@@ -50,24 +50,26 @@ body {font-family: 'Lato';font-size: 13px;}
     width:100%;
 }
 
-.box_app{
-    background-color: rgb(61, 61, 61);
-    color: white;
-    width: 250px;
-    margin: 3px;
-    float: left;
-    border-radius: 5px;
+
+#box_lang_bk{
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    background-color: rgba(0, 0, 0, 0.61);
+    display: none;
 }
 
 #box_lang{
     width: 200px;
     height: 200px;
     background-color: #5e9354;
-    position: fixed;
-    left: 50%;
-    right: 50%;
+    background-color: #5e9354;
+    position: static;
     padding: 20px;
-    display: none;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #box_lang .item_lang{
@@ -77,4 +79,14 @@ body {font-family: 'Lato';font-size: 13px;}
     cursor: pointer;
     background-color: #73a769;
     margin: 2px;
+}
+
+.box_app{
+    background-color: rgb(61, 61, 61);
+    color: white;
+    width: 250px;
+    margin: 3px;
+    float: left;
+    border-radius: 5px;
+    cursor: pointer;
 }
