@@ -2,6 +2,7 @@
 <head>
     <meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
 	<title>Carrot</title>
 
 	<meta name="author" content="Tran Thien Thanh"/>
@@ -19,7 +20,15 @@
         import { initializeApp} from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
         import {getFirestore, collection, addDoc,setDoc,doc,getDoc,query, where,getDocs} from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
 
-        var lang="en";
+        var lang="";
+        var mode_site="nomal";
+
+        if(localStorage.getItem("lang")==null){
+            lang="en";
+            localStorage.setItem("lang",lang);
+        }else{
+            lang=localStorage.getItem("lang");
+        }
 
         const firebaseConfig = {
             apiKey: "AIzaSyDzsx1KYLZL5COz1NaTD8cOz8GYalX2Dxc",
@@ -75,11 +84,13 @@
             querySnapshot.forEach((doc) => {
                 var data_app=doc.data();
                 var key_name="name_"+lang;
-                var htm_item_app="<div class='box_app'>";
+                var htm_item_app="<div class='box_app' id=\""+doc.id+"\">";
                     htm_item_app+="<b>Tên App:</b>"+read_prop(data_app,key_name)+"<br/>";
                     $.each(doc.data(), function(key,val) {
                         htm_item_app+="<b>"+key+"</b>:"+val+"<br/>";
                     });
+                    htm_item_app+="<div class='btn dev' id='btn_app_edit'><i class=\"fa-solid fa-pen-to-square\"></i> Edit</div>";
+                    htm_item_app+="<div class='btn dev' id='btn_app_del'><i class=\"fa-solid fa-trash\"></i> Delete</div>";
                     htm_item_app+="<div>";
                 $("#all_app").append(htm_item_app);
             });
@@ -105,7 +116,8 @@
 
         $("#btn_list_lang").click(async function(){
             close_all_box();
-            $("#box_lang").html("").show();
+            $("#box_lang_bk").show();
+            $("#box_lang").html("");
             var q = query(collection(db, "lang"));
             var querySnapshot =await getDocs(q);
             querySnapshot.forEach((doc) => {
@@ -119,10 +131,12 @@
             });
         });
 
-        $('#box_lang').on('click', '.item_lang', function(emp) {
+        $('#box_lang').on('click', '.item_lang', function() {
             var key_lang=$(this).attr("key");
             lang=key_lang;
-            $("#box_lang").hide();
+            localStorage.setItem("lang", lang);
+            $("#key_lang").html(lang);
+            $("#box_lang_bk").hide();
             get_all_app();
         });
 
@@ -132,8 +146,41 @@
             });
         });
 
+        $('#all_app').on('click', '.box_app',async function() {
+            var id_box_app=$(this).attr("id");
+            var q = query(collection(db, "app"), where("name_en", "==", id_box_app));
+            var querySnapshot =await getDocs(q);
+            querySnapshot.forEach((doc) => {
+                var lang_data=doc.data();
+                alert(lang_data.name_en);
+
+                $("#all_app").hide();
+                $("#box_app_info").show(function(){
+                    $("#box_app_info").html(lang_data.name_en);
+                });
+            });
+        });
+
+        $("#btn_model_site").click(function(){
+            if(mode_site=="nomal")
+                mode_site="dev";
+            else
+                mode_site="nomal";
+            
+            if(mode_site=="dev"){
+                $(".dev").each(function(){
+                    $(this).hide(100);
+                });
+            }else{
+                $(".dev").each(function(){
+                    $(this).show(100);
+                });
+            }
+        });
+
         $(document).ready(function(){
             get_all_app();
+            $("#key_lang").html(lang);
         });
     </script>
     <script src="js/main.js" type="text/javascript"></script>
@@ -142,10 +189,17 @@
     <div id="header">
         <img src="images/72.png">
         <div id="menu_head_right">
-            <div id="btn_list_lang" class="btn">Select Lang</div>
+            <div id="btn_model_site" class="btn">
+                <i class="fa-solid fa-window-maximize fa-bounce"></i> Development mode<br>
+            </div>
+
+            <div id="btn_list_lang" class="btn">
+                <i class="fa-solid fa-globe"></i> Select Lang<br>
+                <div id="key_lang">En</div>
+            </div>
         </div>
     </div>
-    <div id="menu_dev">
+    <div id="menu_dev" class="dev">
         <div class="btn" id="btn_show_add_app"><i class="fa-solid fa-mobile"></i> Add App</div>
         <div onclick="show_add_lang()" class="btn"><i class="fa-solid fa-globe"></i> Add Lang</div>
     </div>
@@ -203,7 +257,13 @@
         </form>
     </div>
 
+    <div id="box_lang_bk">
+        <div id="box_lang"></div>
+    </div>
+
+    <div id="box_app_info"></div>
+
     <div id="all_app"></div>
-    <div id="box_lang"></div>
+    
 </body>
 </html>
