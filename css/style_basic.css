@@ -57,17 +57,28 @@ body {font-family: 'Lato';font-size: 13px;}
     margin: 3px;
     float: left;
     border-radius: 5px;
+    cursor: pointer;
+}
+
+#box_lang_bk{
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    background-color: rgba(0, 0, 0, 0.61);
+    display: none;
 }
 
 #box_lang{
     width: 200px;
     height: 200px;
     background-color: #5e9354;
-    position: fixed;
-    left: 50%;
-    right: 50%;
+    background-color: #5e9354;
+    position: static;
     padding: 20px;
-    display: none;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #box_lang .item_lang{
