@@ -1,57 +1,210 @@
 <html>
 <head>
+    <meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
 	<title>Carrot</title>
+
+	<meta name="author" content="Tran Thien Thanh"/>
+	<meta name="description" content="Carrot App Store"/>
+	<meta name="viewport" content="width=device-width"/>
+
+	<link rel="shortcut icon" href="images/favicon.ico"/>
+    <link href="css/style_basic.css" rel="stylesheet"/>
+    <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+
 	<script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
-	<script type="module">
-	  import { initializeApp} from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
-	  import {getFirestore, collection, addDoc,setDoc,doc,getDoc,query, where,getDocs} from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+    <script src="https://kit.fontawesome.com/edb66aed37.js" crossorigin="anonymous"></script>
 
-	  const firebaseConfig = {
-		  apiKey: "AIzaSyDzsx1KYLZL5COz1NaTD8cOz8GYalX2Dxc",
-		  authDomain: "carrotstore.firebaseapp.com",
-		  projectId: "carrotstore",
-		  storageBucket: "carrotstore.appspot.com",
-		  messagingSenderId: "745653792874",
-		  appId: "1:745653792874:web:55d78113cd3dea7c28da13",
-		  measurementId: "G-KXDDJ42JFN"
-		};
-	
-	  	const app = initializeApp(firebaseConfig);
-	  	const db = getFirestore(app);
+    <script type="module">
+        import { initializeApp} from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+        import {getFirestore, collection, addDoc,setDoc,doc,getDoc,query, where,getDocs} from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
 
-		const user = collection(db, "user");
-		
-		
-		$("#btn_add").click(function(){
-			var user_name=$("#name").val();
-			alert(user_name);
-			alert(user.appId);
-			setDoc(doc(user, user_name), { name: "San Francisco", state: "CA", country: "USA",capital: false, population: 860000,regions: ["west_coast", "norcal"] });
-		});
+        var lang="en";
 
+        const firebaseConfig = {
+            apiKey: "AIzaSyDzsx1KYLZL5COz1NaTD8cOz8GYalX2Dxc",
+            authDomain: "carrotstore.firebaseapp.com",
+            projectId: "carrotstore",
+            storageBucket: "carrotstore.appspot.com",
+            messagingSenderId: "745653792874",
+            appId: "1:745653792874:web:55d78113cd3dea7c28da13",
+            measurementId: "G-KXDDJ42JFN"
+        };
 
-		$("#btn_all_user").click(async function(){
-			$("#all_user").html("");
-			var q = query(collection(db, "user"));
-			var querySnapshot =await getDocs(q);
-			querySnapshot.forEach((doc) => {
-				console.log(doc.id, " => ", doc.data());
-				$("#all_user").append(doc.id);
-			});
-		});
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const cr_app = collection(db, "app");
+        const cr_lang= collection(db, "lang");
 
-	</script>
+        function objectifyForm(formArray) {
+            var returnArray = {};
+            for (var i = 0; i < formArray.length; i++){
+                returnArray[formArray[i]['name']] = formArray[i]['value'];
+            }
+            return returnArray;
+        }
+
+        function add_app(data_app){
+            setDoc(doc(cr_app, data_app.name_en), data_app);
+            get_all_app();
+        }
+
+        function add_lang(data_lang){
+            setDoc(doc(cr_lang, data_lang.key), data_lang);
+            close_all_box();
+        }
+
+        $("#btn_add_app").click(function(){
+            var data_frm=$('#frm_add_app').serializeArray();
+            var data_obj=objectifyForm(data_frm);
+            add_app(data_obj);
+            alert("Add App success :"+data_obj.name_en);
+        });
+
+        $("#btn_add_lang").click(function(){
+            var data_frm=$('#frm_add_lang').serializeArray();
+            var data_obj=objectifyForm(data_frm);
+            add_lang(data_obj);
+            alert("Add Lang success :"+data_obj.key);
+        });
+
+        async function get_all_app(){
+            $("#all_app").html("");
+            var q = query(collection(db, "app"));
+            var querySnapshot =await getDocs(q);
+            querySnapshot.forEach((doc) => {
+                var data_app=doc.data();
+                var key_name="name_"+lang;
+                var htm_item_app="<div class='box_app'>";
+                    htm_item_app+="<b>Tên App:</b>"+read_prop(data_app,key_name)+"<br/>";
+                    $.each(doc.data(), function(key,val) {
+                        htm_item_app+="<b>"+key+"</b>:"+val+"<br/>";
+                    });
+                    htm_item_app+="<div>";
+                $("#all_app").append(htm_item_app);
+            });
+        }
+
+        function read_prop(obj, prop) {
+            return obj[prop];
+        }
+
+        async function get_all_field_name_app_lang(){
+            $("#field_name_app").html("");
+            var q = query(collection(db, "lang"));
+            var querySnapshot =await getDocs(q);
+            querySnapshot.forEach((doc) => {
+                var field_data=doc.data();
+                var htm_item_field="<div class='item_field'>";
+                    htm_item_field+="<label>Name("+field_data.name+")</label>";
+                    htm_item_field+="<input type=\"text\" name=\"name_"+field_data.key+"\"  class=\"inp\" />";
+                    htm_item_field+="<div>";
+                $("#field_name_app").append(htm_item_field);
+            });
+        }
+
+        $("#btn_list_lang").click(async function(){
+            close_all_box();
+            $("#box_lang").html("").show();
+            var q = query(collection(db, "lang"));
+            var querySnapshot =await getDocs(q);
+            querySnapshot.forEach((doc) => {
+                var lang_data=doc.data();
+                var htm_item_app="<div class='item_lang' key='"+lang_data.key+"'>";
+                    $.each(doc.data(), function(key,val) {
+                        htm_item_app+="<b>"+key+"</b>:"+val;
+                    });
+                    htm_item_app+="<div>";
+                $("#box_lang").append(htm_item_app);
+            });
+        });
+
+        $('#box_lang').on('click', '.item_lang', function(emp) {
+            var key_lang=$(this).attr("key");
+            lang=key_lang;
+            $("#box_lang").hide();
+            get_all_app();
+        });
+
+        $("#btn_show_add_app").click(function(){
+            $("#box_add_app").show(function(){
+                get_all_field_name_app_lang();
+            });
+        });
+
+        $(document).ready(function(){
+            get_all_app();
+        });
+    </script>
+    <script src="js/main.js" type="text/javascript"></script>
 </head>
 <body>
+    <div id="header">
+        <img src="images/72.png">
+        <div id="menu_head_right">
+            <div id="btn_list_lang" class="btn">Select Lang</div>
+        </div>
+    </div>
+    <div id="menu_dev">
+        <div class="btn" id="btn_show_add_app"><i class="fa-solid fa-mobile"></i> Add App</div>
+        <div onclick="show_add_lang()" class="btn"><i class="fa-solid fa-globe"></i> Add Lang</div>
+    </div>
 
-	<div action="">
-		<input id="name">
-		<button id="btn_add">Done</button>
-		<button id="btn_all_user">All User</button>
-	</div>
+    <div id="box_add_app">
+        <form class="frm" id="frm_add_app" method="post">
+            <div class="frm-body">
 
-	<div id="all_user">
+                <div class="frm-line">
+                    <i class="fa-solid fa-mobile"></i> Add App
+                </div>
 
-	</div>
+                <div class="frm-line" id="field_name_app"></div>
+
+                <div class="frm-line">
+                    <label>Icon App</label>
+                    <input type="text" id="icon_app" name="icon_app"  class="inp" />
+                </div>
+
+                <div class="frm-line">
+                    <label>Ch play link</label>
+                    <input type="text" id="ch_play" name="ch_play" class="inp" />
+                </div>
+
+                <div class="frm-line">
+                    <div class="btn" id="btn_add_app">Add App</div>
+                    <div class="btn" id="btn_close_app" onclick="close_all_box()">Cancel</div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div id="box_add_lang">
+        <form class="frm" id="frm_add_lang" method="post">
+            <div class="frm-body">
+                <div class="frm-line">
+                    <i class="fa-solid fa-globe"></i> Add Lang
+                </div>
+
+                <div class="frm-line">
+                    <label>Key lang</label>
+                    <input type="text" id="name_app" name="key" class="inp" />
+                </div>
+
+                <div class="frm-line">
+                    <label>Name Lang</label>
+                    <input type="text" id="icon_app" name="name"  class="inp" />
+                </div>
+
+                <div class="frm-line">
+                    <div class="btn" id="btn_add_lang">Add Lang</div>
+                    <div class="btn" id="btn_close_lang" onclick="close_all_box()">Cancel</div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div id="all_app"></div>
+    <div id="box_lang"></div>
 </body>
 </html>
