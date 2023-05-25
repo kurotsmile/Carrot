@@ -1,0 +1,57 @@
+<html>
+<head>
+	<title>Thanh</title>
+	<script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+	<script type="module">
+	  import { initializeApp} from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+	  import {getFirestore, collection, addDoc,setDoc,doc,getDoc,query, where,getDocs} from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+
+	  const firebaseConfig = {
+		  apiKey: "AIzaSyDzsx1KYLZL5COz1NaTD8cOz8GYalX2Dxc",
+		  authDomain: "carrotstore.firebaseapp.com",
+		  projectId: "carrotstore",
+		  storageBucket: "carrotstore.appspot.com",
+		  messagingSenderId: "745653792874",
+		  appId: "1:745653792874:web:55d78113cd3dea7c28da13",
+		  measurementId: "G-KXDDJ42JFN"
+		};
+	
+	  	const app = initializeApp(firebaseConfig);
+	  	const db = getFirestore(app);
+
+		const user = collection(db, "user");
+		
+		
+		$("#btn_add").click(function(){
+			var user_name=$("#name").val();
+			alert(user_name);
+			alert(user.appId);
+			setDoc(doc(user, user_name), { name: "San Francisco", state: "CA", country: "USA",capital: false, population: 860000,regions: ["west_coast", "norcal"] });
+		});
+
+
+		$("#btn_all_user").click(async function(){
+			$("#all_user").html("");
+			var q = query(collection(db, "user"));
+			var querySnapshot =await getDocs(q);
+			querySnapshot.forEach((doc) => {
+				console.log(doc.id, " => ", doc.data());
+				$("#all_user").append(doc.id);
+			});
+		});
+
+	</script>
+</head>
+<body>
+
+	<div action="">
+		<input id="name">
+		<button id="btn_add">Done</button>
+		<button id="btn_all_user">All User</button>
+	</div>
+
+	<div id="all_user">
+
+	</div>
+</body>
+</html>
