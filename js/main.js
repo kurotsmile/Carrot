@@ -77,3 +77,11 @@ function close_all_box(){
     $(".box_add").hide();
     $("#all_app").show();
 }
+
+function add_field(name,label,val=""){
+    var html_filed="<div class='frm-line'>";
+    html_filed+="<label for=\""+name+"\">"+label+"</label>";
+    html_filed+="<input type=\"text\" id=\""+name+"\" name=\""+name+"\" value=\""+val+"\" class=\"inp\"/>";
+    html_filed+="</div>";
+    return html_filed;
+}

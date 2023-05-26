@@ -60,7 +60,7 @@ body {font-family: 'Lato';font-size: 13px;}
     width:100%;
 }
 
-#box_lang_bk{
+#box_lang_bk,#box_msg{
     position: fixed;
     top: 0px;
     left: 0px;
@@ -70,7 +70,7 @@ body {font-family: 'Lato';font-size: 13px;}
     display: none;
 }
 
-#box_lang{
+#box_lang,#box_msg_border{
     width: 200px;
     height: 200px;
     background-color: #5e9354;

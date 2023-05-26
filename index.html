@@ -17,11 +17,13 @@
     <script src="https://kit.fontawesome.com/edb66aed37.js" crossorigin="anonymous"></script>
 
     <script type="module">
-        import { initializeApp} from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+        import {initializeApp} from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
         import {getFirestore, collection, addDoc,setDoc,doc,getDoc,query, where,getDocs,deleteDoc} from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
 
         var lang="";
         var mode_site="nomal";
+
+        var data_lang=Array();
 
         if(localStorage.getItem("lang")==null){
             lang="en";
@@ -69,30 +71,6 @@
             close_all_box();
         }
 
-        $("#btn_add_app").click(function(){
-            var data_frm=$('#frm_add_app').serializeArray();
-            var data_obj=objectifyForm(data_frm);
-            add_app(data_obj);
-            alert("Add App success :"+data_obj.name_en);
-            $('#frm_add_app').each(function(){
-                this.reset();
-            });
-        });
-
-        $("#btn_add_lang").click(function(){
-            var data_frm=$('#frm_add_lang').serializeArray();
-            var data_obj=objectifyForm(data_frm);
-            add_lang(data_obj);
-            alert("Add Lang success :"+data_obj.key);
-        });
-
-        $("#btn_add_link_store").click(function(){
-            var data_frm=$('#frm_links_store').serializeArray();
-            var data_obj=objectifyForm(data_frm);
-            add_link_store(data_obj);
-            alert("Add Link Store success :"+data_obj.key);
-        });
-
         async function get_all_app(){
             $("#all_app").show();
             $("#all_app").html("");
@@ -117,48 +95,46 @@
         }
 
         async function get_all_field_name_app_lang(){
-            $("#field_name_app").html("");
             var q = query(collection(db, "lang"));
             var querySnapshot =await getDocs(q);
             querySnapshot.forEach((doc) => {
                 var field_data=doc.data();
-                var htm_item_field="<div class='item_field'>";
-                    htm_item_field+="<label>Name("+field_data.name+")</label>";
-                    htm_item_field+="<input type=\"text\" name=\"name_"+field_data.key+"\"  class=\"inp\" />";
-                    htm_item_field+="<div>";
-                $("#field_name_app").append(htm_item_field);
+                $("#all-field").append(add_field("name_"+field_data.key,"Name("+field_data.name+")"));
             });
         }
 
         async function get_all_field_link_store(){
-            $("#field_link_store").html("");
             var q = query(cr_link_store);
             var querySnapshot =await getDocs(q);
             querySnapshot.forEach((doc) => {
                 var field_data=doc.data();
-                var htm_item_field="<div class='item_field'>";
-                    htm_item_field+="<label>Links Store ("+field_data.name+")</label>";
-                    htm_item_field+="<input type=\"text\" name=\"name_"+field_data.key+"\"  class=\"inp\" />";
-                    htm_item_field+="<div>";
-                $("#field_link_store").append(htm_item_field);
+                $("#all-field").append(add_field(field_data.key,"Link Store ("+field_data.name+")"));
             });
         }
 
         $("#btn_list_lang").click(async function(){
             $("#box_lang_bk").show();
             $("#box_lang").html("");
-            var q = query(collection(db, "lang"));
-            var querySnapshot =await getDocs(q);
-            querySnapshot.forEach((doc) => {
-                var lang_data=doc.data();
-                var htm_item_app="<div class='item_lang' key='"+lang_data.key+"'>";
-                    $.each(doc.data(), function(key,val) {
-                        htm_item_app+="<b>"+key+"</b>:"+val;
-                    });
-                    htm_item_app+="<div>";
+            if(data_lang.length==0){
+                var q = query(collection(db, "lang"));
+                var querySnapshot =await getDocs(q);
+                querySnapshot.forEach((doc) => {data_lang.push(doc.data());});
+                show_menu_lang(data_lang);
+            }else{
+                show_menu_lang(data_lang);
+            }
+        });
+
+        function show_menu_lang(data_lang){
+            $.each(data_lang, function(idx, obj){ 
+                var htm_item_app="<div class='item_lang' key='"+obj.key+"'>";
+                $.each(obj, function(key, value){
+                    htm_item_app+="<b>"+key+"</b>:"+value;
+                });
+                htm_item_app+="<div>";
                 $("#box_lang").append(htm_item_app);
             });
-        });
+        }
 
         $('#box_lang').on('click', '.item_lang', function() {
             var key_lang=$(this).attr("key");
@@ -171,15 +147,6 @@
             get_all_app();
         });
 
-        $("#btn_show_add_app").click(function(){
-            $(".box_add").hide();
-            $("#box_add_app").show(function(){
-                $("#all_app").hide();
-                get_all_field_name_app_lang();
-                get_all_field_link_store();
-            });
-        });
-
         $("#all_app").each(function(){
             $(this).each(function(){
                $(this).on('click', '.btn_app_edit',async function() {
@@ -189,12 +156,11 @@
                     querySnapshot.forEach((doc) => {
                         var lang_data=doc.data();
                         $("#all_app").hide();
+                        $("#all-field").html("");
                         $("#box_add_app").show(function(){
-                            var htm_info_app="";
                             $.each(lang_data, function(key,val) {
-                                htm_info_app+="<div class='frm-line'><label>"+key+"</label><input name=\""+key+"\" value=\""+val+"\"/>";
+                                $("#all-field").append(add_field(key,key,val));
                             });
-                            $("#box_add_app .frm-body .frm-all-item").html(htm_info_app);
                             $("#box_app_info").hide();
                             return;
                         });
@@ -221,21 +187,68 @@
             else
                 mode_site="nomal";
             
-            if(mode_site=="dev"){
-                $(".dev").each(function(){
-                    $(this).hide(100);
-                });
-            }else{
-                $(".dev").each(function(){
-                    $(this).show(100);
-                });
-            }
+            if(mode_site=="dev")
+                $(".dev").each(function(){$(this).hide(100);});
+            else
+                $(".dev").each(function(){$(this).show(100);});
         });
+
+        function show_box_add(func){
+            $("#box_add_app").show();
+            $("#all-field").html("");
+
+            if(func=="add_app"){
+                $("#box_add_icon").attr("class","fa-solid fa-mobile");
+                $("#all-field").append(add_field("icon","Icon App"));
+                get_all_field_name_app_lang();
+                get_all_field_link_store();
+            }
+
+            if(func=="add_lang"){
+                $("#box_add_icon").attr("class","fa-solid fa-globe");
+                $("#all-field").append(add_field("key","Key lang"));
+                $("#all-field").append(add_field("name","Name Lang"));
+            }
+
+            if(func=="add_link_store"){
+                $("#box_add_icon").attr("class","fa-solid fa-store");
+                $("#all-field").append(add_field("key","Key id Store"));
+                $("#all-field").append(add_field("name","Name Store"));
+                $("#all-field").append(add_field("icon","Icon Font"));
+                $("#all-field").append(add_field("img","Iamge Store"));
+            }
+            
+            var frm_box=$("#frm_add_app");
+            $(frm_box).attr("type",func);
+        }
+
+
+        function done_add_box(){
+            var data_frm=$('#frm_add_app').serializeArray();
+            var frm_box=$("#frm_add_app");
+            var func=$(frm_box).attr("type");
+            var data_obj=objectifyForm(data_frm);
+
+            if(func=="add_app") add_app(data_obj);
+            if(func=="add_lang") add_lang(data_obj);
+            if(func=="add_link_store") add_link_store(data_obj);
+
+            $('#frm_add_app').each(function(){this.reset();});
+            alert("Add Success "+lang+" func:"+func);
+        }
+
+        $("#btn_show_add_app").click(function(){show_box_add('add_app')});
+        $("#btn_show_add_lang").click(function(){show_box_add('add_lang')});
+        $("#btn_show_add_link_store").click(function(){show_box_add('add_link_store')});
+
+        $("#btn_done_add_box").click(done_add_box);
 
         $(document).ready(function(){
             get_all_app();
             $("#key_lang").html(lang);
         });
+
+        export{done_add_box};
     </script>
     <script src="js/main.js" type="text/javascript"></script>
 </head>
@@ -255,104 +268,35 @@
         </div>
     </div>
     <div id="menu_dev" class="dev">
-        <div class="btn" id="btn_show_add_app"><i class="fa-solid fa-mobile"></i> Add App</div>
-        <div onclick="show_add_lang()" class="btn"><i class="fa-solid fa-globe"></i> Add Lang</div>
-        <div onclick="show_add_link_store()" class="btn"><i class="fa-solid fa-store"></i> Add Link Store</div>
+        <div id="btn_show_add_app" class="btn"><i class="fa-solid fa-mobile"></i> Add App</div>
+        <div id="btn_show_add_lang" " class="btn"><i class="fa-solid fa-globe"></i> Add Lang</div>
+        <div id="btn_show_add_link_store" class="btn"><i class="fa-solid fa-store"></i> Add Link Store</div>
     </div>
 
     <div id="box_add_app" class="box_add">
-        <form class="frm" id="frm_add_app" method="post">
+        <form class="frm" id="frm_add_app" method="post" type="add_app">
             <div class="frm-body">
-
                 <div class="frm-line">
-                    <i class="fa-solid fa-mobile"></i> Add App
+                    <i id="box_add_icon" class="fa-solid fa-mobile"></i> Add App
                 </div>
-
-                <div class="frm-all-item">
-                    <div class="frm-line" id="field_name_app"></div>
-                    <div class="frm-line" id="field_link_store"></div>
-
-                    <div class="frm-line">
-                        <label for="icon">Icon App</label>
-                        <input type="text" id="icon" name="icon"  class="inp" />
-                    </div>
-                </div>
-
+                <div class="frm-all-item" id="all-field"></div>
                 <div class="frm-line">
-                    <div class="btn" id="btn_add_app"><i class="fa-solid fa-circle-check"></i> Done</div>
+                    <div class="btn" id="btn_done_add_box"><i class="fa-solid fa-circle-check"></i> Done</div>
                     <div class="btn" onclick="close_all_box()"><i class="fa-solid fa-rectangle-xmark"></i> Cancel</div>
                 </div>
             </div>
         </form>
     </div>
 
-    <div id="box_add_lang" class="box_add">
-        <form class="frm" id="frm_add_lang" method="post">
-            <div class="frm-body">
-                <div class="frm-line">
-                    <i class="fa-solid fa-globe"></i> Add Lang
-                </div>
-
-                <div class="frm-line">
-                    <label>Key lang</label>
-                    <input type="text" id="name_app" name="key" class="inp" />
-                </div>
-
-                <div class="frm-line">
-                    <label>Name Lang</label>
-                    <input type="text" id="icon_app" name="name"  class="inp" />
-                </div>
-
-                <div class="frm-line">
-                    <div class="btn" id="btn_add_lang"><i class="fa-solid fa-circle-check"></i> Done</div>
-                    <div class="btn" onclick="close_all_box()"><i class="fa-solid fa-rectangle-xmark"></i> Cancel</div>
-                </div>
-            </div>
-        </form>
-    </div>
-
-    <div id="box_link_store" class="box_add">
-        <form class="frm" id="frm_links_store" method="post">
-            <div class="frm-body">
-                <div class="frm-line">
-                    <i class="fa-solid fa-store"></i> Add Link Store
-                </div>
-
-                <div class="frm-line">
-                    <label for="key_link_store">Key id Store</label>
-                    <input type="text" id="key_link_store" name="key" class="inp" />
-                </div>
-
-                <div class="frm-line">
-                    <label for="name_link_store">Name Store</label>
-                    <input type="text" id="name_link_store" name="name" class="inp" />
-                </div>
-
-                <div class="frm-line">
-                    <label>Icon Font</label>
-                    <input type="text" id="icon_store" name="icon" class="inp" />
-                </div>
-
-                <div class="frm-line">
-                    <label for="img_link_store">Iamge Store</label>
-                    <input type="text" id="img_link_store" name="img"  class="inp" />
-                </div>
-
-                <div class="frm-line">
-                    <div class="btn" id="btn_add_link_store"><i class="fa-solid fa-circle-check"></i> Done</div>
-                    <div class="btn" onclick="close_all_box()"><i class="fa-solid fa-rectangle-xmark"></i> Cancel</div>
-                </div>
-            </div>
-        </form>
-    </div>
-
-    <div id="box_lang_bk">
-        <div id="box_lang"></div>
-    </div>
-
+    <div id="box_lang_bk"><div id="box_lang"></div></div>
     <div id="box_app_info"></div>
-
     <div id="all_app"></div>
+    <div id="box_msg">
+        <div id="box_msg_border">
+            <div id="box_msg_title">Title</div>
+            <div id="box_msg_body">Boyd</div>
+        </div>
+    </div>
     
 </body>
 </html>
