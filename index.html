@@ -22,7 +22,8 @@
 
         var lang="";
         var mode_site="nomal";
-
+        var is_dev=false;
+        var count_dev=0;
         var data_lang=Array();
 
         if(localStorage.getItem("lang")==null){
@@ -33,6 +34,7 @@
         }
 
         if(localStorage.getItem("mode_site")!=null) mode_site=localStorage.getItem("mode_site");
+        if(localStorage.getItem("is_dev")!=null) is_dev=localStorage.getItem("is_dev");
 
         const firebaseConfig = {
             apiKey: "AIzaSyDzsx1KYLZL5COz1NaTD8cOz8GYalX2Dxc",
@@ -90,6 +92,7 @@
                     htm_item_app+="<div>";
                 $("#all_app").append(htm_item_app);
             });
+            check_mode_site();
         }
 
         function read_prop(obj, prop) {
@@ -195,18 +198,19 @@
                 mode_site="dev";
             else
                 mode_site="nomal";
-            
+            localStorage.setItem("mode_site",mode_site);
             check_mode_site();
         });
 
         function check_mode_site(){
-            if(mode_site=="dev")
+            if(mode_site=="nomal")
                 $(".dev").each(function(){$(this).hide(100);});
             else
                 $(".dev").each(function(){$(this).show(100);});
         }
 
         function show_box_add(func){
+            $("#all_app").hide();
             $("#box_add_app").show();
             $("#all-field").html("");
 
@@ -264,6 +268,18 @@
             $("#all-field").append(add_field(item_key,item_name));
         });
 
+        function act_mode_dev(){
+            count_dev++;
+            if(count_dev>=3){
+                is_dev=true;
+                localStorage.setItem("is_dev",is_dev);
+                $("#btn_model_site").show();
+                count_dev=0;
+                alert("Active Model Dev");
+            }
+        }
+
+        $("#logo_carrot").click(function(){act_mode_dev()});
         $("#btn_show_add_app").click(function(){show_box_add('add_app')});
         $("#btn_show_add_lang").click(function(){show_box_add('add_lang')});
         $("#btn_show_add_link_store").click(function(){show_box_add('add_link_store')});
@@ -273,16 +289,22 @@
         $("#btn_done_add_box").click(done_add_box);
 
         $(document).ready(function(){  
-            check_mode_site();
             get_all_app();
             $("#key_lang").html(lang);
+            if(is_dev){
+                $("#btn_model_site").show();
+            }else{
+                $("#btn_model_site").hide();
+                mode_site=="nomal";
+            }
+            check_mode_site();
         });
     </script>
     <script src="js/main.js" type="text/javascript"></script>
 </head>
 <body>
     <div id="header">
-        <img src="images/72.png">
+        <img id="logo_carrot" src="images/72.png">
         <div id="menu_head_right">
 
             <div id="btn_list_lang" class="btn">
