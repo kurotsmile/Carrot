@@ -83,10 +83,11 @@ body {font-family: 'Lato';font-size: 13px;}
 .box_app{
     background-color: rgb(61, 61, 61);
     color: white;
-    width: 250px;
+    width: 150px;
     margin: 3px;
     float: left;
     border-radius: 5px;
     cursor: pointer;
     padding: 20px;
+    text-align: center;
 }

@@ -18,7 +18,7 @@
 
     <script type="module">
         import { initializeApp} from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
-        import {getFirestore, collection, addDoc,setDoc,doc,getDoc,query, where,getDocs} from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+        import {getFirestore, collection, addDoc,setDoc,doc,getDoc,query, where,getDocs,deleteDoc} from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
 
         var lang="";
         var mode_site="nomal";
@@ -68,6 +68,9 @@
             var data_obj=objectifyForm(data_frm);
             add_app(data_obj);
             alert("Add App success :"+data_obj.name_en);
+            $('#frm_add_app').each(function(){
+                this.reset();
+            });
         });
 
         $("#btn_add_lang").click(function(){
@@ -86,10 +89,9 @@
                 var data_app=doc.data();
                 var key_name="name_"+lang;
                 var htm_item_app="<div class='box_app' id=\""+doc.id+"\">";
-                    htm_item_app+="<b>Tên App:</b>"+read_prop(data_app,key_name)+"<br/>";
-                    $.each(doc.data(), function(key,val) {
-                        htm_item_app+="<b>"+key+"</b>:"+val+"<br/>";
-                    });
+                    htm_item_app+="<img src=\""+data_app.icon+"\"/><br/>";
+                    htm_item_app+="<b>"+read_prop(data_app,key_name)+"</b>";
+                    htm_item_app+="<div>"+data_app.name_en+"</div>";
                     htm_item_app+="<div class='btn dev btn_app_edit' app_id='"+doc.id+"'><i class=\"fa-solid fa-pen-to-square\"></i> Edit</div>";
                     htm_item_app+="<div class='btn dev btn_app_del' app_id='"+doc.id+"'><i class=\"fa-solid fa-trash\"></i> Delete</div>";
                     htm_item_app+="<div>";
@@ -149,24 +151,6 @@
             });
         });
 
-        $('#all_app').on('click', '.box_app',async function() {
-            var id_box_app=$(this).attr("id");
-            var q = query(collection(db, "app"), where("name_en", "==", id_box_app));
-            var querySnapshot =await getDocs(q);
-            querySnapshot.forEach((doc) => {
-                var lang_data=doc.data();
-                $("#all_app").hide();
-                $("#box_app_info").show(function(){
-                    var htm_info_app="<div>";
-                    $.each(lang_data, function(key,val) {
-                        htm_info_app+="<div><b>"+key+"</b> : "+val+"</div>";
-                    });
-                    htm_info_app+="</div>";
-                    $("#box_app_info").html(htm_info_app);
-                });
-            });
-        });
-
         $("#all_app").each(function(){
             $(this).each(function(){
                $(this).on('click', '.btn_app_edit',async function() {
@@ -181,8 +165,7 @@
                             $.each(lang_data, function(key,val) {
                                 htm_info_app+="<div class='frm-line'><label>"+key+"</label><input name=\""+key+"\" value=\""+val+"\"/>";
                             });
-                            htm_info_app+="<div class='frm-line'><div class='btn' id='btn_add_app'>Add App</div><div class='btn' id='btn_close_app' onclick='close_all_box()'>Cancel</div></div>";
-                            $("#box_add_app .frm-body").html(htm_info_app);
+                            $("#box_add_app .frm-body .frm-all-item").html(htm_info_app);
                             $("#box_app_info").hide();
                             return;
                         });
@@ -191,6 +174,17 @@
                });
             });
         }); 
+
+        $("#all_app").each(function(){
+            $(this).each(function(){
+               $(this).on('click', '.btn_app_del',async function() {
+                    var id_box_app=$(this).attr("app_id");
+                    await deleteDoc(doc(db, "app", id_box_app));
+                    get_all_app();
+                    return;
+               });
+            });
+        });
 
         $("#btn_model_site").click(function(){
             if(mode_site=="nomal")
@@ -238,25 +232,27 @@
     <div id="box_add_app">
         <form class="frm" id="frm_add_app" method="post">
             <div class="frm-body">
-                
+
                 <div class="frm-line">
                     <i class="fa-solid fa-mobile"></i> Add App
                 </div>
 
-                <div class="frm-line" id="field_name_app"></div>
+                <div class="frm-all-item">
+                    <div class="frm-line" id="field_name_app"></div>
 
-                <div class="frm-line">
-                    <label for="icon">Icon App</label>
-                    <input type="text" id="icon" name="icon"  class="inp" />
+                    <div class="frm-line">
+                        <label for="icon">Icon App</label>
+                        <input type="text" id="icon" name="icon"  class="inp" />
+                    </div>
+
+                    <div class="frm-line">
+                        <label>Ch play link</label>
+                        <input type="text" id="ch_play" name="ch_play" class="inp" />
+                    </div>
                 </div>
 
                 <div class="frm-line">
-                    <label>Ch play link</label>
-                    <input type="text" id="ch_play" name="ch_play" class="inp" />
-                </div>
-
-                <div class="frm-line">
-                    <div class="btn" id="btn_add_app"><i class="fa-solid fa-hexagon-plus"></i> Add App</div>
+                    <div class="btn" id="btn_add_app"><i class="fa-solid fa-circle-check"></i> Done</div>
                     <div class="btn" id="btn_close_app" onclick="close_all_box()"><i class="fa-solid fa-rectangle-xmark"></i> Cancel</div>
                 </div>
             </div>
