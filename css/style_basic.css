@@ -1,24 +1,6 @@
 * {margin: 0;padding: 0px;}
 body {font-family: 'Lato';font-size: 13px;}
-#header{background-color: #525252;}
-#menu_head_right{float: right;}
-#menu_dev{
-    float: left;
-    width: 100%;
-    background-color: #df8e2f;
-}
-#menu_dev .btn{
-    background-color: #6e781b;
-}
-#all_app{
-    float: left;
-    width: 100%;
-}
-#box_add_app,#box_add_lang{
-    display: none;
-    float: left;
-    width: 100%;
-}
+
 .btn{
     background-color: gray;
     color: white;
@@ -33,6 +15,34 @@ body {font-family: 'Lato';font-size: 13px;}
 .btn:hover{
     background-color: orange;
     color: black;
+}
+
+#header{background-color: #525252;}
+#menu_head_right{float: right;}
+#menu_head_right .btn{
+    width: 80px;
+    height: 50px;
+    float: right;
+    text-align: center;
+    margin-top: 8px;
+}
+#menu_dev{
+    float: left;
+    width: 100%;
+    background-color: #df8e2f;
+}
+#menu_dev .btn{
+    background-color: #6e781b;
+}
+#all_app{
+    float: left;
+    width: 100%;
+}
+
+.box_add{
+    display: none;
+    float: left;
+    width: 100%;
 }
 
 .frm{
@@ -88,6 +98,6 @@ body {font-family: 'Lato';font-size: 13px;}
     float: left;
     border-radius: 5px;
     cursor: pointer;
-    padding: 20px;
+    padding: 3px;
     text-align: center;
 }

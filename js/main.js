@@ -63,28 +63,17 @@ function act_done_add_app(){
     alert("Done");
 }
 
-function show_add_app(){
-    close_all_box();
-    $("#box_add_app").show();
-}
-
 function show_add_lang(){
     close_all_box();
     $("#box_add_lang").show();
 }
 
-function close_all_box(){
-    $("#box_add_app").hide();
-    $("#box_add_lang").hide();
-    $("#all_app").show();
+function show_add_link_store(){
+    close_all_box();
+    $("#box_link_store").show();
 }
 
-$("#btn_all_user").click(async function(){
-    $("#all_user").html("");
-    var q = query(collection(db, "user"));
-    var querySnapshot =await getDocs(q);
-    querySnapshot.forEach((doc) => {
-        console.log(doc.id, " => ", doc.data());
-        $("#all_user").append(doc.id);
-    });
-});
+function close_all_box(){
+    $(".box_add").hide();
+    $("#all_app").show();
+}

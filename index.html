@@ -44,6 +44,7 @@
         const db = getFirestore(app);
         const cr_app = collection(db, "app");
         const cr_lang= collection(db, "lang");
+        const cr_link_store= collection(db, "link_store");
 
         function objectifyForm(formArray) {
             var returnArray = {};
@@ -63,6 +64,11 @@
             close_all_box();
         }
 
+        function add_link_store(data_links_store){
+            setDoc(doc(cr_link_store, data_links_store.key), data_links_store);
+            close_all_box();
+        }
+
         $("#btn_add_app").click(function(){
             var data_frm=$('#frm_add_app').serializeArray();
             var data_obj=objectifyForm(data_frm);
@@ -78,6 +84,13 @@
             var data_obj=objectifyForm(data_frm);
             add_lang(data_obj);
             alert("Add Lang success :"+data_obj.key);
+        });
+
+        $("#btn_add_link_store").click(function(){
+            var data_frm=$('#frm_links_store').serializeArray();
+            var data_obj=objectifyForm(data_frm);
+            add_link_store(data_obj);
+            alert("Add Link Store success :"+data_obj.key);
         });
 
         async function get_all_app(){
@@ -117,6 +130,20 @@
             });
         }
 
+        async function get_all_field_link_store(){
+            $("#field_link_store").html("");
+            var q = query(cr_link_store);
+            var querySnapshot =await getDocs(q);
+            querySnapshot.forEach((doc) => {
+                var field_data=doc.data();
+                var htm_item_field="<div class='item_field'>";
+                    htm_item_field+="<label>Links Store ("+field_data.name+")</label>";
+                    htm_item_field+="<input type=\"text\" name=\"name_"+field_data.key+"\"  class=\"inp\" />";
+                    htm_item_field+="<div>";
+                $("#field_link_store").append(htm_item_field);
+            });
+        }
+
         $("#btn_list_lang").click(async function(){
             $("#box_lang_bk").show();
             $("#box_lang").html("");
@@ -145,9 +172,11 @@
         });
 
         $("#btn_show_add_app").click(function(){
+            $(".box_add").hide();
             $("#box_add_app").show(function(){
                 $("#all_app").hide();
                 get_all_field_name_app_lang();
+                get_all_field_link_store();
             });
         });
 
@@ -214,22 +243,24 @@
     <div id="header">
         <img src="images/72.png">
         <div id="menu_head_right">
-            <div id="btn_model_site" class="btn">
-                <i class="fa-solid fa-window-maximize fa-bounce"></i> Development mode<br>
-            </div>
 
             <div id="btn_list_lang" class="btn">
-                <i class="fa-solid fa-globe"></i> Select Lang<br>
+                <i class="fa-solid fa-globe"></i><br> Select Lang<br>
                 <div id="key_lang">En</div>
+            </div>
+
+            <div id="btn_model_site" class="btn">
+                <i class="fa-solid fa-window-maximize fa-bounce"></i><br>Development mode
             </div>
         </div>
     </div>
     <div id="menu_dev" class="dev">
         <div class="btn" id="btn_show_add_app"><i class="fa-solid fa-mobile"></i> Add App</div>
         <div onclick="show_add_lang()" class="btn"><i class="fa-solid fa-globe"></i> Add Lang</div>
+        <div onclick="show_add_link_store()" class="btn"><i class="fa-solid fa-store"></i> Add Link Store</div>
     </div>
 
-    <div id="box_add_app">
+    <div id="box_add_app" class="box_add">
         <form class="frm" id="frm_add_app" method="post">
             <div class="frm-body">
 
@@ -239,27 +270,23 @@
 
                 <div class="frm-all-item">
                     <div class="frm-line" id="field_name_app"></div>
+                    <div class="frm-line" id="field_link_store"></div>
 
                     <div class="frm-line">
                         <label for="icon">Icon App</label>
                         <input type="text" id="icon" name="icon"  class="inp" />
                     </div>
-
-                    <div class="frm-line">
-                        <label>Ch play link</label>
-                        <input type="text" id="ch_play" name="ch_play" class="inp" />
-                    </div>
                 </div>
 
                 <div class="frm-line">
                     <div class="btn" id="btn_add_app"><i class="fa-solid fa-circle-check"></i> Done</div>
-                    <div class="btn" id="btn_close_app" onclick="close_all_box()"><i class="fa-solid fa-rectangle-xmark"></i> Cancel</div>
+                    <div class="btn" onclick="close_all_box()"><i class="fa-solid fa-rectangle-xmark"></i> Cancel</div>
                 </div>
             </div>
         </form>
     </div>
 
-    <div id="box_add_lang">
+    <div id="box_add_lang" class="box_add">
         <form class="frm" id="frm_add_lang" method="post">
             <div class="frm-body">
                 <div class="frm-line">
@@ -277,8 +304,43 @@
                 </div>
 
                 <div class="frm-line">
-                    <div class="btn" id="btn_add_lang">Add Lang</div>
-                    <div class="btn" id="btn_close_lang" onclick="close_all_box()">Cancel</div>
+                    <div class="btn" id="btn_add_lang"><i class="fa-solid fa-circle-check"></i> Done</div>
+                    <div class="btn" onclick="close_all_box()"><i class="fa-solid fa-rectangle-xmark"></i> Cancel</div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div id="box_link_store" class="box_add">
+        <form class="frm" id="frm_links_store" method="post">
+            <div class="frm-body">
+                <div class="frm-line">
+                    <i class="fa-solid fa-store"></i> Add Link Store
+                </div>
+
+                <div class="frm-line">
+                    <label for="key_link_store">Key id Store</label>
+                    <input type="text" id="key_link_store" name="key" class="inp" />
+                </div>
+
+                <div class="frm-line">
+                    <label for="name_link_store">Name Store</label>
+                    <input type="text" id="name_link_store" name="name" class="inp" />
+                </div>
+
+                <div class="frm-line">
+                    <label>Icon Font</label>
+                    <input type="text" id="icon_store" name="icon" class="inp" />
+                </div>
+
+                <div class="frm-line">
+                    <label for="img_link_store">Iamge Store</label>
+                    <input type="text" id="img_link_store" name="img"  class="inp" />
+                </div>
+
+                <div class="frm-line">
+                    <div class="btn" id="btn_add_link_store"><i class="fa-solid fa-circle-check"></i> Done</div>
+                    <div class="btn" onclick="close_all_box()"><i class="fa-solid fa-rectangle-xmark"></i> Cancel</div>
                 </div>
             </div>
         </form>
