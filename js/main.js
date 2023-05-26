@@ -97,3 +97,9 @@ function show_box_msg(title){
 function close_box_msg(){
     $("#box_msg").hide();
 }
+
+function show_app_info(data){
+    $.each(data, function(key,val) {
+        $("#box_app_info").append("<div><b>"+key+"</b> : "+val+"</div>");
+    });
+}

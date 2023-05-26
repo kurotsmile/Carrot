@@ -147,3 +147,7 @@ body {font-family: 'Lato';font-size: 13px;}
     padding: 3px;
     text-align: center;
 }
+
+.name_app{
+    font-size: smaller;
+}

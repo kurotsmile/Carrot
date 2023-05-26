@@ -84,9 +84,9 @@
                 var data_app=doc.data();
                 var key_name="name_"+lang;
                 var htm_item_app="<div class='box_app' id=\""+doc.id+"\">";
-                    htm_item_app+="<img src=\""+data_app.icon+"\"/><br/>";
-                    htm_item_app+="<b>"+read_prop(data_app,key_name)+"</b>";
-                    htm_item_app+="<div>"+data_app.name_en+"</div>";
+                    htm_item_app+="<img class='icon_app' app_id='"+doc.id+"' src=\""+data_app.icon+"\"/><br/>";
+                    htm_item_app+="<b class='name_app'>"+read_prop(data_app,key_name)+"</b>";
+                    htm_item_app+="<div class='name_app'>"+data_app.name_en+"</div>";
                     htm_item_app+="<div class='btn dev btn_app_edit' app_id='"+doc.id+"'><i class=\"fa-solid fa-pen-to-square\"></i> Edit</div>";
                     htm_item_app+="<div class='btn dev btn_app_del' app_id='"+doc.id+"'><i class=\"fa-solid fa-trash\"></i> Delete</div>";
                     htm_item_app+="<div>";
@@ -180,7 +180,7 @@
                     return;
                });
             });
-        }); 
+        });
 
         $("#all_app").each(function(){
             $(this).each(function(){
@@ -192,6 +192,22 @@
                });
             });
         });
+
+        $("#all_app").each(function(){
+            $(this).each(function(){
+               $(this).on('click', '.icon_app',async function() {
+                    var id_box_app=$(this).attr("app_id");
+                    var q = query(collection(db, "app"), where("name_en", "==", id_box_app));
+                    var querySnapshot =await getDocs(q);
+                    querySnapshot.forEach((doc) => {
+                        var app_data=doc.data();
+                        $("#all_app").hide();
+                        $("#box_app_info").show(function(){show_app_info(app_data);});
+                    });
+                    return;
+               });
+            });
+        }); 
 
         $("#btn_model_site").click(function(){
             if(mode_site=="nomal")
