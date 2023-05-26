@@ -79,9 +79,21 @@ function close_all_box(){
 }
 
 function add_field(name,label,val=""){
-    var html_filed="<div class='frm-line'>";
+    var html_filed="<div class='frm-line item_field'>";
     html_filed+="<label for=\""+name+"\">"+label+"</label>";
+    html_filed+="<div class='btn' onclick=\"$(this).parent().remove()\"><i class='fa-solid fa-delete-left'></i></div>";
     html_filed+="<input type=\"text\" id=\""+name+"\" name=\""+name+"\" value=\""+val+"\" class=\"inp\"/>";
     html_filed+="</div>";
     return html_filed;
+}
+
+function show_box_msg(title){
+    $("#box_msg").show();
+    $("#box_msg_title").html(title);
+    $("#box_msg_body").html("");
+    return $("#box_msg_body");
+}
+
+function close_box_msg(){
+    $("#box_msg").hide();
 }

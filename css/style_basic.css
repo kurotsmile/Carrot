@@ -60,7 +60,15 @@ body {font-family: 'Lato';font-size: 13px;}
     width:100%;
 }
 
-#box_lang_bk,#box_msg{
+.frm .frm-line.item_field{
+    margin-bottom: 10px;
+}
+
+.frm .frm-line.item_field .btn{
+    float: right;
+}
+
+#box_msg{
     position: fixed;
     top: 0px;
     left: 0px;
@@ -70,18 +78,56 @@ body {font-family: 'Lato';font-size: 13px;}
     display: none;
 }
 
-#box_lang,#box_msg_border{
+#box_msg_border{
     width: 200px;
     height: 200px;
     background-color: #5e9354;
-    background-color: #5e9354;
     position: static;
-    padding: 20px;
     margin-left: auto;
     margin-right: auto;
+    margin-top: 50px;
 }
 
-#box_lang .item_lang{
+#box_msg_header{
+    background-color: beige;
+    float: left;
+    width: 100%;
+    text-align: center;
+    height: 30px;
+}
+
+#btn_box_msg_close{
+    float: right;
+    position: relative;
+    right: -2px;
+    top: -42px;
+    width: 40px;
+    height: 40px;
+    border-radius: 40px;
+    padding: 0px;
+    text-align: center;
+    background-color: beige;
+    color: black;
+}
+
+#btn_box_msg_close i{
+    margin-top: 12px;
+    font-size: 15px;
+}
+
+#box_msg_body{
+    padding: 10px;
+    float: left;
+}
+
+#box_msg_title{
+    float: left;
+    width: 100%;
+    font-size: 15px;
+    padding-top: 5px;
+}
+
+#box_msg_body .item_lang,#box_msg_body .item_msg{
     width: 100%;
     float: left;
     display: block;

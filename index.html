@@ -32,6 +32,8 @@
             lang=localStorage.getItem("lang");
         }
 
+        if(localStorage.getItem("mode_site")!=null) mode_site=localStorage.getItem("mode_site");
+
         const firebaseConfig = {
             apiKey: "AIzaSyDzsx1KYLZL5COz1NaTD8cOz8GYalX2Dxc",
             authDomain: "carrotstore.firebaseapp.com",
@@ -95,11 +97,19 @@
         }
 
         async function get_all_field_name_app_lang(){
-            var q = query(collection(db, "lang"));
-            var querySnapshot =await getDocs(q);
-            querySnapshot.forEach((doc) => {
-                var field_data=doc.data();
-                $("#all-field").append(add_field("name_"+field_data.key,"Name("+field_data.name+")"));
+            if(data_lang.length==0){
+                var q = query(collection(db, "lang"));
+                var querySnapshot =await getDocs(q);
+                querySnapshot.forEach((doc) => {data_lang.push(doc.data());});
+                show_all_field_name_app_lang(data_lang);
+            }else{
+                show_all_field_name_app_lang(data_lang);
+            }
+        }
+        
+        function show_all_field_name_app_lang(data){
+            $.each(data_lang, function(idx, obj){ 
+                $("#all-field").append(add_field("name_"+obj.key,"Name("+obj.name+")"));
             });
         }
 
@@ -113,8 +123,7 @@
         }
 
         $("#btn_list_lang").click(async function(){
-            $("#box_lang_bk").show();
-            $("#box_lang").html("");
+            var msg_lang=show_box_msg("Select Lang");
             if(data_lang.length==0){
                 var q = query(collection(db, "lang"));
                 var querySnapshot =await getDocs(q);
@@ -132,19 +141,19 @@
                     htm_item_app+="<b>"+key+"</b>:"+value;
                 });
                 htm_item_app+="<div>";
-                $("#box_lang").append(htm_item_app);
+                $("#box_msg_body").append(htm_item_app);
             });
         }
 
-        $('#box_lang').on('click', '.item_lang', function() {
+        $('#box_msg_body').on('click', '.item_lang', function() {
             var key_lang=$(this).attr("key");
             if(key_lang!=lang){
                 lang=key_lang;
                 localStorage.setItem("lang", lang);
                 $("#key_lang").html(lang);
+                close_box_msg();
+                get_all_app();
             }
-            $("#box_lang_bk").hide();
-            get_all_app();
         });
 
         $("#all_app").each(function(){
@@ -187,11 +196,15 @@
             else
                 mode_site="nomal";
             
+            check_mode_site();
+        });
+
+        function check_mode_site(){
             if(mode_site=="dev")
                 $(".dev").each(function(){$(this).hide(100);});
             else
                 $(".dev").each(function(){$(this).show(100);});
-        });
+        }
 
         function show_box_add(func){
             $("#box_add_app").show();
@@ -208,6 +221,7 @@
                 $("#box_add_icon").attr("class","fa-solid fa-globe");
                 $("#all-field").append(add_field("key","Key lang"));
                 $("#all-field").append(add_field("name","Name Lang"));
+                $("#all-field").append(add_field("icon","Icon Lang"));
             }
 
             if(func=="add_link_store"){
@@ -221,7 +235,6 @@
             var frm_box=$("#frm_add_app");
             $(frm_box).attr("type",func);
         }
-
 
         function done_add_box(){
             var data_frm=$('#frm_add_app').serializeArray();
@@ -237,18 +250,33 @@
             alert("Add Success "+lang+" func:"+func);
         }
 
+        function add_field_to_box(){
+            var func=$("#frm_add_app").attr("type");
+            var box_msg=show_box_msg("List Field");
+            $.each(data_lang, function(idx, obj){ 
+                $(box_msg).append("<div class=\"item_msg item_field\" item_name=\""+obj.name+"\" item_key=\""+obj.key+"\" >Name("+obj.name+" - "+obj.key+")</div>");
+            });
+        }
+
+        $('#box_msg_body').on('click', '.item_field', function() {
+            var item_name="Name ("+$(this).attr("item_name")+"-"+$(this).attr("item_key")+")";
+            var item_key="name_"+$(this).attr("item_key");
+            $("#all-field").append(add_field(item_key,item_name));
+        });
+
         $("#btn_show_add_app").click(function(){show_box_add('add_app')});
         $("#btn_show_add_lang").click(function(){show_box_add('add_lang')});
         $("#btn_show_add_link_store").click(function(){show_box_add('add_link_store')});
+        $("#btn_add_field_to_box").click(function(){add_field_to_box();});
+        $("#btn_box_msg_close").click(function(){close_box_msg();});
 
         $("#btn_done_add_box").click(done_add_box);
 
-        $(document).ready(function(){
+        $(document).ready(function(){  
+            check_mode_site();
             get_all_app();
             $("#key_lang").html(lang);
         });
-
-        export{done_add_box};
     </script>
     <script src="js/main.js" type="text/javascript"></script>
 </head>
@@ -282,19 +310,24 @@
                 <div class="frm-all-item" id="all-field"></div>
                 <div class="frm-line">
                     <div class="btn" id="btn_done_add_box"><i class="fa-solid fa-circle-check"></i> Done</div>
+                    <div class="btn" id="btn_add_field_to_box""><i class="fa-solid fa-circle-plus"></i> Add Field</div>
                     <div class="btn" onclick="close_all_box()"><i class="fa-solid fa-rectangle-xmark"></i> Cancel</div>
                 </div>
             </div>
         </form>
     </div>
 
-    <div id="box_lang_bk"><div id="box_lang"></div></div>
+
     <div id="box_app_info"></div>
     <div id="all_app"></div>
+
     <div id="box_msg">
         <div id="box_msg_border">
-            <div id="box_msg_title">Title</div>
-            <div id="box_msg_body">Boyd</div>
+            <div id="box_msg_header">
+                <div id="box_msg_title">Title</div>
+                <div id="btn_box_msg_close" class="btn"><i class="fa-solid fa-rectangle-xmark"></i></div>
+            </div>
+            <div id="box_msg_body">Body</div>
         </div>
     </div>
     
