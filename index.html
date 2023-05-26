@@ -78,6 +78,7 @@
         });
 
         async function get_all_app(){
+            $("#all_app").show();
             $("#all_app").html("");
             var q = query(collection(db, "app"));
             var querySnapshot =await getDocs(q);
@@ -89,8 +90,8 @@
                     $.each(doc.data(), function(key,val) {
                         htm_item_app+="<b>"+key+"</b>:"+val+"<br/>";
                     });
-                    htm_item_app+="<div class='btn dev' id='btn_app_edit'><i class=\"fa-solid fa-pen-to-square\"></i> Edit</div>";
-                    htm_item_app+="<div class='btn dev' id='btn_app_del'><i class=\"fa-solid fa-trash\"></i> Delete</div>";
+                    htm_item_app+="<div class='btn dev btn_app_edit' app_id='"+doc.id+"'><i class=\"fa-solid fa-pen-to-square\"></i> Edit</div>";
+                    htm_item_app+="<div class='btn dev btn_app_del' app_id='"+doc.id+"'><i class=\"fa-solid fa-trash\"></i> Delete</div>";
                     htm_item_app+="<div>";
                 $("#all_app").append(htm_item_app);
             });
@@ -115,7 +116,6 @@
         }
 
         $("#btn_list_lang").click(async function(){
-            close_all_box();
             $("#box_lang_bk").show();
             $("#box_lang").html("");
             var q = query(collection(db, "lang"));
@@ -133,15 +133,18 @@
 
         $('#box_lang').on('click', '.item_lang', function() {
             var key_lang=$(this).attr("key");
-            lang=key_lang;
-            localStorage.setItem("lang", lang);
-            $("#key_lang").html(lang);
+            if(key_lang!=lang){
+                lang=key_lang;
+                localStorage.setItem("lang", lang);
+                $("#key_lang").html(lang);
+            }
             $("#box_lang_bk").hide();
             get_all_app();
         });
 
         $("#btn_show_add_app").click(function(){
             $("#box_add_app").show(function(){
+                $("#all_app").hide();
                 get_all_field_name_app_lang();
             });
         });
@@ -152,14 +155,42 @@
             var querySnapshot =await getDocs(q);
             querySnapshot.forEach((doc) => {
                 var lang_data=doc.data();
-                alert(lang_data.name_en);
-
                 $("#all_app").hide();
                 $("#box_app_info").show(function(){
-                    $("#box_app_info").html(lang_data.name_en);
+                    var htm_info_app="<div>";
+                    $.each(lang_data, function(key,val) {
+                        htm_info_app+="<div><b>"+key+"</b> : "+val+"</div>";
+                    });
+                    htm_info_app+="</div>";
+                    $("#box_app_info").html(htm_info_app);
                 });
             });
         });
+
+        $("#all_app").each(function(){
+            $(this).each(function(){
+               $(this).on('click', '.btn_app_edit',async function() {
+                    var id_box_app=$(this).attr("app_id");
+                    var q = query(collection(db, "app"), where("name_en", "==", id_box_app));
+                    var querySnapshot =await getDocs(q);
+                    querySnapshot.forEach((doc) => {
+                        var lang_data=doc.data();
+                        $("#all_app").hide();
+                        $("#box_add_app").show(function(){
+                            var htm_info_app="";
+                            $.each(lang_data, function(key,val) {
+                                htm_info_app+="<div class='frm-line'><label>"+key+"</label><input name=\""+key+"\" value=\""+val+"\"/>";
+                            });
+                            htm_info_app+="<div class='frm-line'><div class='btn' id='btn_add_app'>Add App</div><div class='btn' id='btn_close_app' onclick='close_all_box()'>Cancel</div></div>";
+                            $("#box_add_app .frm-body").html(htm_info_app);
+                            $("#box_app_info").hide();
+                            return;
+                        });
+                    });
+                    return;
+               });
+            });
+        }); 
 
         $("#btn_model_site").click(function(){
             if(mode_site=="nomal")
@@ -207,7 +238,7 @@
     <div id="box_add_app">
         <form class="frm" id="frm_add_app" method="post">
             <div class="frm-body">
-
+                
                 <div class="frm-line">
                     <i class="fa-solid fa-mobile"></i> Add App
                 </div>
@@ -215,8 +246,8 @@
                 <div class="frm-line" id="field_name_app"></div>
 
                 <div class="frm-line">
-                    <label>Icon App</label>
-                    <input type="text" id="icon_app" name="icon_app"  class="inp" />
+                    <label for="icon">Icon App</label>
+                    <input type="text" id="icon" name="icon"  class="inp" />
                 </div>
 
                 <div class="frm-line">
@@ -225,8 +256,8 @@
                 </div>
 
                 <div class="frm-line">
-                    <div class="btn" id="btn_add_app">Add App</div>
-                    <div class="btn" id="btn_close_app" onclick="close_all_box()">Cancel</div>
+                    <div class="btn" id="btn_add_app"><i class="fa-solid fa-hexagon-plus"></i> Add App</div>
+                    <div class="btn" id="btn_close_app" onclick="close_all_box()"><i class="fa-solid fa-rectangle-xmark"></i> Cancel</div>
                 </div>
             </div>
         </form>

@@ -88,4 +88,5 @@ body {font-family: 'Lato';font-size: 13px;}
     float: left;
     border-radius: 5px;
     cursor: pointer;
+    padding: 20px;
 }

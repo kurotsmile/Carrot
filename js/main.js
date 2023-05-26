@@ -76,6 +76,7 @@ function show_add_lang(){
 function close_all_box(){
     $("#box_add_app").hide();
     $("#box_add_lang").hide();
+    $("#all_app").show();
 }
 
 $("#btn_all_user").click(async function(){
