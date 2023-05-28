@@ -139,10 +139,8 @@
 
         function show_menu_lang(data_lang){
             $.each(data_lang, function(idx, obj){ 
-                var htm_item_app="<div class='item_lang' key='"+obj.key+"'>";
-                $.each(obj, function(key, value){
-                    htm_item_app+="<b>"+key+"</b>:"+value;
-                });
+                var htm_item_app="<div class='item_lang item_msg' key='"+obj.key+"'>";
+                htm_item_app+="<img class='item_icon' src='"+obj.icon+"'/><b>"+obj.name+"</b>:"+obj.key;
                 htm_item_app+="<div>";
                 $("#box_msg_body").append(htm_item_app);
             });

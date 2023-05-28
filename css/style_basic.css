@@ -127,13 +127,17 @@ body {font-family: 'Lato';font-size: 13px;}
     padding-top: 5px;
 }
 
-#box_msg_body .item_lang,#box_msg_body .item_msg{
+#box_msg_body .item_msg{
     width: 100%;
     float: left;
     display: block;
     cursor: pointer;
     background-color: #73a769;
     margin: 2px;
+}
+
+#box_msg_body .item_msg .item_icon{
+    width: 20px;
 }
 
 .box_app{
