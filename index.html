@@ -27,6 +27,7 @@
 
         var querySnapshot_link_store;
         var querySnapshot_lang;
+        var data_edit_app;
 
         if(localStorage.getItem("lang")==null){
             lang="en";
@@ -166,13 +167,13 @@
                $(this).on('click', '.btn_app_edit',async function() {
                     var id_box_app=$(this).attr("app_id");
                     var q = query(collection(db, "app"), where("name_en", "==", id_box_app));
-                    var querySnapshot =await getDocs(q);
-                    querySnapshot.forEach((doc) => {
-                        var lang_data=doc.data();
+                    var querySnapshot_edit_app =await getDocs(q);
+                    querySnapshot_edit_app.forEach((doc) => {
+                        data_edit_app=doc.data();
                         $("#all_app").hide();
                         $("#all-field").html("");
                         $("#box_add_app").show(function(){
-                            $.each(lang_data, function(key,val) {
+                            $.each(data_edit_app, function(key,val) {
                                 $("#all-field").append(add_field(key,key,val));
                             });
                             $("#box_app_info").hide();
@@ -279,27 +280,39 @@
             if(querySnapshot_lang!=null){
                 querySnapshot_lang.forEach((doc) => {
                     var obj=doc.data();
-                    $(box_msg).append("<div class=\"item_msg item_field\" item_name=\""+obj.name+"\" item_key=\""+obj.key+"\" >Name("+obj.name+" - "+obj.key+")</div>");
+                    if(data_edit_app["name_"+obj.key]!=null)
+                        $(box_msg).append("<div class=\"item_msg item_field active\" item_name=\""+obj.name+"\" item_key=\"name_"+obj.key+"\" >Name("+obj.name+" - "+obj.key+")</div>");
+                    else
+                        $(box_msg).append("<div class=\"item_msg item_field\" item_name=\""+obj.name+"\" item_key=\"name_"+obj.key+"\" >Name("+obj.name+" - "+obj.key+")</div>");
                 });
             }else{
                 var q = query(collection(db, "lang"));
                 querySnapshot_lang =await getDocs(q);
                 querySnapshot_lang.forEach((doc) => {
                     var obj=doc.data();
-                    $(box_msg).append("<div class=\"item_msg item_field\" item_name=\""+obj.name+"\" item_key=\""+obj.key+"\" >Name("+obj.name+" - "+obj.key+")</div>");
+                    if(data_edit_app["name_"+obj.key]!=null)
+                        $(box_msg).append("<div class=\"item_msg item_field active\" item_name=\""+obj.name+"\" item_key=\"name_"+obj.key+"\" >Name("+obj.name+" - "+obj.key+")</div>");
+                    else
+                        $(box_msg).append("<div class=\"item_msg item_field\" item_name=\""+obj.name+"\" item_key=\"name_"+obj.key+"\" >Name("+obj.name+" - "+obj.key+")</div>");
                 });
             }
 
             if(querySnapshot_link_store!=null){
                 querySnapshot_link_store.forEach((doc) => {
                     var obj=doc.data();
-                    $(box_msg).append("<div class=\"item_msg item_field\" item_name=\""+obj.name+"\" item_key=\""+obj.key+"\" >Link Store ("+obj.name+" - "+obj.key+")</div>");
+                    if(data_edit_app[obj.key]!=null)
+                        $(box_msg).append("<div class=\"item_msg item_field active\" item_name=\""+obj.name+"\" item_key=\""+obj.key+"\" >Link Store ("+obj.name+" - "+obj.key+")</div>");
+                    else
+                        $(box_msg).append("<div class=\"item_msg item_field\" item_name=\""+obj.name+"\" item_key=\""+obj.key+"\" >Link Store ("+obj.name+" - "+obj.key+")</div>");
                 });
             }else{
-                var q = query(cr_link_store);
+                var q = query(cr_link_store);  
                 querySnapshot_link_store =await getDocs(q);
                 querySnapshot_link_store.forEach((doc) => {
                     var obj=doc.data();
+                    if(data_edit_app[obj.key]!=null)
+                        $(box_msg).append("<div class=\"item_msg item_field active\" item_name=\""+obj.name+"\" item_key=\""+obj.key+"\" >Link Store ("+obj.name+" - "+obj.key+")</div>");
+                    else
                     $(box_msg).append("<div class=\"item_msg item_field\" item_name=\""+obj.name+"\" item_key=\""+obj.key+"\" >Link Store ("+obj.name+" - "+obj.key+")</div>");
                 });
             }
@@ -307,7 +320,7 @@
 
         $('#box_msg_body').on('click', '.item_field', function() {
             var item_name=$(this).text();
-            var item_key="name_"+$(this).attr("item_key");
+            var item_key=$(this).attr("item_key");
             $("#all-field").append(add_field(item_key,item_name));
         });
 
