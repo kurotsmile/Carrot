@@ -335,12 +335,17 @@
             }
         }
 
+        function show_list_lang(){
+            this.show_box_msg();
+        }
+
         $("#logo_carrot").click(function(){act_mode_dev()});
         $("#btn_show_add_app").click(function(){show_box_add('add_app')});
         $("#btn_show_add_lang").click(function(){show_box_add('add_lang')});
         $("#btn_show_add_link_store").click(function(){show_box_add('add_link_store')});
         $("#btn_add_field_to_box").click(function(){add_field_to_box();});
         $("#btn_box_msg_close").click(function(){close_box_msg();});
+        $("#btn_show_list_lang").click(function(){show_list_lang();});
 
         $("#btn_done_add_box").click(done_add_box);
 
@@ -396,10 +401,8 @@
         </form>
     </div>
 
-
     <div id="box_app_info"></div>
     <div id="all_app"></div>
-
     <div id="box_msg">
         <div id="box_msg_border">
             <div id="box_msg_header">

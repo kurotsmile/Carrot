@@ -183,3 +183,25 @@ figure:hover img {
 	-webkit-transform: rotate(0) scale(1);
 	transform: rotate(0) scale(1);
 }
+
+#box_app_info{
+    background-color: #fff5c1;
+}
+
+#info-app{
+    width: 100%;
+    float: left;
+}
+
+#info-app .info-app-title{
+    width: 100%;
+    float: left;
+    height: 35px;
+    background-color: #fac07e;
+    text-align: center;
+    font-size: 25px;
+    font-weight: bold;
+}
+#info-app .info-app-title .btn{
+    float: left;
+}
