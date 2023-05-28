@@ -87,7 +87,7 @@
                 var data_app=doc.data();
                 var key_name="name_"+lang;
                 var htm_item_app="<div class='box_app' id=\""+doc.id+"\">";
-                    if(data_app.icon!=null) htm_item_app+="<img class='icon_app' app_id='"+doc.id+"' src=\""+data_app.icon+"\"/><br/>";
+                    if(data_app.icon!=null) htm_item_app+="<figure><img class='icon_app' app_id='"+doc.id+"' src=\""+data_app.icon+"\"/></figure><br/>";
                     htm_item_app+="<b class='name_app'>"+read_prop(data_app,key_name)+"</b>";
                     htm_item_app+="<div class='name_app'>"+data_app.name_en+"</div>";
                     htm_item_app+="<div class='btn dev btn_app_edit' app_id='"+doc.id+"'><i class=\"fa-solid fa-pen-to-square\"></i> Edit</div>";

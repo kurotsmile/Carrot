@@ -78,10 +78,24 @@ function close_all_box(){
     $("#all_app").show();
 }
 
+function copy_tag(name_tag) {
+    var $temp = $("<input>");$("body").append($temp);
+    var s_copy=$("#" + name_tag).val();
+    s_copy=s_copy.replace("{ten_user}", "");
+    $temp.val(s_copy).select();
+    document.execCommand("copy");$temp.remove();
+}
+
+function paste_tag(name_tag) {
+    navigator.clipboard.readText().then(text => {$("#"+name_tag).val(text.trim());});
+}
+
 function add_field(name,label,val=""){
     var html_filed="<div class='frm-line item_field'>";
     html_filed+="<label for=\""+name+"\">"+label+"</label>";
-    html_filed+="<div class='btn' onclick=\"$(this).parent().remove()\"><i class='fa-solid fa-delete-left'></i></div>";
+    html_filed+="<div class='btn del' onclick=\"$(this).parent().remove()\"><i class='fa-solid fa-delete-left'></i></div>";
+    html_filed+="<div class='btn' onclick=\"paste_tag('"+name+"')\"><i class='fa-solid fa-paste'></i></div>";
+    html_filed+="<div class='btn' onclick=\"copy_tag('"+name+"')\"><i class='fa-solid fa-copy'></i></div>";
     html_filed+="<input type=\"text\" id=\""+name+"\" name=\""+name+"\" value=\""+val+"\" class=\"inp\"/>";
     html_filed+="</div>";
     return html_filed;

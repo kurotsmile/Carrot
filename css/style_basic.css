@@ -12,6 +12,9 @@ body {font-family: 'Lato';font-size: 13px;}
     padding-right: 10px;
     border-radius: 3px;
 }
+.btn.del{
+    background-color: #c30000;
+}
 .btn:hover{
     background-color: orange;
     color: black;
@@ -143,6 +146,7 @@ body {font-family: 'Lato';font-size: 13px;}
 
 #box_msg_body .item_msg .item_icon{
     width: 20px;
+    float: left;
 }
 
 .box_app{
@@ -159,4 +163,23 @@ body {font-family: 'Lato';font-size: 13px;}
 
 .name_app{
     font-size: smaller;
+}
+
+figure {
+	margin: 0;
+	padding: 0;
+	background: #fff;
+	overflow: hidden;
+}
+
+figure img {
+	-webkit-transform: rotate(15deg) scale(1.3);
+	transform: rotate(15deg) scale(1.3);
+	-webkit-transition: .3s ease-in-out;
+	transition: .3s ease-in-out;
+}
+
+figure:hover img {
+	-webkit-transform: rotate(0) scale(1);
+	transform: rotate(0) scale(1);
 }
