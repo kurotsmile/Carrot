@@ -24,7 +24,9 @@
         var mode_site="nomal";
         var is_dev=false;
         var count_dev=0;
-        var data_lang=Array();
+
+        var querySnapshot_link_store;
+        var querySnapshot_lang;
 
         if(localStorage.getItem("lang")==null){
             lang="en";
@@ -84,7 +86,7 @@
                 var data_app=doc.data();
                 var key_name="name_"+lang;
                 var htm_item_app="<div class='box_app' id=\""+doc.id+"\">";
-                    htm_item_app+="<img class='icon_app' app_id='"+doc.id+"' src=\""+data_app.icon+"\"/><br/>";
+                    if(data_app.icon!=null) htm_item_app+="<img class='icon_app' app_id='"+doc.id+"' src=\""+data_app.icon+"\"/><br/>";
                     htm_item_app+="<b class='name_app'>"+read_prop(data_app,key_name)+"</b>";
                     htm_item_app+="<div class='name_app'>"+data_app.name_en+"</div>";
                     htm_item_app+="<div class='btn dev btn_app_edit' app_id='"+doc.id+"'><i class=\"fa-solid fa-pen-to-square\"></i> Edit</div>";
@@ -100,26 +102,26 @@
         }
 
         async function get_all_field_name_app_lang(){
-            if(data_lang.length==0){
+            if(querySnapshot_lang==null){
                 var q = query(collection(db, "lang"));
-                var querySnapshot =await getDocs(q);
-                querySnapshot.forEach((doc) => {data_lang.push(doc.data());});
-                show_all_field_name_app_lang(data_lang);
+                querySnapshot_lang =await getDocs(q);
+                show_all_field_name_app_lang(querySnapshot_lang);
             }else{
-                show_all_field_name_app_lang(data_lang);
+                show_all_field_name_app_lang(querySnapshot_lang);
             }
         }
         
         function show_all_field_name_app_lang(data){
-            $.each(data_lang, function(idx, obj){ 
+            querySnapshot_lang.forEach((doc) => {
+                var obj=doc.data();
                 $("#all-field").append(add_field("name_"+obj.key,"Name("+obj.name+")"));
             });
         }
 
         async function get_all_field_link_store(){
             var q = query(cr_link_store);
-            var querySnapshot =await getDocs(q);
-            querySnapshot.forEach((doc) => {
+            querySnapshot_link_store =await getDocs(q);
+            querySnapshot_link_store.forEach((doc) => {
                 var field_data=doc.data();
                 $("#all-field").append(add_field(field_data.key,"Link Store ("+field_data.name+")"));
             });
@@ -127,19 +129,21 @@
 
         $("#btn_list_lang").click(async function(){
             var msg_lang=show_box_msg("Select Lang");
-            if(data_lang.length==0){
+            if(querySnapshot_lang==null){
                 var q = query(collection(db, "lang"));
-                var querySnapshot =await getDocs(q);
-                querySnapshot.forEach((doc) => {data_lang.push(doc.data());});
-                show_menu_lang(data_lang);
+                querySnapshot_lang =await getDocs(q);
+                show_menu_lang(querySnapshot_lang);
             }else{
-                show_menu_lang(data_lang);
+                show_menu_lang(querySnapshot_lang);
             }
         });
 
-        function show_menu_lang(data_lang){
-            $.each(data_lang, function(idx, obj){ 
-                var htm_item_app="<div class='item_lang item_msg' key='"+obj.key+"'>";
+        function show_menu_lang(querySnapshot_lang){
+            querySnapshot_lang.forEach((doc) => {
+                var obj=doc.data();
+                var class_active='';
+                if(obj.key==lang) class_active="active";
+                var htm_item_app="<div class='item_lang item_msg "+class_active+"' key='"+obj.key+"'>";
                 htm_item_app+="<img class='item_icon' src='"+obj.icon+"'/><b>"+obj.name+"</b>:"+obj.key;
                 htm_item_app+="<div>";
                 $("#box_msg_body").append(htm_item_app);
@@ -268,16 +272,41 @@
             alert("Add Success "+lang+" func:"+func);
         }
 
-        function add_field_to_box(){
+        async function add_field_to_box(){
             var func=$("#frm_add_app").attr("type");
             var box_msg=show_box_msg("List Field");
-            $.each(data_lang, function(idx, obj){ 
-                $(box_msg).append("<div class=\"item_msg item_field\" item_name=\""+obj.name+"\" item_key=\""+obj.key+"\" >Name("+obj.name+" - "+obj.key+")</div>");
-            });
+
+            if(querySnapshot_lang!=null){
+                querySnapshot_lang.forEach((doc) => {
+                    var obj=doc.data();
+                    $(box_msg).append("<div class=\"item_msg item_field\" item_name=\""+obj.name+"\" item_key=\""+obj.key+"\" >Name("+obj.name+" - "+obj.key+")</div>");
+                });
+            }else{
+                var q = query(collection(db, "lang"));
+                querySnapshot_lang =await getDocs(q);
+                querySnapshot_lang.forEach((doc) => {
+                    var obj=doc.data();
+                    $(box_msg).append("<div class=\"item_msg item_field\" item_name=\""+obj.name+"\" item_key=\""+obj.key+"\" >Name("+obj.name+" - "+obj.key+")</div>");
+                });
+            }
+
+            if(querySnapshot_link_store!=null){
+                querySnapshot_link_store.forEach((doc) => {
+                    var obj=doc.data();
+                    $(box_msg).append("<div class=\"item_msg item_field\" item_name=\""+obj.name+"\" item_key=\""+obj.key+"\" >Link Store ("+obj.name+" - "+obj.key+")</div>");
+                });
+            }else{
+                var q = query(cr_link_store);
+                querySnapshot_link_store =await getDocs(q);
+                querySnapshot_link_store.forEach((doc) => {
+                    var obj=doc.data();
+                    $(box_msg).append("<div class=\"item_msg item_field\" item_name=\""+obj.name+"\" item_key=\""+obj.key+"\" >Link Store ("+obj.name+" - "+obj.key+")</div>");
+                });
+            }
         }
 
         $('#box_msg_body').on('click', '.item_field', function() {
-            var item_name="Name ("+$(this).attr("item_name")+"-"+$(this).attr("item_key")+")";
+            var item_name=$(this).text();
             var item_key="name_"+$(this).attr("item_key");
             $("#all-field").append(add_field(item_key,item_name));
         });
@@ -334,6 +363,7 @@
     <div id="menu_dev" class="dev">
         <div id="btn_show_add_app" class="btn"><i class="fa-solid fa-mobile"></i> Add App</div>
         <div id="btn_show_add_lang" " class="btn"><i class="fa-solid fa-globe"></i> Add Lang</div>
+        <div id="btn_show_list_lang" " class="btn"><i class="fa-solid fa-list"></i> List Lang</div>
         <div id="btn_show_add_link_store" class="btn"><i class="fa-solid fa-store"></i> Add Link Store</div>
     </div>
 
