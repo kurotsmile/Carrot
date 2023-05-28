@@ -205,3 +205,8 @@ figure:hover img {
 #info-app .info-app-title .btn{
     float: left;
 }
+
+#info-app #icon_app{
+    border: solid 21px #fac07e;
+    border-bottom-right-radius: 60px;
+}

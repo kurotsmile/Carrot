@@ -41,7 +41,7 @@ function show_app_info(data){
     var html="<div id='info-app'>";
     $("#box_app_info").html("");
     if(data.name_en!=null) html+="<div class='info-app-title'><div class='btn' onclick=\"$('#box_app_info').hide(); $('#all_app').show()\"><i class=\"fa-solid fa-backward\"></i></div>"+data.name_en+"</div>";
-    if(data.icon!=null) html+="<img src=\""+data.icon+"\"/>";
+    if(data.icon!=null) html+="<img id='icon_app' src=\""+data.icon+"\"/>";
     html+="<div>";
     $("#box_app_info").append(html);
     $.each(data, function(key,val) {
