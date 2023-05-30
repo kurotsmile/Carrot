@@ -160,10 +160,41 @@ body {font-family: 'Lato';font-size: 13px;}
     cursor: pointer;
     padding: 3px;
     text-align: center;
+    pointer-events: none;
+}
+
+.box_app:hover{
+    background-color: #5a2515;
+}
+
+.box_app .btn{
+    pointer-events: auto;
 }
 
 .name_app{
     font-size: smaller;
+}
+
+.tip_app{
+    color: coral;
+    font-size: smaller;
+}
+
+.list_link_app{
+    float: left;
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+.link_app{
+    color: #df8e2f;
+    margin: 3px;
+    pointer-events: auto;
+}
+
+.link_app:hover{
+    color: white;
 }
 
 figure {
@@ -178,9 +209,15 @@ figure img {
 	transform: rotate(15deg) scale(1.3);
 	-webkit-transition: .3s ease-in-out;
 	transition: .3s ease-in-out;
+    pointer-events: auto;
 }
 
 figure:hover img {
+	-webkit-transform: rotate(0) scale(1);
+	transform: rotate(0) scale(1);
+}
+
+figure:hover img:hover {
 	-webkit-transform: rotate(0) scale(1);
 	transform: rotate(0) scale(1);
 }
