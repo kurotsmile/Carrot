@@ -85,7 +85,7 @@
             $("#all_app").show();
             $("#all_app").html("");
             var q = query(collection(db, "app"));
-            var querySnapshot =await getDocs(q);
+            var querySnapshot =await getDocs(q,"type","app");
             querySnapshot.forEach((doc) => {
                 var data_app=doc.data();
                 var key_name="name_"+lang;
@@ -252,6 +252,7 @@
             if(func=="add_app"){
                 $("#box_add_icon").attr("class","fa-solid fa-mobile");
                 $("#all-field").append(add_field("icon","Icon App"));
+                $("#all-field").append(add_field("type","Type App",1,"select",Array("app","game")));
                 get_all_field_name_app_lang();
                 get_all_field_link_store();
             }
@@ -293,44 +294,36 @@
             var func=$("#frm_add_app").attr("type");
             var box_msg=show_box_msg("List Field");
 
-            if(querySnapshot_lang!=null){
-                querySnapshot_lang.forEach((doc) => {
-                    var obj=doc.data();
-                    if(data_edit_app["name_"+obj.key]!=null)
-                        $(box_msg).append("<div class=\"item_msg item_field active\" item_name=\""+obj.name+"\" item_key=\"name_"+obj.key+"\" >Name("+obj.name+" - "+obj.key+")</div>");
-                    else
-                        $(box_msg).append("<div class=\"item_msg item_field\" item_name=\""+obj.name+"\" item_key=\"name_"+obj.key+"\" >Name("+obj.name+" - "+obj.key+")</div>");
-                });
-            }else{
-                var q = query(collection(db, "lang"));
-                querySnapshot_lang =await getDocs(q);
-                querySnapshot_lang.forEach((doc) => {
-                    var obj=doc.data();
-                    if(data_edit_app["name_"+obj.key]!=null)
-                        $(box_msg).append("<div class=\"item_msg item_field active\" item_name=\""+obj.name+"\" item_key=\"name_"+obj.key+"\" >Name("+obj.name+" - "+obj.key+")</div>");
-                    else
-                        $(box_msg).append("<div class=\"item_msg item_field\" item_name=\""+obj.name+"\" item_key=\"name_"+obj.key+"\" >Name("+obj.name+" - "+obj.key+")</div>");
-                });
-            }
+            if(func=="add_app"){
+                if(querySnapshot_lang!=null){
+                    querySnapshot_lang.forEach((doc) => {
+                        var obj=doc.data();
+                        if(data_edit_app["name_"+obj.key]!=null)
+                            $(box_msg).append("<div class=\"item_msg item_field active\" item_name=\""+obj.name+"\" item_key=\"name_"+obj.key+"\" >Name("+obj.name+" - "+obj.key+")</div>");
+                        else
+                            $(box_msg).append("<div class=\"item_msg item_field\" item_name=\""+obj.name+"\" item_key=\"name_"+obj.key+"\" >Name("+obj.name+" - "+obj.key+")</div>");
+                    });
+                }else{
+                    var q = query(collection(db, "lang"));
+                    querySnapshot_lang =await getDocs(q);
+                    querySnapshot_lang.forEach((doc) => {
+                        var obj=doc.data();
+                        if(data_edit_app["name_"+obj.key]!=null)
+                            $(box_msg).append("<div class=\"item_msg item_field active\" item_name=\""+obj.name+"\" item_key=\"name_"+obj.key+"\" >Name("+obj.name+" - "+obj.key+")</div>");
+                        else
+                            $(box_msg).append("<div class=\"item_msg item_field\" item_name=\""+obj.name+"\" item_key=\"name_"+obj.key+"\" >Name("+obj.name+" - "+obj.key+")</div>");
+                    });
+                }
 
-            if(querySnapshot_link_store!=null){
-                querySnapshot_link_store.forEach((doc) => {
-                    var obj=doc.data();
-                    if(data_edit_app[obj.key]!=null)
-                        $(box_msg).append("<div class=\"item_msg item_field active\" item_name=\""+obj.name+"\" item_key=\""+obj.key+"\" >Link Store ("+obj.name+" - "+obj.key+")</div>");
-                    else
-                        $(box_msg).append("<div class=\"item_msg item_field\" item_name=\""+obj.name+"\" item_key=\""+obj.key+"\" >Link Store ("+obj.name+" - "+obj.key+")</div>");
-                });
-            }else{
-                var q = query(cr_link_store);  
-                querySnapshot_link_store =await getDocs(q);
-                querySnapshot_link_store.forEach((doc) => {
-                    var obj=doc.data();
-                    if(data_edit_app[obj.key]!=null)
-                        $(box_msg).append("<div class=\"item_msg item_field active\" item_name=\""+obj.name+"\" item_key=\""+obj.key+"\" >Link Store ("+obj.name+" - "+obj.key+")</div>");
-                    else
-                    $(box_msg).append("<div class=\"item_msg item_field\" item_name=\""+obj.name+"\" item_key=\""+obj.key+"\" >Link Store ("+obj.name+" - "+obj.key+")</div>");
-                });
+                if(querySnapshot_link_store!=null){
+                    querySnapshot_link_store.forEach((doc) => {
+                        var obj=doc.data();
+                        if(data_edit_app[obj.key]!=null)
+                            $(box_msg).append("<div class=\"item_msg item_field active\" item_name=\""+obj.name+"\" item_key=\""+obj.key+"\" >Link Store ("+obj.name+" - "+obj.key+")</div>");
+                        else
+                            $(box_msg).append("<div class=\"item_msg item_field\" item_name=\""+obj.name+"\" item_key=\""+obj.key+"\" >Link Store ("+obj.name+" - "+obj.key+")</div>");
+                    });
+                }
             }
         }
 
@@ -414,6 +407,11 @@
         <div id="btn_show_add_lang" " class="btn"><i class="fa-solid fa-globe"></i> Add Lang</div>
         <div id="btn_show_list_lang" " class="btn"><i class="fa-solid fa-list"></i> List Lang</div>
         <div id="btn_show_add_link_store" class="btn"><i class="fa-solid fa-store"></i> Add Link Store</div>
+    </div>
+
+    <div id="menu_pub" class="pub">
+        <div id="btn_show_app" class="btn"><i class="fa-solid fa-mobile"></i> App</div>
+        <div id="btn_show_game" " class="btn"><i class="fa-solid fa-gamepad"></i> Game</div>
     </div>
 
     <div id="box_add_app" class="box_add">

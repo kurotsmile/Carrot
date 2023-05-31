@@ -15,13 +15,25 @@ function paste_tag(name_tag) {
     navigator.clipboard.readText().then(text => {$("#"+name_tag).val(text.trim());});
 }
 
-function add_field(name,label,val=""){
+function add_field(name,label,val="",type="text",array_label=null){
     var html_filed="<div class='frm-line item_field'>";
     html_filed+="<label for=\""+name+"\">"+label+"</label>";
     html_filed+="<div class='btn del' onclick=\"$(this).parent().remove()\"><i class='fa-solid fa-delete-left'></i></div>";
-    html_filed+="<div class='btn' onclick=\"paste_tag('"+name+"')\"><i class='fa-solid fa-paste'></i></div>";
-    html_filed+="<div class='btn' onclick=\"copy_tag('"+name+"')\"><i class='fa-solid fa-copy'></i></div>";
-    html_filed+="<input type=\"text\" id=\""+name+"\" name=\""+name+"\" value=\""+val+"\" class=\"inp\"/>";
+
+    if(type=="text"){
+        html_filed+="<div class='btn' onclick=\"paste_tag('"+name+"')\"><i class='fa-solid fa-paste'></i></div>";
+        html_filed+="<div class='btn' onclick=\"copy_tag('"+name+"')\"><i class='fa-solid fa-copy'></i></div>";
+    }
+
+    if(type=="select"){
+        html_filed+="<select name=\""+name+"\" id=\""+name+"\" class=\"inp\">";
+        for (let i = 0; i < array_label.length; i++) {
+            html_filed+="<option value=\""+array_label[i]+"\">"+array_label[i]+"</option> ";
+        }
+        html_filed+="</select>";
+    }else{
+        html_filed+="<input type=\""+type+"\" id=\""+name+"\" name=\""+name+"\" value=\""+val+"\" class=\"inp\"/>";
+    }
     html_filed+="</div>";
     return html_filed;
 }
