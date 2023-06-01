@@ -363,12 +363,23 @@
             }
         }
 
-        function show_list_lang(){
-            this.show_box_msg();
-        }
+        async function show_list_by_collection(collection_name){
+            var q=query(collection(db, collection_name));
+            var querySnapshot=await getDocs(q);
+            let foods;
+            querySnapshot.forEach(doc=>{
+                const {value, quantity} = doc.data()
+                for(let i = 0; i < value.length; i++) {
+                    foods.push({value: value[i], quantity:quantity[i]});
+                }
+            });
 
-        function show_list_by_type(){
-
+            var t="<table>";
+            $.each(foods,function(k,v){
+                t+="<tr><td>"+k+"</td><td>"+v+"</td></tr>";
+            });
+            t+="</table>";
+            $("#all_app").html(t);
         }
 
         $("#logo_carrot").click(function(){act_mode_dev()});
@@ -377,7 +388,9 @@
         $("#btn_show_add_link_store").click(function(){show_box_add('add_link_store')});
         $("#btn_add_field_to_box").click(function(){add_field_to_box();});
         $("#btn_box_msg_close").click(function(){close_box_msg();});
-        $("#btn_show_list_lang").click(function(){show_list_lang();});
+        $("#btn_show_list_lang").click(function(){
+            show_list_by_collection("lang");
+        });
 
         $("#btn_done_add_box").click(done_add_box);
 
