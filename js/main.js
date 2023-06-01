@@ -31,11 +31,23 @@ function add_field(name,label,val="",type="text",array_label=null){
             html_filed+="<option value=\""+array_label[i]+"\">"+array_label[i]+"</option> ";
         }
         html_filed+="</select>";
+    }
+    else if(type=="textarea"){
+        html_filed+="<textarea class='inp'>";
+        html_filed+=val;
+        html_filed+="</textarea>";
     }else{
         html_filed+="<input type=\""+type+"\" id=\""+name+"\" name=\""+name+"\" value=\""+val+"\" class=\"inp\"/>";
     }
     html_filed+="</div>";
     return html_filed;
+}
+
+function add_field_to_box_msg(name,label,val="",type="text",array_label=null,active=false){
+    var s_array_label= JSON.stringify(array_label);
+    var class_active="";
+    if(active) class_active="active";
+    $("#box_msg_body").append("<div class=\"item_msg item_field "+class_active+"\" item_name=\""+name+"\" item_key=\""+name+"\" item_type=\""+type+"\" item_val=\""+val+"\" item_array_label='"+s_array_label+"'>"+label+"</div>");
 }
 
 function show_box_msg(title){
