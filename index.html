@@ -406,6 +406,20 @@
             get_all_app();
         });
 
+        function get_param_url(sParam)
+        {
+            var sPageURL = window.location.search.substring(1);
+            var sURLVariables = sPageURL.split('&');
+            for (var i = 0; i < sURLVariables.length; i++) 
+            {
+                var sParameterName = sURLVariables[i].split('=');
+                if (sParameterName[0] == sParam) 
+                {
+                    return sParameterName[1];
+                }
+            }
+        }
+
         async function get_all_data_field(){
             list_store=Array();
             var q = query(cr_link_store);
@@ -413,7 +427,8 @@
             querySnapshot_link_store.forEach((doc) => {
                 list_store.push(doc.data());
             });
-        }
+        };
+
 
         $(document).ready(function(){  
             get_all_data_field();
