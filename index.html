@@ -11,7 +11,6 @@
 
 	<link rel="shortcut icon" href="images/favicon.ico"/>
     <link href="css/style_basic.css" rel="stylesheet"/>
-    <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
 
 	<script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
     <link href="fontawesome6.4.0/css/fontawesome.css" rel="stylesheet">
@@ -366,17 +365,14 @@
         async function show_list_by_collection(collection_name){
             var q=query(collection(db, collection_name));
             var querySnapshot=await getDocs(q);
-            let foods;
-            querySnapshot.forEach(doc=>{
-                const {value, quantity} = doc.data()
-                for(let i = 0; i < value.length; i++) {
-                    foods.push({value: value[i], quantity:quantity[i]});
-                }
-            });
-
             var t="<table>";
-            $.each(foods,function(k,v){
-                t+="<tr><td>"+k+"</td><td>"+v+"</td></tr>";
+            querySnapshot.forEach(doc=>{
+                var data_doc=doc.data();
+                t+="<tr>";
+                $.each(data_doc,function(k,v){
+                    t+="<td>"+k+"</td><td>"+v+"</td>";
+                });
+                t+="</tr>";
             });
             t+="</table>";
             $("#all_app").html(t);
@@ -420,6 +416,14 @@
             }
         }
 
+        $("#btn_privacy_policy").click(function(){
+            $("#all_app").load("privacy_policy/"+lang+".html");
+        });
+
+        $("#btn_test").click(function(){
+            $("#all_app").load("test.html");
+        });
+
         async function get_all_data_field(){
             list_store=Array();
             var q = query(cr_link_store);
@@ -429,9 +433,17 @@
             });
         };
         
-        $(document).ready(function(){  
+        $(document).ready(function(){
+
+            var page=get_param_url("p");
             get_all_data_field();
-            get_all_app();
+
+            if(page=="privacy_policy"){
+                $("#all_app").load("privacy_policy/"+lang+".html");
+            }else{
+                get_all_app();
+            }
+
             $("#key_lang").html(lang);
             if(is_dev){
                 $("#btn_model_site").show();
@@ -475,6 +487,8 @@
         <div id="btn_show_all" class="btn"><i class="fa-solid fa-certificate"></i> All</div>
         <div id="btn_show_app" class="btn"><i class="fa-solid fa-mobile"></i> App</div>
         <div id="btn_show_game" class="btn"><i class="fa-solid fa-gamepad"></i> Game</div>
+        <div id="btn_privacy_policy" class="btn"><i class="fa-sharp fa-solid fa-building-shield"></i> Privacy Policy</div>
+        <div id="btn_test" class="btn"><i class="fa-sharp fa-solid fa-building-shield"></i> Test</div>
     </div>
 
     <div id="box_add_app" class="box_add">
