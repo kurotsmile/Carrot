@@ -1,5 +1,6 @@
 *{margin:0;padding:0}
 body{font-family:Verdana,sans-serif;font-size:13px}
+a{color: #5e9354;text-decoration: none;}
 a:link{color:green}
 a:visited{color:green}
 a:hover{color:red}
