@@ -354,11 +354,25 @@ figure:hover img:hover {
     height: 60px
 }
 
+.item_background{
+    width: 80px;
+    height: 200px;
+}
+
 .item_background figure img {
-    -webkit-transform: rotate(15deg) scale(4);
-    transform: rotate(15deg) scale(4);
-    -webkit-transition: .3s ease-in-out;
-    transition: .3s ease-in-out;
-    pointer-events: auto;
-    height: 150px
+    -webkit-transform: rotate(10deg) scale(2);
+    transform: rotate(10deg) scale(2);
+    height: 150px;
+}
+
+.item_icon{
+    width: 64px;
+    height: 100px;
+}
+
+.item_icon figure img {
+    -webkit-transform: rotate(10deg) scale(1.5);
+    transform: rotate(10deg) scale(1.5);
+    height: 64px;
+    width: 64px;
 }

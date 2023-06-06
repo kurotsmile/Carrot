@@ -394,23 +394,29 @@
             download_json();
         });
 
-        $("#btn_all_contact").click(async function(){
-            var q=query(collection(db, "user-"+lang),where("status_share","==","0"));
-            var querySnapshot =await getDocs(q);
-            show_list_contact(querySnapshot);
-        })
-
-        $("#btn_all_icon").click(async function(){
-            var q=query(collection(db, "icon"));
-            var querySnapshot =await getDocs(q);
-            show_list_icon(querySnapshot);
-        })
-
-        $(".btn.btn-menu").click(function(){
+        $(".btn.btn-menu").click(async function(){
             $(".btn.btn-menu").removeClass("active");
             $(".btn.btn-menu i").removeClass("fa-bounce");
             $(this).addClass("active");
             $(this).find("i").addClass("fa-bounce");
+            var id_fun=$(this).attr("id");
+            if(id_fun=="btn_all_contact"){
+                var q=query(collection(db, "user-"+lang),where("status_share","==","0"));
+                var querySnapshot =await getDocs(q);
+                show_list_contact(querySnapshot);
+            }
+
+            if(id_fun=="btn_all_icon"){
+                var q=query(collection(db, "icon"));
+                var querySnapshot =await getDocs(q);
+                show_list_icon(querySnapshot);
+            }
+
+            if(id_fun=="btn_all_background"){
+                var q=query(collection(db, "background"));
+                var querySnapshot =await getDocs(q);
+                show_list_background(querySnapshot);
+            }
         });
 
         $("#btn_import_json").click(function(){

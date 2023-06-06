@@ -164,7 +164,23 @@ async function show_list_icon(querySnapshot){
         var data_doc=doc.data();
         if(data_doc.icon!=null){
             if(data_doc.icon.trim()!=""){
-                var htm_item_app="<div class='box_app' id=\""+doc.id+"\">";
+                var htm_item_app="<div class='box_app item_icon' id=\""+doc.id+"\">";
+                htm_item_app+="<figure><img class='icon_app' app_id='"+doc.id+"' src=\""+data_doc.icon+"\"/></figure>";
+                htm_item_app+="<b class='name_app'>"+doc.id+"</b>";
+                htm_item_app+="</div>";
+            }
+        }
+        $("#all_app").append(htm_item_app);
+    });
+}
+
+async function show_list_background(querySnapshot){
+    $("#all_app").html("");
+    querySnapshot.forEach((doc) => {
+        var data_doc=doc.data();
+        if(data_doc.icon!=null){
+            if(data_doc.icon.trim()!=""){
+                var htm_item_app="<div class='box_app item_background' id=\""+doc.id+"\">";
                 htm_item_app+="<figure><img class='icon_app' app_id='"+doc.id+"' src=\""+data_doc.icon+"\"/></figure>";
                 htm_item_app+="<b class='name_app'>"+doc.id+"</b>";
                 htm_item_app+="</div>";
