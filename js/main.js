@@ -69,10 +69,10 @@ function close_box_msg(){
     $("#box_msg").hide();
 }
 
-function show_app_info(data){
+function show_app_info(data,lang){
     var html="<div id='info-app'>";
     $("#box_app_info").html("");
-    if(data.name_en!=null) html+="<div class='info-app-title'><div class='btn' onclick=\"$('#box_app_info').hide(); $('#all_app').show()\"><i class=\"fa-solid fa-backward\"></i></div>"+data.name_en+"</div>";
+    if(data.name_en!=null) html+="<div class='info-app-title'><div class='btn' onclick=\"$('#box_app_info').hide(); $('#all_app').show()\"><i class=\"fa-solid fa-backward\"></i></div>"+data["name_"+lang]+"</div>";
     if(data.icon!=null) html+="<img id='icon_app' src=\""+data.icon+"\"/>";
     html+="<div>";
     $("#box_app_info").append(html);

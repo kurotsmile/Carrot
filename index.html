@@ -242,7 +242,7 @@
                     querySnapshot.forEach((doc) => {
                         var app_data=doc.data();
                         $("#all_app").hide();
-                        $("#box_app_info").show(function(){show_app_info(app_data);});
+                        $("#box_app_info").show(function(){show_app_info(app_data,lang);});
                     });
                     return;
                });
