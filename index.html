@@ -19,17 +19,18 @@
 
     <script type="module">
         import {initializeApp} from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
-        import {getFirestore, collection, addDoc,setDoc,doc,getDoc,query, where,getDocs,deleteDoc} from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
-
+        import {getFirestore, collection, addDoc,setDoc,doc,getDoc,query, where,getDocs,deleteDoc,connectFirestoreEmulator} from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
         var lang="";
         var mode_site="nomal";
         var is_dev=false;
         var count_dev=0;
+        var is_localhost=false;
 
         var querySnapshot_link_store;
         var querySnapshot_lang;
         var data_edit_app;
         var list_store=Array();
+        var db;
 
         if(localStorage.getItem("lang")==null){
             lang="en";
@@ -38,10 +39,19 @@
             lang=localStorage.getItem("lang");
         }
 
+        if(localStorage.getItem("is_localhost")==null){
+            is_localhost=false;
+        }else{
+            if(localStorage.getItem("is_localhost")=="false")
+                is_localhost=false;
+            else
+                is_localhost=true;
+        }
+
         if(localStorage.getItem("mode_site")!=null) mode_site=localStorage.getItem("mode_site");
         if(localStorage.getItem("is_dev")!=null) is_dev=localStorage.getItem("is_dev");
 
-        const firebaseConfig = {
+        const firebaseConfig_main = {
             apiKey: "AIzaSyDzsx1KYLZL5COz1NaTD8cOz8GYalX2Dxc",
             authDomain: "carrotstore.firebaseapp.com",
             projectId: "carrotstore",
@@ -51,19 +61,17 @@
             measurementId: "G-KXDDJ42JFN"
         };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        const app = initializeApp(firebaseConfig_main);
+        db = getFirestore(app);
+
+        if(is_localhost){
+            db = getFirestore();
+            connectFirestoreEmulator(db, 'localhost', 8082);
+        }
+
         const cr_app = collection(db, "app");
         const cr_lang= collection(db, "lang");
         const cr_link_store= collection(db, "link_store");
-
-        function objectifyForm(formArray) {
-            var returnArray = {};
-            for (var i = 0; i < formArray.length; i++){
-                returnArray[formArray[i]['name']] = formArray[i]['value'];
-            }
-            return returnArray;
-        }
 
         function add_app(data_app){
             setDoc(doc(cr_app, data_app.name_en), data_app);
@@ -96,7 +104,7 @@
                 $("#btn_show_all").show(100);
                 q=query(collection(db, "app"),where("type","==","game"));
             }
-                
+            
             var querySnapshot =await getDocs(q);
             querySnapshot.forEach((doc) => {
                 var data_app=doc.data();
@@ -123,7 +131,6 @@
                     htm_item_app+="<div>";
                 $("#all_app").append(htm_item_app);
             });
-            check_mode_site();
         }
 
         function read_prop(obj, prop) {
@@ -311,10 +318,15 @@
                 if(querySnapshot_lang!=null){
                     querySnapshot_lang.forEach((doc) => {
                         var obj=doc.data();
-                        if(data_edit_app["name_"+obj.key]!=null)
-                            add_field_to_box_msg("name_"+obj.key,"Name("+obj.name+" - "+obj.key+")","","text",null,true);
-                        else
+                        if(data_edit_app!=null){
+                            if(data_edit_app["name_"+obj.key]!=null)
+                                add_field_to_box_msg("name_"+obj.key,"Name("+obj.name+" - "+obj.key+")","","text",null,true);
+                            else
+                                add_field_to_box_msg("name_"+obj.key,"Name("+obj.name+" - "+obj.key+")");
+                        }else{
                             add_field_to_box_msg("name_"+obj.key,"Name("+obj.name+" - "+obj.key+")");
+                        }
+
                     });
                 }else{
                     var q = query(collection(db, "lang"));
@@ -424,6 +436,59 @@
             $("#all_app").load("test.html");
         });
 
+        $("#btn_download_json").click(function(){
+            download_json();
+        });
+
+        $("#btn_import_json").click(function(){
+            var url_json = prompt("Enter url json", "Enter url");
+            if (url_json != null) {
+                $.ajax(url_json,{success:function(data){
+                    var name_collection=data.collection;
+                    var all_item=data.all_item;
+                    var cr_data = collection(db, name_collection);
+                    $.each(all_item,function(index,d){
+                        var doc_id=d["id_import"];
+                        delete d["id_import"];
+                        setDoc(doc(cr_data, doc_id), d);
+                    });
+                    alert("Import Success!");
+                }});
+            };
+        });
+
+        $("#btn_mode_host").click(function(){
+            if(is_localhost)
+                localStorage.setItem("is_localhost","false");
+            else
+                localStorage.setItem("is_localhost","true");
+
+            location.reload();
+        });
+
+        async function download_json() {
+            var name_collection = prompt("Enter collection json", "Enter name collection");
+            if(name_collection=="") return;
+            var data_json=Object();
+            data_json["all_item"]=Array();
+            data_json["collection"]=name_collection;
+            var q=query(collection(db,name_collection));
+            var querySnapshot =await getDocs(q);
+            querySnapshot.forEach((doc) => {
+                var data_app=doc.data();
+                data_app["id_import"]=doc.id;
+                data_json.all_item.push(data_app);
+            });
+
+            var fileContents=JSON.stringify(data_json, null, 2);
+            var fileName= name_collection+".json";
+
+            var pp = document.createElement('a');
+            pp.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(fileContents));
+            pp.setAttribute('download', fileName);
+            pp.click();
+        }
+
         async function get_all_data_field(){
             list_store=Array();
             var q = query(cr_link_store);
@@ -434,7 +499,6 @@
         };
         
         $(document).ready(function(){
-
             var page=get_param_url("p");
             get_all_data_field();
 
@@ -450,6 +514,12 @@
             }else{
                 $("#btn_model_site").hide();
                 mode_site=="nomal";
+            }
+
+            if(is_localhost){
+                $("#btn_mode_host").html('<i class="fa-brands fa-dev"></i> Localhost');
+            }else{
+                $("#btn_mode_host").html('<i class="fa-sharp fa-solid fa-database"></i> Googlehost');
             }
             check_mode_site();
         });
@@ -474,6 +544,10 @@
                 <i class="fa-brands fa-itch-io"></i><br>itch.io
             </a>
 
+            <div id="btn_all_contact" class="btn">
+                <i class="fa-solid fa-address-book"></i><br>Contact
+            </div>
+            
         </div>
     </div>
     <div id="menu_dev" class="dev">
@@ -481,6 +555,9 @@
         <div id="btn_show_add_lang"  class="btn"><i class="fa-solid fa-globe"></i> Add Lang</div>
         <div id="btn_show_list_lang"  class="btn"><i class="fa-solid fa-list"></i> List Lang</div>
         <div id="btn_show_add_link_store" class="btn"><i class="fa-solid fa-store"></i> Add Link Store</div>
+        <div id="btn_download_json" class="btn"><i class="fa-solid fa-download"></i> Download json</div>
+        <div id="btn_import_json" class="btn"><i class="fa-solid fa-file-import"></i> Import json</div>
+        <div id="btn_mode_host" class="btn"><i class="fa-brands fa-dev"></i> Localhost</div>
     </div>
 
     <div id="menu_pub" class="pub">

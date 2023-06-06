@@ -1,6 +1,8 @@
 * {margin: 0;padding: 0px;}
 body {font-family: Verdana, sans-serif;font-size: 13px;}
-
+.dev{
+    display: none;
+}
 .btn{
     background-color: gray;
     color: white;
