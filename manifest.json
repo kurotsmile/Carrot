@@ -1,0 +1,58 @@
+{
+    "short_name": "Carrot",
+    "name": "Great apps to make your life better",
+    "icons": [
+      {
+        "src": "/images/icons-vector.svg",
+        "type": "image/svg+xml",
+        "sizes": "512x512"
+      },
+      {
+        "src": "/images/192.png",
+        "type": "image/png",
+        "sizes": "192x192"
+      },
+      {
+        "src": "/images/512.png",
+        "type": "image/png",
+        "sizes": "512x512"
+      }
+    ],
+    "id": "/?p=all_app",
+    "start_url": "/?p=all_app",
+    "background_color": "#525252",
+    "display": "standalone",
+    "scope": "/",
+    "theme_color": "#525252",
+    "shortcuts": [
+      {
+        "name": "All App",
+        "short_name": "All-App",
+        "description": "Great apps to make your life better",
+        "url": "/?p=app",
+        "icons": [{ "src": "/images/192.png", "sizes": "192x192" }]
+      },
+      {
+        "name": "All Game",
+        "short_name": "Game",
+        "description": "Play Game now",
+        "url": "/?p=game",
+        "icons": [{ "src": "/images/192.png", "sizes": "192x192" }]
+      }
+    ],
+    "description": "Weather forecast information",
+    "screenshots": [
+      {
+        "src": "/images/screenshot1.png",
+        "type": "image/png",
+        "sizes": "536x261",
+        "form_factor": "narrow"
+      },
+      {
+        "src": "/images/screenshot2.png",
+        "type": "image/jpg",
+        "sizes": "536x261",
+        "form_factor": "wide"
+      }
+    ]
+  }

@@ -210,7 +210,7 @@ a:active {
     display: block;
     cursor: pointer;
     background-color: #73a769;
-    margin: 2px
+    margin: 2px;
 }
 
 #box_msg_body .item_msg.active {
@@ -219,7 +219,8 @@ a:active {
 
 #box_msg_body .item_msg .item_icon {
     width: 20px;
-    float: left
+    float: left;
+    height: 20px;
 }
 
 .box_app {
