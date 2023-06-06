@@ -110,11 +110,10 @@
                 var data_app=doc.data();
                 var key_name="name_"+lang;
                 var htm_item_app="<div class='box_app' id=\""+doc.id+"\">";
-                    if(data_app.icon!=null) htm_item_app+="<figure><img class='icon_app' app_id='"+doc.id+"' src=\""+data_app.icon+"\"/></figure><br/>";
+                    if(data_app.icon!=null) htm_item_app+="<figure><img class='icon_app' app_id='"+doc.id+"' src=\""+data_app.icon+"\"/></figure>";
                     htm_item_app+="<b class='name_app'>"+read_prop(data_app,key_name)+"</b>";
                     htm_item_app+="<div class='tip_app'>"+data_app.name_en+"</div>";
                     if(list_store!=null){
-                        
                         var html_store_link="";
                         $(list_store).each(function(index,store){
                             if(data_app[store.key]!=null){
@@ -235,7 +234,7 @@
 
         $("#all_app").each(function(){
             $(this).each(function(){
-               $(this).on('click', '.icon_app',async function() {
+               $(this).on('click', '.item_app',async function() {
                     var id_box_app=$(this).attr("app_id");
                     var q = query(collection(db, "app"), where("name_en", "==", id_box_app));
                     var querySnapshot =await getDocs(q);
@@ -411,7 +410,7 @@
             get_all_app("game");
         });
 
-        $("#btn_show_all").click(function(){
+        $("#btn_show_all,#btn_all_app,#logo_carrot").click(function(){
             get_all_app();
         });
 
@@ -440,6 +439,12 @@
         $("#btn_download_json").click(function(){
             download_json();
         });
+
+        $("#btn_all_contact").click(async function(){
+            var q=query(collection(db, "user-"+lang),where("status_share","==","0"));
+            var querySnapshot =await getDocs(q);
+            show_list_contact(querySnapshot);
+        })
 
         $("#btn_import_json").click(function(){
             var url_json = prompt("Enter url json", "Enter url");
@@ -529,27 +534,30 @@
 <body>
     <div id="header">
         <img id="logo_carrot" src="images/72.png">
-        <div id="menu_head_right">
 
-            <div id="btn_list_lang" class="btn">
-                <i class="fa-solid fa-globe"></i><br> Select Lang<br>
-                <div id="key_lang">En</div>
-            </div>
+        <div id="btn_all_app" class="btn">
+            <i class="fa-solid fa-box"></i><br> All Product<br>
+            <div>All App</div>
+        </div>
 
-            <div id="btn_model_site" class="btn">
-                <i class="fa-solid fa-window-maximize fa-bounce"></i><br>Development mode
-            </div>
+        <div id="btn_all_contact" class="btn">
+            <i class="fa-solid fa-address-book"></i><br>Phone book
+        </div>
 
-            <a id="btn_model_site" href="https://carrotstore.itch.io/" target="_blank" class="btn">
-                <i class="fa-brands fa-itch-io"></i><br>itch.io
-            </a>
+        <a id="btn_itch_store" href="https://carrotstore.itch.io/" target="_blank" class="btn">
+            <i class="fa-brands fa-itch-io"></i><br>itch.io
+        </a>
 
-            <div id="btn_all_contact" class="btn">
-                <i class="fa-solid fa-address-book"></i><br>Contact
-            </div>
-            
+        <div id="btn_list_lang" class="btn">
+            <i class="fa-solid fa-globe"></i><br> Select Lang<br>
+            <div id="key_lang">En</div>
+        </div>
+
+        <div id="btn_model_site" class="btn">
+            <i class="fa-solid fa-window-maximize fa-bounce"></i><br>Development mode
         </div>
     </div>
+
     <div id="menu_dev" class="dev">
         <div id="btn_show_add_app" class="btn"><i class="fa-solid fa-mobile"></i> Add App</div>
         <div id="btn_show_add_lang"  class="btn"><i class="fa-solid fa-globe"></i> Add Lang</div>

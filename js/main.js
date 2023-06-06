@@ -80,3 +80,23 @@ function show_app_info(data,lang){
         $("#box_app_info").append("<div><b>"+key+"</b> : "+val+"</div>");
     });
 }
+
+async function show_list_contact(querySnapshot){
+    $("#all_app").html("");
+    querySnapshot.forEach((doc) => {
+        var data_doc=doc.data();
+        if(data_doc.avatar!=null){
+            if(data_doc.avatar.trim()!=""){
+                var tip_app="";
+                if(data_doc.phone!=null) if(data_doc.phone.trim()!="") tip_app=data_doc.phone;
+                if(data_doc.email!=null&&tip_app=="") if(data_doc.email.trim()!="") tip_app=data_doc.email;
+                var htm_item_app="<div class='box_app' id=\""+doc.id+"\">";
+                htm_item_app+="<figure><img class='icon_app item_app' app_id='"+doc.id+"' src=\""+data_doc.avatar+"\"/></figure>";
+                htm_item_app+="<b class='name_app'>"+data_doc.name+"</b>";
+                if(tip_app!="") htm_item_app+="<b class='tip_app'>"+tip_app+"</b>";
+                htm_item_app+="<div>";
+            }
+        }
+        $("#all_app").append(htm_item_app);
+    });
+}
