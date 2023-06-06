@@ -110,7 +110,7 @@
                 var data_app=doc.data();
                 var key_name="name_"+lang;
                 var htm_item_app="<div class='box_app' id=\""+doc.id+"\">";
-                    if(data_app.icon!=null) htm_item_app+="<figure><img class='icon_app' app_id='"+doc.id+"' src=\""+data_app.icon+"\"/></figure>";
+                    if(data_app.icon!=null) htm_item_app+="<figure><img class='icon_app item_app' app_id='"+doc.id+"' src=\""+data_app.icon+"\"/></figure>";
                     htm_item_app+="<b class='name_app'>"+read_prop(data_app,key_name)+"</b>";
                     htm_item_app+="<div class='tip_app'>"+data_app.name_en+"</div>";
                     if(list_store!=null){
@@ -390,7 +390,7 @@
             $("#all_app").html(t);
         }
 
-        $("#logo_carrot").click(function(){act_mode_dev()});
+        $("#logo_carrot").on("contextmenu", function(){act_mode_dev();return false;});
         $("#btn_show_add_app").click(function(){show_box_add('add_app')});
         $("#btn_show_add_lang").click(function(){show_box_add('add_lang')});
         $("#btn_show_add_link_store").click(function(){show_box_add('add_link_store')});
