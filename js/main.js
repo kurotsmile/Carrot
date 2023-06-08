@@ -187,33 +187,101 @@ async function show_list_contact(querySnapshot){
 }
 
 async function show_list_icon(querySnapshot){
-    $("#all_app").html("");
+    $("#main_contain").html("");
+    var html_main_contain="";
+    html_main_contain+='<div class="row m-0">';
     querySnapshot.forEach((doc) => {
-        var data_doc=doc.data();
-        if(data_doc.icon!=null){
-            if(data_doc.icon.trim()!=""){
-                var htm_item_app="<div class='box_app item_icon' id=\""+doc.id+"\">";
-                htm_item_app+="<figure><img class='icon_app' app_id='"+doc.id+"' src=\""+data_doc.icon+"\"/></figure>";
-                htm_item_app+="<b class='name_app'>"+doc.id+"</b>";
-                htm_item_app+="</div>";
-            }
-        }
-        $("#all_app").append(htm_item_app);
+        var data_icon=doc.data();
+        html_main_contain+="<div class='col-md-3 mb-3' id=\""+doc.id+"\">";
+            html_main_contain+='<div class="app-cover p-2 shadow-md bg-white">';
+                html_main_contain+='<div class="row">';
+                html_main_contain+='<div class="img-cover pe-0 col-3"><img class="rounded" src="'+data_icon.icon+'" alt="'+doc.id+'"></div>';
+                    html_main_contain+='<div class="det mt-2 col-9">';
+                        html_main_contain+="<h5 class='mb-0 fs-6'>"+doc.id+"</h5>";
+                        html_main_contain+="<span class='fs-8' style='color:"+data_icon.color+"'>"+data_icon.color+"</span>";
+                    html_main_contain+="</div>";
+                html_main_contain+="</div>";
+            html_main_contain+="</div>";
+        html_main_contain+="</div>";
     });
+    html_main_contain+="</div>";
+    $("#main_contain").html(html_main_contain);
 }
 
 async function show_list_background(querySnapshot){
-    $("#all_app").html("");
+    $("#main_contain").html("");
+    var html_main_contain="";
+    html_main_contain+='<div class="row m-0">';
     querySnapshot.forEach((doc) => {
-        var data_doc=doc.data();
-        if(data_doc.icon!=null){
-            if(data_doc.icon.trim()!=""){
-                var htm_item_app="<div class='box_app item_background' id=\""+doc.id+"\">";
-                htm_item_app+="<figure><img class='icon_app' app_id='"+doc.id+"' src=\""+data_doc.icon+"\"/></figure>";
-                htm_item_app+="<b class='name_app'>"+doc.id+"</b>";
-                htm_item_app+="</div>";
-            }
-        }
-        $("#all_app").append(htm_item_app);
+        var data_app=doc.data();
+        html_main_contain+="<div class='col-md-3 mb-3' id=\""+doc.id+"\">";
+            html_main_contain+='<div class="app-cover p-2 shadow-md bg-white">';
+                html_main_contain+='<div class="row">';
+                var url_avatar='';
+                if(data_app.icon!=null) url_avatar=data_app.icon;
+                if(url_avatar=="") url_avatar="images/avatar_default.png";
+                html_main_contain+='<div class="img-cover"><img class="rounded" src="'+url_avatar+'" alt="'+doc.id+'"></div>';
+                    html_main_contain+='<div class="det mt-2 col-9">';
+                        html_main_contain+="<h5 class='mb-0 fs-6'>"+doc.id+"</h5>";
+                    html_main_contain+="</div>";
+                html_main_contain+="</div>";
+            html_main_contain+="</div>";
+        html_main_contain+="</div>";
+        
     });
+    html_main_contain+="</div>";
+    $("#main_contain").html(html_main_contain);
+}
+
+async function show_list_app(querySnapshot,list_store,lang){
+    var html_main_contain="";
+    html_main_contain+='<div class="row m-0">';
+    querySnapshot.forEach((doc) => {
+        var data_app=doc.data();
+        var key_name="name_"+lang;
+        html_main_contain+="<div class='box_app col-md-4 mb-3' id=\""+doc.id+"\">";
+            html_main_contain+='<div class="app-cover p-2 shadow-md bg-white">';
+                html_main_contain+='<div class="row">';
+                if(data_app.icon!=null) html_main_contain+='<div class="img-cover pe-0 col-3"><img class="rounded" src="'+data_app.icon+'" alt=""></div>';
+                    html_main_contain+='<div class="det mt-2 col-9">';
+                        html_main_contain+="<h5 class='mb-0 fs-6'>"+data_app[key_name]+"</h5>";
+                        html_main_contain+="<span class='fs-8'>"+data_app.name_en+"</span>";
+
+                        html_main_contain+='<ul class="row">';
+                            html_main_contain+='<li class="col-8 ratfac">';
+                                html_main_contain+='<i class="bi text-warning fa-solid fa-star"></i>';
+                                html_main_contain+='<i class="bi text-warning fa-solid fa-star"></i>';
+                                html_main_contain+='<i class="bi text-warning fa-solid fa-star"></i>';
+                                html_main_contain+='<i class="bi text-warning fa-solid fa-star"></i>';
+                                html_main_contain+='<i class="bi fa-solid fa-star"></i>';
+                            html_main_contain+='</li>';
+                            if(data_app.type=="app")
+                                html_main_contain+='<li class="col-4"><span class="text-secondary float-end"><i class="fa-solid fa-mobile"></i></span></li>';
+                            else
+                                html_main_contain+='<li class="col-4"><span class="text-secondary float-end"><i class="fa-solid fa-gamepad"></i></span></li>';
+                        html_main_contain+='</ul>';
+
+                        if(list_store!=null){
+                            var html_store_link="";
+                            $(list_store).each(function(index,store){
+                                if(data_app[store.key]!=null){
+                                    var link_store_app=data_app[store.key];
+                                    html_store_link+="<a class='link_app' title=\""+store.name+"\" target=\"_blank\" href=\""+link_store_app+"\"><i class=\""+store.icon+"\"></i></a>";
+                                }
+                            });
+                            if(html_store_link!="") html_main_contain+="<div class='row'><div class='col-12'>"+html_store_link+"</div></div>";
+                        }
+                        html_main_contain+="<div class='row'>";
+                        html_main_contain+="<div class='col-6 btn dev btn_app_edit' app_id='"+doc.id+"'><i class=\"fa-solid fa-pen-to-square\"></i> Edit</div>";
+                        html_main_contain+="<div class='col-6 btn dev btn_app_del' app_id='"+doc.id+"'><i class=\"fa-solid fa-trash\"></i> Delete</div>";
+                        html_main_contain+="</div>";
+
+                    html_main_contain+="</div>";
+                html_main_contain+="</div>";
+            html_main_contain+="</div>";
+        html_main_contain+="</div>";
+        
+    });
+    html_main_contain+="</div>";
+    $("#main_contain").html(html_main_contain);
 }

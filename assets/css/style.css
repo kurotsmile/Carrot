@@ -551,4 +551,8 @@ html {
 .dev{
   display: none;
 }
+
+.btn-menu.dev{
+  background-color: #f3f0f0;
+}
 /*# sourceMappingURL=style.css.map */
