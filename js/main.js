@@ -139,23 +139,51 @@ function show_app_info(data,list_link_store,lang){
 }
 
 async function show_list_contact(querySnapshot){
-    $("#all_app").html("");
+    $("#main_contain").html("");
+    var html_main_contain="";
+    html_main_contain+='<div class="row m-0">';
     querySnapshot.forEach((doc) => {
-        var data_doc=doc.data();
-        if(data_doc.avatar!=null){
-            if(data_doc.avatar.trim()!=""){
-                var tip_app="";
-                if(data_doc.phone!=null) if(data_doc.phone.trim()!="") tip_app=data_doc.phone;
-                if(data_doc.email!=null&&tip_app=="") if(data_doc.email.trim()!="") tip_app=data_doc.email;
-                var htm_item_app="<div class='box_app' id=\""+doc.id+"\">";
-                htm_item_app+="<figure><img class='icon_app' app_id='"+doc.id+"' src=\""+data_doc.avatar+"\"/></figure>";
-                htm_item_app+="<b class='name_app'>"+data_doc.name+"</b>";
-                if(tip_app!="") htm_item_app+="<b class='tip_app'>"+tip_app+"</b>";
-                htm_item_app+="</div>";
-            }
-        }
-        $("#all_app").append(htm_item_app);
+        var data_app=doc.data();
+        html_main_contain+="<div class='box_app col-md-4 mb-3' id=\""+doc.id+"\">";
+            html_main_contain+='<div class="app-cover p-2 shadow-md bg-white">';
+                html_main_contain+='<div class="row">';
+                var url_avatar='';
+                if(data_app.avatar!=null) url_avatar=data_app.avatar;
+                if(url_avatar=="") url_avatar="images/avatar_default.png";
+                html_main_contain+='<div class="img-cover pe-0 col-3"><img class="rounded" src="'+url_avatar+'" alt="'+data_app.name+'"></div>';
+                    html_main_contain+='<div class="det mt-2 col-9">';
+                        html_main_contain+="<h5 class='mb-0 fs-6'>"+data_app.name+"</h5>";
+                        html_main_contain+='<ul class="row">';
+                        html_main_contain+='<li class="col-8 ratfac">';
+                            html_main_contain+='<i class="bi text-warning fa-solid fa-heart"></i>';
+                            html_main_contain+='<i class="bi text-warning fa-solid fa-heart"></i>';
+                            html_main_contain+='<i class="bi text-warning fa-solid fa-heart"></i>';
+                            html_main_contain+='<i class="bi text-danger fa-solid fa-heart"></i>';
+                            html_main_contain+='<i class="bi fa-solid fa-heart"></i>';
+                        html_main_contain+='</li>';
+                        if(data_app.sex=="0")
+                            html_main_contain+='<li class="col-4"><span class="text-success float-end"><i class="fa-solid fa-mars"></i></span></li>';
+                        else
+                            html_main_contain+='<li class="col-4"><span class="text-success float-end"><i class="fa-solid fa-venus"></i></span></li>';
+                        html_main_contain+='</ul>';
+
+                        html_main_contain+='<ul class="row">';
+                        if(data_app.phone!="") html_main_contain+='<li class="col-12 fs-8"><i class="fa-solid fa-phone"></i> '+data_app.phone+'</li>';
+                        if(data_app.email!="") html_main_contain+='<li class="col-12 fs-8"><i class="fa-solid fa-envelope"></i> '+data_app.email+'</li>';
+                        if(data_app.address!=""){
+                            var user_address=data_app.address;
+                            if(user_address.name!="") html_main_contain+='<li class="col-12 fs-8"><i class="fa-solid fa-location-dot"></i> '+user_address.name+'</li>';
+                        }
+                        html_main_contain+='</ul>';
+
+                    html_main_contain+="</div>";
+                html_main_contain+="</div>";
+            html_main_contain+="</div>";
+        html_main_contain+="</div>";
+        
     });
+    html_main_contain+="</div>";
+    $("#main_contain").html(html_main_contain);
 }
 
 async function show_list_icon(querySnapshot){
