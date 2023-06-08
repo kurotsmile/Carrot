@@ -118,39 +118,20 @@
                     show_all_field_name_app_lang(querySnapshot_lang);
                 }
             }
-    
-            $("#btn_list_lang").click(async function(){
-                var msg_lang=show_box_msg("Select Lang");
-                if(querySnapshot_lang==null){
-                    var q = query(collection(db, "lang"));
-                    querySnapshot_lang =await getDocs(q);
-                    show_menu_lang(querySnapshot_lang);
-                }else{
-                    show_menu_lang(querySnapshot_lang);
-                }
-            });
-    
-            function show_menu_lang(querySnapshot_lang){
-                querySnapshot_lang.forEach((doc) => {
-                    var obj=doc.data();
-                    var class_active='';
-                    if(obj.key==lang) class_active="active";
-                    var htm_item_app="<div class='item_lang item_msg "+class_active+"' key='"+obj.key+"'>";
-                    htm_item_app+="<img class='item_icon' src='"+obj.icon+"'/><b>"+obj.name+"</b>:"+obj.key;
-                    htm_item_app+="<div>";
-                    $("#box_msg_body").append(htm_item_app);
-                });
+
+            function change_lang(){
+                $.MessageBox("Lang change success!");
             }
     
-            $('#box_msg_body').on('click', '.item_lang', function() {
+    
+            $('#list_lang').on('click', '.item_lang',async function() {
                 var key_lang=$(this).attr("key");
                 if(key_lang!=lang){
                     lang=key_lang;
                     localStorage.setItem("lang", lang);
                     $("#key_lang").html(lang);
-                    close_box_msg();
                     get_all_app();
-                }
+                };
             });
     
             $("#all_app").each(function(){
@@ -293,7 +274,7 @@
                     localStorage.setItem("is_dev",is_dev);
                     $("#btn_model_site").show();
                     count_dev=0;
-                    alert("Active Model Dev");
+                    $.MessageBox("Active Model Dev!");
                 }
             }
     
@@ -354,7 +335,7 @@
                 $(this).find("i").addClass("fa-bounce");
                 var id_fun=$(this).attr("id");
                 if(id_fun=="btn_address_book"){
-                    var q=query(collection(db, "user-vi"),where("status_share","==","0"));
+                    var q=query(collection(db, "user-"+lang),where("status_share","==","0"));
                     var querySnapshot =await getDocs(q);
                     show_list_contact(querySnapshot);
                 }
@@ -390,7 +371,6 @@
         
                     location.reload();
                 }
-                
             });
     
             $("#btn_import_json").click(function(){
@@ -405,9 +385,90 @@
                             delete d["id_import"];
                             setDoc(doc(cr_data, doc_id), d);
                         });
-                        alert("Import Success!");
+                        $.MessageBox("Import Success!");
                     }});
                 };
+            });
+
+            $("#btn_login").click(function(){
+                $.MessageBox({
+                    message : "<b><i class='fa-solid fa-key'></i> Login</b>",
+                    input   : {
+                        text1    : {
+                            type         : "text",
+                            label        : "Phone:",
+                            title        : "Enter Your Phone"
+                        },
+                        password1 : {
+                            type         : "password",
+                            label        : "Secret password:",
+                            title        : "Type password here"
+                        },
+                        dummy_caption : {
+                            type         : "caption",
+                            message      : "This is a <b>caption</b>, sometimes you might need one"
+                        }
+                    },
+                    top     : "auto"
+                }).done(function(data){
+                    console.log(data);
+                });
+            });
+
+            $("#btn_add_app").click(function(){
+                $.MessageBox({
+                    message : "<b>Here is a complex form with different input types!</b>",
+                    input   : {
+                        text1    : {
+                            type         : "text",
+                            label        : "Some text:",
+                            title        : "Input some text"
+                        },
+                        text2    : {
+                            type         : "text",
+                            label        : "Some text (max 10 characters):",
+                            title        : "Input some other text",
+                            defaultValue : "Hi!",
+                            maxlength    : 10
+                        },
+                        password1 : {
+                            type         : "password",
+                            label        : "Secret password:",
+                            title        : "Type password here"
+                        },
+                        checkbox1 : {
+                            type         : "checkbox",
+                            label        : "A good ol' checkbox:",
+                            title        : "Check or uncheck this, no big deal"
+                        },
+                        dummy_caption : {
+                            type         : "caption",
+                            message      : "This is a <b>caption</b>, sometimes you might need one"
+                        },
+                        select1 : {
+                            type         : "select",
+                            label        : "Select with values same as displayed texts:",
+                            title        : "Select a letter",
+                            options      : ["A", "B", "C", "D", "E"]
+                        },
+                        select2 : {
+                            type         : "select",
+                            label        : "Select with values and texts specified and a default choice selected:",
+                            title        : "Select S",
+                            options      : {
+                                "A" : "Letter A",
+                                "B" : "Letter B",
+                                "C" : "Letter C",
+                                "D" : "Letter D",
+                                "E" : "Letter E"
+                            },
+                            defaultValue : "C"
+                        }
+                    },
+                    top     : "auto"
+                }).done(function(data){
+                    console.log(data);
+                });
             });
     
             async function download_json() {
@@ -448,7 +509,9 @@
                 var q = query(cr_lang);
                 var querySnapshot_lang =await getDocs(q);
                 querySnapshot_lang.forEach((doc) => {
+                    var lang_data=doc.data();
                     list_lang.push(doc.data());
+                    $("#list_lang").append('<div class="dropdown-item item_lang" key="'+lang_data.key+'"><img style="width:20px" src="'+lang_data.icon+'"/> '+lang_data.name+'</div>');
                 });
             };
     
@@ -500,11 +563,18 @@
                 <li id="btn_all_icon" class="border-bottom btn-menu"><i class="fa-solid fa-face-smile fs-6 me-2"></i> Icon</li>
                 <li id="btn_privacy_policy" class="border-bottom btn-menu"><i class="fa-sharp fa-solid fa-building-shield fs-6 me-2"></i>Privacy Policy</li>
                 <li id="btn_about_us" class="border-bottom btn-menu"><i class="fa-solid fa-heart fs-6 me-2"></i> About Us</li>
-                <li id="btn_list_lang" class="border-bottom btn-menu"><i class="fa-solid fa-globe fs-6 me-2"></i> Select Language</li>
                 <li id="btn_model_site" class="border-bottom btn-menu"><i class="fa-solid fa-window-maximize fs-6 me-2"></i> Development mode</li>
+                <li id="btn_add_app" class="border-bottom btn-menu dev"><i class="fa-solid fa-add fs-6 me-2"></i> Add App</li>
                 <li id="btn_mode_host" class="border-bottom btn-menu dev"><i class="fa-solid fa-dev fs-6 me-2"></i> Localhost</li>
                 <li id="btn_download_json" class="border-bottom btn-menu dev"><i class="fa-solid fa-download fs-6 me-2"></i>  Export json</li>
                 <li id="btn_import_json" class="border-bottom btn-menu dev"><i class="fa-solid fa-file-import fs-6 me-2"></i> Import json</li>
+
+                <li class="btn-group dropup border-bottom">
+                    <div type="button" class="dropdown-toggle"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        <i class="fa-solid fa-globe fs-6 me-2"></i> Select Language
+                    </div>
+                    <div class="dropdown-menu" id="list_lang"></div>
+                </li>
             </ul>
         </div>
     </header>
@@ -513,16 +583,14 @@
             <div class="row">
                 <div class="col-md-5">
                     <div class="input-group mb-0">
-                        <input type="text" class="form-control border-end-0 mb-0" placeholder="Search Apps"
-                            aria-label="Recipient's username" aria-describedby="basic-addon2">
-                        <span class="input-group-text sit border-start-0" id="basic-addon2"><i
-                                class="bi bi-search"></i></span>
+                        <input type="text" class="form-control border-end-0 mb-0" placeholder="Search Apps" aria-label="Recipient's username" aria-describedby="basic-addon2">
+                        <span class="input-group-text sit border-start-0" id="basic-addon2"><i class="bi bi-search"></i></span>
                     </div>
                 </div>
-                <div class="col-md-3"></div>
+                <div class="col-md-3 text-end">&nbsp;</div>
                 <div class="col-md-4 text-end">
                     <div class="dropdown pt-2">
-                        <a class="cp pt-4 fw-bolder fs-8 dropdown-toggle" data-bs-toggle="dropdown"
+                        <a id="btn_login" class="cp pt-4 fw-bolder fs-8 dropdown-toggle" data-bs-toggle="dropdown"
                             aria-expanded="false">
                             <i class="fa-solid fa-user"></i> Trần Thiện Thanh
                         </a>
@@ -547,6 +615,8 @@
     <script src="assets/plugins/scroll-fixed/jquery-scrolltofixed-min.js"></script>
     <script src="assets/plugins/testimonial/js/owl.carousel.min.js"></script>
     <script src="assets/js/script.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-message-box@3.2.2/dist/messagebox.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-message-box@3.2.2/dist/messagebox.min.js"></script>
 </body>
 
 

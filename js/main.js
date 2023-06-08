@@ -43,12 +43,6 @@ function show_box_add(func,list_store=null,list_lang=null){
     $(frm_box).attr("type",func);
 }
 
-function close_all_box(){
-    $(".box_add").hide();
-    $("#all_app").show();
-    document.title = "Carrot Store";
-}
-
 function objectifyForm(formArray) {
     var returnArray = {};
     for (var i = 0; i < formArray.length; i++){
