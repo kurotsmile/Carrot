@@ -83,13 +83,13 @@
                         </a>
 
                         <a id="btn_acc_info" class="btn btn-small btn-light cpfs-8 dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="true">
-                            <i class="fa-solid fa-user"></i> <span id="acc_info_name">User name</span>
+                            <img id="acc_info_avatar" style="width: 20px;height: 20px;" src="images/avatar_default.png"/> <span id="acc_info_name">User name</span>
                         </a>
 
-                        <ul class="dropdown-menu" id="menu_account" style="display: none;">
+                        <ul class="dropdown-menu" id="menu_account">
                             <li><a class="dropdown-item" href="#">Dashboard</a></li>
                             <li><a class="dropdown-item" href="#">My Downloads</a></li>
-                            <li><a class="dropdown-item" href="#">Logout</a></li>
+                            <li><a id="btn_logout" class="dropdown-item" href="#">Logout</a></li>
                         </ul>
                     </div>
                 </div>
@@ -145,11 +145,8 @@
                 is_localhost = true;
         }
 
-        if(localStorage.getItem("obj_login")!=null){
-            obj_login=JSON.parse(localStorage.getItem("obj_login"));
-            alert(obj_login);
-        }
-
+        if(localStorage.getItem("obj_login")!=null) obj_login=JSON.parse(localStorage.getItem("obj_login"));
+        
         if (localStorage.getItem("mode_site") != null) mode_site = localStorage.getItem("mode_site");
         if (localStorage.getItem("is_dev") != null) is_dev = localStorage.getItem("is_dev");
 
@@ -378,12 +375,19 @@
                         message: "Điền Đầy đủ thông tin để đăng nhập vào hệ thống!"
                     }
                 },
-                top: "auto"
+                top: "auto",
+                buttonFail:"Cancel"
             }).done(function(data) {
                 var username=data.usernames;
                 var password=data.password;
                 check_user_login(username,password);
             });
+        });
+
+        $("#btn_logout").click(function(){
+            obj_login=null;
+            localStorage.removeItem("obj_login");
+            show_info_user_login_in_header(obj_login);
         });
 
         async function check_user_login(username,password){
@@ -392,11 +396,8 @@
             if(querySnapshot.docs.length>0){
                 querySnapshot.forEach((doc) => {
                     obj_login=doc.data();
-                    $("#btn_acc_info").show();
-                    $("#btn_login").hide();
-                    $("#acc_info_name").html(obj_login.name);
-
                     localStorage.setItem("obj_login",JSON.stringify(obj_login));
+                    show_info_user_login_in_header(obj_login);
                 });
             }else{
                 $.MessageBox("Đăng nhập thất bại!");
@@ -530,7 +531,7 @@
             get_all_data_lang();
             get_all_data_lang_web();
             check_show_by_id_page();
-
+            show_info_user_login_in_header(obj_login);
             $("#key_lang").html(lang);
             if (is_dev) {
                 $("#btn_model_site").show();

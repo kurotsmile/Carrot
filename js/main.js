@@ -345,3 +345,17 @@ function show_box_add_or_edit_app(list_lang,list_store,data_app,act_done){
         buttonFail: "Cancel"
     }).done(act_done);
 }
+
+function show_info_user_login_in_header(data_user){
+    if(data_user==null){
+        $("#btn_acc_info").hide();
+        $("#btn_login").show();
+        $("#menu_account").hide();
+    }else{
+        $("#menu_account").removeAttr("style");
+        $("#btn_acc_info").show();
+        $("#btn_login").hide();
+        $("#acc_info_name").html(data_user.name);
+        if(data_user.avatar!=null&&data_user.avatar!="") $("#acc_info_avatar").attr("src",data_user.avatar);
+    }
+}
