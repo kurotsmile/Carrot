@@ -3,46 +3,6 @@ function change_title_page(s_title,s_url){
     window.history.pushState(s_title, 'Title', s_url);
 }
 
-function show_box_add(func,list_store=null,list_lang=null){
-    $("#all_app").hide();
-    $("#box_add_app").show();
-    $("#all-field").html("");
-    
-    if(func=="add_app"){
-        $("#box_add_icon").attr("class","fa-solid fa-mobile");
-        $("#all-field").append(add_field("icon","Icon App"));
-        $("#all-field").append(add_field("type","Type App",1,"select",Array("app","game")));
-        $.each(list_store,function(index,data_link_store){
-            var field_data=data_link_store;
-            $("#all-field").append(add_field(field_data.key,"Link Store ("+field_data.name+")"));
-        });
-
-        $.each(list_lang,function(index,data_lang){
-            var obj=data_lang;
-            $("#all-field").append(add_field("name_"+obj.key,"Name("+obj.name+")"));
-            $("#all-field").append(add_field("describe_"+obj.key,"Describe("+obj.name+")","","textarea"));
-        });
-    }
-
-    if(func=="add_lang"){
-        $("#box_add_icon").attr("class","fa-solid fa-globe");
-        $("#all-field").append(add_field("key","Key lang"));
-        $("#all-field").append(add_field("name","Name Lang"));
-        $("#all-field").append(add_field("icon","Icon Lang"));
-    }
-
-    if(func=="add_link_store"){
-        $("#box_add_icon").attr("class","fa-solid fa-store");
-        $("#all-field").append(add_field("key","Key id Store"));
-        $("#all-field").append(add_field("name","Name Store"));
-        $("#all-field").append(add_field("icon","Icon Font"));
-        $("#all-field").append(add_field("img","Iamge Store"));
-    }
-    
-    var frm_box=$("#frm_add_app");
-    $(frm_box).attr("type",func);
-}
-
 function copy_tag(name_tag) {
     var $temp = $("<input>");$("body").append($temp);
     var s_copy=$("#" + name_tag).val();
@@ -73,11 +33,11 @@ function show_app_info(data,list_store,lang,list_app){
 
                     html+='<div class="row pt-4">';
                         html+='<div class="col-md-4 col-6 text-center">';
-                            html+='<b>3.9 <i class="bi bi-star-fill"></i></b>';
+                            html+='<b>3.9 <i class="fa-sharp fa-solid fa-eye"></i></b>';
                             html+='<p>11.6k Reviews</p>';
                         html+='</div>';
                         html+='<div class="col-md-4 col-6 text-center">';
-                            html+='<b>5M+</b>';
+                            html+='<b>5M+ <i class="fa-solid fa-download"></i></b>';
                             html+='<p>Downloads</p>';
                         html+='</div>';
                     html+='</div>';
