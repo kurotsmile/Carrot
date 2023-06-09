@@ -69,17 +69,15 @@
             <div class="row">
                 <div class="col-md-5">
                     <div class="input-group mb-0">
-                        <input type="text" class="form-control border-end-0 mb-0" placeholder="Search Apps"
-                            aria-label="Recipient's username" aria-describedby="basic-addon2">
-                        <span class="input-group-text sit border-start-0" id="basic-addon2"><i
-                                class="fa-sharp fa-solid fa-magnifying-glass"></i></span>
+                        <input id="box_input_search" type="text" class="form-control border-end-0 mb-0" placeholder="Search Apps" aria-label="Recipient's username" aria-describedby="basic-addon2">
+                        <span class="input-group-text sit border-start-0" id="basic-addon2"><i class="fa-sharp fa-solid fa-magnifying-glass"></i></span>
                     </div>
                 </div>
                 <div class="col-md-3 text-end">&nbsp;</div>
                 <div class="col-md-4 text-end">
                     <div class="dropdown pt-2">
                         <a id="btn_login" class="btn btn-small btn-light cpfs-8">
-                            <i class="fa-solid fa-user"></i> Login
+                            <i class="fa-solid fa-user"></i> <lang class="lang" key_lang="login">Login</lang>
                         </a>
 
                         <a id="btn_acc_info" class="btn btn-small btn-light cpfs-8 dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="true">
@@ -358,7 +356,7 @@
 
         $("#btn_login").click(function () {
             $.MessageBox({
-                message: "<b><i class='fa-solid fa-key'></i> Login</b>",
+                message: "<b><i class='fa-solid fa-key'></i> "+l('login')+"</b>",
                 input: {
                     usernames: {
                         type: "text",
@@ -524,6 +522,18 @@
                     act_del_app(id_box_app);
                 });
             });
+        }
+
+        $("#box_input_search").change(async function(){
+            var inp_text=$("#box_input_search").val();
+            var q = query(collection(db, "app"), where("name_"+lang, "==", inp_text));
+            var querySnapshot = await getDocs(q);
+            show_list_app(querySnapshot, list_store, lang,list_app);
+            $("#box_input_search").val('');
+        });
+
+        function l(key){
+            return obj_lang[key].trim();
         }
 
         $(document).ready(function () {
