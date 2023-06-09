@@ -381,7 +381,7 @@
 
         function act_done_add_app(data){
             var s_name_app = data.name_en;
-            setDoc(doc(cr_app, data.name_en), data);
+            setDoc(doc(collection(db, "app"), data.name_en), data);
             $.MessageBox("Add or Edit App ('" + s_name_app + "') Success!");
         }
 
@@ -415,7 +415,7 @@
 
         async function get_all_data_field() {
             list_store = Array();
-            var q = query(cr_link_store);
+            var q = query(collection(db, "link_store"));
             querySnapshot_link_store = await getDocs(q);
             querySnapshot_link_store.forEach((doc) => {
                 list_store.push(doc.data());
