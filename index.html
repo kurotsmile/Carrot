@@ -78,11 +78,15 @@
                 <div class="col-md-3 text-end">&nbsp;</div>
                 <div class="col-md-4 text-end">
                     <div class="dropdown pt-2">
-                        <a id="btn_login" class="cp pt-4 fw-bolder fs-8 dropdown-toggle" data-bs-toggle="dropdown"
-                            aria-expanded="false">
-                            <i class="fa-solid fa-user"></i> Trần Thiện Thanh
+                        <a id="btn_login" class="btn btn-small btn-light cpfs-8">
+                            <i class="fa-solid fa-user"></i> Login
                         </a>
-                        <ul class="dropdown-menu">
+
+                        <a id="btn_acc_info" class="btn btn-small btn-light cpfs-8 dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="true">
+                            <i class="fa-solid fa-user"></i> <span id="acc_info_name">User name</span>
+                        </a>
+
+                        <ul class="dropdown-menu" id="menu_account" style="display: none;">
                             <li><a class="dropdown-item" href="#">Dashboard</a></li>
                             <li><a class="dropdown-item" href="#">My Downloads</a></li>
                             <li><a class="dropdown-item" href="#">Logout</a></li>
@@ -103,8 +107,7 @@
     <script src="assets/plugins/scroll-fixed/jquery-scrolltofixed-min.js"></script>
     <script src="assets/plugins/testimonial/js/owl.carousel.min.js"></script>
     <script src="assets/js/script.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-message-box@3.2.2/dist/messagebox.min.css"
-        rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-message-box@3.2.2/dist/messagebox.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-message-box@3.2.2/dist/messagebox.min.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
@@ -122,6 +125,7 @@
         var list_lang = null;
         var list_app = null;
         var obj_lang=Object();
+        var obj_login=null;
         var db;
         var id_page;
 
@@ -139,6 +143,11 @@
                 is_localhost = false;
             else
                 is_localhost = true;
+        }
+
+        if(localStorage.getItem("obj_login")!=null){
+            obj_login=JSON.parse(localStorage.getItem("obj_login"));
+            alert(obj_login);
         }
 
         if (localStorage.getItem("mode_site") != null) mode_site = localStorage.getItem("mode_site");
@@ -354,12 +363,12 @@
             $.MessageBox({
                 message: "<b><i class='fa-solid fa-key'></i> Login</b>",
                 input: {
-                    text1: {
+                    usernames: {
                         type: "text",
                         label: "Phone:",
                         title: "Enter Your Phone"
                     },
-                    password1: {
+                    password: {
                         type: "password",
                         label: "Secret password:",
                         title: "Type password here"
@@ -370,10 +379,29 @@
                     }
                 },
                 top: "auto"
-            }).done(function (data) {
-                console.log(data);
+            }).done(function(data) {
+                var username=data.usernames;
+                var password=data.password;
+                check_user_login(username,password);
             });
         });
+
+        async function check_user_login(username,password){
+            var q = query(collection(db, "user-"+lang), where("phone", "==", username),where("password", "==", password));
+            var querySnapshot = await getDocs(q);
+            if(querySnapshot.docs.length>0){
+                querySnapshot.forEach((doc) => {
+                    obj_login=doc.data();
+                    $("#btn_acc_info").show();
+                    $("#btn_login").hide();
+                    $("#acc_info_name").html(obj_login.name);
+
+                    localStorage.setItem("obj_login",JSON.stringify(obj_login));
+                });
+            }else{
+                $.MessageBox("Đăng nhập thất bại!");
+            }
+        }
 
         $("#btn_add_app").click(function () {
             show_box_add_or_edit_app(list_lang,list_store,null,act_done_add_app);
