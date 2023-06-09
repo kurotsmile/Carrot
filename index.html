@@ -27,13 +27,13 @@
         </div>
         <div id="navbarNav" class="navcol pt-0 d-none d-lg-block">
             <ul>
-                <li id="btn_home" class="border-bottom btn-menu"><i class="fa-solid fa-home fs-6 me-2"></i> Home</li>
+                <li id="btn_home" class="border-bottom btn-menu"><i class="fa-solid fa-home fs-6 me-2"></i> <lang class="lang" key_lang="home">Home</lang></li>
                 <li id="btn_all_app" class="border-bottom btn-menu"><i class="fa-solid fa-mobile bi fs-6 me-2"></i> <i
-                        class="bi fs-6  bi-google-play"></i> Applications</li>
+                        class="bi fs-6  bi-google-play"></i> <lang class="lang" key_lang="app">Applications</lang></li>
                 <li id="btn_all_game" class="border-bottom btn-menu"><i class="fa-solid fa-gamepad bi me-2 fs-6"></i>
-                    Games</li>
+                    <lang class="lang" key_lang="game">Games</lang></li>
                 <li id="btn_address_book" class="border-bottom btn-menu"><i
-                        class="fa-solid fa-address-book fs-6 me-2"></i> Phone book</li>
+                        class="fa-solid fa-address-book fs-6 me-2"></i> <lang class="lang" key_lang="phone_book">Phone book</lang></li>
                 <li id="btn_wallpapers" class="border-bottom btn-menu"><i class="fa-solid fa-image fs-6 me-2"></i>
                     Wallpapers</li>
                 <li id="btn_all_icon" class="border-bottom btn-menu"><i class="fa-solid fa-face-smile fs-6 me-2"></i>
@@ -56,7 +56,7 @@
                 <li class="btn-group dropup border-bottom">
                     <div type="button" class="dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true"
                         aria-expanded="true">
-                        <i class="fa-solid fa-globe fs-6 me-2"></i> Select Language <span class="fs-8 text-warning"
+                        <i class="fa-solid fa-globe fs-6 me-2"></i> <lang class="lang" key_lang="select_lang">Select Language</lang> <span class="fs-8 text-warning"
                             id="key_lang">en</span>
                     </div>
                     <div class="dropdown-menu" id="list_lang"></div>
@@ -121,6 +121,7 @@
         var list_store = null;
         var list_lang = null;
         var list_app = null;
+        var obj_lang=Object();
         var db;
         var id_page;
 
@@ -210,6 +211,7 @@
                 lang = key_lang;
                 localStorage.setItem("lang", lang);
                 $("#key_lang").html(lang);
+                get_all_data_lang_web();
                 check_show_by_id_page();
             };
         });
@@ -432,13 +434,17 @@
             });
         };
 
-        async function get_all_data_lang_web() {
-            var q = query(collection(db, "lang_web"),where(""));
-            var querySnapshot_lang = await getDocs(q);
-            querySnapshot_lang.forEach((doc) => {
-                console.log(doc.data());
-            });
-        };
+        async function get_all_data_lang_web(){
+            const docRef = doc(db, "lang_web", lang);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                obj_lang=docSnap.data();
+                $(".lang").each(function(index,emp){
+                    var key_lang=$(emp).attr("key_lang");
+                    $(emp).html(obj_lang[key_lang].trim());
+                })
+            }
+        }
 
         function check_show_by_id_page() {
             if (id_page == "privacy_policy") {
@@ -455,15 +461,17 @@
         function check_btn_app_dev() {
             $(".app_icon").click(async function(){
                 var id_box_app = $(this).attr("app_id");
-                var q = query(collection(db, "app"), where("name_en", "==", id_box_app));
-                var querySnapshot_edit_app = await getDocs(q);
-                querySnapshot_edit_app.forEach((doc) => {
-                    data_edit_app = doc.data();
-                    data_edit_app["id"]=doc.id;
+                const appRef = doc(db, "app", id_box_app);
+                const appSnap = await getDoc(appRef);
+                if (appSnap.exists()) {
+                    data_edit_app = appSnap.data();
+                    data_edit_app["id"]=appSnap.id;
                     show_app_info(data_edit_app,list_store,lang,list_app);
                     check_mode_site();
                     check_btn_app_dev();
-                });
+                } else {
+                    $.MessageBox("Ứng dụng không tồn tại!");
+                }
             });
 
             $(".btn_app_edit").click(async function () {
