@@ -135,7 +135,7 @@ function show_app_info(data,list_store,lang,list_app){
 
 function box_app_item(data_app,list_store,lang,s_class){
     var key_name="name_"+lang;
-    var html_main_contain="<div class='box_app "+s_class+"' id=\""+data_app.id+"\">";
+    var html_main_contain="<div class='box_app "+s_class+"' id=\""+data_app.id+"\" key_search=\""+data_app[key_name]+"\">";
         html_main_contain+='<div class="app-cover p-2 shadow-md bg-white">';
             html_main_contain+='<div class="row">';
             if(data_app.icon!=null) html_main_contain+='<div role="button" class="img-cover pe-0 col-3 app_icon" app_id="'+data_app.id+'"><img class="rounded" src="'+data_app.icon+'" alt=""></div>';
@@ -285,7 +285,17 @@ async function show_list_app(querySnapshot,list_store,lang,list_app){
         html_main_contain+=box_app_item(data_app,list_store,lang,'col-md-4 mb-3');
     });
     html_main_contain+="</div>";
+    localStorage.setItem("list_app",JSON.stringify(list_app));
     $("#main_contain").html(html_main_contain);
+    $("#box_input_search").change(function(){
+        var inp_text=$("#box_input_search").val();
+        $(".box_app").each(function(index,emp){
+            var id_box=$(emp).attr("id");
+            var key_search=$(emp).attr("key_search");
+            if(id_box.search(inp_text)!=-1||key_search.search(inp_text)!=-1) $(emp).show();
+            else $(emp).hide();
+        });
+    });
 }
 
 function show_box_add_or_edit_app(list_lang,list_store,data_app,act_done){
@@ -358,4 +368,38 @@ function show_info_user_login_in_header(data_user){
         $("#acc_info_name").html(data_user.name);
         if(data_user.avatar!=null&&data_user.avatar!="") $("#acc_info_avatar").attr("src",data_user.avatar);
     }
+}
+
+function get_version_data_cur(){
+    var data_version=Object();
+    if(localStorage.getItem('v_app')!=null) data_version["app"]=localStorage.getItem('v_app'); else data_version["app"]="0.0";
+    if(localStorage.getItem('v_lang_web')!=null) data_version["lang_web"]=localStorage.getItem('v_lang_web'); else data_version["lang_web"]="0.0";
+    if(localStorage.getItem('v_js')!=null) data_version["js"]=localStorage.getItem('v_js'); else data_version["js"]="0.0";
+    if(localStorage.getItem('v_css')!=null) data_version["css"]=localStorage.getItem('v_css'); else data_version["css"]="0.0";
+    if(localStorage.getItem('v_link_store')!=null) data_version["link_store"]=localStorage.getItem('v_link_store'); else data_version["link_store"]="0.0";
+    return data_version;
+}
+
+function set_version_data_cur(data_version){
+    localStorage.setItem('v_app',data_version["app"]);
+    localStorage.setItem('v_lang_web',data_version["lang_web"]);
+    localStorage.setItem('v_js',data_version["js"]);
+    localStorage.setItem('v_css',data_version["css"]);
+    localStorage.setItem('v_link_store',data_version["link_store"]);
+}
+
+function show_edit_version_data_version(act_done){
+    var data_version=get_version_data_cur();
+    var obj_data_ver = Object();
+
+    $.each(data_version,function(key,value){        
+        obj_data_ver[key]={'type':'input','defaultValue':value,'label':key};
+    })
+
+    $.MessageBox({
+        message: "Edit version",
+        input: obj_data_ver,
+        top: "auto",
+        buttonFail: "Cancel"
+    }).done(act_done);
 }
