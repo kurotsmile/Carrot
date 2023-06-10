@@ -470,7 +470,9 @@
         function load_data_lang_web() {
             $(".lang").each(function(index,emp){
                     var key_lang=$(emp).attr("key_lang");
-                    $(emp).html(lang_web[key_lang].trim());
+                    if(lang_web[key_lang]!=null){
+                        $(emp).html(lang_web[key_lang].trim());
+                    }
             });
         }
 
