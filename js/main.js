@@ -1,3 +1,14 @@
+function get_param_url(sParam) {
+    var sPageURL = window.location.search.substring(1);
+    var sURLVariables = sPageURL.split('&');
+    for (var i = 0; i < sURLVariables.length; i++) {
+        var sParameterName = sURLVariables[i].split('=');
+        if (sParameterName[0] == sParam) {
+            return sParameterName[1];
+        }
+    }
+}
+
 function change_title_page(s_title,s_url){
     document.title =s_title;
     window.history.pushState(s_title, 'Title', s_url);
@@ -348,6 +359,8 @@ function show_box_add_or_edit_app(list_lang,list_store,data_app,act_done){
         obj_app[data_store.key] = obj_input_link_store;
     });
 
+    customer_field_for_db(obj_app,'app','name_en','get_all_app','Add App successfully');
+
     $.MessageBox({
         message: s_title_box,
         input: obj_app,
@@ -399,6 +412,99 @@ function show_edit_version_data_version(act_done){
     $.MessageBox({
         message: "Edit version",
         input: obj_data_ver,
+        top: "auto",
+        buttonFail: "Cancel"
+    }).done(act_done);
+}
+
+function show_box_add_or_edit_icon(data_icon,act_done){
+    var s_title_box='';
+    if(data_icon==null) s_title_box="<b>Add Icon</b>";
+    else s_title_box="<b>Update Icon</b>";
+
+    var obj_icon = Object();
+    obj_icon["tip_icon"] = { type: "caption", message: "Thông tin cơ bản" };
+    if(data_icon==null){
+        data_icon=Object();
+        data_icon["name"]='';
+        data_icon["icon"]='';
+        data_icon["color"]='';
+    }else{
+        if(data_icon["name"]=="") data_icon["name"]=data_icon["id"];
+    }
+    obj_icon["name"]={'type':'input','defaultValue':data_icon["name"], 'label':'Name'};
+    obj_icon["icon"]={'type':'input','defaultValue':data_icon["icon"], 'label':'Icon (url)'};
+    obj_icon["color"]={'type':'color','defaultValue':data_icon["color"], 'label':'Color'};
+    customer_field_for_db(obj_icon,'icon','name','show_all_icon','Add Icon successfully');
+
+    $.MessageBox({
+        message: s_title_box,
+        input: obj_icon,
+        top: "auto",
+        buttonFail: "Cancel"
+    }).done(act_done);
+}
+
+function show_box_add_or_edit_wallpaper(data_wallpaper,act_done){
+    var s_title_box='';
+    if(data_wallpaper==null) s_title_box="<b>Add Wallpaper</b>";
+    else s_title_box="<b>Update Wallpaper</b>";
+
+    var obj_wallpaper = Object();
+    obj_wallpaper["tip_wallpaper"] = { type: "caption", message: "Thông tin cơ bản" };
+
+    if(data_wallpaper==null){
+        data_wallpaper=Object();
+        data_wallpaper["name"]='';
+        data_wallpaper["icon"]='';
+    }else{
+        if(data_wallpaper["name"]=="") data_wallpaper["name"]=data_wallpaper["id"];
+    }
+    obj_wallpaper["name"]={'type':'input','defaultValue':data_wallpaper["name"], 'label':'Name'};
+    obj_wallpaper["icon"]={'type':'input','defaultValue':data_wallpaper["icon"], 'label':'Icon (url)'};
+
+    customer_field_for_db(obj_wallpaper,'background','name','show_all_wallpaper','Add wallpaper successfully');
+
+    $.MessageBox({
+        message: s_title_box,
+        input: obj_wallpaper,
+        top: "auto",
+        buttonFail: "Cancel"
+    }).done(act_done);
+}
+
+function customer_field_for_db(data,collection,key_name_doc,name_fuc_callback,smg_success){
+    data["act_msg_success"]={'defaultValue':smg_success,'customClass':'d-none'};
+    data["db_collection"]={'defaultValue':collection,'customClass':'d-none'};
+    data["db_doc"]={'defaultValue':key_name_doc,'customClass':'d-none'};
+    data["act_name_before"]={'defaultValue':name_fuc_callback,'customClass':'d-none'};
+}
+
+function show_box_add_or_edit_lang(data_lang,act_done){
+    var s_title_box='';
+    if(data_lang==null) s_title_box="<b>Add Lang</b>";
+    else s_title_box="<b>Update Lang</b>";
+
+    var obj_lang=Object();
+    obj_lang["tip_lang"] = { type: "caption", message: "Thông tin cơ bản" };
+
+    if(data_lang==null){
+        data_lang=Object();
+        data_lang["key"]=''
+        data_lang["name"]='';
+        data_lang["icon"]='';
+    }else{
+        if(data_lang["key"]=="") data_lang["key"]=data_lang["id"];
+    }
+    obj_lang["key"]={'type':'input','defaultValue':data_lang["key"], 'label':'Key'};
+    obj_lang["name"]={'type':'input','defaultValue':data_lang["name"], 'label':'Name'};
+    obj_lang["icon"]={'type':'input','defaultValue':data_lang["icon"], 'label':'Icon (url)'};
+
+    customer_field_for_db(obj_lang,'lang','key','','Add lang successfully');
+
+    $.MessageBox({
+        message: s_title_box,
+        input: obj_lang,
         top: "auto",
         buttonFail: "Cancel"
     }).done(act_done);

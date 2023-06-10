@@ -51,7 +51,8 @@
                     <div class="dropdown-menu">
                         <div class="dropdown-item btn-menu" id="btn_add_app" role="button"><i class="fa-solid fa-add fs-6 me-2"></i> Add App</div>
                         <div class="dropdown-item btn-menu" id="btn_add_icon" role="button"><i class="fa-solid fa-add fs-6 me-2"></i> Add Icon</div>
-                        <div class="dropdown-item btn-menu" id="btn_add_background" role="button"><i class="fa-solid fa-add fs-6 me-2"></i> Add Background</div>
+                        <div class="dropdown-item btn-menu" id="btn_add_wallpaper" role="button"><i class="fa-solid fa-add fs-6 me-2"></i> Add Background</div>
+                        <div class="dropdown-item btn-menu" id="btn_add_lang" role="button"><i class="fa-solid fa-add fs-6 me-2"></i> Add Lang</div>
                     </div>
                 </li>
 
@@ -59,6 +60,7 @@
                 <li id="btn_download_json" class="border-bottom btn-menu dev"><i class="fa-solid fa-download fs-6 me-2"></i> Export json</li>
                 <li id="btn_import_json" class="border-bottom btn-menu dev"><i class="fa-solid fa-file-import fs-6 me-2"></i> Import json</li>
                 <li id="btn_version_data" class="border-bottom btn-menu dev"><i class="fa-regular fa-code-compare"></i> Version</li>
+                <li id="btn_ai_lover" class="border-bottom btn-menu dev"><i class="fa-brands fa-rocketchat"></i> Chat Ai</li>
 
                 <li class="btn-group dropup border-bottom">
                     <div type="button" class="dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -90,7 +92,7 @@
                         </a>
 
                         <ul class="dropdown-menu" id="menu_account">
-                            <li><a class="dropdown-item" href="#">Dashboard</a></li>
+                            <li><a class="dropdown-item" href="#">Edit Info</a></li>
                             <li><a class="dropdown-item" href="#">My Downloads</a></li>
                             <li><a id="btn_logout" class="dropdown-item" href="#">Logout</a></li>
                         </ul>
@@ -232,27 +234,7 @@
         }
 
         $("#logo_carrot").on("contextmenu", function () { act_mode_dev(); return false; });
-        $("#btn_show_add_app").click(function () { show_box_add('add_app', link_store, list_lang) });
-        $("#btn_show_add_lang").click(function () { show_box_add('add_lang') });
-        $("#btn_show_add_link_store").click(function () { show_box_add('add_link_store') });
-        $("#btn_show_list_lang").click(function () {
-            show_list_by_collection("lang");
-        });
-
-        function get_param_url(sParam) {
-            var sPageURL = window.location.search.substring(1);
-            var sURLVariables = sPageURL.split('&');
-            for (var i = 0; i < sURLVariables.length; i++) {
-                var sParameterName = sURLVariables[i].split('=');
-                if (sParameterName[0] == sParam) {
-                    return sParameterName[1];
-                }
-            }
-        }
-
-        $("#btn_download_json").click(function () {
-            download_json();
-        });
+        $("#btn_download_json").click(function () {download_json();});
 
         $(".btn-menu").click(async function () {
             $(".btn-menu").removeClass("active");
@@ -269,21 +251,8 @@
                 id_page = "address_book";
             }
 
-            if (id_fun == "btn_all_icon") {
-                var q = query(collection(db, "icon"));
-                var querySnapshot = await getDocs(q);
-                show_list_icon(querySnapshot);
-                change_title_page("Icon", "?p=icon");
-                id_page = "icon";
-            }
-
-            if (id_fun == "btn_wallpapers") {
-                var q = query(collection(db, "background"));
-                var querySnapshot = await getDocs(q);
-                show_list_background(querySnapshot);
-                change_title_page("Wallpapers", "?p=wallpapers");
-                id_page = "wallpapers";
-            }
+            if (id_fun == "btn_all_icon") show_all_icon();
+            if (id_fun == "btn_wallpapers") show_all_wallpaper();
 
             if (id_fun == "btn_home") { 
                 get_all_app(); 
@@ -331,15 +300,50 @@
                 check_mode_site();
             }
 
-            if (id_fun == "btn_add_app") show_box_add_or_edit_app(list_lang,link_store,null,act_done_add_app);
+            if(id_fun=="btn_add_app") show_box_add_or_edit_app(list_lang,link_store,null,act_done_add_or_edit);
+            if(id_fun=='btn_add_icon') show_box_add_or_edit_icon(null,act_done_add_or_edit);
+            if(id_fun=='btn_add_wallpaper') show_box_add_or_edit_wallpaper(null,act_done_add_or_edit);
+            if(id_fun=='btn_add_lang') show_box_add_or_edit_lang(null,act_done_add_or_edit);
+
             if(id_fun=='btn_version_data') show_edit_version_data_version(act_done_edit_version_data_version);
 
             check_mode_site();
         });
 
+        function act_done_add_or_edit(data){
+            var act_msg_success=data.act_msg_success;
+            var db_collection=data.db_collection;
+            var db_doc=data.db_doc;
+            var act_name_before=data.act_name_before;
+
+            delete(data.act_msg_success);
+            delete(data.db_collection);
+            delete(data.db_doc);
+            delete(data.act_name_before);
+            setDoc(doc(collection(db,db_collection),data[db_doc]), data);
+            $.MessageBox(act_msg_success);
+            if(act_name_before!=null&&act_name_before!='') eval(act_name_before + "()");
+        }
+
         function act_done_edit_version_data_version(data){
             setDoc(doc(collection(db, "setting_web"),"version"), data);
             $.MessageBox("Change version data site success!");
+        }
+        
+        async function show_all_icon(){
+            var q = query(collection(db, "icon"));
+            var querySnapshot = await getDocs(q);
+            show_list_icon(querySnapshot);
+            change_title_page("Icon", "?p=icon");
+            id_page = "icon";
+        }
+
+        async function show_all_wallpaper(){
+            var q = query(collection(db, "background"));
+            var querySnapshot = await getDocs(q);
+            show_list_background(querySnapshot);
+            change_title_page("Wallpapers", "?p=wallpapers");
+            id_page = "wallpapers";
         }
 
         $("#btn_import_json").click(function () {
@@ -370,11 +374,14 @@
                     dummy_caption: {type: "caption",message: "Điền Đầy đủ thông tin để đăng nhập vào hệ thống!"}
                 },
                 top: "auto",
-                buttonFail:l("cancel")
-            }).done(function(data) {
+                buttonFail:l("cancel"),
+                buttonDone  : {login:{text:l('login'),keyCode: 12},register:{text:"Register",keyCode: 13}},
+            }).done(function(data,button) {
                 var username=data.usernames;
                 var password=data.password;
-                check_user_login(username,password);
+                console.log(button);
+                if(button=='login') check_user_login(username,password);
+                if(button=='register') $.MessageBox("Registration Success");
             });
         });
 
@@ -396,12 +403,6 @@
             }else{
                 $.MessageBox("Đăng nhập thất bại!");
             }
-        }
-
-        function act_done_add_app(data){
-            var s_name_app = data.name_en;
-            setDoc(doc(collection(db, "app"), data.name_en), data);
-            $.MessageBox("Add or Edit App ('" + s_name_app + "') Success!");
         }
 
         async function act_del_app(id_app){
@@ -475,15 +476,12 @@
 
         function check_show_by_id_page() {
             id_page = get_param_url("p");
-            if (id_page == "privacy_policy") {
-                $("#btn_privacy_policy").click();
-            } else if (id_page == "about_us") {
-                $("#btn_about_us").click();
-            } else if (id_page == "address_book") {
-                $("#btn_address_book").click();
-            } else {
-                get_all_app();
-            }
+            if(id_page == "privacy_policy") $("#btn_privacy_policy").click();
+            else if(id_page == "about_us") $("#btn_about_us").click();
+            else if(id_page == "address_book") $("#btn_address_book").click();
+            else if(id_page=="wallpapers") show_all_wallpaper();
+            else if(id_page=="icon") show_all_icon();
+            else get_all_app();
         }
 
         function check_btn_app_dev() {
@@ -508,7 +506,7 @@
                 var querySnapshot_edit_app = await getDocs(q);
                 querySnapshot_edit_app.forEach((doc) => {
                     data_edit_app = doc.data();
-                    if(mode_site == "dev") show_box_add_or_edit_app(list_lang,link_store,data_edit_app,act_done_add_app);
+                    if(mode_site == "dev") show_box_add_or_edit_app(list_lang,link_store,data_edit_app,act_done_add_or_edit);
                 });
             });
 
