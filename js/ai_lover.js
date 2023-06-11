@@ -6,10 +6,9 @@ class Ai_Lover{
 
     async show_all_chat(querySnapshot) {
         var html = '';
-        html += '<table class="table">';
+        html += '<table class="table table-striped" id="table_all_chat">';
         html += '<thead class="thead-light">';
         html += '<tr>';
-        html += '<th scope="col">ID</th>';
         html += '<th scope="col">Key</th>';
         html += '<th scope="col">Msg</th>';
         html += '<th scope="col">Icon</th>';
@@ -22,15 +21,39 @@ class Ai_Lover{
             var data_chat=doc.data();
             data_chat["id"]=doc.id;
             html += '<tr>';
-            html += '<th scope="row">'+data_chat['id']+'</th>';
             html += '<td>'+data_chat['key']+'</td>';
             html += '<td>'+data_chat['msg']+'</td>';
             html += '<td>'+data_chat['icon']+'</td>';
-            html += '<td><button type="button" class="btn btn-dark ai_lover_del_chat" id_doc="'+data_chat['id']+'"><i class="fa-solid fa-trash"></i> Delete</button></td>';
+            html += '<td>';
+            html += '<span type="button"  role="button" class="btn  .text-warning ai_lover_edit_chat btn-sm mr-1" id_doc="'+data_chat['id']+'"><i class="fa-solid fa-edit"></i> Edit</span> ';
+            html += '<span type="button"  role="button" class="btn text-danger ai_lover_del_chat btn-sm" id_doc="'+data_chat['id']+'"><i class="fa-solid fa-trash"></i> Delete</span>';
+            html += '</td>';
             html += '</tr>';
         });
         html += '</tbody>';
         html += '</table>';
         $("#main_contain").html(html);
+    }
+
+    show_edit_object(data_obj,act_done){
+        var obj_input=new Object();
+        $.each(data_obj,function(key,val){
+            var obj_emp=data_obj[key];
+            if(key=="act_msg_success") val=obj_emp.defaultValue;
+            else if(key=="db_collection") val=obj_emp["defaultValue"];
+            else if(key=="db_doc") val=obj_emp["defaultValue"];
+            else if(key=="act_name_before") val=obj_emp["defaultValue"];
+
+            if(key=='color')
+                obj_input[key]={'label':key,'defaultValue':val,'type':'color'};
+            else
+                obj_input[key]={'label':key,'defaultValue':val,'type':'input'};
+        });
+        $.MessageBox({
+            input:obj_input,
+            buttonDone  : "Yes",
+            buttonFail  : "No",
+            message     : "Cập nhật đối tượng"
+        }).done(act_done);
     }
 }

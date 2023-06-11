@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Carrot Store</title>
     <link rel="shortcut icon" href="images/favicon.ico" / type="images/x-icon">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&amp;display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
     <link rel="shortcut icon" href="assets/images/fav.jpg">
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="assets/css/style.css" />
@@ -69,10 +68,10 @@
                     </div>
                 </li>
 
+                <li id="btn_ai_lover_all_chat" class="border-bottom btn-menu dev"><i class="fa-brands fa-rocketchat"></i> Chat Ai</li>
                 <li id="btn_mode_host" class="border-bottom btn-menu dev"><i class="fa-solid fa-dev fs-6 me-2"></i> Localhost</li>
                 <li id="btn_version_data" class="border-bottom btn-menu dev"><i class="fa-regular fa-code-compare"></i> Version</li>
-                <li id="btn_ai_lover_all_chat" class="border-bottom btn-menu dev"><i class="fa-brands fa-rocketchat"></i> Chat Ai</li>
-
+                
                 <li class="btn-group dropup border-bottom">
                     <div type="button" class="dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                         <i class="fa-solid fa-globe fs-6 me-2"></i> <lang class="lang" key_lang="select_lang">Select Language</lang> <span class="fs-8 text-warning" id="key_lang">en</span>
@@ -125,6 +124,8 @@
     <script src="assets/js/script.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-message-box@3.2.2/dist/messagebox.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-message-box@3.2.2/dist/messagebox.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css" />
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
         import { getFirestore, collection, addDoc, setDoc, doc, getDoc, query, where, getDocs, deleteDoc, connectFirestoreEmulator } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
@@ -337,40 +338,74 @@
             if(id_fun=='btn_add_lang') show_box_add_or_edit_lang(null,act_done_add_or_edit);
 
             if(id_fun=='btn_version_data') show_edit_version_data_version(act_done_edit_version_data_version);
-            if(id_fun=='btn_ai_lover_all_chat'){
-                var querySnapshot = await getDocs(query(collection(db, "chat-vi"),where("status","==","pending")));
+            if(id_fun=='btn_ai_lover_all_chat') show_all_chat_ai_lover();
+            if(id_fun=='btn_download_json_doc') download_json_doc();
+            if(id_fun=='btn_import_json_doc') act_show_import_json_box(null);
+            check_mode_site();
+        });
+
+        async function show_all_chat_ai_lover(){
+            var querySnapshot = await getDocs(query(collection(db, "chat-vi"),where("status","==","pending")));
                 ai_lover.show_all_chat(querySnapshot);
                 $(".ai_lover_del_chat").each(function(index,emp){
                     $(emp).click(function(){
                         var id_doc=$(emp).attr("id_doc");
-                        act_del_obj("chat-"+lang,id_doc);
-                        $(emp).parent().parent().remove();
+                        $.MessageBox({
+                            buttonDone  : "Yes",
+                            buttonFail  : "No",
+                            message     : "Bạn có chắc chắng là xóa Trò chuyện "+id_doc+" này không?"
+                        }).done(function(){
+                            if(mode_site == "dev"){
+                                act_del_obj("chat-"+lang,id_doc);
+                            $(emp).parent().parent().remove();
+                            }
+                        });
                     });
                 });
-            }
 
-            if(id_fun=='btn_download_json_doc') download_json_doc();
-            if(id_fun=='btn_import_json_doc'){
-                $.MessageBox({
-                    input    : {db_collection:{'label': "Collection"},db_document:{'label': "Document ID"},data:{'type': 'textarea','label': "Nhập kiểu dữ liệu văn bảng dạng json:"}},
-                    message  : "Import JSON document text"
-                }).done(function(data, button){
-                    var s_collection=data.db_collection;
-                    var s_document=data.db_document;
-                    var data_import=JSON.parse(data.data);
-                    delete(data.db_collection);
-                    delete(data.db_document);
-                    delete(data.data);
-                    setDoc(doc(collection(db,s_collection),s_document),data_import);
-                    $.MessageBox("Import Data Json Success!!!");
-                    console.log(data);
-                    console.log(button);
+                $(".ai_lover_edit_chat").each(function(index,emp){
+                    $(emp).click(async function(){
+                        var id_doc=$(emp).attr("id_doc");
+                        const chatRef = doc(db, "chat-"+lang, id_doc);
+                        const chatSnap = await getDoc(chatRef);
+                        if (chatSnap.exists()) {
+                            var data_obj = chatSnap.data();
+                            data_obj["id"]=chatSnap.id;
+                            customer_field_for_db(data_obj,"chat-"+lang,'id','show_all_chat_ai_lover','Edit Obj Success');
+                            ai_lover.show_edit_object(data_obj,act_done_add_or_edit);
+                        } else {
+                            $.MessageBox("Câu trò chuyện không còn tồn tại!");
+                        }
+                    });
                 });
+
+                let table = new DataTable('#table_all_chat', {responsive: true});
+        }
+
+
+        function act_show_import_json_box(data_show){
+            if(data_show==null){
+                data_show=new Object();
+                data_show["collection"]="";
+                data_show["document"]="";
             }
-            check_mode_site();
-        });
+            $.MessageBox({
+                input    : {db_collection:{'label': "Collection","defaultValue":data_show["collection"]},db_document:{'label': "Document ID","defaultValue":data_show["document"]},data:{'type': 'textarea','label': "Nhập kiểu dữ liệu văn bảng dạng json:"}},
+                message  : "Import JSON document text"
+            }).done(function(data, button){
+                var s_collection=data.db_collection;
+                var s_document=data.db_document;
+                var data_import=JSON.parse(data.data);
+                delete(data.db_collection);
+                delete(data.db_document);
+                delete(data.data);
+                setDoc(doc(collection(db,s_collection),s_document),data_import);
+                $.MessageBox("Import Data Json Success!!!");
+            });
+        }
 
         function act_done_add_or_edit(data){
+            console.log(data);
             var act_msg_success=data.act_msg_success;
             var db_collection=data.db_collection;
             var db_doc=data.db_doc;
@@ -498,13 +533,8 @@
             pp.click();
         }
 
-        async function download_json_doc() {
-            var name_collection = prompt("Enter collection", "Enter name collection");
-            if(name_collection=="") return;
-            var name_document = prompt("Enter document", "Enter document in collection");
-            if (name_document== "") return;
+        async function act_download_json_by_collection_and_doc(name_collection, name_document) {
             var data_json = Object();
-
             const verRef = doc(db, name_collection,name_document);
             const verSnap = await getDoc(verRef);
             if (verSnap.exists()) {
@@ -518,6 +548,14 @@
                 pp.setAttribute('download', fileName);
                 pp.click();
             }
+        }
+
+        function download_json_doc() {
+            var name_collection = prompt("Enter collection", "Enter name collection");
+            if(name_collection=="") return;
+            var name_document = prompt("Enter document", "Enter document in collection");
+            if (name_document== "") return;
+            act_download_json_by_collection_and_doc(name_collection,name_document);
         }
 
         async function get_all_data_app() {
@@ -623,14 +661,24 @@
                     if(mode_site == "dev") act_del_app(id_box_app);
                 });
             });
+
+            $(".btn_app_export").click(function(){
+                var app_id=$(this).attr("app_id");
+                var data_collection=$(this).attr("data-collection");
+                act_download_json_by_collection_and_doc(data_collection,app_id);
+            });
+
+            $(".btn_app_import").click(function(){
+                var app_id=$(this).attr("app_id");
+                var data_collection=$(this).attr("data-collection");
+                var obj_data=new Object();
+                obj_data["collection"]=data_collection;
+                obj_data["document"]=app_id;
+                act_show_import_json_box(obj_data);
+            });
         }
 
-            function l(key) {
-                if (lang_web[key] != null)
-                    return lang_web[key].trim();
-                else
-                    return key;
-            }
+        function l(key){if (lang_web[key] != null) return lang_web[key].trim();else return key;}
             
         async function check_version_data(){
             var obj_version_cur =get_version_data_cur();
@@ -641,8 +689,6 @@
                 if(ver_data_new.link_store!=obj_version_cur["link_store"]) get_all_data_link_store();
                 if(ver_data_new.lang_web!=obj_version_cur["lang_web"]) get_all_data_lang_web();
                 if(ver_data_new.app!=obj_version_cur["app"]) get_all_data_app();
-                console.log(ver_data_new);
-                console.log(obj_version_cur);
                 set_version_data_cur(ver_data_new);
                 check_show_by_id_page();
             }

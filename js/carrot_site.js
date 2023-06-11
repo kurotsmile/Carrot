@@ -84,6 +84,8 @@ class Carrot_Site{
                         html+='<button class="btn border ps-3 w-45 fw-semi fs-8 py-2 btn-outlie-primary"> Add to Wish List </button>';
                         html+="<button class='btn dev btn_app_edit btn-warning w-45 fw-semi fs-8 py-2 me-3' app_id='"+data.id+"'><i class=\"fa-solid fa-pen-to-square\"></i> Edit</button>";
                         html+="<button class='btn dev btn_app_del btn-danger border ps-3 w-45 fw-semi fs-8 py-2' app_id='"+data.id+"'><i class=\"fa-solid fa-trash\"></i> Delete</button>";
+                        html+="<button class='btn dev btn_app_export btn-dark w-45 fw-semi fs-8 py-2 me-3' app_id='"+data.id+"' data-collection='app'><i class=\"fa-solid fa-download\"></i> Export Json</button>";
+                        html+="<button class='btn dev btn_app_import btn-dark border ps-3 w-45 fw-semi fs-8 py-2' app_id='"+data.id+"'  data-collection='app'><i class=\"fa-solid fa-upload\"></i> Import</button>";
     
                         html+='<div class="row pt-4">';
                             html+='<div class="col-md-4 col-6 text-center">';
