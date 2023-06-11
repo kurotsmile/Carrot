@@ -137,7 +137,6 @@
 
         var querySnapshot_link_store;
         var querySnapshot_lang;
-        var data_edit_app;
         var link_store = null;
         var list_lang = null;
         var list_app = null;
@@ -163,7 +162,9 @@
         }
 
         var ai_lover=new Ai_Lover(db);
+        var carrot=new Carrot_Site();
 
+        if(localStorage.getItem("list_app")!=null) list_app=JSON.parse(localStorage.getItem("list_app"));
         if(localStorage.getItem("link_store")!=null) link_store=JSON.parse(localStorage.getItem("link_store"));
         if(localStorage.getItem("lang_web")!=null) lang_web=JSON.parse(localStorage.getItem("lang_web"));
 
@@ -189,15 +190,31 @@
             connectFirestoreEmulator(db, 'localhost', 8082);
         }
 
-        async function get_all_app(type = "") {
-            list_app=Array();
-            var q;
-            if (type == "") q = query(collection(db, "app"));
-            else if (type == "app") q = query(collection(db, "app"), where("type", "==", "app"));
-            else if (type == "game") q = query(collection(db, "app"), where("type", "==", "game"));
+        function show_home(){
+            console.log('show_home');
+            carrot.show_list_app(list_app, link_store, lang);
+            check_btn_app_dev();
+            check_mode_site();
+        }
 
-            var querySnapshot = await getDocs(q);
-            show_list_app(querySnapshot, link_store, lang,list_app);
+        function show_all_app(){
+            console.log('show_all_app');
+            var list_app_mobile=Array();
+            $(list_app).each(function(index,emp){
+                if(emp.type == "app") list_app_mobile.push(emp);
+            });
+            carrot.show_list_app(list_app_mobile, link_store, lang);
+            check_btn_app_dev();
+            check_mode_site();
+        }
+
+        function show_all_game(){
+            console.log('show_all_game');
+            var list_game=Array();
+            $(list_app).each(function(index,emp){
+                if(emp.type == "game") list_game.push(emp);
+            });
+            carrot.show_list_app(list_game, link_store, lang);
             check_btn_app_dev();
             check_mode_site();
         }
@@ -269,19 +286,19 @@
             if (id_fun == "btn_wallpapers") show_all_wallpaper();
 
             if (id_fun == "btn_home") { 
-                get_all_app(); 
+                show_home();
                 change_title_page("Carrot store", "?p=home");
                 id_page = "home";
             };
 
             if (id_fun == "btn_all_app") { 
-                get_all_app("app"); 
+                show_all_app();
                 change_title_page("Apps", "?p=all_app");
                 id_page = "app";
             };
 
             if (id_fun == "btn_all_game") { 
-                get_all_app("game"); 
+                show_all_game();
                 change_title_page("Games", "?p=game");
                 id_page = "game";
             };
@@ -503,6 +520,20 @@
             }
         }
 
+        async function get_all_data_app() {
+            console.log("get_all_data_app");
+            list_app = Array();
+            var q = query(collection(db, "app"));
+            var querySnapshot_app = await getDocs(q);
+            querySnapshot_app.forEach((doc) => {
+                var data_app=doc.data();
+                data_app["id"]=doc.id;
+                list_app.push(data_app);
+            });
+            localStorage.setItem("list_app", JSON.stringify(list_app));
+            show_home();
+        };
+
         async function get_all_data_link_store() {
             console.log("get_all_data_link_store");
             link_store = Array();
@@ -553,7 +584,7 @@
             else if(id_page == "address_book") $("#btn_address_book").click();
             else if(id_page=="wallpapers") show_all_wallpaper();
             else if(id_page=="icon") show_all_icon();
-            else get_all_app();
+            else show_home();
         }
 
         function check_btn_app_dev() {
@@ -562,9 +593,9 @@
                 const appRef = doc(db, "app", id_box_app);
                 const appSnap = await getDoc(appRef);
                 if (appSnap.exists()) {
-                    data_edit_app = appSnap.data();
-                    data_edit_app["id"]=appSnap.id;
-                    show_app_info(data_edit_app,link_store,lang,list_app);
+                    var data_app = appSnap.data();
+                    data_app["id"]=appSnap.id;
+                    carrot.show_app_info(data_app,link_store,lang,list_app);
                     check_mode_site();
                     check_btn_app_dev();
                 } else {
@@ -577,8 +608,8 @@
                 var q = query(collection(db, "app"), where("name_en", "==", id_box_app));
                 var querySnapshot_edit_app = await getDocs(q);
                 querySnapshot_edit_app.forEach((doc) => {
-                    data_edit_app = doc.data();
-                    if(mode_site == "dev") show_box_add_or_edit_app(list_lang,link_store,data_edit_app,act_done_add_or_edit);
+                    var data_app=doc.data();
+                    if(mode_site == "dev") show_box_add_or_edit_app(list_lang,link_store,data_app,act_done_add_or_edit);
                 });
             });
 
@@ -609,6 +640,7 @@
                 var ver_data_new=verSnap.data();
                 if(ver_data_new.link_store!=obj_version_cur["link_store"]) get_all_data_link_store();
                 if(ver_data_new.lang_web!=obj_version_cur["lang_web"]) get_all_data_lang_web();
+                if(ver_data_new.app!=obj_version_cur["app"]) get_all_data_app();
                 console.log(ver_data_new);
                 console.log(obj_version_cur);
                 set_version_data_cur(ver_data_new);
@@ -638,5 +670,6 @@
     </script>
     <script src="js/main.js?ver=1.4" type="text/javascript"></script>
     <script src="js/ai_lover.js?ver=1.5" type="text/javascript"></script>
+    <script src="js/carrot_site.js?ver=1.5" type="text/javascript"></script>
 </body>
 </html>
