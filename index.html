@@ -56,11 +56,22 @@
                     </div>
                 </li>
 
+                <li class="btn-group dropup border-bottom dev btn-menu">
+                    <div type="button" class="dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        <i class="fa-solid fa-rotate fs-6 me-2"></i> Backup and Sync
+                    </div>
+
+                    <div class="dropdown-menu">
+                        <div class="dropdown-item btn-menu" id="btn_download_json" role="button"><i class="fa-solid fa-download fs-6 me-2"></i> Export Collection json</div>
+                        <div class="dropdown-item btn-menu" id="btn_import_json" role="button"><i class="fa-solid fa-file-import fs-6 me-2"></i> Import Collection json</div>
+                        <div class="dropdown-item btn-menu" id="btn_download_json_doc" role="button"><i class="fa-solid fa-file-lines fs-6 me-2"></i> Export Doc json</div>
+                        <div class="dropdown-item btn-menu" id="btn_import_json_doc" role="button"><i class="fa-solid fa-file-lines fs-6 me-2"></i> Import Doc json</div>
+                    </div>
+                </li>
+
                 <li id="btn_mode_host" class="border-bottom btn-menu dev"><i class="fa-solid fa-dev fs-6 me-2"></i> Localhost</li>
-                <li id="btn_download_json" class="border-bottom btn-menu dev"><i class="fa-solid fa-download fs-6 me-2"></i> Export json</li>
-                <li id="btn_import_json" class="border-bottom btn-menu dev"><i class="fa-solid fa-file-import fs-6 me-2"></i> Import json</li>
                 <li id="btn_version_data" class="border-bottom btn-menu dev"><i class="fa-regular fa-code-compare"></i> Version</li>
-                <li id="btn_ai_lover" class="border-bottom btn-menu dev"><i class="fa-brands fa-rocketchat"></i> Chat Ai</li>
+                <li id="btn_ai_lover_all_chat" class="border-bottom btn-menu dev"><i class="fa-brands fa-rocketchat"></i> Chat Ai</li>
 
                 <li class="btn-group dropup border-bottom">
                     <div type="button" class="dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -117,6 +128,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
         import { getFirestore, collection, addDoc, setDoc, doc, getDoc, query, where, getDocs, deleteDoc, connectFirestoreEmulator } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+        
         var lang = "";
         var mode_site = "nomal";
         var is_dev = false;
@@ -149,6 +161,8 @@
             else
                 is_localhost = true;
         }
+
+        var ai_lover=new Ai_Lover(db);
 
         if(localStorage.getItem("link_store")!=null) link_store=JSON.parse(localStorage.getItem("link_store"));
         if(localStorage.getItem("lang_web")!=null) lang_web=JSON.parse(localStorage.getItem("lang_web"));
@@ -306,7 +320,36 @@
             if(id_fun=='btn_add_lang') show_box_add_or_edit_lang(null,act_done_add_or_edit);
 
             if(id_fun=='btn_version_data') show_edit_version_data_version(act_done_edit_version_data_version);
+            if(id_fun=='btn_ai_lover_all_chat'){
+                var querySnapshot = await getDocs(query(collection(db, "chat-vi"),where("status","==","pending")));
+                ai_lover.show_all_chat(querySnapshot);
+                $(".ai_lover_del_chat").each(function(index,emp){
+                    $(emp).click(function(){
+                        var id_doc=$(emp).attr("id_doc");
+                        act_del_obj("chat-"+lang,id_doc);
+                        $(emp).parent().parent().remove();
+                    });
+                });
+            }
 
+            if(id_fun=='btn_download_json_doc') download_json_doc();
+            if(id_fun=='btn_import_json_doc'){
+                $.MessageBox({
+                    input    : {db_collection:{'label': "Collection"},db_document:{'label': "Document ID"},data:{'type': 'textarea','label': "Nhập kiểu dữ liệu văn bảng dạng json:"}},
+                    message  : "Import JSON document text"
+                }).done(function(data, button){
+                    var s_collection=data.db_collection;
+                    var s_document=data.db_document;
+                    var data_import=JSON.parse(data.data);
+                    delete(data.db_collection);
+                    delete(data.db_document);
+                    delete(data.data);
+                    setDoc(doc(collection(db,s_collection),s_document),data_import);
+                    $.MessageBox("Import Data Json Success!!!");
+                    console.log(data);
+                    console.log(button);
+                });
+            }
             check_mode_site();
         });
 
@@ -410,6 +453,11 @@
             $.MessageBox("Delete App ('" + id_app + "') Success!");
         }
 
+        async function act_del_obj(db_collection,db_doc_id){
+            await deleteDoc(doc(db, db_collection, db_doc_id));
+            $.MessageBox("Delete object ('" + db_doc_id + "') Success!");
+        }
+
         async function download_json() {
             var name_collection = prompt("Enter collection json", "Enter name collection");
             if (name_collection == "") return;
@@ -431,6 +479,28 @@
             pp.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(fileContents));
             pp.setAttribute('download', fileName);
             pp.click();
+        }
+
+        async function download_json_doc() {
+            var name_collection = prompt("Enter collection", "Enter name collection");
+            if(name_collection=="") return;
+            var name_document = prompt("Enter document", "Enter document in collection");
+            if (name_document== "") return;
+            var data_json = Object();
+
+            const verRef = doc(db, name_collection,name_document);
+            const verSnap = await getDoc(verRef);
+            if (verSnap.exists()) {
+                data_json=verSnap.data();
+
+                var fileContents = JSON.stringify(data_json, null, 2);
+                var fileName = name_collection+"-"+name_document + ".json";
+
+                var pp = document.createElement('a');
+                pp.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(fileContents));
+                pp.setAttribute('download', fileName);
+                pp.click();
+            }
         }
 
         async function get_all_data_link_store() {
@@ -567,5 +637,6 @@
         });
     </script>
     <script src="js/main.js?ver=1.4" type="text/javascript"></script>
+    <script src="js/ai_lover.js?ver=1.5" type="text/javascript"></script>
 </body>
 </html>
