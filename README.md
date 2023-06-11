@@ -2,6 +2,7 @@
 Carrot Store ứng dụng web giới thiệu các sản phẩm của Trần Thiện Thanh sử dụng cơ sở dữ liệu mới tích hợp nền tảng Firebase
 
 `URL:`https://carrotstore.web.app
+`URL:`https://kurotsmile.github.io/Carrot
 
 ## Các tính năng nỗi bậc
 - Các ứng dụng và trò chơi
