@@ -19,10 +19,19 @@ class Ai_Lover{
         html += '<tbody>';
         querySnapshot.forEach((doc) => {
             var data_chat=doc.data();
+            var s_icon_sex_character;
+            var s_icon_sex_user;
+
+            if(data_chat.sex_character=="0") s_icon_sex_character='<i class="fa-solid fa-venus"></i>';
+            else  s_icon_sex_character='<i class="fa-solid fa-mars"></i>';
+
+            if(data_chat.sex_user=="0") s_icon_sex_user='<i class="fa-solid fa-venus"></i>';
+            else  s_icon_sex_user='<i class="fa-solid fa-mars"></i>';
+
             data_chat["id"]=doc.id;
             html += '<tr>';
-            html += '<td>'+data_chat['key']+'</td>';
-            html += '<td>'+data_chat['msg']+'</td>';
+            html += '<td>'+s_icon_sex_user+' '+data_chat['key']+'</td>';
+            html += '<td>'+s_icon_sex_character+' '+data_chat['msg']+'</td>';
             html += '<td>'+data_chat['icon']+'</td>';
             html += '<td>';
             html += '<span type="button"  role="button" class="btn  .text-warning ai_lover_edit_chat btn-sm mr-1" id_doc="'+data_chat['id']+'"><i class="fa-solid fa-edit"></i> Edit</span> ';
@@ -39,15 +48,34 @@ class Ai_Lover{
         var obj_input=new Object();
         $.each(data_obj,function(key,val){
             var obj_emp=data_obj[key];
-            if(key=="act_msg_success") val=obj_emp.defaultValue;
-            else if(key=="db_collection") val=obj_emp["defaultValue"];
-            else if(key=="db_doc") val=obj_emp["defaultValue"];
-            else if(key=="act_name_before") val=obj_emp["defaultValue"];
-
-            if(key=='color')
+            if(key=="act_msg_success"){
+                val=obj_emp.defaultValue;
+                obj_input[key]={'defaultValue':val,'customClass':'d-none'};
+            }
+            else if(key=="db_collection"){
+                val=obj_emp["defaultValue"];
+                obj_input[key]={'defaultValue':val,'customClass':'d-none'};
+            }
+            else if(key=="db_doc"){
+                val=obj_emp["defaultValue"];
+                obj_input[key]={'defaultValue':val,'customClass':'d-none'};
+            }
+            else if(key=="act_name_before"){
+                val=obj_emp["defaultValue"];
+                obj_input[key]={'defaultValue':val,'customClass':'d-none'};
+            }
+            else{
+                if(key=='color')
                 obj_input[key]={'label':key,'defaultValue':val,'type':'color'};
-            else
-                obj_input[key]={'label':key,'defaultValue':val,'type':'input'};
+                else if(key=='msg')
+                    obj_input[key]={'label':key,'defaultValue':val,'type':'textarea'};
+                else if(key=='status')
+                    obj_input[key]={'label':key,'defaultValue':val,'type':'select', 'options':{'pending':'pending','passed':'passed','reserve':'reserve'}};
+                else
+                    obj_input[key]={'label':key,'defaultValue':val,'type':'input'};
+            }
+
+
         });
         $.MessageBox({
             input:obj_input,
