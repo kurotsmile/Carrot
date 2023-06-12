@@ -103,7 +103,7 @@ class Ai_Lover{
                 html+='<button type="button" class="btn btn-secondary btn-sm mr-1 mt-1 btn-setting-lang-change" key_change="'+lang.key+'"><img src="'+lang.icon+'" style="width:20px"/>'+lang.name+'</button> ';
         });
 
-        html += '<table class="table table-striped" id="table_setting_lang">';
+        html += '<table class="table table-striped table-hover" id="table_setting_lang">';
         html += '<thead class="thead-light">';
         html += '<tr>';
         html += '<th scope="col" class="w-10">Key</th>';
