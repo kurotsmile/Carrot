@@ -117,66 +117,6 @@ async function show_list_background(querySnapshot){
     $("#main_contain").html(html_main_contain);
 }
 
-function show_box_add_or_edit_app(list_lang,list_store,data_app,act_done){
-    var s_title_box='';
-    if(data_app==null) s_title_box="<b>Add Application</b>";
-    else s_title_box="<b>Update Application</b>";
-    var obj_app = Object();
-    obj_app["tip_app"] = { type: "caption", message: "Thông tin cơ bản" };
-
-    var obj_input_icon = Object();
-    obj_input_icon["type"] = "input";
-    obj_input_icon["label"] = "Icon App";
-    if(data_app!=null&&data_app["icon"]!="") obj_input_icon["defaultValue"]=data_app["icon"];
-    obj_app["icon"] = obj_input_icon;
-
-    var obj_input_type = Object();
-    obj_input_type["type"] = "select";
-    obj_input_type["label"] = "Type App";
-    obj_input_type["options"] = { "app": "app", "game": "game" };
-    if(data_app!=null&&data_app["icon"]!="") 
-        obj_input_type["defaultValue"]=data_app["type"];
-    else
-        obj_input_type["defaultValue"] = "app";
-    obj_app["type"] = obj_input_type;
-
-    obj_app["tip_name"] = { type: "caption", message: "Tên và mô tả" };
-
-    $.each(list_lang, function (index, data_lang) {
-        var obj_input_name = Object();
-        obj_input_name["type"] = "input";
-        obj_input_name["label"] = "Name - " + data_lang.name;
-        if(data_app!=null&&data_app["name_" + data_lang.key]!="") obj_input_name["defaultValue"]=data_app["name_" + data_lang.key];
-        obj_app["name_" + data_lang.key] = obj_input_name;
-
-        var obj_input_describe = Object();
-        obj_input_describe["type"] = "textarea";
-        obj_input_describe["label"] = "Describe - " + data_lang.name;
-        if(data_app!=null&&data_app["describe_" + data_lang.key]!="") obj_input_describe["defaultValue"]=data_app["describe_" + data_lang.key];
-        obj_app["describe_" + data_lang.key] = obj_input_describe;
-
-    });
-
-    obj_app["tip_link"] = { type: "caption", message: "Các Liên kết tới các store khác" };
-
-    $.each(list_store, function (index, data_store) {
-        var obj_input_link_store = Object();
-        obj_input_link_store["type"] = "input";
-        obj_input_link_store["label"] = "Link Store - (" + data_store.name + ") - " + data_store.key;
-        if(data_app!=null&&data_app[data_store.key]!="") obj_input_link_store["defaultValue"]=data_app[data_store.key];
-        obj_app[data_store.key] = obj_input_link_store;
-    });
-
-    customer_field_for_db(obj_app,'app','name_en','get_all_app','Add App successfully');
-
-    $.MessageBox({
-        message: s_title_box,
-        input: obj_app,
-        top: "auto",
-        buttonFail: "Cancel"
-    }).done(act_done);
-}
-
 function show_info_user_login_in_header(data_user){
     if(data_user==null){
         $("#btn_acc_info").hide();
@@ -194,6 +134,7 @@ function show_info_user_login_in_header(data_user){
 function get_version_data_cur(){
     var data_version=Object();
     if(localStorage.getItem('v_app')!=null) data_version["app"]=localStorage.getItem('v_app'); else data_version["app"]="0.0";
+    if(localStorage.getItem('v_lang')!=null) data_version["lang"]=localStorage.getItem('v_lang'); else data_version["lang"]="0.0";
     if(localStorage.getItem('v_lang_web')!=null) data_version["lang_web"]=localStorage.getItem('v_lang_web'); else data_version["lang_web"]="0.0";
     if(localStorage.getItem('v_js')!=null) data_version["js"]=localStorage.getItem('v_js'); else data_version["js"]="0.0";
     if(localStorage.getItem('v_css')!=null) data_version["css"]=localStorage.getItem('v_css'); else data_version["css"]="0.0";
@@ -203,6 +144,7 @@ function get_version_data_cur(){
 
 function set_version_data_cur(data_version){
     localStorage.setItem('v_app',data_version["app"]);
+    localStorage.setItem('v_lang',data_version["lang"]);
     localStorage.setItem('v_lang_web',data_version["lang_web"]);
     localStorage.setItem('v_js',data_version["js"]);
     localStorage.setItem('v_css',data_version["css"]);

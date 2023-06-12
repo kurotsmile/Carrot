@@ -2,11 +2,13 @@ class Carrot_Site{
     
     lang;
     lang_url="";
+    list_lang;
     obj_app;
 
     constructor(){
-        this.obj_app=new Object();
+        this.list_lang=Array();
         this.load_obj_app();
+        this.load_list_lang();
     };
 
     load_obj_app(){
@@ -17,8 +19,22 @@ class Carrot_Site{
         }
     }
 
+    load_list_lang(){
+        if (localStorage.getItem("list_lang") == null) {
+            this.list_lang=new Array();
+        } else {
+            this.list_lang=JSON.parse(localStorage.getItem("list_lang"));
+            this.show_list_lang_in_menu();
+        }
+    }
+
     save_obj_app(){
         localStorage.setItem("obj_app", JSON.stringify(this.obj_app));
+    }
+    
+    save_list_lang(){
+        localStorage.setItem("list_lang", JSON.stringify(this.list_lang));
+        this.show_list_lang_in_menu();
     }
 
     load_lang(){
@@ -26,6 +42,17 @@ class Carrot_Site{
             carrot.change_lang("en");
         } else {
             this.lang = localStorage.getItem("lang");
+        }
+    }
+
+    show_list_lang_in_menu(){
+        $("#list_lang").html("");
+        console.log('show_list_lang_in_menu');
+        for (let i = 0; i < this.list_lang.length; i++) {
+            var lang_data=this.list_lang[i];
+            var s_active='';
+            if(lang_data.key==this.lang) s_active='active';
+            $("#list_lang").append('<div class="dropdown-item item_lang '+s_active+'" role="button" key="' + lang_data.key + '"><img style="width:20px" src="' + lang_data.icon + '"/> ' + lang_data.name + '</div>');
         }
     }
 
@@ -133,11 +160,11 @@ class Carrot_Site{
                         html+='<div class="row pt-4">';
                             html+='<div class="col-md-4 col-6 text-center">';
                                 html+='<b>3.9 <i class="fa-sharp fa-solid fa-eye"></i></b>';
-                                html+='<p>11.6k Reviews</p>';
+                                html+='<p>11.6k <l class="lang"  key_lang="count_view">Reviews</l></p>';
                             html+='</div>';
                             html+='<div class="col-md-4 col-6 text-center">';
                                 html+='<b>5M+ <i class="fa-solid fa-download"></i></b>';
-                                html+='<p>Downloads</p>';
+                                html+='<p class="lang" key_lang="count_download">Downloads</p>';
                             html+='</div>';
                         html+='</div>';
     
@@ -150,12 +177,12 @@ class Carrot_Site{
                 html+="</div>";
     
                 html+='<div class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
-                    html+='<h4 class="fw-semi fs-5">About this Game</h4>';
+                    html+='<h4 class="fw-semi fs-5 lang" key_lang="describe">About this Game</h4>';
                     html+='<p class="fs-8 text-justify">'+data["describe_"+this.lang]+'</p>';
                 html+='</div>';
     
                 html+='<div class="about row p-2 py-3  bg-white mt-4 shadow-sm">';
-                    html+='<h4 class="fw-semi fs-5">Review</h4>';
+                    html+='<h4 class="fw-semi fs-5 lang" key_lang="review">Review</h4>';
     
                     html+='<div class="row m-0 reviewrow p-3 px-0 border-bottom">';
                         html+='<div class="col-md-12 align-items-center col-9 rcolm">';
@@ -231,5 +258,69 @@ class Carrot_Site{
         html+="</div>";
         $("#main_contain").html(html);
         window.scrollTo(0, 0);
-    }    
+    }
+
+    show_box_add_or_edit_app(list_store,data_app,act_done){
+        var s_title_box='';
+        if(data_app==null) s_title_box="<b>Add Application</b>";
+        else s_title_box="<b>Update Application</b>";
+        var obj_app = Object();
+        obj_app["tip_app"] = { type: "caption", message: "Thông tin cơ bản" };
+    
+        var obj_input_icon = Object();
+        obj_input_icon["type"] = "input";
+        obj_input_icon["label"] = "Icon App";
+        if(data_app!=null&&data_app["icon"]!="") obj_input_icon["defaultValue"]=data_app["icon"];
+        obj_app["icon"] = obj_input_icon;
+    
+        var obj_input_type = Object();
+        obj_input_type["type"] = "select";
+        obj_input_type["label"] = "Type App";
+        obj_input_type["options"] = { "app": "app", "game": "game" };
+        if(data_app!=null&&data_app["icon"]!="") 
+            obj_input_type["defaultValue"]=data_app["type"];
+        else
+            obj_input_type["defaultValue"] = "app";
+        obj_app["type"] = obj_input_type;
+    
+        obj_app["tip_name"] = { type: "caption", message: "Tên và mô tả" };
+    
+        $.each(this.list_lang, function (index, data_lang) {
+            obj_app["tip_lang_"+data_lang.key] = { type: "caption", message: "<img style='width:20px;' src='"+data_lang.icon+"'/> <b>"+data_lang.name+"</b> Thiết lập giao diện ngôn ngữ ("+data_lang.key+")" };
+
+            var obj_input_name = Object();
+            obj_input_name["type"] = "input";
+            obj_input_name["label"] = "Name - " + data_lang.name;
+            if(data_app!=null&&data_app["name_" + data_lang.key]!="") obj_input_name["defaultValue"]=data_app["name_" + data_lang.key];
+            obj_app["name_" + data_lang.key] = obj_input_name;
+    
+            var obj_input_describe = Object();
+            obj_input_describe["type"] = "textarea";
+            obj_input_describe["label"] = "Describe - " + data_lang.name;
+            if(data_app!=null&&data_app["describe_" + data_lang.key]!="") obj_input_describe["defaultValue"]=data_app["describe_" + data_lang.key];
+            obj_app["describe_" + data_lang.key] = obj_input_describe;
+    
+        });
+    
+        obj_app["tip_link"] = { type: "caption", message: "Các Liên kết tới các store khác" };
+    
+        $.each(list_store, function (index, data_store) {
+            obj_app["tip_lang_"+data_store.key] = { type: "caption", message: "<i class='fa-solid "+data_store.icon+"'></i> <b>"+data_store.name+"</b> Thiết lập liên kết ("+data_store.key+")" };
+
+            var obj_input_link_store = Object();
+            obj_input_link_store["type"] = "input";
+            obj_input_link_store["label"] = "Link Store - (" + data_store.name + ") - " + data_store.key;
+            if(data_app!=null&&data_app[data_store.key]!="") obj_input_link_store["defaultValue"]=data_app[data_store.key];
+            obj_app[data_store.key] = obj_input_link_store;
+        });
+    
+        customer_field_for_db(obj_app,'app','name_en','get_all_app','Add App successfully');
+    
+        $.MessageBox({
+            message: s_title_box,
+            input: obj_app,
+            top: "auto",
+            buttonFail: "Cancel"
+        }).done(act_done);
+    }
 }
