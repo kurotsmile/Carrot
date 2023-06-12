@@ -184,7 +184,7 @@
             connectFirestoreEmulator(db, '192.168.1.59', 8080);
         }
 
-        var ai_lover=new Ai_Lover(db);
+        var ai_lover=new Ai_Lover(carrot);
 
         function show_home(){
             console.log('show_home');
@@ -336,7 +336,17 @@
             if(id_fun=='btn_ai_lover_all_chat') show_all_chat_ai_lover();
             if(id_fun=='btn_download_json_doc') download_json_doc();
             if(id_fun=='btn_import_json_doc') act_show_import_json_box(null);
-            if(id_fun=='btn_setting_lang') ai_lover.show_setting_lang();
+            if(id_fun=='btn_setting_lang'){
+                const langRef = doc(db, "lang_app", "en");
+                const langSnap = await getDoc(langRef);
+                if (langSnap.exists()) {
+                    var data_obj = langSnap.data();
+                    data_obj["id"]=langSnap.id;
+                    ai_lover.show_setting_lang(data_obj);
+                } else {
+                    $.MessageBox("Không tìm thấy ngôn ngữ");
+                }
+            }
             check_mode_site();
         });
 

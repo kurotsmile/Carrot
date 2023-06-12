@@ -1,7 +1,7 @@
 class Ai_Lover{
-    db;
-    constructor(db_set) {
-        this.db=db_set;
+    carrot;
+    constructor(cr) {
+        this.carrot=cr;
     }
 
     async show_all_chat(querySnapshot) {
@@ -85,15 +85,33 @@ class Ai_Lover{
         }).done(act_done);
     }
 
-    show_setting_lang(){
+    show_setting_lang(data_lang){
         var html = '';
+        console.log(this.carrot);
+        var list_lang=this.carrot.list_lang;
+        $.each(list_lang,function(i,lang){
+            html+='<button type="button" class="btn btn-primary btn-sm mr-1"><img src="'+lang.icon+'" style="width:20px"/>'+lang.name+'</button> ';
+        });
+
         html += '<table class="table table-striped" id="table_setting_lang">';
         html += '<thead class="thead-light">';
         html += '<tr>';
         html += '<th scope="col">Key</th>';
         html += '<th scope="col">Value</th>';
+        html += '<th scope="col">New Lang</th>';
         html += '</tr>';
         html += '</thead>';
+
+        html += '<tbody>';
+        $.each(data_lang, function(key, value){
+            html += '<tr>';
+            html += '<td scope="col"><b>'+key+'</b></td>';
+            html += '<td scope="col">'+value+'</td>';
+            html += '<td scope="col"><input type="text" class="form-control inp-lang input-sm" data-key="'+key+'"></td>';
+            html += '</tr>';
+        });
+        html += '</tbody>';
+        html += '</table>';
         $("#main_contain").html(html);
     }
 }
