@@ -378,3 +378,31 @@ figure:hover img:hover {
     height: 64px;
     width: 64px;
 }
+
+/* rows */
+div.dropdown-multicol{
+    width: 30em;
+  }
+  div.dropdown-row>div.dropdown-item{
+    display:inline-block;
+    width: 32%;
+  }
+  
+  /* Columns */
+  div.dropdown-multicol2{
+    width: 30em;
+  }
+  div.dropdown-multicol2>div.dropdown-col{
+    display:inline-block;
+    width: 32%;
+  }
+  
+  /*
+  Or just:
+  div.dropdown-row>a.dropdown-item{
+    display:inline-block;
+    width: 10em;
+  }
+  
+  (Former may be more convenient for responsive)
+  */

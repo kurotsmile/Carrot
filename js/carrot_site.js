@@ -4,12 +4,53 @@ class Carrot_Site{
     lang_url="";
     list_lang;
     obj_app;
+    version=null;
 
     constructor(){
         this.list_lang=Array();
         this.load_obj_app();
         this.load_list_lang();
+        this.version=this.get_version_data_cur();
     };
+
+    get_version_data_cur(){
+        var data_version=Object();
+        if(localStorage.getItem('v_app')!=null) data_version["app"]=localStorage.getItem('v_app'); else data_version["app"]="0.0";
+        if(localStorage.getItem('v_lang')!=null) data_version["lang"]=localStorage.getItem('v_lang'); else data_version["lang"]="0.0";
+        if(localStorage.getItem('v_lang_web')!=null) data_version["lang_web"]=localStorage.getItem('v_lang_web'); else data_version["lang_web"]="0.0";
+        if(localStorage.getItem('v_js')!=null) data_version["js"]=localStorage.getItem('v_js'); else data_version["js"]="0.0";
+        if(localStorage.getItem('v_css')!=null) data_version["css"]=localStorage.getItem('v_css'); else data_version["css"]="0.0";
+        if(localStorage.getItem('v_link_store')!=null) data_version["link_store"]=localStorage.getItem('v_link_store'); else data_version["link_store"]="0.0";
+        if(localStorage.getItem('v_page')!=null) data_version["page"]=localStorage.getItem('v_page'); else data_version["page"]="0.0";
+        return data_version;
+    }
+
+    set_version_data_cur(data_version){
+        localStorage.setItem('v_app',data_version["app"]);
+        localStorage.setItem('v_lang',data_version["lang"]);
+        localStorage.setItem('v_lang_web',data_version["lang_web"]);
+        localStorage.setItem('v_js',data_version["js"]);
+        localStorage.setItem('v_css',data_version["css"]);
+        localStorage.setItem('v_link_store',data_version["link_store"]);
+        localStorage.setItem('v_page',data_version["page"]);
+        this.version=data_version;
+    }
+
+    show_edit_version_data_version(act_done){
+        var data_version=this.get_version_data_cur();
+        var obj_data_ver = Object();
+    
+        $.each(data_version,function(key,value){        
+            obj_data_ver[key]={'type':'input','defaultValue':value,'label':key};
+        })
+    
+        $.MessageBox({
+            message: "Edit version",
+            input: obj_data_ver,
+            top: "auto",
+            buttonFail: "Cancel"
+        }).done(act_done);
+    }
 
     load_obj_app(){
         if (localStorage.getItem("obj_app") == null) {
@@ -46,13 +87,17 @@ class Carrot_Site{
     }
 
     show_list_lang_in_menu(){
-        $("#list_lang").html("");
+        $("#list_lang_1").html("");
+        $("#list_lang_2").html("");
         console.log('show_list_lang_in_menu');
         for (let i = 0; i < this.list_lang.length; i++) {
             var lang_data=this.list_lang[i];
             var s_active='';
             if(lang_data.key==this.lang) s_active='active';
-            $("#list_lang").append('<div class="dropdown-item item_lang '+s_active+'" role="button" key="' + lang_data.key + '"><img style="width:20px" src="' + lang_data.icon + '"/> ' + lang_data.name + '</div>');
+            if(i%2==0)
+            $("#list_lang_1").append('<div class="dropdown-item item_lang '+s_active+'" role="button" key="' + lang_data.key + '"><img style="width:20px" src="' + lang_data.icon + '"/> ' + lang_data.name + '</div>');
+            else
+            $("#list_lang_2").append('<div class="dropdown-item item_lang '+s_active+'" role="button" key="' + lang_data.key + '"><img style="width:20px" src="' + lang_data.icon + '"/> ' + lang_data.name + '</div>');
         }
     }
 
