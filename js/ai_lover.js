@@ -84,4 +84,16 @@ class Ai_Lover{
             message     : "Cập nhật đối tượng"
         }).done(act_done);
     }
+
+    show_setting_lang(){
+        var html = '';
+        html += '<table class="table table-striped" id="table_setting_lang">';
+        html += '<thead class="thead-light">';
+        html += '<tr>';
+        html += '<th scope="col">Key</th>';
+        html += '<th scope="col">Value</th>';
+        html += '</tr>';
+        html += '</thead>';
+        $("#main_contain").html(html);
+    }
 }
