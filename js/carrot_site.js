@@ -7,6 +7,7 @@ class Carrot_Site{
     version=null;
 
     constructor(){
+        this.load_lang();
         this.list_lang=Array();
         this.load_obj_app();
         this.load_list_lang();
