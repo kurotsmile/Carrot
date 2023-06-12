@@ -12,15 +12,30 @@ function get_param_url(sParam) {
 function copy_tag(name_tag) {
     var $temp = $("<input>");$("body").append($temp);
     var s_copy=$("#" + name_tag).val();
-    s_copy=s_copy.replace("{ten_user}", "");
     $temp.val(s_copy).select();
     document.execCommand("copy");$temp.remove();
+}
+
+function copy_txt_tag(name_tag) {
+    var $temp = $("<input>");$("body").append($temp);
+    var s_copy=$("#" + name_tag).html();
+    $("#"+name_tag).addClass("text-primary");
+    $temp.val(s_copy).select();
+    document.execCommand("copy");$temp.remove();
+}
+
+function tr(name_tag,lang_change) {
+    var s_txt=$("#" + name_tag).html();
+    $("#"+name_tag).addClass("text-primary");
+    if(lang_change=='zh') lang_change='zh-CN';
+    var left  = ($(window).width()/2)-(900/2);
+    top   = ($(window).height()/2)-(600/2);
+    window.open("https://translate.google.com/?sl=en&tl="+lang_change+"&text="+s_txt,"Carrot_Translate","width=900, height=600, top="+top+", left="+left);
 }
 
 function paste_tag(name_tag) {
     navigator.clipboard.readText().then(text => {$("#"+name_tag).val(text.trim());});
 }
-
 
 async function show_list_contact(querySnapshot){
     $("#main_contain").html("");

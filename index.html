@@ -67,7 +67,18 @@
                     </div>
                 </li>
 
-                <li id="btn_setting_lang" class="border-bottom btn-menu dev"><i class="fa-solid fa-language fs-6 me-2"></i> Language Data</li>
+                <li class="btn-group dropup border-bottom dev btn-menu">
+                    <div type="button" class="dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        <i class="fa-solid fa-language fs-6 me-2"></i> Language Data
+                    </div>
+
+                    <div class="dropdown-menu">
+                        <div class="dropdown-item btn-menu" id="btn_setting_lang_app" role="button"><i class="fa-solid fa-language fs-6 me-2"></i> Lang all app</div>
+                        <div class="dropdown-item btn-menu" id="btn_setting_lang_ailover" role="button"><i class="fa-solid fa-language fs-6 me-2"></i> Ai Lover</div>
+                        <div class="dropdown-item btn-menu" id="btn_setting_lang_web" role="button"><i class="fa-solid fa-language fs-6 me-2"></i> Lang web</div>
+                    </div>
+                </li>
+
                 <li id="btn_ai_lover_all_chat" class="border-bottom btn-menu dev"><i class="fa-brands fa-rocketchat fs-6 me-2"></i> Chat Ai</li>
                 <li id="btn_mode_host" class="border-bottom btn-menu dev"><i class="fa-solid fa-dev fs-6 me-2"></i> Localhost</li>
                 <li id="btn_version_data" class="border-bottom btn-menu dev"><i class="fa-regular fa-code-compare fs-6 me-2"></i> Version</li>
@@ -336,12 +347,14 @@
             if(id_fun=='btn_ai_lover_all_chat') show_all_chat_ai_lover();
             if(id_fun=='btn_download_json_doc') download_json_doc();
             if(id_fun=='btn_import_json_doc') act_show_import_json_box(null);
-            if(id_fun=='btn_setting_lang') show_setting_lang_by_key('es');
+            if(id_fun=='btn_setting_lang_app') show_setting_lang_by_key('vi','lang_app');
+            if(id_fun=='btn_setting_lang_ailover') show_setting_lang_by_key('vi','lang_app_ai_lover');
+            if(id_fun=='btn_setting_lang_web') show_setting_lang_by_key('vi','lang_web');
             check_mode_site();
         });
 
-        async function show_setting_lang_by_key(s_key_lang_change){
-            const langRef_tag = doc(db, "lang_app", "en");
+        async function show_setting_lang_by_key(s_key_lang_change,s_collection){
+            const langRef_tag = doc(db, s_collection, "en");
                 const langSnap_tag = await getDoc(langRef_tag);
                 var data_obj_lang_tag=new Object();
                 if (langSnap_tag.exists()) {
@@ -349,7 +362,7 @@
                     data_obj_lang_tag["id"]=langSnap_tag.id;
                 }
 
-                const langRef_change = doc(db, "lang_app", s_key_lang_change);
+                const langRef_change = doc(db, s_collection, s_key_lang_change);
                 const langSnap_change = await getDoc(langRef_change);
                 var data_obj_lang_change=new Object();
                 if (langSnap_change.exists()) {
@@ -357,7 +370,8 @@
                     data_obj_lang_change["id"]=langSnap_change.id;
                 }
 
-                ai_lover.setting_lang_collection="lang_app";
+                ai_lover.setting_lang_collection=s_collection;
+                ai_lover.setting_lang_change=s_key_lang_change;
                 ai_lover.show_setting_lang(data_obj_lang_tag,data_obj_lang_change);
                 reload_btn_setting_lang();
         }
@@ -372,6 +386,11 @@
                 });
                 setDoc(doc(collection(db,ai_lover.setting_lang_collection),ai_lover.setting_lang_change),data_inp_lang);
                 $.MessageBox("Cập nhật "+ai_lover.setting_lang_collection+" - "+ai_lover.setting_lang_change+" thành công!")
+            });
+
+            $(".btn-setting-lang-change").click(function(){
+                var key_change=$(this).attr("key_change");
+                show_setting_lang_by_key(key_change,ai_lover.setting_lang_collection);
             });
         }
 

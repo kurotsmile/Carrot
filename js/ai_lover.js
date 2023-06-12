@@ -92,28 +92,28 @@ class Ai_Lover{
 
     show_setting_lang(data_lang_tag,data_lang_change){
         var html = '';
-        console.log(this.carrot);
         var list_lang=this.carrot.list_lang;
 
-        this.setting_lang_change=data_lang_change['id'];
+        html+='<h3>Dịch thuật đa ngôn ngữ <small class="text-muted">'+this.setting_lang_collection+'</small></h3>';
 
         $.each(list_lang,function(i,lang){
             if(lang.key==data_lang_change.id)
-                html+='<button type="button" class="btn btn-light btn-sm mr-1 mt-1"><img src="'+lang.icon+'" style="width:20px"/>'+lang.name+'</button> ';
+                html+='<button type="button" class="btn btn-light btn-sm mr-1 mt-1 btn-setting-lang-change" key_change="'+lang.key+'"><img src="'+lang.icon+'" style="width:20px"/>'+lang.name+'</button> ';
             else
-                html+='<button type="button" class="btn btn-secondary btn-sm mr-1 mt-1"><img src="'+lang.icon+'" style="width:20px"/>'+lang.name+'</button> ';
+                html+='<button type="button" class="btn btn-secondary btn-sm mr-1 mt-1 btn-setting-lang-change" key_change="'+lang.key+'"><img src="'+lang.icon+'" style="width:20px"/>'+lang.name+'</button> ';
         });
 
         html += '<table class="table table-striped" id="table_setting_lang">';
         html += '<thead class="thead-light">';
         html += '<tr>';
-        html += '<th scope="col">Key</th>';
-        html += '<th scope="col">Value</th>';
+        html += '<th scope="col" class="w-10">Key</th>';
+        html += '<th scope="col" class="w-25">Value</th>';
         html += '<th scope="col">New Lang</th>';
         html += '</tr>';
         html += '</thead>';
 
         html += '<tbody>';
+        var ai_lover=this;
         $.each(data_lang_tag, function(key, value){
             var s_val_change='';
             if(data_lang_change!=null){
@@ -122,15 +122,22 @@ class Ai_Lover{
                 }
             }
             html += '<tr>';
-            html += '<td scope="col"><b>'+key+'</b></td>';
-            html += '<td scope="col">'+value+'</td>';
-            html += '<td scope="col"><input type="text" value="'+s_val_change+'" class="form-control inp-lang input-sm" data-key="'+key+'"></td>';
+            html += '<td scope="col" class="w-10"><b>'+key+'</b></td>';
+            html += '<td scope="col" class="w-25"><span id="txt_'+key+'">'+value+'</span> <button class="btn btn-outline-secondary btn-sm" type="button" onclick="copy_txt_tag(\'txt_'+key+'\')"><i class="fa-solid fa-copy"></i></button> <button class="btn btn-outline-secondary btn-sm" type="button" onclick="tr(\'txt_'+key+'\',\''+ai_lover.setting_lang_change+'\')"><i class="fa-solid fa-language"></i></button></td>';
+            html += '<td scope="col">';
+                html += '<div class="input-group">';
+                    html += '<input id="inp_'+key+'" type="text" value="'+s_val_change+'" class="form-control inp-lang input-sm" data-key="'+key+'"/>';
+                    html += '<div class="input-group-append">';
+                    html += '<button class="btn btn-outline-secondary" type="button" onclick="paste_tag(\'inp_'+key+'\')"><i class="fa-solid fa-paste"></i> Paste</button>';
+                    html += '</div>';
+                html += '</div>';
+            html += '</td>';
             html += '</tr>';
         });
         html += '</tbody>';
         html += '</table>';
 
-        html+='<button id="btn_done_setting_lang" type="button" class="btn btn-primary mr-1 mt-1">Done</button> ';
+        html+='<button id="btn_done_setting_lang" type="button" class="btn btn-primary mr-1 mt-1"><i class="fa-solid fa-square-check"></i> Done</button> ';
         $("#main_contain").html(html);
     }
 }
