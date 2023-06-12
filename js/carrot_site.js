@@ -1,7 +1,25 @@
 class Carrot_Site{
-    constructor(){};
+    
     lang;
     lang_url="";
+    obj_app;
+
+    constructor(){
+        this.obj_app=new Object();
+        this.load_obj_app();
+    };
+
+    load_obj_app(){
+        if (localStorage.getItem("obj_app") == null) {
+            this.obj_app=new Object();
+        } else {
+            this.obj_app=JSON.parse(localStorage.getItem("obj_app"));
+        }
+    }
+
+    save_obj_app(){
+        localStorage.setItem("obj_app", JSON.stringify(this.obj_app));
+    }
 
     load_lang(){
         if (localStorage.getItem("lang") == null) {
@@ -26,8 +44,8 @@ class Carrot_Site{
             window.history.pushState(s_title,"",null);
     }
 
-    box_app_item(data_app,list_store,lang,s_class){
-        var key_name="name_"+lang;
+    box_app_item(data_app,list_store,s_class){
+        var key_name="name_"+this.lang;
         var html_main_contain="<div class='box_app "+s_class+"' id=\""+data_app.id+"\" key_search=\""+data_app[key_name]+"\">";
             html_main_contain+='<div class="app-cover p-2 shadow-md bg-white">';
                 html_main_contain+='<div class="row">';
@@ -73,12 +91,12 @@ class Carrot_Site{
         return html_main_contain;
     }
 
-    show_list_app(list_app,list_store,lang){
+    show_list_app(list_app,list_store){
         var html_main_contain="";
         var carrot=this;
         html_main_contain+='<div id="all_app" class="row m-0">';
         $(list_app).each(function(intdex,data_app) {
-            html_main_contain+=carrot.box_app_item(data_app,list_store,lang,'col-md-4 mb-3');
+            html_main_contain+=carrot.box_app_item(data_app,list_store,'col-md-4 mb-3');
         });
         html_main_contain+="</div>";
 
@@ -94,7 +112,7 @@ class Carrot_Site{
         });
     }
 
-    show_app_info(data,list_store,lang,list_app){
+    show_app_info(data,list_store,list_app){
         document.title = data.name_en;
         var html='<div class="section-container p-2 p-xl-4">';
         html+='<div class="row">';
@@ -104,7 +122,7 @@ class Carrot_Site{
                         html+='<img class="w-100" src="'+data.icon+'" alt="">';
                     html+='</div>';
                     html+='<div class="col-md-8 p-2">';
-                        html+='<h4 class="fw-semi fs-4 mb-3">'+data["name_"+lang]+'</h4>';
+                        html+='<h4 class="fw-semi fs-4 mb-3">'+data["name_"+this.lang]+'</h4>';
                         html+='<button class="btn btn-primary w-45 fw-semi fs-8 py-2 me-3"> Download </button>';
                         html+='<button class="btn border ps-3 w-45 fw-semi fs-8 py-2 btn-outlie-primary"> Add to Wish List </button>';
                         html+="<button class='btn dev btn_app_edit btn-warning w-45 fw-semi fs-8 py-2 me-3' app_id='"+data.id+"'><i class=\"fa-solid fa-pen-to-square\"></i> Edit</button>";
@@ -133,7 +151,7 @@ class Carrot_Site{
     
                 html+='<div class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
                     html+='<h4 class="fw-semi fs-5">About this Game</h4>';
-                    html+='<p class="fs-8 text-justify">'+data["describe_"+lang]+'</p>';
+                    html+='<p class="fs-8 text-justify">'+data["describe_"+this.lang]+'</p>';
                 html+='</div>';
     
                 html+='<div class="about row p-2 py-3  bg-white mt-4 shadow-sm">';
@@ -205,7 +223,7 @@ class Carrot_Site{
             var carrot=this;
             list_app = list_app.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
                 $(list_app).each(function(intdex,app_item){
-                    if(data.type==app_item.type&&data.id!=app_item.id) html+=carrot.box_app_item(app_item,list_store,lang,'col-md-12 mb-3');
+                    if(data.type==app_item.type&&data.id!=app_item.id) html+=carrot.box_app_item(app_item,list_store,'col-md-12 mb-3');
                 })
             html+='</div>';
     

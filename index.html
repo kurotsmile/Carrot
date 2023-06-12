@@ -135,8 +135,6 @@
         var count_dev = 0;
         var is_localhost = false;
 
-        var querySnapshot_link_store;
-        var querySnapshot_lang;
         var link_store = null;
         var list_lang = null;
         var list_app = null;
@@ -188,7 +186,7 @@
 
         function show_home(){
             console.log('show_home');
-            carrot.show_list_app(list_app, link_store, carrot.lang);
+            carrot.show_list_app(list_app, link_store);
             check_btn_app_dev();
             check_mode_site();
         }
@@ -199,7 +197,7 @@
             $(list_app).each(function(index,emp){
                 if(emp.type == "app") list_app_mobile.push(emp);
             });
-            carrot.show_list_app(list_app_mobile, link_store, carrot.lang);
+            carrot.show_list_app(list_app_mobile, link_store);
             check_btn_app_dev();
             check_mode_site();
         }
@@ -210,7 +208,7 @@
             $(list_app).each(function(index,emp){
                 if(emp.type == "game") list_game.push(emp);
             });
-            carrot.show_list_app(list_game, link_store, carrot.lang);
+            carrot.show_list_app(list_game, link_store);
             check_btn_app_dev();
             check_mode_site();
         }
@@ -561,8 +559,10 @@
             querySnapshot_app.forEach((doc) => {
                 var data_app=doc.data();
                 data_app["id"]=doc.id;
+                carrot.obj_app[doc.id]=JSON.stringify(data_app);
                 list_app.push(data_app);
             });
+            carrot.save_obj_app();
             localStorage.setItem("list_app", JSON.stringify(list_app));
             show_home();
         };
@@ -571,7 +571,7 @@
             console.log("get_all_data_link_store");
             link_store = Array();
             var q = query(collection(db, "link_store"));
-            querySnapshot_link_store = await getDocs(q);
+            var querySnapshot_link_store = await getDocs(q);
             querySnapshot_link_store.forEach((doc) => {
                 link_store.push(doc.data());
             });
@@ -627,16 +627,23 @@
         function check_btn_app_dev() {
             $(".app_icon").click(async function(){
                 var id_box_app = $(this).attr("app_id");
-                const appRef = doc(db, "app", id_box_app);
-                const appSnap = await getDoc(appRef);
-                if (appSnap.exists()) {
-                    var data_app = appSnap.data();
-                    data_app["id"]=appSnap.id;
-                    carrot.show_app_info(data_app,link_store,carrot.lang,list_app);
+                if(carrot.obj_app[id_box_app]!=null&&carrot.obj_app[id_box_app]!=""){
+                    const appRef = doc(db, "app", id_box_app);
+                    const appSnap = await getDoc(appRef);
+                    if (appSnap.exists()) {
+                        var data_app = appSnap.data();
+                        data_app["id"]=appSnap.id;
+                        carrot.show_app_info(data_app,link_store,list_app);
+                        check_mode_site();
+                        check_btn_app_dev();
+                    } else {
+                        $.MessageBox("Ứng dụng không tồn tại!");
+                    }
+                }else{
+                    var data_app=JSON.parse(carrot.obj_app[id_box_app]);
+                    carrot.show_app_info(data_app,link_store,list_app);
                     check_mode_site();
                     check_btn_app_dev();
-                } else {
-                    $.MessageBox("Ứng dụng không tồn tại!");
                 }
             });
 
