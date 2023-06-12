@@ -9,11 +9,6 @@ function get_param_url(sParam) {
     }
 }
 
-function change_title_page(s_title,s_url){
-    document.title =s_title;
-    window.history.pushState(s_title, 'Title', s_url);
-}
-
 function copy_tag(name_tag) {
     var $temp = $("<input>");$("body").append($temp);
     var s_copy=$("#" + name_tag).val();

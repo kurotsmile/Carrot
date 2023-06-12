@@ -1,5 +1,30 @@
 class Carrot_Site{
     constructor(){};
+    lang;
+    lang_url="";
+
+    load_lang(){
+        if (localStorage.getItem("lang") == null) {
+            carrot.change_lang("en");
+        } else {
+            this.lang = localStorage.getItem("lang");
+        }
+    }
+
+    change_lang(s_key){
+        this.lang=s_key;
+        localStorage.setItem("lang", s_key);
+        $("#key_lang").html(s_key);
+    }
+
+    change_title_page(s_title,s_url){
+        document.title =s_title;
+        if(this.lang_url!=""&&s_url!="") s_url=s_url+"&lang="+this.lang;
+        if(s_url!="")
+            window.history.pushState(s_title, 'Title', s_url);
+        else
+            window.history.pushState(s_title,"",null);
+    }
 
     box_app_item(data_app,list_store,lang,s_class){
         var key_name="name_"+lang;
