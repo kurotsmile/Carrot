@@ -1,7 +1,12 @@
 class Ai_Lover{
     carrot;
+    setting_lang_change;
+    setting_lang_collection;
+
     constructor(cr) {
         this.carrot=cr;
+        this.setting_lang_change='';
+        this.setting_lang_collection='';
     }
 
     async show_all_chat(querySnapshot) {
@@ -85,12 +90,18 @@ class Ai_Lover{
         }).done(act_done);
     }
 
-    show_setting_lang(data_lang){
+    show_setting_lang(data_lang_tag,data_lang_change){
         var html = '';
         console.log(this.carrot);
         var list_lang=this.carrot.list_lang;
+
+        this.setting_lang_change=data_lang_change['id'];
+
         $.each(list_lang,function(i,lang){
-            html+='<button type="button" class="btn btn-primary btn-sm mr-1"><img src="'+lang.icon+'" style="width:20px"/>'+lang.name+'</button> ';
+            if(lang.key==data_lang_change.id)
+                html+='<button type="button" class="btn btn-light btn-sm mr-1 mt-1"><img src="'+lang.icon+'" style="width:20px"/>'+lang.name+'</button> ';
+            else
+                html+='<button type="button" class="btn btn-secondary btn-sm mr-1 mt-1"><img src="'+lang.icon+'" style="width:20px"/>'+lang.name+'</button> ';
         });
 
         html += '<table class="table table-striped" id="table_setting_lang">';
@@ -103,15 +114,23 @@ class Ai_Lover{
         html += '</thead>';
 
         html += '<tbody>';
-        $.each(data_lang, function(key, value){
+        $.each(data_lang_tag, function(key, value){
+            var s_val_change='';
+            if(data_lang_change!=null){
+                if(data_lang_change[key]!=null){
+                    s_val_change=data_lang_change[key];
+                }
+            }
             html += '<tr>';
             html += '<td scope="col"><b>'+key+'</b></td>';
             html += '<td scope="col">'+value+'</td>';
-            html += '<td scope="col"><input type="text" class="form-control inp-lang input-sm" data-key="'+key+'"></td>';
+            html += '<td scope="col"><input type="text" value="'+s_val_change+'" class="form-control inp-lang input-sm" data-key="'+key+'"></td>';
             html += '</tr>';
         });
         html += '</tbody>';
         html += '</table>';
+
+        html+='<button id="btn_done_setting_lang" type="button" class="btn btn-primary mr-1 mt-1">Done</button> ';
         $("#main_contain").html(html);
     }
 }
