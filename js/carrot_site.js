@@ -39,7 +39,7 @@ class Carrot_Site{
 
     load_lang(){
         if (localStorage.getItem("lang") == null) {
-            carrot.change_lang("en");
+            this.change_lang("en");
         } else {
             this.lang = localStorage.getItem("lang");
         }
