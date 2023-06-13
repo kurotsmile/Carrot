@@ -152,7 +152,6 @@
         var is_localhost = false;
 
         var link_store = null;
-        var list_lang = null;
         var lang_web=Object();
         var obj_login=null;
         var db;
@@ -405,8 +404,6 @@
                         }
                     });
                 });
-
-                let table = new DataTable('#table_all_chat', {responsive: true});
         }
 
         carrot.show_all_block_chat_by_lang=async (s_key_lang='')=>{

@@ -14,16 +14,17 @@ class Ai_Lover{
         var ai_lover=this;
         $.each(this.carrot.list_lang,function(i,lang){
             if(lang.key==ai_lover.setting_lang_change)
-                html+='<button type="button" class="btn btn-light btn-sm mr-1 mt-1 btn-setting-lang-change" key_change="'+lang.key+'"><img src="'+lang.icon+'" style="width:20px"/>'+lang.name+'</button> ';
+                html+='<button type="button" class="btn btn-light btn-sm mr-1 mt-1 mb-1 btn-setting-lang-change" key_change="'+lang.key+'"><img src="'+lang.icon+'" style="width:20px"/>'+lang.name+'</button> ';
             else
-                html+='<button type="button" class="btn btn-secondary btn-sm mr-1 mt-1 btn-setting-lang-change" key_change="'+lang.key+'"><img src="'+lang.icon+'" style="width:20px"/>'+lang.name+'</button> ';
+                html+='<button type="button" class="btn btn-secondary btn-sm mr-1 mt-1 mb-1 btn-setting-lang-change" key_change="'+lang.key+'"><img src="'+lang.icon+'" style="width:20px"/>'+lang.name+'</button> ';
         });
         return html;
     }
 
     async show_all_chat(querySnapshot) {
         var html = '';
-        html += '<table class="table table-striped" id="table_all_chat">';
+        html +=this.list_btn_lang_select();
+        html += '<table class="table table-striped mt-6" id="table_all_chat">';
         html += '<thead class="thead-light">';
         html += '<tr>';
         html += '<th scope="col">Key</th>';
@@ -59,6 +60,7 @@ class Ai_Lover{
         html += '</tbody>';
         html += '</table>';
         $("#main_contain").html(html);
+        new DataTable('#table_all_chat', {responsive: true,pageLength:100});
     }
 
     show_edit_object(data_obj,act_done){

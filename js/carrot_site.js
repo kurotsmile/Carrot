@@ -17,7 +17,7 @@ class Carrot_Site{
             appId: "1:745653792874:web:55d78113cd3dea7c28da13",
             measurementId: "G-KXDDJ42JFN"
         }
-        this.load_lang();
+        if (localStorage.getItem("lang") == null) this.change_lang("en"); else this.lang = localStorage.getItem("lang");
         this.list_lang=Array();
         this.load_obj_app();
         this.load_list_lang();
@@ -89,14 +89,6 @@ class Carrot_Site{
     save_list_lang(){
         localStorage.setItem("list_lang", JSON.stringify(this.list_lang));
         this.show_list_lang_in_menu();
-    }
-
-    load_lang(){
-        if (localStorage.getItem("lang") == null) {
-            this.change_lang("en");
-        } else {
-            this.lang = localStorage.getItem("lang");
-        }
     }
 
     show_list_lang_in_menu(){
