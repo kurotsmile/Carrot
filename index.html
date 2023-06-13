@@ -193,6 +193,11 @@
             check_mode_site();
         }
 
+        carrot.set_doc=(s_collection,s_document,data)=>{
+            console.log("Set doc: collection:" + s_collection+" document:"+s_document);
+            setDoc(doc(collection(db,s_collection),s_document),data);
+        }
+
         function show_all_app(){
             console.log('show_all_app');
             var list_app_mobile=Array();
@@ -337,13 +342,13 @@
             if(id_fun=='btn_block_chat') carrot.show_all_block_chat_by_lang();
             if(id_fun=='btn_download_json_doc') download_json_doc();
             if(id_fun=='btn_import_json_doc') act_show_import_json_box(null);
-            if(id_fun=='btn_setting_lang_app') show_setting_lang_by_key(carrot.lang,'lang_app');
-            if(id_fun=='btn_setting_lang_ailover') show_setting_lang_by_key(carrot.lang,'lang_app_ai_lover');
-            if(id_fun=='btn_setting_lang_web') show_setting_lang_by_key(carrot.lang,'lang_web');
+            if(id_fun=='btn_setting_lang_app') carrot.show_setting_lang_by_key(carrot.lang,'lang_app');
+            if(id_fun=='btn_setting_lang_ailover') carrot.show_setting_lang_by_key(carrot.lang,'lang_app_ai_lover');
+            if(id_fun=='btn_setting_lang_web') carrot.show_setting_lang_by_key(carrot.lang,'lang_web');
             check_mode_site();
         });
 
-        async function show_setting_lang_by_key(s_key_lang_change,s_collection){
+        carrot.show_setting_lang_by_key=async(s_key_lang_change,s_collection)=>{
                 ai_lover.setting_lang_change=s_key_lang_change;
                 const langRef_tag = doc(db, s_collection, "en");
                 const langSnap_tag = await getDoc(langRef_tag);
@@ -363,26 +368,8 @@
 
                 ai_lover.setting_lang_collection=s_collection;
                 ai_lover.show_setting_lang(data_obj_lang_tag,data_obj_lang_change);
-                reload_btn_setting_lang();
         }
         
-        function reload_btn_setting_lang(){
-            $("#btn_done_setting_lang").click(function(){
-                var data_inp_lang=new Object();
-                $(".inp-lang").each(function(index,emp){
-                    var key_lang=$(this).attr("data-key");
-                    var val_lang=$(this).val();
-                    data_inp_lang[key_lang]=val_lang;
-                });
-                setDoc(doc(collection(db,ai_lover.setting_lang_collection),ai_lover.setting_lang_change),data_inp_lang);
-                $.MessageBox("Cập nhật "+ai_lover.setting_lang_collection+" - "+ai_lover.setting_lang_change+" thành công!")
-            });
-
-            $(".btn-setting-lang-change").click(function(){
-                var key_change=$(this).attr("key_change");
-                show_setting_lang_by_key(key_change,ai_lover.setting_lang_collection);
-            });
-        }
 
         async function show_all_chat_ai_lover(){
             var querySnapshot = await getDocs(query(collection(db, "chat-"+carrot.lang),where("status","==","pending")));

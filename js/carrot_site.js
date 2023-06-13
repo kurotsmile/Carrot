@@ -47,7 +47,7 @@ class Carrot_Site{
         localStorage.setItem('v_page',data_version["page"]);
         this.version=data_version;
     }
-
+    
     show_edit_version_data_version(act_done){
         var data_version=this.get_version_data_cur();
         var obj_data_ver = Object();
@@ -381,4 +381,9 @@ class Carrot_Site{
             buttonFail: "Cancel"
         }).done(act_done);
     }
+
+    uniq = function(){
+        return 'id' + (new Date()).getTime();
+    }
+    
 }
