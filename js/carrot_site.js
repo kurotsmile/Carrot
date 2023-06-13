@@ -364,7 +364,7 @@ class Carrot_Site{
             obj_app[data_store.key] = obj_input_link_store;
         });
     
-        customer_field_for_db(obj_app,'app','name_en','get_all_app','Add App successfully');
+        customer_field_for_db(obj_app,'app','name_en','','Add App successfully');
     
         $.MessageBox({
             message: s_title_box,

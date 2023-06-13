@@ -23,6 +23,8 @@ class Ai_Lover{
 
     async show_all_chat(querySnapshot) {
         var html = '';
+        var carrot=this.carrot;
+        var ai_lover=this;
         html +=this.list_btn_lang_select();
         html += '<table class="table table-striped mt-6" id="table_all_chat">';
         html += '<thead class="thead-light">';
@@ -61,6 +63,38 @@ class Ai_Lover{
         html += '</table>';
         $("#main_contain").html(html);
         new DataTable('#table_all_chat', {responsive: true,pageLength:100});
+
+        $(".btn-setting-lang-change").click(function(){
+            var key_change=$(this).attr("key_change");
+            ai_lover.show_all_chat_ai_lover(key_change);
+        });
+
+        $(".ai_lover_del_chat").each(function(index,emp){
+            $(emp).click(function(){
+                var id_doc=$(emp).attr("id_doc");
+                $.MessageBox({
+                    buttonDone  : "Yes",
+                    buttonFail  : "No",
+                    message     : "Bạn có chắc chắng là xóa Trò chuyện "+id_doc+" này không?"
+                }).done(function(){
+                    carrot.act_del_obj("chat-"+carrot.lang,id_doc);
+                    $(emp).parent().parent().remove();
+                });
+            });
+        });
+
+        $(".ai_lover_edit_chat").each(function(index,emp){
+            $(emp).click(async function(){
+                var id_doc=$(emp).attr("id_doc");
+                carrot.get_doc("chat-"+ai_lover.setting_lang_change,id_doc,ai_lover.done_edit_chat);
+            });
+        });
+    }
+
+    done_edit_chat(data,carrot,ai_lover){
+        if(data==null) $.MessageBox("Ứng dụng không còn tồn tại!");
+        customer_field_for_db(data,"chat-"+ai_lover.setting_lang_change,'id','','Edit Obj Success');
+        ai_lover.show_edit_object(data,carrot.act_done_add_or_edit);
     }
 
     show_edit_object(data_obj,act_done){
