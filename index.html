@@ -27,20 +27,13 @@
         <div id="navbarNav" class="navcol pt-0 d-none d-lg-block">
             <ul>
                 <li id="btn_home" class="border-bottom btn-menu"><i class="fa-solid fa-home fs-6 me-2"></i> <lang class="lang" key_lang="home">Home</lang></li>
-                <li id="btn_all_app" class="border-bottom btn-menu"><i class="fa-solid fa-mobile bi fs-6 me-2"></i> <i
-                        class="bi fs-6  bi-google-play"></i> <lang class="lang" key_lang="app">Applications</lang></li>
-                <li id="btn_all_game" class="border-bottom btn-menu"><i class="fa-solid fa-gamepad bi me-2 fs-6"></i>
-                    <lang class="lang" key_lang="game">Games</lang></li>
-                <li id="btn_address_book" class="border-bottom btn-menu"><i
-                        class="fa-solid fa-address-book fs-6 me-2"></i> <lang class="lang" key_lang="phone_book">Phone book</lang></li>
-                <li id="btn_wallpapers" class="border-bottom btn-menu"><i class="fa-solid fa-image fs-6 me-2"></i>
-                    <lang class="lang" key_lang="wallpaper">Wallpapers</lang></li>
-                <li id="btn_all_icon" class="border-bottom btn-menu"><i class="fa-solid fa-face-smile fs-6 me-2"></i>
-                    <lang class="lang" key_lang="icon">Icon</lang></li>
-                <li id="btn_privacy_policy" class="border-bottom btn-menu"><i
-                        class="fa-sharp fa-solid fa-building-shield fs-6 me-2"></i> <lang class="lang" key_lang="privacy_policy">Privacy Policy</lang></li>
-                <li id="btn_about_us" class="border-bottom btn-menu"><i class="fa-solid fa-heart fs-6 me-2"></i> <lang class="lang" key_lang="about_us">About
-                    Us</lang></li>
+                <li id="btn_all_app" class="border-bottom btn-menu"><i class="fa-solid fa-mobile bi fs-6 me-2"></i> <i class="bi fs-6  bi-google-play"></i> <lang class="lang" key_lang="app">Applications</lang></li>
+                <li id="btn_all_game" class="border-bottom btn-menu"><i class="fa-solid fa-gamepad bi me-2 fs-6"></i> <lang class="lang" key_lang="game">Games</lang></li>
+                <li id="btn_address_book" class="border-bottom btn-menu"><i class="fa-solid fa-address-book fs-6 me-2"></i> <lang class="lang" key_lang="phone_book">Phone book</lang></li>
+                <li id="btn_wallpapers" class="border-bottom btn-menu"><i class="fa-solid fa-image fs-6 me-2"></i> <lang class="lang" key_lang="wallpaper">Wallpapers</lang></li>
+                <li id="btn_all_icon" class="border-bottom btn-menu"><i class="fa-solid fa-face-smile fs-6 me-2"></i> <lang class="lang" key_lang="icon">Icon</lang></li>
+                <li id="btn_privacy_policy" class="border-bottom btn-menu"><i class="fa-sharp fa-solid fa-building-shield fs-6 me-2"></i> <lang class="lang" key_lang="privacy_policy">Privacy Policy</lang></li>
+                <li id="btn_about_us" class="border-bottom btn-menu"><i class="fa-solid fa-heart fs-6 me-2"></i> <lang class="lang" key_lang="about_us">About Us</lang></li>
                 <li id="btn_model_site" class="border-bottom btn-menu"><i class="fa-solid fa-window-maximize fs-6 me-2"></i> Development mode</li>
 
                 <li class="btn-group dropup border-bottom dev btn-menu">
@@ -75,12 +68,22 @@
 
                     <div class="dropdown-menu">
                         <div class="dropdown-item btn-menu" id="btn_setting_lang_app" role="button"><i class="fa-solid fa-language fs-6 me-2"></i> Lang all app</div>
-                        <div class="dropdown-item btn-menu" id="btn_setting_lang_ailover" role="button"><i class="fa-solid fa-language fs-6 me-2"></i> Ai Lover</div>
+                        <div class="dropdown-item btn-menu" id="btn_setting_lang_ailover" role="button"><i class="fa-solid fa-language fs-6 me-2"></i> Lang Ai Lover</div>
                         <div class="dropdown-item btn-menu" id="btn_setting_lang_web" role="button"><i class="fa-solid fa-language fs-6 me-2"></i> Lang web</div>
                     </div>
                 </li>
 
-                <li id="btn_ai_lover_all_chat" class="border-bottom btn-menu dev"><i class="fa-brands fa-rocketchat fs-6 me-2"></i> Chat Ai</li>
+                <li class="btn-group dropup border-bottom dev btn-menu">
+                    <div type="button" class="dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        <i class="fa-brands fa-rocketchat fs-6 me-2"></i> Ai Lover
+                    </div>
+
+                    <div class="dropdown-menu">
+                        <div class="dropdown-item btn-menu" id="btn_ai_lover_all_chat" role="button"><i class="fa-brands fa-rocketchat fs-6 me-2"></i> Chat Ai Lover</div>
+                        <div class="dropdown-item btn-menu" id="btn_block_chat" role="button"><i class="fa-solid fa-language fs-6 me-2"></i> Ai Lover</div>
+                    </div>
+                </li>
+
                 <li id="btn_mode_host" class="border-bottom btn-menu dev"><i class="fa-solid fa-dev fs-6 me-2"></i> Localhost</li>
                 <li id="btn_version_data" class="border-bottom btn-menu dev"><i class="fa-regular fa-code-compare fs-6 me-2"></i> Version</li>
                 
@@ -158,7 +161,7 @@
         var id_page;
 
         var carrot=new Carrot_Site();
-        
+
         if (localStorage.getItem("is_localhost") == null) {
             is_localhost = false;
         } else {
@@ -191,8 +194,10 @@
 
         if (is_localhost) {
             db = getFirestore();
-            connectFirestoreEmulator(db,'localhost', 8080);
+            connectFirestoreEmulator(db,'localhost', 8082);
         }
+
+        console.log(db);
 
         var ai_lover=new Ai_Lover(carrot);
 
@@ -346,9 +351,9 @@
             if(id_fun=='btn_ai_lover_all_chat') show_all_chat_ai_lover();
             if(id_fun=='btn_download_json_doc') download_json_doc();
             if(id_fun=='btn_import_json_doc') act_show_import_json_box(null);
-            if(id_fun=='btn_setting_lang_app') show_setting_lang_by_key('vi','lang_app');
-            if(id_fun=='btn_setting_lang_ailover') show_setting_lang_by_key('vi','lang_app_ai_lover');
-            if(id_fun=='btn_setting_lang_web') show_setting_lang_by_key('vi','lang_web');
+            if(id_fun=='btn_setting_lang_app') show_setting_lang_by_key(carrot.lang,'lang_app');
+            if(id_fun=='btn_setting_lang_ailover') show_setting_lang_by_key(carrot.lang,'lang_app_ai_lover');
+            if(id_fun=='btn_setting_lang_web') show_setting_lang_by_key(carrot.lang,'lang_web');
             check_mode_site();
         });
 
@@ -430,7 +435,6 @@
 
                 let table = new DataTable('#table_all_chat', {responsive: true});
         }
-
 
         function act_show_import_json_box(data_show){
             if(data_show==null){
