@@ -79,7 +79,7 @@
 
                     <div class="dropdown-menu">
                         <div class="dropdown-item btn-menu" id="btn_ai_lover_all_chat" role="button"><i class="fa-brands fa-rocketchat fs-6 me-2"></i> Chat Ai Lover</div>
-                        <div class="dropdown-item btn-menu" id="btn_block_chat" role="button"><i class="fa-solid fa-language fs-6 me-2"></i> Ai Lover</div>
+                        <div class="dropdown-item btn-menu" id="btn_block_chat" role="button"><i class="fa-solid fa-shield-halved fs-6 me-2"></i> Block Key</div>
                     </div>
                 </li>
 
@@ -178,17 +178,7 @@
         if(localStorage.getItem("mode_site") != null) mode_site = localStorage.getItem("mode_site");
         if(localStorage.getItem("is_dev") != null) is_dev = localStorage.getItem("is_dev");
 
-        const firebaseConfig_main = {
-            apiKey: "AIzaSyDzsx1KYLZL5COz1NaTD8cOz8GYalX2Dxc",
-            authDomain: "carrotstore.firebaseapp.com",
-            projectId: "carrotstore",
-            storageBucket: "carrotstore.appspot.com",
-            messagingSenderId: "745653792874",
-            appId: "1:745653792874:web:55d78113cd3dea7c28da13",
-            measurementId: "G-KXDDJ42JFN"
-        };
-
-        const app = initializeApp(firebaseConfig_main);
+        const app = initializeApp(carrot.firebaseConfig_mainhost);
         db = getFirestore(app);
 
         if (is_localhost) {
@@ -346,6 +336,7 @@
 
             if(id_fun=='btn_version_data') carrot.show_edit_version_data_version(act_done_edit_version_data_version);
             if(id_fun=='btn_ai_lover_all_chat') show_all_chat_ai_lover();
+            if(id_fun=='btn_block_chat') show_all_block_chat();
             if(id_fun=='btn_download_json_doc') download_json_doc();
             if(id_fun=='btn_import_json_doc') act_show_import_json_box(null);
             if(id_fun=='btn_setting_lang_app') show_setting_lang_by_key(carrot.lang,'lang_app');
@@ -396,7 +387,7 @@
         }
 
         async function show_all_chat_ai_lover(){
-            var querySnapshot = await getDocs(query(collection(db, "chat-vi"),where("status","==","pending")));
+            var querySnapshot = await getDocs(query(collection(db, "chat-"+carrot.lang),where("status","==","pending")));
                 ai_lover.show_all_chat(querySnapshot);
                 $(".ai_lover_del_chat").each(function(index,emp){
                     $(emp).click(function(){
@@ -431,6 +422,16 @@
                 });
 
                 let table = new DataTable('#table_all_chat', {responsive: true});
+        }
+
+        async function show_all_block_chat(){
+            const appSnap = await getDoc(doc(db, "block", carrot.lang));
+            if (appSnap.exists()) {
+                ai_lover.show_list_block_chat(appSnap.data());
+            } else {
+                $.MessageBox("Chưa có danh sách từ cấm!");
+                ai_lover.show_list_block_chat(null);
+            }
         }
 
         function act_show_import_json_box(data_show){

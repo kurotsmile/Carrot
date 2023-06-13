@@ -1,5 +1,5 @@
 class Carrot_Site{
-    
+    firebaseConfig_mainhost;
     lang;
     lang_url="";
     list_lang;
@@ -7,6 +7,15 @@ class Carrot_Site{
     version=null;
 
     constructor(){
+        this.firebaseConfig_mainhost={
+            apiKey: "AIzaSyDzsx1KYLZL5COz1NaTD8cOz8GYalX2Dxc",
+            authDomain: "carrotstore.firebaseapp.com",
+            projectId: "carrotstore",
+            storageBucket: "carrotstore.appspot.com",
+            messagingSenderId: "745653792874",
+            appId: "1:745653792874:web:55d78113cd3dea7c28da13",
+            measurementId: "G-KXDDJ42JFN"
+        }
         this.load_lang();
         this.list_lang=Array();
         this.load_obj_app();

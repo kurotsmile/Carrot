@@ -104,7 +104,7 @@ class Ai_Lover{
                 html+='<button type="button" class="btn btn-secondary btn-sm mr-1 mt-1 btn-setting-lang-change" key_change="'+lang.key+'"><img src="'+lang.icon+'" style="width:20px"/>'+lang.name+'</button> ';
         });
 
-        html += '<table class="table table-striped table-hover" id="table_setting_lang">';
+        html += '<table class="table table-striped table-hover mt-3" id="table_setting_lang">';
         html += '<thead class="thead-light">';
         html += '<tr>';
         html += '<th scope="col" class="w-10">Key</th>';
@@ -147,6 +147,7 @@ class Ai_Lover{
         if(data_lang_change.id=="en") html+='<button id="btn_add_field_setting_lang" type="button" class="btn btn-secondary mr-1 mt-1 btn-sm" ><i class="fa-solid fa-add"></i> Add Field</button>';
         $("#main_contain").html(html);
         if(data_lang_change.id=="en") document.getElementById("btn_add_field_setting_lang").onclick = event => {  this.add_field_for_setting_lang();}
+        new DataTable('#table_setting_lang', {responsive: true,pageLength:1000});
     }
 
     add_field_for_setting_lang(){
@@ -173,5 +174,32 @@ class Ai_Lover{
         });
     }
 
+    show_list_block_chat(list_key_block_chat){
+        var html = '';
+        var list_block_chat=list_key_block_chat.chat;
+        html += '<table class="table table-striped table-hover mt-3" id="table_key_block">';
+        html += '<thead class="thead-light">';
+        html += '<tr>';
+        html += '<th scope="col">Key Block</th>';
+        html += '<th scope="col">Change</th>';
+        html += '<th scope="col">Action</th>';
+        html += '</tr>';
+        html += '</thead>';
 
+        html += '<tbody id="body_table_lang_setting">';
+        for(var i = 0; i < list_block_chat.length; i++){
+            html += '<tr>';
+            html += '<td><b id="txt_'+list_block_chat[i]+'">'+list_block_chat[i]+'</b></td>';
+            html += '<td><input class="form-control inp-key-block input-sm" id="inp_'+list_block_chat[i]+'" value="'+list_block_chat[i]+'"/></td>';
+            html += '<td>';
+                html+='<button class="btn btn-secondary mr-3" type="button" onclick="paste_tag(\'inp_'+list_block_chat[i]+'\')"><i class="fa-solid fa-paste"></i></button> ';
+                html+='<button class="btn btn-secondary mr-3" type="button" onclick="tr(\'txt_'+list_block_chat[i]+'\')"><i class="fa-solid fa-language"></i></button> ';
+                html+='<button class="btn btn-danger" type="button" onclick=" $(this).parent().parent().remove();"><i class="fa-solid fa-trash"></i></button>';
+            html += '</td>';
+            html += '</tr>';
+        }
+        html += '</tbody>';
+        $("#main_contain").html(html);
+        new DataTable('#table_key_block', {responsive: true,pageLength:1000});
+    }
 }
