@@ -153,7 +153,6 @@
 
         var link_store = null;
         var list_lang = null;
-        var list_app = null;
         var lang_web=Object();
         var obj_login=null;
         var db;
@@ -170,7 +169,6 @@
                 is_localhost = true;
         }
 
-        if(localStorage.getItem("list_app")!=null) list_app=JSON.parse(localStorage.getItem("list_app"));
         if(localStorage.getItem("link_store")!=null) link_store=JSON.parse(localStorage.getItem("link_store"));
         if(localStorage.getItem("lang_web")!=null) lang_web=JSON.parse(localStorage.getItem("lang_web"));
 
@@ -188,9 +186,9 @@
 
         var ai_lover=new Ai_Lover(carrot);
 
-        function show_home(){
+        carrot.show_home=()=>{
             console.log('show_home');
-            carrot.show_list_app(list_app, link_store);
+            carrot.show_list_app(carrot.list_app, link_store);
             check_btn_app_dev();
             check_mode_site();
         }
@@ -198,7 +196,7 @@
         function show_all_app(){
             console.log('show_all_app');
             var list_app_mobile=Array();
-            $(list_app).each(function(index,emp){
+            $(carrot.list_app).each(function(index,emp){
                 if(emp.type == "app") list_app_mobile.push(emp);
             });
             carrot.show_list_app(list_app_mobile, link_store);
@@ -209,7 +207,7 @@
         function show_all_game(){
             console.log('show_all_game');
             var list_game=Array();
-            $(list_app).each(function(index,emp){
+            $(carrot.list_app).each(function(index,emp){
                 if(emp.type == "game") list_game.push(emp);
             });
             carrot.show_list_app(list_game, link_store);
@@ -284,7 +282,7 @@
             if (id_fun == "btn_wallpapers") show_all_wallpaper();
 
             if (id_fun == "btn_home"||id_fun=='logo_carrot') { 
-                show_home();
+                carrot.show_home();
                 carrot.change_title_page("Carrot store", "/");
                 id_page = "home";
             };
@@ -336,7 +334,7 @@
 
             if(id_fun=='btn_version_data') carrot.show_edit_version_data_version(act_done_edit_version_data_version);
             if(id_fun=='btn_ai_lover_all_chat') show_all_chat_ai_lover();
-            if(id_fun=='btn_block_chat') show_all_block_chat();
+            if(id_fun=='btn_block_chat') carrot.show_all_block_chat_by_lang();
             if(id_fun=='btn_download_json_doc') download_json_doc();
             if(id_fun=='btn_import_json_doc') act_show_import_json_box(null);
             if(id_fun=='btn_setting_lang_app') show_setting_lang_by_key(carrot.lang,'lang_app');
@@ -346,7 +344,8 @@
         });
 
         async function show_setting_lang_by_key(s_key_lang_change,s_collection){
-            const langRef_tag = doc(db, s_collection, "en");
+                ai_lover.setting_lang_change=s_key_lang_change;
+                const langRef_tag = doc(db, s_collection, "en");
                 const langSnap_tag = await getDoc(langRef_tag);
                 var data_obj_lang_tag=new Object();
                 if (langSnap_tag.exists()) {
@@ -363,7 +362,6 @@
                 }
 
                 ai_lover.setting_lang_collection=s_collection;
-                ai_lover.setting_lang_change=s_key_lang_change;
                 ai_lover.show_setting_lang(data_obj_lang_tag,data_obj_lang_change);
                 reload_btn_setting_lang();
         }
@@ -424,13 +422,19 @@
                 let table = new DataTable('#table_all_chat', {responsive: true});
         }
 
-        async function show_all_block_chat(){
-            const appSnap = await getDoc(doc(db, "block", carrot.lang));
+        carrot.show_all_block_chat_by_lang=async (s_key_lang='')=>{
+            if(s_key_lang=='') s_key_lang=carrot.lang;
+            const appSnap = await getDoc(doc(db, "block",s_key_lang));
             if (appSnap.exists()) {
-                ai_lover.show_list_block_chat(appSnap.data());
+                var data_list_key_block=appSnap.data();
+                data_list_key_block["lang"]=appSnap.id;
+                ai_lover.show_list_block_chat(data_list_key_block);
             } else {
                 $.MessageBox("Chưa có danh sách từ cấm!");
-                ai_lover.show_list_block_chat(null);
+                var data_list_key_block=new Object();
+                data_list_key_block["lang"]=s_key_lang;
+                data_list_key_block["chat"]=Array("new_key_block");
+                ai_lover.show_list_block_chat(data_list_key_block);
             }
         }
 
@@ -611,18 +615,17 @@
 
         async function get_all_data_app() {
             console.log("get_all_data_app");
-            list_app = Array();
+            carrot.list_app = Array();
             var q = query(collection(db, "app"));
             var querySnapshot_app = await getDocs(q);
             querySnapshot_app.forEach((doc) => {
                 var data_app=doc.data();
                 data_app["id"]=doc.id;
                 carrot.obj_app[doc.id]=JSON.stringify(data_app);
-                list_app.push(data_app);
+                carrot.list_app.push(data_app);
             });
             carrot.save_obj_app();
-            localStorage.setItem("list_app", JSON.stringify(list_app));
-            show_home();
+            carrot.show_home();
         };
 
         async function get_all_data_link_store() {
@@ -678,7 +681,7 @@
             else if(id_page == "address_book") $("#btn_address_book").click();
             else if(id_page=="wallpapers") show_all_wallpaper();
             else if(id_page=="icon") show_all_icon();
-            else show_home();
+            else carrot.show_home();
         }
 
         function check_btn_app_dev() {
@@ -690,7 +693,7 @@
                     if (appSnap.exists()) {
                         var data_app = appSnap.data();
                         data_app["id"]=appSnap.id;
-                        carrot.show_app_info(data_app,link_store,list_app);
+                        carrot.show_app_info(data_app,link_store);
                         check_mode_site();
                         check_btn_app_dev();
                         load_data_lang_web();
@@ -699,7 +702,7 @@
                     }
                 }else{
                     var data_app=JSON.parse(carrot.obj_app[id_box_app]);
-                    carrot.show_app_info(data_app,link_store,list_app);
+                    carrot.show_app_info(data_app,link_store);
                     check_mode_site();
                     check_btn_app_dev();
                     load_data_lang_web();

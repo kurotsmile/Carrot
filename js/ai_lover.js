@@ -92,18 +92,9 @@ class Ai_Lover{
 
     show_setting_lang(data_lang_tag,data_lang_change){
         var html = '';
-        var list_lang=this.carrot.list_lang;
         var ai_lover=this;
-
-        html+='<h3>Dịch thuật đa ngôn ngữ <small class="text-muted">'+this.setting_lang_collection+'</small></h3>';
-
-        $.each(list_lang,function(i,lang){
-            if(lang.key==ai_lover.setting_lang_change)
-                html+='<button type="button" class="btn btn-light btn-sm mr-1 mt-1 btn-setting-lang-change" key_change="'+lang.key+'"><img src="'+lang.icon+'" style="width:20px"/>'+lang.name+'</button> ';
-            else
-                html+='<button type="button" class="btn btn-secondary btn-sm mr-1 mt-1 btn-setting-lang-change" key_change="'+lang.key+'"><img src="'+lang.icon+'" style="width:20px"/>'+lang.name+'</button> ';
-        });
-
+        html +='<h3>Dịch thuật đa ngôn ngữ <small class="text-muted">'+this.setting_lang_collection+'</small></h3>';
+        html +=this.list_btn_lang_select();
         html += '<table class="table table-striped table-hover mt-3" id="table_setting_lang">';
         html += '<thead class="thead-light">';
         html += '<tr>';
@@ -177,6 +168,8 @@ class Ai_Lover{
     show_list_block_chat(list_key_block_chat){
         var html = '';
         var list_block_chat=list_key_block_chat.chat;
+        this.setting_lang_change=list_key_block_chat.lang;
+        html += this.list_btn_lang_select();
         html += '<table class="table table-striped table-hover mt-3" id="table_key_block">';
         html += '<thead class="thead-light">';
         html += '<tr>';
@@ -189,17 +182,39 @@ class Ai_Lover{
         html += '<tbody id="body_table_lang_setting">';
         for(var i = 0; i < list_block_chat.length; i++){
             html += '<tr>';
-            html += '<td><b id="txt_'+list_block_chat[i]+'">'+list_block_chat[i]+'</b></td>';
-            html += '<td><input class="form-control inp-key-block input-sm" id="inp_'+list_block_chat[i]+'" value="'+list_block_chat[i]+'"/></td>';
+            html += '<td><b id="txt_'+i+'">'+list_block_chat[i]+'</b></td>';
+            html += '<td><input class="form-control inp-key-block input-sm" id="inp_'+i+'" value="'+list_block_chat[i]+'"/></td>';
             html += '<td>';
-                html+='<button class="btn btn-secondary mr-3" type="button" onclick="paste_tag(\'inp_'+list_block_chat[i]+'\')"><i class="fa-solid fa-paste"></i></button> ';
-                html+='<button class="btn btn-secondary mr-3" type="button" onclick="tr(\'txt_'+list_block_chat[i]+'\')"><i class="fa-solid fa-language"></i></button> ';
+                html+='<button class="btn btn-secondary mr-3" type="button" onclick="paste_tag(\'inp_'+i+'\')"><i class="fa-solid fa-paste"></i></button> ';
+                html+='<button class="btn btn-secondary mr-3" type="button" onclick="tr(\'txt_'+i+'\',\''+this.setting_lang_change+'\')"><i class="fa-solid fa-language"></i></button> ';
                 html+='<button class="btn btn-danger" type="button" onclick=" $(this).parent().parent().remove();"><i class="fa-solid fa-trash"></i></button>';
             html += '</td>';
             html += '</tr>';
         }
         html += '</tbody>';
+        html+='<button id="btn_test_ai" type="button" class="btn btn-primary mr-1 mt-1"><i class="fa-solid fa-square-check"></i> Done</button> ';
         $("#main_contain").html(html);
         new DataTable('#table_key_block', {responsive: true,pageLength:1000});
+        var carrot=this.carrot;
+        $("#btn_test_ai").click(function(){
+            carrot.show_home();
+        });
+
+        $(".btn-setting-lang-change").click(function(){
+            var key_change=$(this).attr("key_change");
+            carrot.show_all_block_chat_by_lang(key_change);
+        });
+    }
+
+    list_btn_lang_select(){
+        var html='';
+        var ai_lover=this;
+        $.each(this.carrot.list_lang,function(i,lang){
+            if(lang.key==ai_lover.setting_lang_change)
+                html+='<button type="button" class="btn btn-light btn-sm mr-1 mt-1 btn-setting-lang-change" key_change="'+lang.key+'"><img src="'+lang.icon+'" style="width:20px"/>'+lang.name+'</button> ';
+            else
+                html+='<button type="button" class="btn btn-secondary btn-sm mr-1 mt-1 btn-setting-lang-change" key_change="'+lang.key+'"><img src="'+lang.icon+'" style="width:20px"/>'+lang.name+'</button> ';
+        });
+        return html;
     }
 }

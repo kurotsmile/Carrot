@@ -3,6 +3,7 @@ class Carrot_Site{
     lang;
     lang_url="";
     list_lang;
+    list_app=null;
     obj_app;
     version=null;
 
@@ -21,6 +22,7 @@ class Carrot_Site{
         this.load_obj_app();
         this.load_list_lang();
         this.version=this.get_version_data_cur();
+        if(localStorage.getItem("list_app")!=null) this.list_app=JSON.parse(localStorage.getItem("list_app"));
     };
 
     get_version_data_cur(){
@@ -81,6 +83,7 @@ class Carrot_Site{
 
     save_obj_app(){
         localStorage.setItem("obj_app", JSON.stringify(this.obj_app));
+        localStorage.setItem("list_app", JSON.stringify(this.list_app));
     }
     
     save_list_lang(){
@@ -194,7 +197,7 @@ class Carrot_Site{
         });
     }
 
-    show_app_info(data,list_store,list_app){
+    show_app_info(data,list_store){
         document.title = data.name_en;
         var html='<div class="section-container p-2 p-xl-4">';
         html+='<div class="row">';
@@ -303,8 +306,8 @@ class Carrot_Site{
             html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-3">Related Apps</h4>';
             
             var carrot=this;
-            list_app = list_app.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
-                $(list_app).each(function(intdex,app_item){
+            this.list_app = this.list_app.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
+                $(this.list_app).each(function(intdex,app_item){
                     if(data.type==app_item.type&&data.id!=app_item.id) html+=carrot.box_app_item(app_item,list_store,'col-md-12 mb-3');
                 })
             html+='</div>';
