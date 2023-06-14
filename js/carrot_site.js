@@ -1,13 +1,21 @@
 class Carrot_Site{
+    mode_site = "nomal";
     firebaseConfig_mainhost;
     lang;
     lang_url="";
+    lang_web=Object();
+    list_link_store=null;
     list_lang;
-    list_app=null;
     obj_app;
     version=null;
 
+    name_collection_cur="";
+    name_document_cur="";
+
     constructor(){
+
+        if(localStorage.getItem("mode_site") != null) this.mode_site = localStorage.getItem("mode_site");
+
         this.firebaseConfig_mainhost={
             apiKey: "AIzaSyDzsx1KYLZL5COz1NaTD8cOz8GYalX2Dxc",
             authDomain: "carrotstore.firebaseapp.com",
@@ -17,13 +25,42 @@ class Carrot_Site{
             appId: "1:745653792874:web:55d78113cd3dea7c28da13",
             measurementId: "G-KXDDJ42JFN"
         }
-        if (localStorage.getItem("lang") == null) this.change_lang("en"); else this.lang = localStorage.getItem("lang");
+
+        if(localStorage.getItem("lang_web")!=null) this.lang_web=JSON.parse(localStorage.getItem("lang_web"));
+        if(localStorage.getItem("link_store")!=null) this.list_link_store=JSON.parse(localStorage.getItem("link_store"));
+        if(localStorage.getItem("lang") == null) this.change_lang("en"); else this.lang = localStorage.getItem("lang");
         this.list_lang=Array();
         this.load_obj_app();
         this.load_list_lang();
         this.version=this.get_version_data_cur();
-        if(localStorage.getItem("list_app")!=null) this.list_app=JSON.parse(localStorage.getItem("list_app"));
     };
+
+    change_mode_site(){
+        if (this.mode_site == "nomal")
+            this.mode_site = "dev";
+        else
+            this.mode_site = "nomal";
+        localStorage.setItem("mode_site",this.mode_site);
+        this.check_mode_site();
+    }
+
+    check_mode_site() {
+        if (this.mode_site == "nomal")
+            $(".dev").each(function () { $(this).hide(100); });
+        else
+            $(".dev").each(function () { $(this).show(100); });
+    }
+
+    async get_all_data_lang_web(){
+        console.log("Carrot:get_all_data_lang_web");
+        this.get_doc("lang_web",this.lang,this.get_data_lang_web_done);
+    }
+
+    get_data_lang_web_done(data,carrot){
+        carrot.lang_web=data;
+        localStorage.setItem("lang_web",JSON.stringify(carrot.lang_web));
+        carrot.load_data_lang_web();
+    }
 
     get_version_data_cur(){
         var data_version=Object();
@@ -46,6 +83,36 @@ class Carrot_Site{
         localStorage.setItem('v_link_store',data_version["link_store"]);
         localStorage.setItem('v_page',data_version["page"]);
         this.version=data_version;
+    }
+
+    convert_apps_to_list(){
+        var list_app=Array();
+        $.each(this.obj_app,function(key,val){
+            list_app.push(JSON.parse(val));
+        });
+        return list_app;
+    }
+
+    show_home(){
+        this.show_list_app(this.convert_apps_to_list());
+    }
+
+    show_all_app(){
+        console.log('Carrot:show_all_app');
+        var list_app_mobile=Array();
+        $(this.convert_apps_to_list()).each(function(index,emp){
+            if(emp.type == "app") list_app_mobile.push(emp);
+        });
+        this.show_list_app(list_app_mobile);
+    }
+
+    show_all_game(){
+        console.log('Carrot:show_all_game');
+        var list_game=Array();
+        $(this.convert_apps_to_list()).each(function(index,emp){
+            if(emp.type == "game") list_game.push(emp);
+        });
+        this.show_list_app(list_game);
     }
     
     show_edit_version_data_version(act_done){
@@ -83,12 +150,21 @@ class Carrot_Site{
 
     save_obj_app(){
         localStorage.setItem("obj_app", JSON.stringify(this.obj_app));
-        localStorage.setItem("list_app", JSON.stringify(this.list_app));
+    }
+
+    delete_obj_app(){
+        localStorage.removeItem("obj_app");
+        this.obj_app=new Object();
+        this.get_all_data_app();
     }
     
     save_list_lang(){
         localStorage.setItem("list_lang", JSON.stringify(this.list_lang));
         this.show_list_lang_in_menu();
+    }
+
+    save_list_link_store(){
+        localStorage.setItem("link_store", JSON.stringify(this.list_link_store));
     }
 
     show_list_lang_in_menu(){
@@ -121,12 +197,26 @@ class Carrot_Site{
             window.history.pushState(s_title,"",null);
     }
 
-    box_app_item(data_app,list_store,s_class){
+    load_data_lang_web() {
+        var carrot=this;
+        $(".lang").each(function(index,emp){
+            var key_lang=$(emp).attr("key_lang");
+            if(carrot.lang_web[key_lang]!=null){
+                $(emp).html(carrot.lang_web[key_lang].trim());
+            }
+        });
+        this.check_mode_site();
+    }
+
+    box_app_item(data_app,s_class){
         var key_name="name_"+this.lang;
+        var s_url_icon="";
+        if(data_app.icon!=null) s_url_icon=data_app.icon;
+        if(s_url_icon=="") s_url_icon="images/150.png";
         var html_main_contain="<div class='box_app "+s_class+"' id=\""+data_app.id+"\" key_search=\""+data_app[key_name]+"\">";
             html_main_contain+='<div class="app-cover p-2 shadow-md bg-white">';
                 html_main_contain+='<div class="row">';
-                if(data_app.icon!=null) html_main_contain+='<div role="button" class="img-cover pe-0 col-3 app_icon" app_id="'+data_app.id+'"><img class="rounded" src="'+data_app.icon+'" alt=""></div>';
+                    html_main_contain+='<div role="button" class="img-cover pe-0 col-3 app_icon" app_id="'+data_app.id+'"><img class="rounded" src="'+s_url_icon+'" alt="'+data_app[key_name]+'"></div>';
                     html_main_contain+='<div class="det mt-2 col-9">';
                         html_main_contain+="<h5 class='mb-0 fs-6'>"+data_app[key_name]+"</h5>";
                         html_main_contain+="<span class='fs-8'>"+data_app.name_en+"</span>";
@@ -145,9 +235,9 @@ class Carrot_Site{
                                 html_main_contain+='<li class="col-4"><span class="text-secondary float-end"><i class="fa-solid fa-gamepad"></i></span></li>';
                         html_main_contain+='</ul>';
     
-                        if(list_store!=null){
+                        if(this.list_link_store!=null){
                             var html_store_link="";
-                            $(list_store).each(function(index,store){
+                            $(this.list_link_store).each(function(index,store){
                                 if(data_app[store.key]!=null){
                                     var link_store_app=data_app[store.key];
                                     html_store_link+="<a class='link_app' title=\""+store.name+"\" target=\"_blank\" href=\""+link_store_app+"\"><i class=\""+store.icon+"\"></i></a>";
@@ -168,12 +258,12 @@ class Carrot_Site{
         return html_main_contain;
     }
 
-    show_list_app(list_app,list_store){
+    show_list_app(list_app){
         var html_main_contain="";
         var carrot=this;
         html_main_contain+='<div id="all_app" class="row m-0">';
         $(list_app).each(function(intdex,data_app) {
-            html_main_contain+=carrot.box_app_item(data_app,list_store,'col-md-4 mb-3');
+            html_main_contain+=carrot.box_app_item(data_app,'col-md-4 mb-3');
         });
         html_main_contain+="</div>";
 
@@ -187,9 +277,11 @@ class Carrot_Site{
                 else $(emp).hide();
             });
         });
+        this.check_btn_for_list_app();
     }
 
-    show_app_info(data,list_store){
+    show_app_info(data,carrot){
+        if(data==null) $.MessageBox(carrot.l("no_app"));
         document.title = data.name_en;
         var html='<div class="section-container p-2 p-xl-4">';
         html+='<div class="row">';
@@ -199,7 +291,7 @@ class Carrot_Site{
                         html+='<img class="w-100" src="'+data.icon+'" alt="">';
                     html+='</div>';
                     html+='<div class="col-md-8 p-2">';
-                        html+='<h4 class="fw-semi fs-4 mb-3">'+data["name_"+this.lang]+'</h4>';
+                        html+='<h4 class="fw-semi fs-4 mb-3">'+data["name_"+carrot.lang]+'</h4>';
                         html+='<button class="btn btn-primary w-45 fw-semi fs-8 py-2 me-3"> Download </button>';
                         html+='<button class="btn border ps-3 w-45 fw-semi fs-8 py-2 btn-outlie-primary"> Add to Wish List </button>';
                         html+="<button class='btn dev btn_app_edit btn-warning w-45 fw-semi fs-8 py-2 me-3' app_id='"+data.id+"'><i class=\"fa-solid fa-pen-to-square\"></i> Edit</button>";
@@ -228,7 +320,7 @@ class Carrot_Site{
     
                 html+='<div class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
                     html+='<h4 class="fw-semi fs-5 lang" key_lang="describe">About this Game</h4>';
-                    html+='<p class="fs-8 text-justify">'+data["describe_"+this.lang]+'</p>';
+                    html+='<p class="fs-8 text-justify">'+data["describe_"+carrot.lang]+'</p>';
                 html+='</div>';
     
                 html+='<div class="about row p-2 py-3  bg-white mt-4 shadow-sm">';
@@ -297,22 +389,79 @@ class Carrot_Site{
             html+='<div class="col-md-4">';
             html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-3">Related Apps</h4>';
             
-            var carrot=this;
-            this.list_app = this.list_app.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
-                $(this.list_app).each(function(intdex,app_item){
-                    if(data.type==app_item.type&&data.id!=app_item.id) html+=carrot.box_app_item(app_item,list_store,'col-md-12 mb-3');
-                })
+            var list_app=carrot.convert_apps_to_list();
+            list_app= list_app.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
+            $(list_app).each(function(intdex,app_item){
+                if(data.type==app_item.type&&data.id!=app_item.id) html+=carrot.box_app_item(app_item,'col-md-12 mb-3');
+            });
             html+='</div>';
     
         html+="</div>";
         html+="</div>";
         $("#main_contain").html(html);
         window.scrollTo(0, 0);
+        carrot.check_btn_for_list_app();
     }
 
-    show_box_add_or_edit_app(list_store,data_app,act_done){
+    check_btn_for_list_app(){
+        var carrot=this;
+        $(".app_icon").click(async function(){
+            var id_box_app = $(this).attr("app_id");
+            if(carrot.obj_app[id_box_app]!=null){
+                console.log("Load info app "+id_box_app+" from sever");
+                carrot.get_doc("app",id_box_app,carrot.show_app_info)
+            }else{
+                console.log("Load info app "+id_box_app+" from cache");
+                var data_app=JSON.parse(carrot.obj_app[id_box_app]);
+                carrot.show_app_info(data_app,this);
+            }
+        });
+
+        $(".btn_app_edit").click(async function () {
+            var id_box_app = $(this).attr("app_id");
+            carrot.get_doc("app",id_box_app,carrot.show_edit_app_done);
+        });
+
+        $(".btn_app_del").click(async function () {
+            var id_box_app = $(this).attr("app_id");
+            $.MessageBox({
+                buttonDone  : "Yes",
+                buttonFail  : "No",
+                message     : "Bạn có chắc chắng là xóa ứng dụng "+id_box_app+" này không?"
+            }).done(function(){
+                carrot.act_del_obj("app",id_box_app);
+            });
+        });
+
+        $(".btn_app_export").click(function(){
+            var app_id=$(this).attr("app_id");
+            var data_collection=$(this).attr("data-collection");
+            carrot.act_download_json_by_collection_and_doc(data_collection,app_id);
+        });
+
+        $(".btn_app_import").click(function(){
+            var app_id=$(this).attr("app_id");
+            var data_collection=$(this).attr("data-collection");
+            var obj_data=new Object();
+            obj_data["collection"]=data_collection;
+            obj_data["document"]=app_id;
+            carrot.show_import_json_box(obj_data);
+        });
+
+        this.load_data_lang_web();
+        this.check_mode_site();
+    }
+
+    show_edit_app_done(data_app,carrot){
+        if(data_app!=null)
+            carrot.show_box_add_or_edit_app(data_app,carrot.act_done_add_or_edit);
+        else
+            $.MessageBox("Ứng dụng không còn tồn tại!");
+    }
+
+    show_box_add_or_edit_app(data_app,act_done){
         var s_title_box='';
-        if(data_app==null) s_title_box="<b>Add Application</b>";
+        if(data_app==null)s_title_box="<b>Add Application</b>";
         else s_title_box="<b>Update Application</b>";
         var obj_app = Object();
         obj_app["tip_app"] = { type: "caption", message: "Thông tin cơ bản" };
@@ -338,6 +487,8 @@ class Carrot_Site{
         $.each(this.list_lang, function (index, data_lang) {
             obj_app["tip_lang_"+data_lang.key] = { type: "caption", message: "<img style='width:20px;' src='"+data_lang.icon+"'/> <b>"+data_lang.name+"</b> Thiết lập giao diện ngôn ngữ ("+data_lang.key+")" };
 
+            if(data_lang.key=="en") obj_app["lang_en_required"] = { type: "caption", message: "<b class='text-danger'>*Bắt buột</b>:không để trống quốc gia này để thêm mới và cập nhật<br/><i class='text-secondary'>Vì đây là trường id chính xác định ứng dụng</i>" };
+
             var obj_input_name = Object();
             obj_input_name["type"] = "input";
             obj_input_name["label"] = "Name - " + data_lang.name;
@@ -354,7 +505,7 @@ class Carrot_Site{
     
         obj_app["tip_link"] = { type: "caption", message: "Các Liên kết tới các store khác" };
     
-        $.each(list_store, function (index, data_store) {
+        $.each(this.list_link_store, function (index, data_store) {
             obj_app["tip_lang_"+data_store.key] = { type: "caption", message: "<i class='fa-solid "+data_store.icon+"'></i> <b>"+data_store.name+"</b> Thiết lập liên kết ("+data_store.key+")" };
 
             var obj_input_link_store = Object();
@@ -377,5 +528,47 @@ class Carrot_Site{
     uniq = function(){
         return 'id' + (new Date()).getTime();
     }
-    
+
+    l(key){if (this.lang_web[key] != null) return this.lang_web[key].trim();else return key;}
+
+    async act_download_json_by_collection_and_doc(name_collection, name_document) {
+        this.name_collection_cur=name_collection;
+        this.name_document_cur=name_document;
+        this.get_doc(name_collection,name_document,this.done_get_file_json)
+    }
+
+    done_get_file_json(data_json,carrot){
+        if(data_json==null){ $.MessageBox(carrot.l("no_app")); return;}
+        var fileContents = JSON.stringify(data_json, null, 2);
+        var fileName = carrot.name_collection_cur+"-"+carrot.name_document_cur+ ".json";
+
+        var pp = document.createElement('a');
+        pp.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(fileContents));
+        pp.setAttribute('download', fileName);
+        pp.click();
+    }
+
+    show_import_json_box(data_show){
+        var carrot=this;
+        if(data_show==null){
+            data_show=new Object();
+            data_show["collection"]="";
+            data_show["document"]="";
+        }
+        $.MessageBox({
+            input    : {db_collection:{'label': "Collection","defaultValue":data_show["collection"]},db_document:{'label': "Document ID","defaultValue":data_show["document"]},data:{'type': 'textarea','label': "Nhập kiểu dữ liệu văn bảng dạng json:"}},
+            message  : "Import JSON document text"
+        }).done(function(data, button){
+            if(data.data==""){$.MessageBox("Dữ liệu json trống không thể import!");return false}
+            var s_collection=data.db_collection;
+            var s_document=data.db_document;
+            var data_import=JSON.parse(data.data);
+            delete(data.db_collection);
+            delete(data.db_document);
+            delete(data.data);
+            carrot.set_doc(s_collection,s_document,data_import);
+            if(s_collection=="app") carrot.delete_obj_app();
+            $.MessageBox("Import Data Json Success!!!");
+        });
+    }
 }

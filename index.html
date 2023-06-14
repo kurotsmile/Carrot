@@ -146,13 +146,9 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
         import { getFirestore, collection, addDoc, setDoc, doc, getDoc, query, where, getDocs, deleteDoc, connectFirestoreEmulator } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
         
-        var mode_site = "nomal";
         var is_dev = false;
         var count_dev = 0;
         var is_localhost = false;
-
-        var link_store = null;
-        var lang_web=Object();
         var obj_login=null;
         var db;
         var id_page;
@@ -168,11 +164,7 @@
                 is_localhost = true;
         }
 
-        if(localStorage.getItem("link_store")!=null) link_store=JSON.parse(localStorage.getItem("link_store"));
-        if(localStorage.getItem("lang_web")!=null) lang_web=JSON.parse(localStorage.getItem("lang_web"));
-
         if(localStorage.getItem("obj_login")!=null) obj_login=JSON.parse(localStorage.getItem("obj_login"));
-        if(localStorage.getItem("mode_site") != null) mode_site = localStorage.getItem("mode_site");
         if(localStorage.getItem("is_dev") != null) is_dev = localStorage.getItem("is_dev");
 
         const app = initializeApp(carrot.firebaseConfig_mainhost);
@@ -184,13 +176,6 @@
         }
 
         var ai_lover=new Ai_Lover(carrot);
-
-        carrot.show_home=()=>{
-            console.log('show_home');
-            carrot.show_list_app(carrot.list_app, link_store);
-            check_btn_app_dev();
-            check_mode_site();
-        }
 
         carrot.set_doc=(s_collection,s_document,data)=>{
             console.log("Set doc: collection:" + s_collection+" document:"+s_document);
@@ -206,30 +191,8 @@
                 data_obj["id"]=dataSnap.id;
                 act_done(data_obj,carrot,ai_lover);
             } else {
-                act_done(null);
+                act_done(null,carrot,ai_lover);
             }
-        }
-
-        function show_all_app(){
-            console.log('show_all_app');
-            var list_app_mobile=Array();
-            $(carrot.list_app).each(function(index,emp){
-                if(emp.type == "app") list_app_mobile.push(emp);
-            });
-            carrot.show_list_app(list_app_mobile, link_store);
-            check_btn_app_dev();
-            check_mode_site();
-        }
-
-        function show_all_game(){
-            console.log('show_all_game');
-            var list_game=Array();
-            $(carrot.list_app).each(function(index,emp){
-                if(emp.type == "game") list_game.push(emp);
-            });
-            carrot.show_list_app(list_game, link_store);
-            check_btn_app_dev();
-            check_mode_site();
         }
 
         $('#list_lang_1,#list_lang_2').on('click', '.item_lang', async function () {
@@ -238,17 +201,10 @@
                 $(".item_lang").removeClass("active");
                 $(this).addClass("active");
                 carrot.change_lang(key_lang);
-                get_all_data_lang_web();
+                carrot.get_all_data_lang_web();
                 check_show_by_id_page();
             };
         });
-
-        function check_mode_site() {
-            if (mode_site == "nomal")
-                $(".dev").each(function () { $(this).hide(100); });
-            else
-                $(".dev").each(function () { $(this).show(100); });
-        }
 
         function act_mode_dev() {
             count_dev++;
@@ -305,13 +261,13 @@
             };
 
             if (id_fun == "btn_all_app") { 
-                show_all_app();
+                carrot.show_all_app();
                 carrot.change_title_page("Apps", "?p=all_app");
                 id_page = "app";
             };
 
             if (id_fun == "btn_all_game") { 
-                show_all_game();
+                carrot.show_all_game();
                 carrot.change_title_page("Games", "?p=game");
                 id_page = "game";
             };
@@ -335,16 +291,8 @@
                 $.MessageBox("Thay đổi kế độ kết nối cơ sở dữ liệu thành công! Load lại trang để làm mới các chức năng!");
             }
 
-            if (id_fun == "btn_model_site"){
-                if (mode_site == "nomal")
-                    mode_site = "dev";
-                else
-                    mode_site = "nomal";
-                localStorage.setItem("mode_site", mode_site);
-                check_mode_site();
-            }
-
-            if(id_fun=="btn_add_app") carrot.show_box_add_or_edit_app(link_store,null,carrot.act_done_add_or_edit);
+            if(id_fun == "btn_model_site") carrot.change_mode_site();
+            if(id_fun=="btn_add_app") carrot.show_box_add_or_edit_app(null,carrot.act_done_add_or_edit);
             if(id_fun=='btn_add_icon') show_box_add_or_edit_icon(null,carrot.act_done_add_or_edit);
             if(id_fun=='btn_add_wallpaper') show_box_add_or_edit_wallpaper(null,carrot.act_done_add_or_edit);
             if(id_fun=='btn_add_lang') show_box_add_or_edit_lang(null,carrot.act_done_add_or_edit);
@@ -353,11 +301,10 @@
             if(id_fun=='btn_ai_lover_all_chat') ai_lover.show_all_chat_ai_lover();
             if(id_fun=='btn_block_chat') carrot.show_all_block_chat_by_lang();
             if(id_fun=='btn_download_json_doc') download_json_doc();
-            if(id_fun=='btn_import_json_doc') act_show_import_json_box(null);
+            if(id_fun=='btn_import_json_doc') carrot.show_import_json_box(null);
             if(id_fun=='btn_setting_lang_app') carrot.show_setting_lang_by_key(carrot.lang,'lang_app');
             if(id_fun=='btn_setting_lang_ailover') carrot.show_setting_lang_by_key(carrot.lang,'lang_app_ai_lover');
             if(id_fun=='btn_setting_lang_web') carrot.show_setting_lang_by_key(carrot.lang,'lang_web');
-            check_mode_site();
         });
 
         carrot.show_setting_lang_by_key=async(s_key_lang_change="",s_collection)=>{    
@@ -405,27 +352,6 @@
             }
         }
 
-        function act_show_import_json_box(data_show){
-            if(data_show==null){
-                data_show=new Object();
-                data_show["collection"]="";
-                data_show["document"]="";
-            }
-            $.MessageBox({
-                input    : {db_collection:{'label': "Collection","defaultValue":data_show["collection"]},db_document:{'label': "Document ID","defaultValue":data_show["document"]},data:{'type': 'textarea','label': "Nhập kiểu dữ liệu văn bảng dạng json:"}},
-                message  : "Import JSON document text"
-            }).done(function(data, button){
-                var s_collection=data.db_collection;
-                var s_document=data.db_document;
-                var data_import=JSON.parse(data.data);
-                delete(data.db_collection);
-                delete(data.db_document);
-                delete(data.data);
-                setDoc(doc(collection(db,s_collection),s_document),data_import);
-                $.MessageBox("Import Data Json Success!!!");
-            });
-        }
-
         carrot.act_done_add_or_edit=(data)=>{
             console.log(data);
             var act_msg_success=data.act_msg_success;
@@ -438,6 +364,7 @@
             delete(data.db_doc);
             delete(data.act_name_before);
             setDoc(doc(collection(db,db_collection),data[db_doc]), data);
+            if(db_collection=="app") carrot.delete_obj_app();
             $.MessageBox(act_msg_success);
             if(act_name_before!=null&&act_name_before!='') eval(act_name_before + "()");
         }
@@ -484,15 +411,15 @@
 
         $("#btn_login").click(function () {
             $.MessageBox({
-                message: "<b><i class='fa-solid fa-key'></i> "+l('login')+"</b>",
+                message: "<b><i class='fa-solid fa-key'></i> "+carrot.l('login')+"</b>",
                 input: {
-                    usernames: {type: "text",label: l("phone"),title: "Enter Your Phone"},
-                    password: {type: "password",label:l("password"),title: "Type password here"},
-                    dummy_caption: {type: "caption",message: l("login_tip")}
+                    usernames: {type: "text",label: carrot.l("phone"),title: "Enter Your Phone"},
+                    password: {type: "password",label:carrot.l("password"),title: "Type password here"},
+                    dummy_caption: {type: "caption",message: carrot.l("login_tip")}
                 },
                 top: "auto",
-                buttonFail:l("cancel"),
-                buttonDone  : {login:{text:l('login'),keyCode: 12},register:{text:l("register"),keyCode: 13}},
+                buttonFail:carrot.l("cancel"),
+                buttonDone  : {login:{text:carrot.l('login'),keyCode: 12},register:{text:carrot.l("register"),keyCode: 13}},
             }).done(function(data,button) {
                 var username=data.usernames;
                 var password=data.password;
@@ -522,14 +449,10 @@
             }
         }
 
-        async function act_del_app(id_app){
-            await deleteDoc(doc(db, "app", id_app));
-            $.MessageBox("Delete App ('" + id_app + "') Success!");
-        }
-
         carrot.act_del_obj=async (db_collection,db_doc_id)=>{
             await deleteDoc(doc(db, db_collection, db_doc_id));
             $.MessageBox("Delete object ('" + db_doc_id + "') Success!");
+            if(db_collection=="app") carrot.delete_obj_app();
         }
 
         async function download_json() {
@@ -555,41 +478,22 @@
             pp.click();
         }
 
-        async function act_download_json_by_collection_and_doc(name_collection, name_document) {
-            var data_json = Object();
-            const verRef = doc(db, name_collection,name_document);
-            const verSnap = await getDoc(verRef);
-            if (verSnap.exists()) {
-                data_json=verSnap.data();
-
-                var fileContents = JSON.stringify(data_json, null, 2);
-                var fileName = name_collection+"-"+name_document + ".json";
-
-                var pp = document.createElement('a');
-                pp.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(fileContents));
-                pp.setAttribute('download', fileName);
-                pp.click();
-            }
-        }
-
         function download_json_doc() {
             var name_collection = prompt("Enter collection", "Enter name collection");
             if(name_collection=="") return;
             var name_document = prompt("Enter document", "Enter document in collection");
             if (name_document== "") return;
-            act_download_json_by_collection_and_doc(name_collection,name_document);
+            carrot.act_download_json_by_collection_and_doc(name_collection,name_document);
         }
 
-        async function get_all_data_app() {
+        carrot.get_all_data_app=async()=>{
             console.log("get_all_data_app");
-            carrot.list_app = Array();
             var q = query(collection(db, "app"));
             var querySnapshot_app = await getDocs(q);
             querySnapshot_app.forEach((doc) => {
                 var data_app=doc.data();
                 data_app["id"]=doc.id;
                 carrot.obj_app[doc.id]=JSON.stringify(data_app);
-                carrot.list_app.push(data_app);
             });
             carrot.save_obj_app();
             carrot.show_home();
@@ -597,13 +501,13 @@
 
         async function get_all_data_link_store() {
             console.log("get_all_data_link_store");
-            link_store = Array();
+            carrot.list_link_store=Array();
             var q = query(collection(db, "link_store"));
             var querySnapshot_link_store = await getDocs(q);
             querySnapshot_link_store.forEach((doc) => {
-                link_store.push(doc.data());
+                carrot.list_link_store.push(doc.data());
             });
-            localStorage.setItem("link_store", JSON.stringify(link_store));
+            carrot.save_list_link_store();
         };
 
         async function get_all_data_lang() {
@@ -619,28 +523,6 @@
             carrot.save_list_lang();
         };
 
-        async function get_all_data_lang_web(){
-            console.log("get_all_data_lang_web");
-            const docRef = doc(db, "lang_web",carrot.lang);
-            const docSnap = await getDoc(docRef);
-            if (docSnap.exists()) {
-                lang_web=docSnap.data();
-                localStorage.setItem("lang_web",JSON.stringify(lang_web));
-                load_data_lang_web();
-            }else{
-                load_data_lang_web();
-            }
-        }
-
-        function load_data_lang_web() {
-            $(".lang").each(function(index,emp){
-                    var key_lang=$(emp).attr("key_lang");
-                    if(lang_web[key_lang]!=null){
-                        $(emp).html(lang_web[key_lang].trim());
-                    }
-            });
-        }
-
         function check_show_by_id_page() {
             id_page = get_param_url("p");
             if(id_page == "privacy_policy") $("#btn_privacy_policy").click();
@@ -651,70 +533,6 @@
             else carrot.show_home();
         }
 
-        function check_btn_app_dev() {
-            $(".app_icon").click(async function(){
-                var id_box_app = $(this).attr("app_id");
-                if(carrot.obj_app[id_box_app]!=null&&carrot.obj_app[id_box_app]!=""){
-                    const appRef = doc(db, "app", id_box_app);
-                    const appSnap = await getDoc(appRef);
-                    if (appSnap.exists()) {
-                        var data_app = appSnap.data();
-                        data_app["id"]=appSnap.id;
-                        carrot.show_app_info(data_app,link_store);
-                        check_mode_site();
-                        check_btn_app_dev();
-                        load_data_lang_web();
-                    } else {
-                        $.MessageBox("Ứng dụng không tồn tại!");
-                    }
-                }else{
-                    var data_app=JSON.parse(carrot.obj_app[id_box_app]);
-                    carrot.show_app_info(data_app,link_store);
-                    check_mode_site();
-                    check_btn_app_dev();
-                    load_data_lang_web();
-                }
-            });
-
-            $(".btn_app_edit").click(async function () {
-                var id_box_app = $(this).attr("app_id");
-                var q = query(collection(db, "app"), where("name_en", "==", id_box_app));
-                var querySnapshot_edit_app = await getDocs(q);
-                querySnapshot_edit_app.forEach((doc) => {
-                    var data_app=doc.data();
-                    if(mode_site == "dev") carrot.show_box_add_or_edit_app(link_store,data_app,carrot.act_done_add_or_edit);
-                });
-            });
-
-            $(".btn_app_del").click(async function () {
-                var id_box_app = $(this).attr("app_id");
-                $.MessageBox({
-                    buttonDone  : "Yes",
-                    buttonFail  : "No",
-                    message     : "Bạn có chắc chắng là xóa ứng dụng "+id_box_app+" này không?"
-                }).done(function(){
-                    if(mode_site == "dev") act_del_app(id_box_app);
-                });
-            });
-
-            $(".btn_app_export").click(function(){
-                var app_id=$(this).attr("app_id");
-                var data_collection=$(this).attr("data-collection");
-                act_download_json_by_collection_and_doc(data_collection,app_id);
-            });
-
-            $(".btn_app_import").click(function(){
-                var app_id=$(this).attr("app_id");
-                var data_collection=$(this).attr("data-collection");
-                var obj_data=new Object();
-                obj_data["collection"]=data_collection;
-                obj_data["document"]=app_id;
-                act_show_import_json_box(obj_data);
-            });
-        }
-
-        function l(key){if (lang_web[key] != null) return lang_web[key].trim();else return key;}
-            
         async function check_version_data(){
             var obj_version_cur =carrot.version;
             const verRef = doc(db, "setting_web","version");
@@ -722,8 +540,8 @@
             if (verSnap.exists()) {
                 var ver_data_new=verSnap.data();
                 if(ver_data_new.link_store!=obj_version_cur["link_store"]) get_all_data_link_store();
-                if(ver_data_new.lang_web!=obj_version_cur["lang_web"]) get_all_data_lang_web();
-                if(ver_data_new.app!=obj_version_cur["app"]) get_all_data_app();
+                if(ver_data_new.lang_web!=obj_version_cur["lang_web"]) carrot.get_all_data_lang_web();
+                if(ver_data_new.app!=obj_version_cur["app"]) carrot.get_all_data_app();
                 if(ver_data_new.js!=obj_version_cur["js"]){
                     var ver_data_js=ver_data_new.js;
                     $(".emp_js").each(function(){
@@ -746,18 +564,18 @@
                 if(lang_page!=carrot.lang){
                     carrot.lang_url=lang_page;
                     carrot.change_lang(lang_page);
-                    get_all_data_lang_web();
+                    carrot.get_all_data_lang_web();
                 }
             }
             check_version_data();;
-            load_data_lang_web();
+            carrot.load_data_lang_web();
             show_info_user_login_in_header(obj_login);
             $("#key_lang").html(carrot.lang);
             if (is_dev) {
                 $("#btn_model_site").show();
             } else {
                 $("#btn_model_site").hide();
-                mode_site == "nomal";
+                carrot.mode_site == "nomal";
             }
 
             if (is_localhost) {
