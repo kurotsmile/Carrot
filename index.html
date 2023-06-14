@@ -168,13 +168,10 @@
         if(localStorage.getItem("is_dev") != null) is_dev = localStorage.getItem("is_dev");
 
         const app = initializeApp(carrot.firebaseConfig_mainhost);
+        db = getFirestore();
 
-        if (is_localhost) {
-            db = getFirestore();
-            connectFirestoreEmulator(db,'localhost', 8082);
-        }
+        if (is_localhost) connectFirestoreEmulator(db,'localhost', 8082);
 
-        console.log(db);
         if(db==null){
             var htm_msg="<div class='row text-center'>";
             htm_msg="<div class='col-12 text-center'>";
