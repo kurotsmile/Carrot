@@ -6,7 +6,7 @@ class Carrot_Site{
     lang_web=Object();
     list_link_store=null;
     list_lang;
-    obj_app;
+    obj_app=Object();
     version=null;
 
     name_collection_cur="";
@@ -49,6 +49,19 @@ class Carrot_Site{
             $(".dev").each(function () { $(this).hide(100); });
         else
             $(".dev").each(function () { $(this).show(100); });
+    }
+
+    show_error_connect_sever(){
+        var htm_msg="<div class='row text-center'>";
+        htm_msg="<div class='col-12 text-center'>";
+        htm_msg+="<img src='images/upgrade.png' class='mx-auto d-block' width='200px;' alt='Upgrade'/>";
+        htm_msg+="<h5>"+this.l("error_connect_sever","Data server connection failed!")+"</h5>";
+        htm_msg+="<p class='text-justify'>"+this.l("error_connect_sever_msg","We are doing system maintenance and upgrading in a few hours. But you can use the functions with offline mode when you have previously visited,The site will be back to normal when the upgrade is done!")+"</p>";
+        htm_msg+="<p><i class='text-secondary'>"+this.l("error_connect_sever_thanks","Sorry for this inconvenience!")+"</i><p>";
+        htm_msg+="</div>";
+        htm_msg+="</div>";
+        $.MessageBox({message:htm_msg});
+        this.show_home();
     }
 
     async get_all_data_lang_web(){
@@ -529,7 +542,16 @@ class Carrot_Site{
         return 'id' + (new Date()).getTime();
     }
 
-    l(key){if (this.lang_web[key] != null) return this.lang_web[key].trim();else return key;}
+    l(key,lang_en_default=""){
+        if (this.lang_web[key] != null) 
+            return this.lang_web[key].trim();
+        else{
+            if(lang_en_default=="")
+                return key;
+            else
+                return lang_en_default;
+        }  
+    }
 
     async act_download_json_by_collection_and_doc(name_collection, name_document) {
         this.name_collection_cur=name_collection;
