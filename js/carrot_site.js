@@ -400,7 +400,7 @@ class Carrot_Site{
             html+="</div>";
     
             html+='<div class="col-md-4">';
-            html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-3">Related Apps</h4>';
+            html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-3 lang"  key_lang="related_apps">Related Apps</h4>';
             
             var list_app=this.convert_apps_to_list();
             list_app= list_app.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);

@@ -20,39 +20,24 @@
     ],
     "id": "/?p=all_app",
     "start_url": "/?p=all_app",
-    "background_color": "#525252",
+    "background_color": "#FFFFFF",
     "display": "standalone",
     "scope": "/",
-    "theme_color": "#525252",
-    "shortcuts": [
+    "theme_color": "#FFFFFF",
+    "related_applications": [
       {
-        "name": "All App",
-        "short_name": "All-App",
-        "description": "Great apps to make your life better",
-        "url": "/?p=app",
-        "icons": [{ "src": "/images/192.png", "sizes": "192x192" }]
-      },
-      {
-        "name": "All Game",
-        "short_name": "Game",
-        "description": "Play Game now",
-        "url": "/?p=game",
-        "icons": [{ "src": "/images/192.png", "sizes": "192x192" }]
+        "platform": "play",
+        "url": "https://play.google.com/store/apps/details?id=com.carrotstore.ailover",
+        "id": "com.carrotstore.ailover"
+      }, {
+        "platform": "windows",
+        "url": "https://apps.microsoft.com/store/detail/9N4F0SQKPQC6"
       }
     ],
-    "description": "Weather forecast information",
-    "screenshots": [
+    "protocol_handlers": [
       {
-        "src": "/images/screenshot1.png",
-        "type": "image/png",
-        "sizes": "536x261",
-        "form_factor": "narrow"
-      },
-      {
-        "src": "/images/screenshot2.png",
-        "type": "image/jpg",
-        "sizes": "536x261",
-        "form_factor": "wide"
+        "protocol": "call",
+        "url": "/bookphone?=phone%s"
       }
     ]
   }
