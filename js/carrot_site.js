@@ -326,6 +326,7 @@ class Carrot_Site{
                         html+='<div class="auth pt-4">';
                             html+='<h6 class="text-primary fw-semi mb-0">Zego Global Publishing</h6>';
                             html+='<p class="fs-8">contains Ads</p>';
+                            html+='<button id="btn_share" class="btn btn-primary w-45 fw-semi fs-8 py-2 me-3"> Share </button>';
                         html+='</div>';
     
                     html+='</div>';
@@ -461,6 +462,10 @@ class Carrot_Site{
             carrot.show_import_json_box(obj_data);
         });
 
+        $("#btn_share").click(function(){
+            carrot.show_share();
+        });
+
         this.load_data_lang_web();
         this.check_mode_site();
     }
@@ -592,5 +597,14 @@ class Carrot_Site{
             if(s_collection=="app") carrot.delete_obj_app();
             $.MessageBox("Import Data Json Success!!!");
         });
+    }
+
+    show_share(){
+        let shareData = {
+            title: 'Carrot Store',
+            text: 'Get Now',
+            url:  window.location.href,
+        }
+        navigator.share(shareData)
     }
 }
