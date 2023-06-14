@@ -144,7 +144,7 @@
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, setDoc, doc, getDoc, query, where, getDocs, deleteDoc, connectFirestoreEmulator } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, setDoc, doc, getDoc, query, where, getDocs, deleteDoc, connectFirestoreEmulator,disableNetwork } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
         
         var is_dev = false;
         var count_dev = 0;
@@ -168,11 +168,21 @@
         if(localStorage.getItem("is_dev") != null) is_dev = localStorage.getItem("is_dev");
 
         const app = initializeApp(carrot.firebaseConfig_mainhost);
-        db = getFirestore(app);
 
         if (is_localhost) {
             db = getFirestore();
             connectFirestoreEmulator(db,'localhost', 8082);
+        }
+
+        console.log(db);
+        if(db==null){
+            var htm_msg="<div class='row text-center'>";
+            htm_msg="<div class='col-12 text-center'>";
+            htm_msg+="<img src='images/upgrade.png' class='mx-auto d-block' width='200px;' alt='Upgrade'/><br/><b>Kết nối máy chủ không thành công!</b>.<br/>Chúng tôi đang bảo trì và nân cấp hệ thống trong một vài giờ<br/>Trang web sẽ hoặt động trở lại bình thường khi quá trình nân cấp xong!<br/><i class='text-secondary'>xin thứ lỗi vì sự bất tiện này!</i>";
+            htm_msg+="</div>";
+            htm_msg+="</div>";
+            $.MessageBox({message:htm_msg});
+            carrot.show_home();
         }
 
         var ai_lover=new Ai_Lover(carrot);

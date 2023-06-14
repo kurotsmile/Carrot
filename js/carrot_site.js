@@ -389,7 +389,7 @@ class Carrot_Site{
             html+='<div class="col-md-4">';
             html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-3">Related Apps</h4>';
             
-            var list_app=carrot.convert_apps_to_list();
+            var list_app=this.convert_apps_to_list();
             list_app= list_app.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
             $(list_app).each(function(intdex,app_item){
                 if(data.type==app_item.type&&data.id!=app_item.id) html+=carrot.box_app_item(app_item,'col-md-12 mb-3');
@@ -407,13 +407,13 @@ class Carrot_Site{
         var carrot=this;
         $(".app_icon").click(async function(){
             var id_box_app = $(this).attr("app_id");
-            if(carrot.obj_app[id_box_app]!=null){
+            if(carrot.obj_app[id_box_app]==null){
                 console.log("Load info app "+id_box_app+" from sever");
                 carrot.get_doc("app",id_box_app,carrot.show_app_info)
             }else{
                 console.log("Load info app "+id_box_app+" from cache");
                 var data_app=JSON.parse(carrot.obj_app[id_box_app]);
-                carrot.show_app_info(data_app,this);
+                carrot.show_app_info(data_app,carrot);
             }
         });
 
