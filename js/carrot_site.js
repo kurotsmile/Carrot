@@ -1,12 +1,14 @@
 class Carrot_Site{
     mode_site = "nomal";
     firebaseConfig_mainhost;
+    is_dev=false;
     lang;
     lang_url="";
     lang_web=Object();
     list_link_store=null;
     list_lang;
     obj_app=Object();
+    obj_lang_web=Object();
     obj_icon=null;
     version=null;
 
@@ -16,6 +18,7 @@ class Carrot_Site{
     name_document_cur="";
 
     constructor(){
+        var carrot=this;
         this.firebaseConfig_mainhost={
             apiKey: "AIzaSyDzsx1KYLZL5COz1NaTD8cOz8GYalX2Dxc",
             authDomain: "carrotstore.firebaseapp.com",
@@ -27,6 +30,7 @@ class Carrot_Site{
         }
 
         if(localStorage.getItem("mode_site") != null) this.mode_site = localStorage.getItem("mode_site");
+        if(localStorage.getItem("is_dev") != null) this.is_dev = localStorage.getItem("is_dev");
         if(localStorage.getItem("lang_web")!=null) this.lang_web=JSON.parse(localStorage.getItem("lang_web"));
         if(localStorage.getItem("link_store")!=null) this.list_link_store=JSON.parse(localStorage.getItem("link_store"));
         if(localStorage.getItem("lang") == null) this.change_lang("en"); else this.lang = localStorage.getItem("lang");
@@ -37,6 +41,8 @@ class Carrot_Site{
         this.load_recognition();
 
         this.version=this.get_version_data_cur();
+        $("#key_lang").html(this.lang);
+        $("#btn_change_lang").click(function(){ carrot.show_list_lang();});
     };
 
     load_recognition(){
@@ -51,7 +57,7 @@ class Carrot_Site{
             var speechResult = event.results[0][0].transcript.toLowerCase();
             $("#txt_recognition_msg").removeClass("text-primary").addClass("text-success").html(speechResult);
             carrot.act_search(s_key_search);
-            console.log('Confidence: ' + speechResult);
+            carrot.log('Confidence: ' + speechResult);
         }
 
         this.recognition.onspeechend = function() { carrot.recognition.stop();}
@@ -64,25 +70,25 @@ class Carrot_Site{
             $("#txt_recognition_msg").addClass("text-primary").html(carrot.l("recognition_start","Speak into the microphone to search..."));
             $("#txt_recognition").removeClass("d-none");
             $("#box_input_search").addClass("d-none");
-            console.log('SpeechRecognition.onaudiostart');
+            carrot.log('SpeechRecognition.onaudiostart');
         }
           
         this.recognition.onaudioend = function(event) {
             carrot.recognition.stop();
-            console.log('SpeechRecognition.onaudioend');
+            carrot.log('SpeechRecognition.onaudioend');
         }
           
         this.recognition.onend = function(event) {
             $("#txt_recognition").addClass("d-none");
             $("#box_input_search").removeClass("d-none");
-            console.log('SpeechRecognition.onend');
+            carrot.log('SpeechRecognition.onend');
         }
           
-        this.recognition.onnomatch = function(event) {console.log('SpeechRecognition.onnomatch');}
-        this.recognition.onsoundstart = function(event) {console.log('SpeechRecognition.onsoundstart');}
-        this.recognition.onsoundend = function(event) {console.log('SpeechRecognition.onsoundend');}
-        this.recognition.onspeechstart = function (event) {console.log('SpeechRecognition.onspeechstart');}
-        this.recognition.onstart = function(event) {console.log('SpeechRecognition.onstart');}
+        this.recognition.onnomatch = function(event) {carrot.log('SpeechRecognition.onnomatch');}
+        this.recognition.onsoundstart = function(event) {carrot.log('SpeechRecognition.onsoundstart');}
+        this.recognition.onsoundend = function(event) {carrot.log('SpeechRecognition.onsoundend');}
+        this.recognition.onspeechstart = function (event) {carrot.log('SpeechRecognition.onspeechstart');}
+        this.recognition.onstart = function(event) {carrot.log('SpeechRecognition.onstart');}
     }
 
     change_mode_site(){
@@ -95,10 +101,16 @@ class Carrot_Site{
     }
 
     check_mode_site() {
-        if (this.mode_site == "nomal")
+        if (this.is_dev) {
+            $("#btn_model_site").show();
+            if (this.mode_site == "nomal")
+                $(".dev").each(function () { $(this).hide(100); });
+            else
+                $(".dev").each(function () { $(this).show(100); });
+        } else {
+            $("#btn_model_site").hide();
             $(".dev").each(function () { $(this).hide(100); });
-        else
-            $(".dev").each(function () { $(this).show(100); });
+        }
     }
 
     start_recognition(){
@@ -119,13 +131,15 @@ class Carrot_Site{
     }
 
     async get_all_data_lang_web(){
-        console.log("Carrot:get_all_data_lang_web");
+        this.log("get_all_data_lang_web");
         this.get_doc("lang_web",this.lang,this.get_data_lang_web_done);
     }
 
     get_data_lang_web_done(data,carrot){
         carrot.lang_web=data;
+        carrot.obj_lang_web[carrot.lang]=JSON.stringify(carrot.lang_web);
         localStorage.setItem("lang_web",JSON.stringify(carrot.lang_web));
+        localStorage.setItem("obj_lang_web",JSON.stringify(carrot.obj_lang_web));
         carrot.load_data_lang_web();
     }
 
@@ -169,7 +183,7 @@ class Carrot_Site{
     }
 
     show_all_app(){
-        console.log('Carrot:show_all_app');
+        this.log('show_all_app');
         var list_app_mobile=Array();
         $(this.convert_apps_to_list()).each(function(index,emp){
             if(emp.type == "app") list_app_mobile.push(emp);
@@ -178,7 +192,7 @@ class Carrot_Site{
     }
 
     show_all_game(){
-        console.log('Carrot:show_all_game');
+        this.log('show_all_game');
         var list_game=Array();
         $(this.convert_apps_to_list()).each(function(index,emp){
             if(emp.type == "game") list_game.push(emp);
@@ -215,12 +229,10 @@ class Carrot_Site{
     }
 
     load_list_lang(){
-        if (localStorage.getItem("list_lang") == null) {
+        if (localStorage.getItem("list_lang") == null)
             this.list_lang=new Array();
-        } else {
+        else 
             this.list_lang=JSON.parse(localStorage.getItem("list_lang"));
-            this.show_list_lang_in_menu();
-        }
     }
 
     save_obj_app(){
@@ -251,21 +263,6 @@ class Carrot_Site{
 
     save_list_link_store(){
         localStorage.setItem("link_store", JSON.stringify(this.list_link_store));
-    }
-
-    show_list_lang_in_menu(){
-        $("#list_lang_1").html("");
-        $("#list_lang_2").html("");
-        console.log('show_list_lang_in_menu');
-        for (let i = 0; i < this.list_lang.length; i++) {
-            var lang_data=this.list_lang[i];
-            var s_active='';
-            if(lang_data.key==this.lang) s_active='active';
-            if(i%2==0)
-            $("#list_lang_1").append('<div class="dropdown-item item_lang '+s_active+'" role="button" key="' + lang_data.key + '"><img style="width:20px" src="' + lang_data.icon + '"/> ' + lang_data.name + '</div>');
-            else
-            $("#list_lang_2").append('<div class="dropdown-item item_lang '+s_active+'" role="button" key="' + lang_data.key + '"><img style="width:20px" src="' + lang_data.icon + '"/> ' + lang_data.name + '</div>');
-        }
     }
 
     change_lang(s_key){
@@ -359,10 +356,10 @@ class Carrot_Site{
 
     show_app_by_id(id_box_app){
         if(this.obj_app[id_box_app]==null){
-            console.log("Load info app "+id_box_app+" from sever");
+            this.log("Load info app "+id_box_app+" from sever");
             this.get_doc("app",id_box_app,this.show_app_info)
         }else{
-            console.log("Load info app "+id_box_app+" from cache");
+            this.log("Load info app "+id_box_app+" from cache");
             var data_app=JSON.parse(this.obj_app[id_box_app]);
             this.show_app_info(data_app,this);
         }
@@ -845,6 +842,51 @@ class Carrot_Site{
                 var jsonPretty = JSON.stringify(obj_json, null, '\t');
                 $("#file_contain").html(jsonPretty);
             })
+        });
+    }
+
+    log(s_msg,s_status="info") {
+        console.log(s_msg);
+        if(this.mode_site=="dev") SnackBar({message: s_msg,timeout: 3000,status:s_status});
+    }
+
+    show_list_lang(){
+        var carrot=this;
+        var obj_list_lang=Object();
+        var userLang = navigator.language || navigator.userLanguage; 
+        var n_lang=userLang.split("-")[0];
+
+        $(this.list_lang).each(function(index,lang){
+            var m_activer_color='';
+            if(lang.key==carrot.lang)
+                m_activer_color='btn-primary';
+            else{
+                if(carrot.obj_lang_web[lang.key]!=null)
+                    m_activer_color='btn-secondary';
+                else if(n_lang==lang.key) 
+                    m_activer_color='btn-info';
+                else
+                    m_activer_color='btn-dark';
+            }
+                
+            var m_lang="<div role='button' style='margin:3px;float:left' class='item_lang btn d-inline btn-sm text-left "+m_activer_color+"' key='"+lang.key+"'><img src='"+lang.icon+"' width='20px'/> "+lang.name+"</div>";
+            obj_list_lang["lang_"+index]={'type':'caption',message:m_lang,'customClass':'d-inline'};
+        });
+
+        $.MessageBox({
+            title :carrot.l("select_lang"),
+            input:obj_list_lang,
+            width:'360'
+        });
+
+        $(".item_lang").click(function(){
+            var key_lang = $(this).attr("key");
+            if (key_lang != carrot.lang) {
+                carrot.change_lang(key_lang);
+                carrot.get_all_data_lang_web();
+                carrot.load_data_lang_web();
+                $(".messagebox_button_done").click();
+            };
         });
     }
 }
