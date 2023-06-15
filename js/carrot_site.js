@@ -9,12 +9,17 @@ class Carrot_Site{
     obj_app=Object();
     version=null;
 
+    recognition=null;
+
     name_collection_cur="";
     name_document_cur="";
 
     constructor(){
-
+        var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
         if(localStorage.getItem("mode_site") != null) this.mode_site = localStorage.getItem("mode_site");
+        this.recognition = new SpeechRecognition();
+        this.recognition.lang = 'en-US';
+        this.recognition.interimResults = false;
 
         this.firebaseConfig_mainhost={
             apiKey: "AIzaSyDzsx1KYLZL5COz1NaTD8cOz8GYalX2Dxc",
@@ -33,6 +38,63 @@ class Carrot_Site{
         this.load_obj_app();
         this.load_list_lang();
         this.version=this.get_version_data_cur();
+
+        var carrot=this;
+        this.recognition.onresult = function(event) {
+            var speechResult = event.results[0][0].transcript.toLowerCase();
+            $("#txt_recognition_msg").removeClass("text-primary").addClass("text-success").html(speechResult);
+            carrot.act_search(s_key_search);
+            console.log('Confidence: ' + speechResult);
+        }
+
+        this.recognition.onspeechend = function() { carrot.recognition.stop();}
+        
+        this.recognition.onerror = function(event) {
+            $("#txt_recognition_msg").removeClass("text-primary").removeClass("text-success").removeClass("text-danger").html(event.error);
+        }
+          
+        this.recognition.onaudiostart = function(event) {
+            $("#txt_recognition_msg").addClass("text-primary");
+            $("#txt_recognition").removeClass("d-none");
+            $("#box_input_search").addClass("d-none");
+            console.log('SpeechRecognition.onaudiostart');
+        }
+          
+        this.recognition.onaudioend = function(event) {
+            carrot.recognition.stop();
+            console.log('SpeechRecognition.onaudioend');
+        }
+          
+        this.recognition.onend = function(event) {
+            $("#txt_recognition").addClass("d-none");
+            $("#box_input_search").removeClass("d-none");
+            console.log('SpeechRecognition.onend');
+        }
+          
+        this.recognition.onnomatch = function(event) {
+            //Fired when the speech recognition service returns a final result with no significant recognition. This may involve some degree of recognition, which doesn't meet or exceed the confidence threshold.
+            console.log('SpeechRecognition.onnomatch');
+        }
+          
+        this.recognition.onsoundstart = function(event) {
+            //Fired when any sound — recognisable speech or not — has been detected.
+            console.log('SpeechRecognition.onsoundstart');
+        }
+          
+        this.recognition.onsoundend = function(event) {
+            //Fired when any sound — recognisable speech or not — has stopped being detected.
+            console.log('SpeechRecognition.onsoundend');
+        }
+          
+        this.recognition.onspeechstart = function (event) {
+            //Fired when sound that is recognised by the speech recognition service as speech has been detected.
+            console.log('SpeechRecognition.onspeechstart');
+        }
+
+        this.recognition.onstart = function(event) {
+            //Fired when the speech recognition service has begun listening to incoming audio with intent to recognize grammars associated with the current SpeechRecognition.
+            console.log('SpeechRecognition.onstart');
+        }
     };
 
     change_mode_site(){
@@ -49,6 +111,10 @@ class Carrot_Site{
             $(".dev").each(function () { $(this).hide(100); });
         else
             $(".dev").each(function () { $(this).show(100); });
+    }
+
+    start_recognition(){
+        this.recognition.start();
     }
 
     show_error_connect_sever(){
@@ -281,37 +347,53 @@ class Carrot_Site{
         html_main_contain+="</div>";
 
         $("#main_contain").html(html_main_contain);
-        $("#box_input_search").change(function(){
-            var inp_text=$("#box_input_search").val();
-            $(".box_app").each(function(index,emp){
-                var id_box=$(emp).attr("id");
-                var key_search=$(emp).attr("key_search");
-                if(id_box.search(inp_text)!=-1||key_search.search(inp_text)!=-1) $(emp).show();
-                else $(emp).hide();
-            });
-        });
         this.check_btn_for_list_app();
+    }
+
+    show_app_by_id(id_box_app){
+        if(this.obj_app[id_box_app]==null){
+            console.log("Load info app "+id_box_app+" from sever");
+            this.get_doc("app",id_box_app,this.show_app_info)
+        }else{
+            console.log("Load info app "+id_box_app+" from cache");
+            var data_app=JSON.parse(this.obj_app[id_box_app]);
+            this.show_app_info(data_app,this);
+        }
     }
 
     show_app_info(data,carrot){
         if(data==null) $.MessageBox(carrot.l("no_app"));
-        document.title = data.name_en;
+        this.change_title_page(data.name_en,"?p=app&id="+data.id);
         var html='<div class="section-container p-2 p-xl-4">';
         html+='<div class="row">';
             html+='<div class="col-md-8 ps-4 ps-lg-3">';
                 html+='<div class="row bg-white shadow-sm">';
                     html+='<div class="col-md-4 p-3">';
-                        html+='<img class="w-100" src="'+data.icon+'" alt="">';
+                        html+='<img class="w-100" src="'+data.icon+'" alt="'+data.name_en+'">';
                     html+='</div>';
                     html+='<div class="col-md-8 p-2">';
                         html+='<h4 class="fw-semi fs-4 mb-3">'+data["name_"+carrot.lang]+'</h4>';
-                        html+='<button class="btn btn-primary w-45 fw-semi fs-8 py-2 me-3"> Download </button>';
-                        html+='<button class="btn border ps-3 w-45 fw-semi fs-8 py-2 btn-outlie-primary"> Add to Wish List </button>';
                         html+="<button class='btn dev btn_app_edit btn-warning w-45 fw-semi fs-8 py-2 me-3' app_id='"+data.id+"'><i class=\"fa-solid fa-pen-to-square\"></i> Edit</button>";
                         html+="<button class='btn dev btn_app_del btn-danger border ps-3 w-45 fw-semi fs-8 py-2' app_id='"+data.id+"'><i class=\"fa-solid fa-trash\"></i> Delete</button>";
                         html+="<button class='btn dev btn_app_export btn-dark w-45 fw-semi fs-8 py-2 me-3' app_id='"+data.id+"' data-collection='app'><i class=\"fa-solid fa-download\"></i> Export Json</button>";
                         html+="<button class='btn dev btn_app_import btn-dark border ps-3 w-45 fw-semi fs-8 py-2' app_id='"+data.id+"'  data-collection='app'><i class=\"fa-solid fa-upload\"></i> Import</button>";
     
+                        if(this.list_link_store!=null){
+                            var html_store_link="";
+                            var html_store_link_lager="";
+                            $(this.list_link_store).each(function(index,store){
+                                if(data[store.key]!=null){
+                                    var link_store_app=data[store.key];
+                                    if(link_store_app.trim()!=""){
+                                        html_store_link+="<a class='link_app' title=\""+store.name+"\" target=\"_blank\" href=\""+link_store_app+"\"><i class=\""+store.icon+"\"></i></a>";
+                                        html_store_link_lager+="<a class='mt-6 mb-6 mr-6 ml-6 d-inline' title=\""+store.name+"\" target=\"_blank\" href=\""+link_store_app+"\"><img style='width:100px' src='"+store.img+"'></a> ";
+                                    }
+                                }
+                            });
+                            if(html_store_link!="") html+="<div class='row pt-4'><div class='col-md-12 col-12 text-center'>"+html_store_link+"</div></div>";
+                            if(html_store_link_lager!="") html+="<div class='row pt-4'><div class='col-md-12 col-12 text-center'>"+html_store_link_lager+"</div></div>";
+                        }
+
                         html+='<div class="row pt-4">';
                             html+='<div class="col-md-4 col-6 text-center">';
                                 html+='<b>3.9 <i class="fa-sharp fa-solid fa-eye"></i></b>';
@@ -321,14 +403,33 @@ class Carrot_Site{
                                 html+='<b>5M+ <i class="fa-solid fa-download"></i></b>';
                                 html+='<p class="lang" key_lang="count_download">Downloads</p>';
                             html+='</div>';
+                            html+='<div class="col-md-4 col-6 text-center">';
+                                if(data.type=="game"){
+                                    html+='<b>Game <i class="fa-solid fa-gamepad"></i></b>';
+                                    html+='<p class="lang" key_lang="game">Game</p>';
+                                } 
+                                else{
+                                    html+='<b>App <i class="fa-solid fa-mobile"></i></b>';
+                                    html+='<p class="lang" key_lang="app">Application</p>';
+                                }
+                            html+='</div>';
+                            html+='<div class="col-md-4 col-6 text-center">';
+                                html+='<b>Ads <i class="fa-solid fa-window-restore"></i></b>';
+                                html+='<p class="lang" key_lang="contains_ads">Contains Ads</p>';
+                            html+='</div>';
+                            html+='<div class="col-md-4 col-6 text-center">';
+                                html+='<b>In-App <i class="fa-solid fa-cart-shopping"></i></b>';
+                                html+='<p class="lang" key_lang="contains_inapp">In-app purchases</p>';
+                            html+='</div>';
                         html+='</div>';
-    
-                        html+='<div class="auth pt-4">';
-                            html+='<h6 class="text-primary fw-semi mb-0">Zego Global Publishing</h6>';
-                            html+='<p class="fs-8">contains Ads</p>';
-                            html+='<button id="btn_share" class="btn btn-primary w-45 fw-semi fs-8 py-2 me-3"> Share </button>';
+
+                        html+='<div class="row pt-4">';
+                            html+='<div class="col-12 text-center">';
+                            html+='<button id="btn_share" type="button" class="btn d-inline btn-success"><i class="fa-solid fa-share-nodes"></i> Share </button> ';
+                            html+='<button id="register_protocol_url" type="button"  class="btn d-inline btn-success"><i class="fa-solid fa-rocket"></i> Open with.. </button>';
+                            html+='</div>';
                         html+='</div>';
-    
+
                     html+='</div>';
                 html+="</div>";
     
@@ -421,14 +522,7 @@ class Carrot_Site{
         var carrot=this;
         $(".app_icon").click(async function(){
             var id_box_app = $(this).attr("app_id");
-            if(carrot.obj_app[id_box_app]==null){
-                console.log("Load info app "+id_box_app+" from sever");
-                carrot.get_doc("app",id_box_app,carrot.show_app_info)
-            }else{
-                console.log("Load info app "+id_box_app+" from cache");
-                var data_app=JSON.parse(carrot.obj_app[id_box_app]);
-                carrot.show_app_info(data_app,carrot);
-            }
+            carrot.show_app_by_id(id_box_app);
         });
 
         $(".btn_app_edit").click(async function () {
@@ -466,8 +560,25 @@ class Carrot_Site{
             carrot.show_share();
         });
 
+        $("#box_input_search").change(function(){
+            var inp_text=$("#box_input_search").val();
+            carrot.act_search(inp_text);
+        });
+
+        $('#register_protocol_url').click(function(){
+           carrot.register_protocol_url(); 
+        });
         this.load_data_lang_web();
         this.check_mode_site();
+    }
+
+    act_search(s_key_search){
+        $(".box_app").each(function(index,emp){
+            var id_box=$(emp).attr("id");
+            var key_search=$(emp).attr("key_search");
+            if(id_box.search(s_key_search)!=-1||key_search.search(s_key_search)!=-1) $(emp).show();
+            else $(emp).hide();
+        });
     }
 
     show_edit_app_done(data_app,carrot){
@@ -606,5 +717,13 @@ class Carrot_Site{
             url:  window.location.href,
         }
         navigator.share(shareData)
+    }
+
+    register_protocol_url(){
+        if (!window.navigator || !window.navigator.registerProtocolHandler) {
+            $.MessageBox("Your browser does not support the Stellar-protocol: SEP-0007. Use Chrome, Opera or Firefox to open web+stellar links")
+        } else {
+            navigator.registerProtocolHandler("web+app", `${window.location.origin}/?p=app&id=%s`,"Carrot App");
+        }
     }
 }

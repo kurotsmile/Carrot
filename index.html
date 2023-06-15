@@ -14,18 +14,14 @@
     <link href="fontawesome6.4.0/css/fontawesome.css" rel="stylesheet">
     <link href="fontawesome6.4.0/css/brands.css" rel="stylesheet">
     <link href="fontawesome6.4.0/css/solid.css" rel="stylesheet">
-    <link rel="manifest" href="manifest.json?ver=1.5" />
+    <link rel="manifest" href="manifest.json?ver=1.7" />
 </head>
 
 <body>
     <header class="head">
         <div class="logo border-bottom">
             <img id="logo_carrot" class="w-100" src="images/logo.jpg" alt="Carrot Store" />
-            <a class="navbar-toggler d-block d-lg-none" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
-                aria-label="Toggle navigation">
-                <i class="bi fa-solid fa-bars"></i>
-            </a>
+            <a class="navbar-toggler d-block d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"><i class="bi fa-solid fa-bars"></i></a>
         </div>
         <div id="navbarNav" class="navcol pt-0 d-none d-lg-block">
             <ul>
@@ -107,8 +103,10 @@
             <div class="row">
                 <div class="col-md-5">
                     <div class="input-group mb-0">
+                        <div id="txt_recognition" class="form-control border-end-0 mb-0 d-none"><i class="fa-solid fa-voicemail"></i> <span id="txt_recognition_msg" class="text-primary">Speak into the microphone to search</span></div>
                         <input id="box_input_search" type="text" class="form-control border-end-0 mb-0" placeholder="Search Apps" aria-label="Recipient's username" aria-describedby="basic-addon2">
                         <span class="input-group-text sit border-start-0" id="basic-addon2"><i class="fa-sharp fa-solid fa-magnifying-glass"></i></span>
+                        <span role="button" class="input-group-text sit border-start-0" id="btn_recognition"><i class="fa-solid fa-microphone"></i></span>
                     </div>
                 </div>
                 <div class="col-md-3 text-end">&nbsp;</div>
@@ -393,6 +391,10 @@
             id_page = "wallpapers";
         }
 
+        $("#btn_recognition").click(function(){
+            carrot.start_recognition();
+        });
+
         $("#btn_import_json").click(function () {
             var url_json = prompt("Enter url json", "Enter url");
             if (url_json != null) {
@@ -529,6 +531,15 @@
         function check_show_by_id_page() {
             id_page = get_param_url("p");
             if(id_page == "privacy_policy") $("#btn_privacy_policy").click();
+            else if(id_page=="app"){
+                var id_app=get_param_url("id");
+                if(id_app!=""){
+                    id_app=decodeURI(id_app);
+                    carrot.show_app_by_id(id_app);
+                }
+                else carrot.show_all_app();
+            }
+            else if(id_page=="game") carrot.show_all_game();
             else if(id_page == "about_us") $("#btn_about_us").click();
             else if(id_page == "address_book") $("#btn_address_book").click();
             else if(id_page=="wallpapers") show_all_wallpaper();

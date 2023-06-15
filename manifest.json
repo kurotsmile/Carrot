@@ -1,6 +1,7 @@
 {
     "short_name": "Carrot",
     "name": "Great apps to make your life better",
+    "categories": ["App", "Game", "Medical","Icons","Background","Book Phone"],
     "icons": [
       {
         "src": "/images/icons-vector.svg",
@@ -36,8 +37,11 @@
     ],
     "protocol_handlers": [
       {
-        "protocol": "call",
+        "protocol": "web+call",
         "url": "/bookphone?=phone%s"
+      },      {
+        "protocol": "web+app",
+        "url": "/?p=app&id=%s"
       }
     ]
   }
