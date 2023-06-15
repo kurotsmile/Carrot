@@ -54,9 +54,10 @@
 
                     <div class="dropdown-menu">
                         <div class="dropdown-item btn-menu" id="btn_download_json" role="button"><i class="fa-solid fa-download fs-6 me-2"></i> Export Collection json</div>
-                        <div class="dropdown-item btn-menu" id="btn_import_json" role="button"><i class="fa-solid fa-file-import fs-6 me-2"></i> Import Collection json</div>
+                        <div class="dropdown-item btn-menu" id="btn_import_json_url" role="button"><i class="fa-solid fa-file-import fs-6 me-2"></i> Import Collection json (Url)</div>
+                        <div class="dropdown-item btn-menu" id="btn_import_json_file" role="button"><i class="fa-solid fa-file-import fs-6 me-2"></i> Import Collection json (File)</div>
                         <div class="dropdown-item btn-menu" id="btn_download_json_doc" role="button"><i class="fa-solid fa-file-lines fs-6 me-2"></i> Export Doc json</div>
-                        <div class="dropdown-item btn-menu" id="btn_import_json_doc" role="button"><i class="fa-solid fa-file-lines fs-6 me-2"></i> Import Doc json</div>
+                        <div class="dropdown-item btn-menu" id="btn_import_json_doc" role="button"><i class="fa-solid fa-file-lines fs-6 me-2"></i> Import Doc json (Url)</div>
                     </div>
                 </li>
 
@@ -305,6 +306,7 @@
             if(id_fun=='btn_block_chat') carrot.show_all_block_chat_by_lang();
             if(id_fun=='btn_download_json_doc') download_json_doc();
             if(id_fun=='btn_import_json_doc') carrot.show_import_json_box(null);
+            if(id_fun=='btn_import_json_file') carrot.show_import_json_file();
             if(id_fun=='btn_setting_lang_app') carrot.show_setting_lang_by_key(carrot.lang,'lang_app');
             if(id_fun=='btn_setting_lang_ailover') carrot.show_setting_lang_by_key(carrot.lang,'lang_app_ai_lover');
             if(id_fun=='btn_setting_lang_web') carrot.show_setting_lang_by_key(carrot.lang,'lang_web');
@@ -396,24 +398,28 @@
             carrot.start_recognition();
         });
 
-        $("#btn_import_json").click(function () {
+        $("#btn_import_json_url").click(function () {
             var url_json = prompt("Enter url json", "Enter url");
             if (url_json != null) {
                 $.ajax(url_json, {
                     success: function (data) {
-                        var name_collection = data.collection;
-                        var all_item = data.all_item;
-                        var cr_data = collection(db, name_collection);
-                        $.each(all_item, function (index, d) {
-                            var doc_id = d["id_import"];
-                            delete d["id_import"];
-                            setDoc(doc(cr_data, doc_id), d);
-                        });
-                        $.MessageBox("Import Success!");
+                        carrot.import_json_by_data(data);
                     }
                 });
             };
         });
+
+        carrot.import_json_by_data=(data)=>{
+            var name_collection = data.collection;
+            var all_item = data.all_item;
+            var cr_data = collection(db, name_collection);
+            $.each(all_item, function (index, d) {
+                var doc_id = d["id_import"];
+                delete d["id_import"];
+                setDoc(doc(cr_data, doc_id), d);
+            });
+            $.MessageBox("Import Success!");
+        }
 
         $("#btn_login").click(function () {
             $.MessageBox({

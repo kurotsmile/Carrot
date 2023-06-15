@@ -16,7 +16,6 @@ class Carrot_Site{
     name_document_cur="";
 
     constructor(){
-        
         this.firebaseConfig_mainhost={
             apiKey: "AIzaSyDzsx1KYLZL5COz1NaTD8cOz8GYalX2Dxc",
             authDomain: "carrotstore.firebaseapp.com",
@@ -62,7 +61,7 @@ class Carrot_Site{
         }
           
         this.recognition.onaudiostart = function(event) {
-            $("#txt_recognition_msg").addClass("text-primary");
+            $("#txt_recognition_msg").addClass("text-primary").html(carrot.l("recognition_start","Speak into the microphone to search..."));
             $("#txt_recognition").removeClass("d-none");
             $("#box_input_search").addClass("d-none");
             console.log('SpeechRecognition.onaudiostart');
@@ -79,30 +78,11 @@ class Carrot_Site{
             console.log('SpeechRecognition.onend');
         }
           
-        this.recognition.onnomatch = function(event) {
-            //Fired when the speech recognition service returns a final result with no significant recognition. This may involve some degree of recognition, which doesn't meet or exceed the confidence threshold.
-            console.log('SpeechRecognition.onnomatch');
-        }
-          
-        this.recognition.onsoundstart = function(event) {
-            //Fired when any sound — recognisable speech or not — has been detected.
-            console.log('SpeechRecognition.onsoundstart');
-        }
-          
-        this.recognition.onsoundend = function(event) {
-            //Fired when any sound — recognisable speech or not — has stopped being detected.
-            console.log('SpeechRecognition.onsoundend');
-        }
-          
-        this.recognition.onspeechstart = function (event) {
-            //Fired when sound that is recognised by the speech recognition service as speech has been detected.
-            console.log('SpeechRecognition.onspeechstart');
-        }
-
-        this.recognition.onstart = function(event) {
-            //Fired when the speech recognition service has begun listening to incoming audio with intent to recognize grammars associated with the current SpeechRecognition.
-            console.log('SpeechRecognition.onstart');
-        }
+        this.recognition.onnomatch = function(event) {console.log('SpeechRecognition.onnomatch');}
+        this.recognition.onsoundstart = function(event) {console.log('SpeechRecognition.onsoundstart');}
+        this.recognition.onsoundend = function(event) {console.log('SpeechRecognition.onsoundend');}
+        this.recognition.onspeechstart = function (event) {console.log('SpeechRecognition.onspeechstart');}
+        this.recognition.onstart = function(event) {console.log('SpeechRecognition.onstart');}
     }
 
     change_mode_site(){
@@ -389,7 +369,7 @@ class Carrot_Site{
     }
 
     show_app_info(data,carrot){
-        if(data==null) $.MessageBox(carrot.l("no_app"));
+        if(data==null) $.MessageBox(carrot.l("no_obj"));
         this.change_title_page(data.name_en,"?p=app&id="+data.id);
         var html='<div class="section-container p-2 p-xl-4">';
         html+='<div class="row">';
@@ -442,22 +422,22 @@ class Carrot_Site{
                             html+='</div>';
                             html+='<div class="col-md-4 col-6 text-center">';
                                 html+='<b>Ads <i class="fa-solid fa-window-restore"></i></b>';
-                                html+='<p class="lang" key_lang="contains_ads">Contains Ads</p>';
+                                html+='<p class="lang" key_lang="in_app">Contains Ads</p>';
                             html+='</div>';
                             html+='<div class="col-md-4 col-6 text-center">';
                                 html+='<b>In-App <i class="fa-solid fa-cart-shopping"></i></b>';
                                 html+='<p class="lang" key_lang="contains_inapp">In-app purchases</p>';
                             html+='</div>';
                             html+='<div class="col-md-4 col-6 text-center">';
-                                html+='<b>Author <i class="fa-solid fa-user-group-simple"></i></b>';
+                                html+='<b><l class="lang" key_lang="author">Author</l> <i class="fa-solid fa-user-group-simple"></i></b>';
                                 html+='<p>Thanh <i class="fa-solid fa-heart"></i> Nhung</p>';
                             html+='</div>';
                         html+='</div>';
 
                         html+='<div class="row pt-4">';
                             html+='<div class="col-12 text-center">';
-                            html+='<button id="btn_share" type="button" class="btn d-inline btn-success"><i class="fa-solid fa-share-nodes"></i> Share </button> ';
-                            html+='<button id="register_protocol_url" type="button"  class="btn d-inline btn-success"><i class="fa-solid fa-rocket"></i> Open with.. </button>';
+                            html+='<button id="btn_share" type="button" class="btn d-inline btn-success"><i class="fa-solid fa-share-nodes"></i> <l class="lang" key_lang="share">Share</l> </button> ';
+                            html+='<button id="register_protocol_url" type="button"  class="btn d-inline btn-success"><i class="fa-solid fa-rocket"></i> <l class="lang" key_lang="open_with">Open with..</l> </button>';
                             html+='</div>';
                         html+='</div>';
 
@@ -707,7 +687,7 @@ class Carrot_Site{
     }
 
     done_get_file_json(data_json,carrot){
-        if(data_json==null){ $.MessageBox(carrot.l("no_app")); return;}
+        if(data_json==null){ $.MessageBox(carrot.l("no_obj")); return;}
         var fileContents = JSON.stringify(data_json, null, 2);
         var fileName = carrot.name_collection_cur+"-"+carrot.name_document_cur+ ".json";
 
@@ -845,5 +825,26 @@ class Carrot_Site{
             top: "auto",
             buttonFail: "Cancel"
         }).done(act_done);
+    }
+
+    show_import_json_file(){
+        var carrot=this;
+        var html='';
+        html+='<div class="row"><div class="col-12"><input type="file" id="input-file-import"></div></div>';
+        html+='<div class="row"><div id="file_contain" class="col-12"></div></div>';
+        $("#main_contain").html(html);
+        $("#input-file-import").on('change',function() {
+            var file = $(this).get(0).files;
+            var reader = new FileReader();
+            reader.readAsText(file[0]);
+            reader.addEventListener("load", function(e) {
+                var textFromFileLoaded = e.target.result;
+                console.log(textFromFileLoaded);
+                var obj_json=JSON.parse(textFromFileLoaded);
+                carrot.import_json_by_data(obj_json);
+                var jsonPretty = JSON.stringify(obj_json, null, '\t');
+                $("#file_contain").html(jsonPretty);
+            })
+        });
     }
 }
