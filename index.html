@@ -289,12 +289,14 @@
                 else
                     localStorage.setItem("is_localhost", "true");
 
+                carrot.delete_obj_app();
+                carrot.delete_obj_icon();
                 $.MessageBox("Thay đổi kế độ kết nối cơ sở dữ liệu thành công! Load lại trang để làm mới các chức năng!");
             }
 
             if(id_fun == "btn_model_site") carrot.change_mode_site();
             if(id_fun=="btn_add_app") carrot.show_box_add_or_edit_app(null,carrot.act_done_add_or_edit);
-            if(id_fun=='btn_add_icon') show_box_add_or_edit_icon(null,carrot.act_done_add_or_edit);
+            if(id_fun=='btn_add_icon') carrot.show_box_add_or_edit_icon(null,carrot.act_done_add_or_edit);
             if(id_fun=='btn_add_wallpaper') show_box_add_or_edit_wallpaper(null,carrot.act_done_add_or_edit);
             if(id_fun=='btn_add_lang') show_box_add_or_edit_lang(null,carrot.act_done_add_or_edit);
 
@@ -366,6 +368,7 @@
             delete(data.act_name_before);
             setDoc(doc(collection(db,db_collection),data[db_doc]), data);
             if(db_collection=="app") carrot.delete_obj_app();
+            if(db_collection=="icon") carrot.delete_obj_icon();
             $.MessageBox(act_msg_success);
             if(act_name_before!=null&&act_name_before!='') eval(act_name_before + "()");
         }
@@ -375,12 +378,10 @@
             $.MessageBox("Change version data site success!");
         }
         
-        async function show_all_icon(){
-            var q = query(collection(db, "icon"));
-            var querySnapshot = await getDocs(q);
-            show_list_icon(querySnapshot);
-            carrot.change_title_page("Icon", "?p=icon");
+        function show_all_icon(){
+            if(carrot.obj_icon==null) carrot.get_all_data_icon();
             id_page = "icon";
+            carrot.show_all_icon();
         }
 
         async function show_all_wallpaper(){
@@ -458,6 +459,7 @@
             await deleteDoc(doc(db, db_collection, db_doc_id));
             $.MessageBox("Delete object ('" + db_doc_id + "') Success!");
             if(db_collection=="app") carrot.delete_obj_app();
+            if(db_collection=="icon") carrot.delete_obj_icon();
         }
 
         async function download_json() {
@@ -527,6 +529,19 @@
             });
             carrot.save_list_lang();
         };
+
+        carrot.get_all_data_icon=async()=>{
+            console.log("Get and Load icon to sever");
+            carrot.obj_icon=new Object();
+            var q = query(collection(db, "icon"));
+            var querySnapshot = await getDocs(q);
+            querySnapshot.forEach((doc) => {
+                var data_icon=doc.data();
+                data_icon["id"]=doc.id;
+                carrot.obj_icon[doc.id]=JSON.stringify(data_icon);
+            });
+            carrot.save_obj_icon();
+        }
 
         function check_show_by_id_page() {
             id_page = get_param_url("p");

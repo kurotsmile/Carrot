@@ -7,6 +7,7 @@ class Carrot_Site{
     list_link_store=null;
     list_lang;
     obj_app=Object();
+    obj_icon=null;
     version=null;
 
     recognition=null;
@@ -15,12 +16,7 @@ class Carrot_Site{
     name_document_cur="";
 
     constructor(){
-        var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
-        if(localStorage.getItem("mode_site") != null) this.mode_site = localStorage.getItem("mode_site");
-        this.recognition = new SpeechRecognition();
-        this.recognition.lang = 'en-US';
-        this.recognition.interimResults = false;
-
+        
         this.firebaseConfig_mainhost={
             apiKey: "AIzaSyDzsx1KYLZL5COz1NaTD8cOz8GYalX2Dxc",
             authDomain: "carrotstore.firebaseapp.com",
@@ -31,15 +27,27 @@ class Carrot_Site{
             measurementId: "G-KXDDJ42JFN"
         }
 
+        if(localStorage.getItem("mode_site") != null) this.mode_site = localStorage.getItem("mode_site");
         if(localStorage.getItem("lang_web")!=null) this.lang_web=JSON.parse(localStorage.getItem("lang_web"));
         if(localStorage.getItem("link_store")!=null) this.list_link_store=JSON.parse(localStorage.getItem("link_store"));
         if(localStorage.getItem("lang") == null) this.change_lang("en"); else this.lang = localStorage.getItem("lang");
         this.list_lang=Array();
         this.load_obj_app();
         this.load_list_lang();
-        this.version=this.get_version_data_cur();
+        this.load_obj_icon();
+        this.load_recognition();
 
+        this.version=this.get_version_data_cur();
+    };
+
+    load_recognition(){
+        var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
         var carrot=this;
+
+        this.recognition = new SpeechRecognition();
+        this.recognition.lang = 'en-US';
+        this.recognition.interimResults = false;
+        
         this.recognition.onresult = function(event) {
             var speechResult = event.results[0][0].transcript.toLowerCase();
             $("#txt_recognition_msg").removeClass("text-primary").addClass("text-success").html(speechResult);
@@ -95,7 +103,7 @@ class Carrot_Site{
             //Fired when the speech recognition service has begun listening to incoming audio with intent to recognize grammars associated with the current SpeechRecognition.
             console.log('SpeechRecognition.onstart');
         }
-    };
+    }
 
     change_mode_site(){
         if (this.mode_site == "nomal")
@@ -165,11 +173,15 @@ class Carrot_Site{
     }
 
     convert_apps_to_list(){
-        var list_app=Array();
-        $.each(this.obj_app,function(key,val){
-            list_app.push(JSON.parse(val));
+        return this.convert_obj_to_list(this.obj_app);
+    }
+
+    convert_obj_to_list(obj_carrot){
+        var list_obj=Array();
+        $.each(obj_carrot,function(key,val){
+            list_obj.push(JSON.parse(val));
         });
-        return list_app;
+        return list_obj;
     }
 
     show_home(){
@@ -218,6 +230,10 @@ class Carrot_Site{
         }
     }
 
+    load_obj_icon(){
+        if (localStorage.getItem("obj_icon") != null) this.obj_icon=JSON.parse(localStorage.getItem("obj_icon"));
+    }
+
     load_list_lang(){
         if (localStorage.getItem("list_lang") == null) {
             this.list_lang=new Array();
@@ -231,10 +247,21 @@ class Carrot_Site{
         localStorage.setItem("obj_app", JSON.stringify(this.obj_app));
     }
 
+    save_obj_icon(){
+        localStorage.setItem("obj_icon", JSON.stringify(this.obj_icon));
+    }
+
     delete_obj_app(){
         localStorage.removeItem("obj_app");
         this.obj_app=new Object();
         this.get_all_data_app();
+    }
+
+    delete_obj_icon(){
+        localStorage.removeItem("obj_icon");
+        this.obj_icon=null;
+        this.get_all_data_icon();
+        this.show_all_icon();
     }
     
     save_list_lang(){
@@ -319,7 +346,7 @@ class Carrot_Site{
                             $(this.list_link_store).each(function(index,store){
                                 if(data_app[store.key]!=null){
                                     var link_store_app=data_app[store.key];
-                                    html_store_link+="<a class='link_app' title=\""+store.name+"\" target=\"_blank\" href=\""+link_store_app+"\"><i class=\""+store.icon+"\"></i></a>";
+                                    if(link_store_app!='') html_store_link+="<a class='link_app' title=\""+store.name+"\" target=\"_blank\" href=\""+link_store_app+"\"><i class=\""+store.icon+"\"></i></a>";
                                 }
                             });
                             if(html_store_link!="") html_main_contain+="<div class='row'><div class='col-12'>"+html_store_link+"</div></div>";
@@ -420,6 +447,10 @@ class Carrot_Site{
                             html+='<div class="col-md-4 col-6 text-center">';
                                 html+='<b>In-App <i class="fa-solid fa-cart-shopping"></i></b>';
                                 html+='<p class="lang" key_lang="contains_inapp">In-app purchases</p>';
+                            html+='</div>';
+                            html+='<div class="col-md-4 col-6 text-center">';
+                                html+='<b>Author <i class="fa-solid fa-user-group-simple"></i></b>';
+                                html+='<p>Thanh <i class="fa-solid fa-heart"></i> Nhung</p>';
                             html+='</div>';
                         html+='</div>';
 
@@ -725,5 +756,94 @@ class Carrot_Site{
         } else {
             navigator.registerProtocolHandler("web+app", `${window.location.origin}/?p=app&id=%s`,"Carrot App");
         }
+    }
+
+    show_all_icon(){
+        this.load_obj_icon();
+        if(this.obj_icon==null){$.MessageBox("No list icon");return;}
+        this.change_title_page("Icon", "?p=icon");
+        var list_icon=this.convert_obj_to_list(this.obj_icon);
+        $("#main_contain").html("");
+        var html_main_contain="";
+        html_main_contain+='<div class="row m-0">';
+        $(list_icon).each(function(index,data_icon) {
+            var s_url_icon="";
+            if(data_icon.icon!=null) s_url_icon=data_icon.icon;
+            if(s_url_icon=="") s_url_icon="images/64.png";
+
+            html_main_contain+="<div class='col-md-3 mb-3' id=\""+data_icon.id+"\">";
+                html_main_contain+='<div class="app-cover p-2 shadow-md bg-white">';
+                    html_main_contain+='<div class="row">';
+                    html_main_contain+='<div class="img-cover pe-0 col-3"><img class="rounded" src="'+s_url_icon+'" alt="'+data_icon.id+'"></div>';
+                        html_main_contain+='<div class="det mt-2 col-9">';
+                            html_main_contain+="<h5 class='mb-0 fs-6'>"+data_icon.id+"</h5>";
+                            html_main_contain+="<span class='fs-8' style='color:"+data_icon.color+"'>"+data_icon.color+"</span>";
+                        html_main_contain+="</div>";
+                    html_main_contain+="</div>";
+
+                    html_main_contain+="<div class='row'>";
+                    html_main_contain+="<div class='col-6'><div class='btn dev btn_app_edit btn-warning btn-sm' app_id='"+data_icon.id+"'><i class=\"fa-solid fa-pen-to-square\"></i> Edit</div></div>";
+                    html_main_contain+="<div class='col-6'><div class='btn dev btn_app_del btn-danger btn-sm' app_id='"+data_icon.id+"'><i class=\"fa-solid fa-trash\"></i> Delete</div></div>";
+                    html_main_contain+="</div>";
+
+                html_main_contain+="</div>";
+            html_main_contain+="</div>";
+        });
+        html_main_contain+="</div>";
+        $("#main_contain").html(html_main_contain);
+
+        var carrot=this;
+        $(".btn_app_edit").click(async function () {
+            var id_box_app = $(this).attr("app_id");
+            carrot.get_doc("icon",id_box_app,carrot.show_edit_icon_done);
+        });
+
+        $(".btn_app_del").click(async function () {
+            var id_box_app = $(this).attr("app_id");
+            $.MessageBox({
+                buttonDone  : "Yes",
+                buttonFail  : "No",
+                message     : "Bạn có chắc chắng là xóa biểu tượng "+id_box_app+" này không?"
+            }).done(function(){
+                carrot.act_del_obj("icon",id_box_app);
+            });
+        });
+
+        this.check_mode_site();
+    }
+
+    show_edit_icon_done(data_icon,carrot){
+        if(data_icon!=null)
+            carrot.show_box_add_or_edit_icon(data_icon,carrot.act_done_add_or_edit);
+        else
+            $.MessageBox("Icon không còn tồn tại!");
+    }
+
+    show_box_add_or_edit_icon(data_icon,act_done){
+        var s_title_box='';
+        if(data_icon==null)s_title_box="<b>Add Icon</b>";
+        else s_title_box="<b>Update Icon</b>";
+        var obj_icon = Object();
+        obj_icon["tip_icon"] = { type: "caption", message: "Thông tin cơ bản" };
+        if(data_icon==null){
+            data_icon=Object();
+            data_icon["name"]='';
+            data_icon["icon"]='';
+            data_icon["color"]='';
+        }else{
+            if(data_icon["name"]=="") data_icon["name"]=data_icon["id"];
+        }
+        obj_icon["id"]={'type':'input','defaultValue':data_icon["id"], 'label':'ID'};
+        obj_icon["name"]={'type':'input','defaultValue':data_icon["name"], 'label':'Name'};
+        obj_icon["icon"]={'type':'input','defaultValue':data_icon["icon"], 'label':'Icon (url)'};
+        obj_icon["color"]={'type':'color','defaultValue':data_icon["color"], 'label':'Color'};
+        customer_field_for_db(obj_icon,'icon','id','show_all_icon','Add App successfully');
+    
+        $.MessageBox({
+            message: s_title_box,
+            input: obj_icon,
+            top: "auto",
+            buttonFail: "Cancel"
+        }).done(act_done);
     }
 }

@@ -95,28 +95,6 @@ async function show_list_contact(querySnapshot){
     $("#main_contain").html(html_main_contain);
 }
 
-async function show_list_icon(querySnapshot){
-    $("#main_contain").html("");
-    var html_main_contain="";
-    html_main_contain+='<div class="row m-0">';
-    querySnapshot.forEach((doc) => {
-        var data_icon=doc.data();
-        html_main_contain+="<div class='col-md-3 mb-3' id=\""+doc.id+"\">";
-            html_main_contain+='<div class="app-cover p-2 shadow-md bg-white">';
-                html_main_contain+='<div class="row">';
-                html_main_contain+='<div class="img-cover pe-0 col-3"><img class="rounded" src="'+data_icon.icon+'" alt="'+doc.id+'"></div>';
-                    html_main_contain+='<div class="det mt-2 col-9">';
-                        html_main_contain+="<h5 class='mb-0 fs-6'>"+doc.id+"</h5>";
-                        html_main_contain+="<span class='fs-8' style='color:"+data_icon.color+"'>"+data_icon.color+"</span>";
-                    html_main_contain+="</div>";
-                html_main_contain+="</div>";
-            html_main_contain+="</div>";
-        html_main_contain+="</div>";
-    });
-    html_main_contain+="</div>";
-    $("#main_contain").html(html_main_contain);
-}
-
 async function show_list_background(querySnapshot){
     $("#main_contain").html("");
     var html_main_contain="";
@@ -154,34 +132,6 @@ function show_info_user_login_in_header(data_user){
         $("#acc_info_name").html(data_user.name);
         if(data_user.avatar!=null&&data_user.avatar!="") $("#acc_info_avatar").attr("src",data_user.avatar);
     }
-}
-
-function show_box_add_or_edit_icon(data_icon,act_done){
-    var s_title_box='';
-    if(data_icon==null) s_title_box="<b>Add Icon</b>";
-    else s_title_box="<b>Update Icon</b>";
-
-    var obj_icon = Object();
-    obj_icon["tip_icon"] = { type: "caption", message: "Thông tin cơ bản" };
-    if(data_icon==null){
-        data_icon=Object();
-        data_icon["name"]='';
-        data_icon["icon"]='';
-        data_icon["color"]='';
-    }else{
-        if(data_icon["name"]=="") data_icon["name"]=data_icon["id"];
-    }
-    obj_icon["name"]={'type':'input','defaultValue':data_icon["name"], 'label':'Name'};
-    obj_icon["icon"]={'type':'input','defaultValue':data_icon["icon"], 'label':'Icon (url)'};
-    obj_icon["color"]={'type':'color','defaultValue':data_icon["color"], 'label':'Color'};
-    customer_field_for_db(obj_icon,'icon','name','show_all_icon','Add Icon successfully');
-
-    $.MessageBox({
-        message: s_title_box,
-        input: obj_icon,
-        top: "auto",
-        buttonFail: "Cancel"
-    }).done(act_done);
 }
 
 function show_box_add_or_edit_wallpaper(data_wallpaper,act_done){
