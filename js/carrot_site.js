@@ -180,6 +180,7 @@ class Carrot_Site{
 
     show_home(){
         this.show_list_app(this.convert_apps_to_list());
+        carrot.change_title_page("Carrot store", "?p=home");
     }
 
     show_all_app(){
@@ -272,7 +273,7 @@ class Carrot_Site{
 
     change_title_page(s_title,s_url){
         document.title =s_title;
-        if(this.lang_url!=""&&s_url!="") s_url=s_url+"&lang="+this.lang;
+        if(this.lang_url!=""&&s_url!="") s_url=this.get_url()+s_url+"&lang="+this.lang;
         if(s_url!="")
             window.history.pushState(s_title, 'Title', s_url);
         else
