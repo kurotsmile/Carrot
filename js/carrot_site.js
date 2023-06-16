@@ -258,7 +258,6 @@ class Carrot_Site{
     
     save_list_lang(){
         localStorage.setItem("list_lang", JSON.stringify(this.list_lang));
-        this.show_list_lang_in_menu();
     }
 
     save_list_link_store(){
@@ -888,5 +887,15 @@ class Carrot_Site{
                 $(".messagebox_button_done").click();
             };
         });
+    }
+
+    show_editor_code_js(){
+        var html='';
+        html+='<style>.editor {border-radius: 6px;box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);font-family:  monospace;font-size: 14px;font-weight: 400;height: 340px;letter-spacing: normal;line-height: 20px;padding: 10px;tab-size: 4;}</style>';
+        html+='<div class="row m-0">';
+            html+='<div class="editor language-js"></div>';
+        html+='</div>';
+        $("#main_contain").html(html);
+        this.create_editor_js();
     }
 }

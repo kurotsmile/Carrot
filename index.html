@@ -91,6 +91,7 @@
 
                 <li id="btn_mode_host" class="border-bottom btn-menu dev"><i class="fa-solid fa-dev fs-6 me-2"></i> Localhost</li>
                 <li id="btn_version_data" class="border-bottom btn-menu dev"><i class="fa-regular fa-code-compare fs-6 me-2"></i> Version</li>
+                <li id="btn_code_js" class="border-bottom btn-menu dev"><i class="fa-regular fa-code fs-6 me-2"></i> Code Editer</li>
             </ul>
         </div>
     </header>
@@ -157,6 +158,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
         import { getFirestore, collection, addDoc, setDoc, doc, getDoc, query, where, getDocs, deleteDoc, connectFirestoreEmulator,disableNetwork } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+        import {CodeJar} from "https://medv.io/codejar/codejar.js";
         
         var count_dev = 0;
         var is_localhost = false;
@@ -234,6 +236,7 @@
 
         $("#logo_carrot").on("contextmenu", function () { act_mode_dev(); return false; });
         $("#btn_download_json").click(function () {download_json();});
+        $("#btn_code_js").click(function(){carrot.show_editor_code_js();});
 
         $(".btn-menu").click(async function () {
             $(".btn-menu").removeClass("active");
@@ -546,6 +549,10 @@
             carrot.show_all_icon();
         }
 
+        carrot.create_editor_js=()=>{
+            CodeJar(document.querySelector('.editor'), hljs.highlightElement);
+        }
+
         function check_show_by_id_page() {
             id_page = get_param_url("p");
             if(id_page == "privacy_policy") $("#btn_privacy_policy").click();
@@ -579,7 +586,6 @@
                     carrot.set_version_data_cur(ver_data_new);
                     check_show_by_id_page();
                 }else{
-                    carrot.show_list_lang_in_menu();
                     check_show_by_id_page();
                     carrot.show_error_connect_sever();
                 }
@@ -591,7 +597,6 @@
                     carrot.log(err.request);
                     return err.request;
                 } else {
-                    carrot.show_list_lang_in_menu();
                     check_show_by_id_page();
                     carrot.show_error_connect_sever();
                     carrot.log(err.message);
@@ -623,5 +628,7 @@
     <script src="js/main.js?ver=1.8" type="text/javascript" class="emp_js" data-ver="1.6"></script>
     <script src="js/ai_lover.js?ver=1.8" type="text/javascript" class="emp_js" data-ver="1.6"></script>
     <script src="js/carrot_site.js?ver=1.8" type="text/javascript" class="emp_js" data-ver="1.6"></script>
+    <link rel="stylesheet" href="highlight/styles/default.min.css"/>
+    <script src="highlight/highlight.min.js"></script>
 </body>
 </html>
