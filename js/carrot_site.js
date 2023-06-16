@@ -16,6 +16,7 @@ class Carrot_Site{
     obj_lang_web=Object();
     obj_icon=null;
     obj_login=null;
+    obj_phone_book=null;
 
     name_collection_cur="";
     name_document_cur="";
@@ -53,6 +54,7 @@ class Carrot_Site{
         this.load_obj_app();
         this.load_list_lang();
         this.load_obj_icon();
+        this.load_obj_phone_book();
         this.load_recognition();
 
         this.version=this.get_version_data_cur();
@@ -264,6 +266,10 @@ class Carrot_Site{
         if (localStorage.getItem("obj_icon") != null) this.obj_icon=JSON.parse(localStorage.getItem("obj_icon"));
     }
 
+    load_obj_phone_book(){
+        if (localStorage.getItem("obj_phone_book") != null) this.obj_phone_book=JSON.parse(localStorage.getItem("obj_phone_book"));
+    }
+
     load_list_lang(){
         if (localStorage.getItem("list_lang") == null)
             this.list_lang=new Array();
@@ -279,6 +285,10 @@ class Carrot_Site{
         localStorage.setItem("obj_icon", JSON.stringify(this.obj_icon));
     }
 
+    save_obj_phone_book(){
+        localStorage.setItem("obj_phone_book", JSON.stringify(this.obj_phone_book));
+    }
+
     delete_obj_app(){
         localStorage.removeItem("obj_app");
         this.obj_app=new Object();
@@ -287,6 +297,11 @@ class Carrot_Site{
     delete_obj_icon(){
         localStorage.removeItem("obj_icon");
         this.obj_icon=null;
+    }
+
+    delete_obj_phone_book(){
+        localStorage.removeItem("obj_phone_book");
+        this.obj_phone_book=null;
     }
     
     save_list_lang(){
@@ -1010,5 +1025,120 @@ class Carrot_Site{
             $("#acc_info_name").html(this.obj_login.name);
             if(this.obj_login.avatar!=null&&this.obj_login.avatar!="") $("#acc_info_avatar").attr("src",this.obj_login.avatar);
         }
+    }
+
+    show_all_phone_book(){
+        if(this.obj_phone_book==null) 
+            this.get_all_data_phone_book();
+        else{
+            this.log("Show all data phone book from cache!");
+            this.show_all_phone_book_from_list();
+        }
+    }
+
+    show_all_phone_book_from_list(){
+        var carrot=this;
+        var list_phone_book=this.convert_obj_to_list(this.obj_phone_book);
+        this.change_title_page("Address Book", "?p=address_book","address_book");
+        $("#main_contain").html("");
+        var html_main_contain="";
+        html_main_contain+='<div class="row m-0">';
+        $(list_phone_book).each(function(index,data_app) {
+            html_main_contain+="<div class='box_app col-md-4 mb-3' id=\""+data_app.id+"\">";
+                html_main_contain+='<div class="app-cover p-2 shadow-md bg-white">';
+                    html_main_contain+='<div class="row">';
+                    var url_avatar='';
+                    if(data_app.avatar!=null) url_avatar=data_app.avatar;
+                    if(url_avatar=="") url_avatar="images/avatar_default.png";
+                    html_main_contain+='<div class="img-cover pe-0 col-3"><img class="rounded" src="'+url_avatar+'" alt="'+data_app.name+'"></div>';
+                        html_main_contain+='<div class="det mt-2 col-9">';
+                            html_main_contain+="<h5 class='mb-0 fs-6'>"+data_app.name+"</h5>";
+                            html_main_contain+='<ul class="row">';
+                            html_main_contain+='<li class="col-8 ratfac">';
+                                html_main_contain+='<i class="bi text-warning fa-solid fa-heart"></i>';
+                                html_main_contain+='<i class="bi text-warning fa-solid fa-heart"></i>';
+                                html_main_contain+='<i class="bi text-warning fa-solid fa-heart"></i>';
+                                html_main_contain+='<i class="bi text-danger fa-solid fa-heart"></i>';
+                                html_main_contain+='<i class="bi fa-solid fa-heart"></i>';
+                            html_main_contain+='</li>';
+                            if(data_app.sex=="0")
+                                html_main_contain+='<li class="col-4"><span class="text-success float-end"><i class="fa-solid fa-mars"></i></span></li>';
+                            else
+                                html_main_contain+='<li class="col-4"><span class="text-success float-end"><i class="fa-solid fa-venus"></i></span></li>';
+                            html_main_contain+='</ul>';
+    
+                            html_main_contain+='<ul class="row">';
+                            if(data_app.phone!="") html_main_contain+='<li class="col-12 fs-8"><i class="fa-solid fa-phone"></i> '+data_app.phone+'</li>';
+                            if(data_app.email!="") html_main_contain+='<li class="col-12 fs-8"><i class="fa-solid fa-envelope"></i> '+data_app.email+'</li>';
+                            if(data_app.address!=""){
+                                var user_address=data_app.address;
+                                if(user_address.name!="") html_main_contain+='<li class="col-12 fs-8"><i class="fa-solid fa-location-dot"></i> '+user_address.name+'</li>';
+                            }
+                            html_main_contain+='</ul>';
+
+                            html_main_contain+="<div class='row' style='margin-top:6px;'>";
+                            html_main_contain+="<div class='col-6'><div class='btn dev btn_app_edit btn-warning btn-sm' app_id='"+data_app.id+"'><i class=\"fa-solid fa-pen-to-square\"></i> Edit</div></div>";
+                            html_main_contain+="<div class='col-6'><div class='btn dev btn_app_del btn-danger btn-sm' app_id='"+data_app.id+"'><i class=\"fa-solid fa-trash\"></i> Delete</div></div>";
+                            html_main_contain+="</div>";
+    
+                        html_main_contain+="</div>";
+                    html_main_contain+="</div>";
+                html_main_contain+="</div>";
+            html_main_contain+="</div>";
+            
+        });
+        html_main_contain+="</div>";
+        $("#main_contain").html(html_main_contain);
+
+        $(".btn_app_edit").click(async function () {
+            var id_box_app = $(this).attr("app_id");
+            carrot.get_doc("user-"+carrot.lang,id_box_app,carrot.show_edit_phone_book_done);
+        });
+
+        $(".btn_app_del").click(async function () {
+            var id_box_app = $(this).attr("app_id");
+            $.MessageBox({
+                buttonDone  : "Yes",
+                buttonFail  : "No",
+                message     : "Bạn có chắc chắng là xóa ứng dụng "+id_box_app+" này không?"
+            }).done(function(){
+                carrot.act_del_obj("user-"+carrot.lang,id_box_app);
+            });
+        });
+        this.check_mode_site();
+    }
+
+    show_edit_phone_book_done(data_user,carrot){
+        if(data_user!=null)
+            carrot.show_box_add_or_edit_phone_book(data_user,carrot.act_done_add_or_edit);
+        else
+            $.MessageBox("Danh bạ không còn tồn tại!");
+    }
+
+    show_box_add_or_edit_phone_book(data_user,act_done){
+        var s_title_box='';
+        if(data_user==null)s_title_box="<b>Add User</b>";
+        else s_title_box="<b>Update User</b>";
+        var obj_user = Object();
+        obj_user["tip_app"] = { type: "caption", message: "Thông tin cơ bản" };
+    
+        obj_user["name"]={type:'text','title':'Full Name','label':'Full Name'};
+        obj_user["sex"]={type:'text','title':'Your Sex','label':'Your Sex'};
+        obj_user["email"]={type:'email','title':'Email','label':'Email'};
+        obj_user["phone"]={type:'number','title':'Address','label':'Address'};
+
+        obj_user["address_name"]={type:'text','title':'Address','label':'Address'};
+        obj_user["address_log"]={type:'text','title':'Address','label':'Address'};
+        obj_user["address_lat"]={type:'text','title':'Address','label':'Address'};
+
+        obj_user["lang"]={type:'text','title':'Lang','label':'lang','defaultValue':this.lang};
+        customer_field_for_db(obj_user,'user-'+this.lang,'id','','Add User successfully');
+    
+        $.MessageBox({
+            message: s_title_box,
+            input: obj_user,
+            top: "auto",
+            buttonFail: "Cancel"
+        }).done(act_done);
     }
 }

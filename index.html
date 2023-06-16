@@ -226,19 +226,14 @@
             };
         });
 
-        $(".btn-menu").click(async function () {
+        $(".btn-menu").click(function () {
             $(".btn-menu").removeClass("active");
             $(".btn-menu i").removeClass("fa-bounce");
             $(this).addClass("active");
             $(this).find("i").addClass("fa-bounce");
             var id_fun = $(this).attr("id");
 
-            if (id_fun == "btn_address_book") {
-                var q = query(collection(db, "user-"+carrot.lang), where("status_share", "==", "0"));
-                var querySnapshot = await getDocs(q);
-                show_list_contact(querySnapshot);
-                carrot.change_title_page("Address Book", "?p=address_book","address_book");
-            }
+            if (id_fun == "btn_address_book") carrot.show_all_phone_book();
 
             if (id_fun == "btn_all_icon") carrot.show_all_icon();
             if (id_fun == "btn_wallpapers") show_all_wallpaper();
@@ -383,7 +378,7 @@
                 var username=data.usernames;
                 var password=data.password;
                 if(button=='login') check_user_login(username,password);
-                if(button=='register') $.MessageBox("Registration Success");
+                if(button=='register') carrot.show_box_add_or_edit_phone_book(null);
             });
         });
 
@@ -406,6 +401,7 @@
             $.MessageBox("Delete object ('" + db_doc_id + "') Success!");
             if(db_collection=="app") carrot.delete_obj_app();
             if(db_collection=="icon") carrot.delete_obj_icon();
+            if(carrot.id_page=="address_book") carrot.delete_obj_phone_book();
         }
 
         async function download_json() {
@@ -452,6 +448,20 @@
             carrot.save_obj_app();
             carrot.show_home();
         };
+
+        carrot.get_all_data_phone_book=async()=>{
+            carrot.log("get_all_data_phone_book from sever");
+            var q = query(collection(db, "user-"+carrot.lang), where("status_share", "==", "0"));
+            var queryListPhoneBook = await getDocs(q);
+            carrot.obj_phone_book=Object();
+            queryListPhoneBook.forEach((doc) => {
+                var data_phone=doc.data();
+                data_phone["id"]=doc.id;
+                carrot.obj_phone_book[doc.id]=JSON.stringify(data_phone);
+            });
+            carrot.save_obj_phone_book();
+            carrot.show_all_phone_book();
+        }
 
         async function get_all_data_link_store() {
             carrot.log("get_all_data_link_store");
