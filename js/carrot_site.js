@@ -683,6 +683,7 @@ class Carrot_Site{
             var obj_input_describe = Object();
             obj_input_describe["type"] = "textarea";
             obj_input_describe["label"] = "Describe - " + data_lang.name;
+            obj_input_describe["rows"]="10";
             if(data_app!=null&&data_app["describe_" + data_lang.key]!="") obj_input_describe["defaultValue"]=data_app["describe_" + data_lang.key];
             obj_app["describe_" + data_lang.key] = obj_input_describe;
     
