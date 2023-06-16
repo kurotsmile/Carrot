@@ -275,12 +275,12 @@
             };
 
             if (id_fun == "btn_about_us") {
-                $("#main_contain").load("about_us/" + carrot.lang+".html?ver="+carrot.version["page"]);
+                $("#main_contain").load(carrot.get_url()+"/about_us/" + carrot.lang+".html?ver="+carrot.version["page"]);
                 carrot.change_title_page("About Us", "?p=about_us");
                 id_page = "about_us";
             };
             if (id_fun == "btn_privacy_policy") {
-                $("#main_contain").load("privacy_policy/" + carrot.lang+".html?ver="+carrot.version["page"]);
+                $("#main_contain").load(carrot.get_url()+"/privacy_policy/" + carrot.lang+".html?ver="+carrot.version["page"]);
                 carrot.change_title_page("Privacy Policy", "?p=privacy_policy");
                 id_page = "privacy_policy";
             };
@@ -623,11 +623,13 @@
             } else {
                 $("#btn_mode_host").html('<i class="fa-sharp fa-solid fa-database fs-6 me-2"></i> Googlehost');
             }
+
+            alert(carrot.get_url());
         });
     </script>
-    <script src="js/main.js?ver=1.8" type="text/javascript" class="emp_js" data-ver="1.6"></script>
-    <script src="js/ai_lover.js?ver=1.8" type="text/javascript" class="emp_js" data-ver="1.6"></script>
-    <script src="js/carrot_site.js?ver=1.8" type="text/javascript" class="emp_js" data-ver="1.6"></script>
+    <script src="js/main.js?ver=1.9" type="text/javascript" class="emp_js" data-ver="1.6"></script>
+    <script src="js/ai_lover.js?ver=1.9" type="text/javascript" class="emp_js" data-ver="1.6"></script>
+    <script src="js/carrot_site.js?ver=1.9" type="text/javascript" class="emp_js" data-ver="1.6"></script>
     <link rel="stylesheet" href="highlight/styles/default.min.css"/>
     <script src="highlight/highlight.min.js"></script>
 </body>

@@ -898,4 +898,8 @@ class Carrot_Site{
         $("#main_contain").html(html);
         this.create_editor_js();
     }
+
+    get_url(){
+        return location.protocol+"//"+location.hostname+location.pathname;
+    }
 }
