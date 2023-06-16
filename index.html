@@ -34,6 +34,8 @@
                 <li id="btn_all_app" class="border-bottom btn-menu"><i class="fa-solid fa-mobile bi fs-6 me-2"></i> <i class="bi fs-6  bi-google-play"></i> <lang class="lang" key_lang="app">Applications</lang></li>
                 <li id="btn_all_game" class="border-bottom btn-menu"><i class="fa-solid fa-gamepad bi me-2 fs-6"></i> <lang class="lang" key_lang="game">Games</lang></li>
                 <li id="btn_address_book" class="border-bottom btn-menu"><i class="fa-solid fa-address-book fs-6 me-2"></i> <lang class="lang" key_lang="phone_book">Phone book</lang></li>
+                <li id="btn_list_music" class="border-bottom btn-menu"><i class="fa-solid fa-music fs-6 me-2"></i> Music</li>
+                <li id="btn_audio" class="border-bottom btn-menu"><i class="fa-solid fa-guitar fs-6 me-2"></i> Instrumental music</li>
                 <li id="btn_wallpapers" class="border-bottom btn-menu"><i class="fa-solid fa-image fs-6 me-2"></i> <lang class="lang" key_lang="wallpaper">Wallpapers</lang></li>
                 <li id="btn_all_icon" class="border-bottom btn-menu"><i class="fa-solid fa-face-smile fs-6 me-2"></i> <lang class="lang" key_lang="icon">Icon</lang></li>
                 <li id="btn_privacy_policy" class="border-bottom btn-menu"><i class="fa-sharp fa-solid fa-building-shield fs-6 me-2"></i> <lang class="lang" key_lang="privacy_policy">Privacy Policy</lang></li>
@@ -49,6 +51,7 @@
                         <div class="dropdown-item btn-menu" id="btn_add_icon" role="button"><i class="fa-solid fa-add fs-6 me-2"></i> Add Icon</div>
                         <div class="dropdown-item btn-menu" id="btn_add_wallpaper" role="button"><i class="fa-solid fa-add fs-6 me-2"></i> Add Background</div>
                         <div class="dropdown-item btn-menu" id="btn_add_lang" role="button"><i class="fa-solid fa-add fs-6 me-2"></i> Add Lang</div>
+                        <div class="dropdown-item btn-menu" id="btn_add_avatar" role="button"><i class="fa-solid fa-square-plus fs-6 me-2"></i> Add Avatar</div>
                     </div>
                 </li>
 
@@ -171,12 +174,9 @@
             db = getFirestore();
             if (carrot.is_localhost) connectFirestoreEmulator(db,'localhost', 8082);
             if(db==null) carrot.show_error_connect_sever();
-            console.log(db);
         }
 
         carrot.setup_sever_db();
-
-        var ai_lover=new Ai_Lover(carrot);
 
         carrot.set_doc=(s_collection,s_document,data)=>{
             carrot.log("Set doc: collection:" + s_collection+" document:"+s_document);
@@ -190,9 +190,23 @@
             if (dataSnap.exists()) {
                 var data_obj = dataSnap.data();
                 data_obj["id"]=dataSnap.id;
-                act_done(data_obj,carrot,ai_lover);
+                act_done(data_obj,carrot);
             } else {
-                act_done(null,carrot,ai_lover);
+                act_done(null,carrot);
+            }
+        }
+
+        carrot.get_list_doc=async(s_collection,act_done)=>{
+            var q = query(collection(db, s_collection));
+            var queryListObj = await getDocs(q);
+            if(queryListObj.docs.length>0){
+                var obj_data=Object();
+                queryListObj.forEach((doc) => {
+                    obj_data[doc.id]=JSON.stringify(doc.data());
+                });
+                act_done(obj_data,carrot);
+            }else{
+                act_done(null,carrot);
             }
         }
 
@@ -235,12 +249,10 @@
             var id_fun = $(this).attr("id");
 
             if (id_fun == "btn_address_book") carrot.show_all_phone_book();
-
             if (id_fun == "btn_all_icon") carrot.show_all_icon();
             if (id_fun == "btn_wallpapers") show_all_wallpaper();
-
             if (id_fun == "btn_home"||id_fun=='logo_carrot') carrot.show_home();
-
+            if(id_fun=="btn_list_music") carrot.music.show_list_music();
             if (id_fun == "btn_all_app") { 
                 carrot.show_all_app();
                 carrot.change_title_page("Apps", "?p=all_app","app");
@@ -259,15 +271,14 @@
                 $("#main_contain").load(carrot.get_url()+"/privacy_policy/" + carrot.lang+".html?ver="+carrot.version["page"]);
                 carrot.change_title_page("Privacy Policy", "?p=privacy_policy","privacy_policy");
             };
-            if (id_fun == "btn_mode_host") carrot.change_host_connection();
-            if(id_fun == "btn_model_site") carrot.change_mode_site();
+            if(id_fun=="btn_mode_host") carrot.change_host_connection();
+            if(id_fun=="btn_model_site") carrot.change_mode_site();
             if(id_fun=="btn_add_app") carrot.show_box_add_or_edit_app(null,carrot.act_done_add_or_edit);
             if(id_fun=='btn_add_icon') carrot.show_box_add_or_edit_icon(null,carrot.act_done_add_or_edit);
             if(id_fun=='btn_add_wallpaper') show_box_add_or_edit_wallpaper(null,carrot.act_done_add_or_edit);
             if(id_fun=='btn_add_lang') show_box_add_or_edit_lang(null,carrot.act_done_add_or_edit);
-
             if(id_fun=='btn_version_data') carrot.show_edit_version_data_version(act_done_edit_version_data_version);
-            if(id_fun=='btn_ai_lover_all_chat') ai_lover.show_all_chat_ai_lover();
+            if(id_fun=='btn_ai_lover_all_chat') carrot.ai_lover.show_all_chat_ai_lover();
             if(id_fun=='btn_block_chat') carrot.show_all_block_chat_by_lang();
             if(id_fun=='btn_download_json_doc') download_json_doc();
             if(id_fun=='btn_import_json_doc') carrot.show_import_json_box(null);
@@ -278,7 +289,7 @@
         });
 
         carrot.show_setting_lang_by_key=async(s_key_lang_change="",s_collection)=>{    
-                ai_lover.setting_lang_change=s_key_lang_change;
+                carrot.ai_lover.setting_lang_change=s_key_lang_change;
                 const langRef_tag = doc(db, s_collection, "en");
                 const langSnap_tag = await getDoc(langRef_tag);
                 var data_obj_lang_tag=new Object();
@@ -295,15 +306,15 @@
                     data_obj_lang_change["id"]=langSnap_change.id;
                 }
 
-                ai_lover.setting_lang_collection=s_collection;
-                ai_lover.show_setting_lang(data_obj_lang_tag,data_obj_lang_change);
+                carrot.ai_lover.setting_lang_collection=s_collection;
+                carrot.ai_lover.show_setting_lang(data_obj_lang_tag,data_obj_lang_change);
         }
 
-        ai_lover.show_all_chat_ai_lover=async (s_lang="")=>{
+        carrot.ai_lover.show_all_chat_ai_lover=async (s_lang="")=>{
             if(s_lang=="") s_lang=carrot.lang;
-            ai_lover.setting_lang_change=s_lang;
+            carrot.ai_lover.setting_lang_change=s_lang;
             var querySnapshot = await getDocs(query(collection(db, "chat-"+s_lang),where("status","==","pending")));
-            ai_lover.show_all_chat(querySnapshot);
+            carrot.ai_lover.show_all_chat(querySnapshot);
         }
 
         carrot.show_all_block_chat_by_lang=async (s_key_lang='')=>{
@@ -312,13 +323,13 @@
             if (appSnap.exists()) {
                 var data_list_key_block=appSnap.data();
                 data_list_key_block["lang"]=appSnap.id;
-                ai_lover.show_list_block_chat(data_list_key_block);
+                carrot.ai_lover.show_list_block_chat(data_list_key_block);
             } else {
                 $.MessageBox("Chưa có danh sách từ cấm!");
                 var data_list_key_block=new Object();
                 data_list_key_block["lang"]=s_key_lang;
                 data_list_key_block["chat"]=Array("new_key_block");
-                ai_lover.show_list_block_chat(data_list_key_block);
+                carrot.ai_lover.show_list_block_chat(data_list_key_block);
             }
         }
 
@@ -379,19 +390,19 @@
                 var username=data.usernames;
                 var password=data.password;
                 if(button=='login') check_user_login(username,password);
-                if(button=='register') carrot.show_box_add_or_edit_phone_book(null);
+                if(button=='register') carrot.show_box_add_or_edit_phone_book(null,carrot.act_done_add_or_edit);
             });
         });
 
         $("#btn_logout").click(function(){carrot.user_logout();});
-
         $("#btn_user_avatar").click(async function(){
             var q = query(collection(db, "user-avatar"));
             var queryUserAvatar = await getDocs(q);
             if(queryUserAvatar.docs.length>0){
-                ai_lover.show_list_avatar(queryUserAvatar.docs);
+                carrot.ai_lover.show_list_avatar(queryUserAvatar.docs);
             }
         });
+        $("#btn_add_avatar").click(function(){carrot.ai_lover.show_box_add_or_edit_avatar(null,carrot.act_done_add_or_edit);});
 
         async function check_user_login(username,password){
             var q = query(collection(db, "user-"+carrot.lang), where("phone", "==", username),where("password", "==", password));
@@ -570,6 +581,7 @@
     <script src="js/main.js?ver=1.9" type="text/javascript" class="emp_js" data-ver="1.6"></script>
     <script src="js/ai_lover.js?ver=1.9" type="text/javascript" class="emp_js" data-ver="1.6"></script>
     <script src="js/carrot_site.js?ver=1.9" type="text/javascript" class="emp_js" data-ver="1.6"></script>
+    <script src="js/carrot_music.js?ver=1.9" type="text/javascript" class="emp_js" data-ver="1.6"></script>
     <link rel="stylesheet" href="highlight/styles/default.min.css"/>
     <script src="highlight/highlight.min.js"></script>
 </body>

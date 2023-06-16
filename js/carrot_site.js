@@ -21,6 +21,10 @@ class Carrot_Site{
     name_collection_cur="";
     name_document_cur="";
     id_page;
+    body;
+
+    music;
+    ai_lover;
 
     constructor(){
         var carrot=this;
@@ -60,6 +64,11 @@ class Carrot_Site{
         this.version=this.get_version_data_cur();
         $("#key_lang").html(this.lang);
         $("#btn_change_lang").click(function(){ carrot.show_list_lang();});
+
+        this.body=$("#main_contain");
+
+        this.music=new Carrot_Music(this);
+        this.ai_lover=new Ai_Lover(this);
     };
 
     load_recognition(){
@@ -1118,15 +1127,17 @@ class Carrot_Site{
 
     show_box_add_or_edit_phone_book(data_user,act_done){
         var s_title_box='';
-        if(data_user==null)s_title_box="<b>Add User</b>";
-        else s_title_box="<b>Update User</b>";
+        this.getLocation_for_address_user();
+        if(data_user==null)s_title_box=this.l("register","Add User");
+        else s_title_box="Update User";
         var obj_user = Object();
-        obj_user["tip_app"] = { type: "caption", message: "Thông tin cơ bản" };
-    
+        obj_user["tip_app"] = { type: "caption", message: "Register an account to use services and manage your information in the system",customClass:'text-info'};
+  
+        obj_user["id"]={type:'text',defaultValue:this.uniq(),customClass:'d-none'};
         obj_user["name"]={type:'text','title':'Full Name','label':'Full Name'};
-        obj_user["sex"]={type:'text','title':'Your Sex','label':'Your Sex'};
+        obj_user["sex"]={type:'select','title':'Your Sex','label':'Your Sex','options':{ "0": "Boy", "1": "Girl" },defaultValue:"0"};
         obj_user["email"]={type:'email','title':'Email','label':'Email'};
-        obj_user["phone"]={type:'number','title':'Address','label':'Address'};
+        obj_user["phone"]={type:'number','title':'Address','label':'Phone'};
 
         obj_user["address_name"]={type:'text','title':'Address','label':'Address'};
         obj_user["address_log"]={type:'text','title':'Address','label':'Address'};
@@ -1136,10 +1147,23 @@ class Carrot_Site{
         customer_field_for_db(obj_user,'user-'+this.lang,'id','','Add User successfully');
     
         $.MessageBox({
-            message: s_title_box,
+            title: s_title_box,
             input: obj_user,
             top: "auto",
             buttonFail: "Cancel"
         }).done(act_done);
+    }
+    
+    getLocation_for_address_user() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(this.showPosition);
+        } else {
+          this.log("Geolocation is not supported by this browser.");
+        }
+    }
+      
+    showPosition(position) {
+        var s_address="Latitude: " + position.coords.latitude + " Longitude: " + position.coords.longitude;
+        $.MessageBox({message:s_address});
     }
 }

@@ -315,7 +315,7 @@ class Ai_Lover{
             html+="<div class='col-md-3 mb-3' id=\""+data_avatar.id+"\">";
             html+='<div class="app-cover p-2 shadow-md bg-white">';
                 html+='<div class="row">';
-                    html+='<div class="img-cover pe-0 col-3"><img class="rounded" src="'+data_avatar.icon+'" alt="'+data_avatar.id+'"></div>';
+                    html+='<div class="img-cover pe-0 col-3"><img class="rounded" style="width:85px;height:85px" src="'+data_avatar.icon+'" alt="'+data_avatar.id+'"></div>';
                     html+='<div class="det mt-2 col-9">';
                         html+="<h5 class='mb-2 fs-6'>"+data_avatar.type+"</h5>";
                         html+="<div class='btn btn_app_edit btn-warning btn-sm d-inline' app_id='"+data_avatar.id+"'><i class=\"fa-solid fa-pen-to-square\"></i> Edit</div> ";
@@ -330,17 +330,18 @@ class Ai_Lover{
         $("#main_contain").html(html);
 
         var carrot=this.carrot;
+        var ai_lover=this;
         $(".btn_app_edit").click(async function () {
             var id_box_app = $(this).attr("app_id");
-            carrot.get_doc("icon",id_box_app,carrot.show_edit_icon_done);
+            carrot.get_doc("user-avatar",id_box_app,ai_lover.show_edit_avatar_done);
         });
 
         $(".btn_app_del").click(async function () {
             var id_box_app = $(this).attr("app_id");
             var item_ui=$(this).parent().parent().parent().parent();
             $.MessageBox({
-                buttonDone  : "Yes",
-                buttonFail  : "No",
+                buttonDone  : 'Yes',
+                buttonFail  : 'No',
                 message     : "Bạn có chắc chắng là xóa <b>Avatar</b> "+id_box_app+" này không?"
             }).done(function(){
                 $(item_ui).remove();
@@ -348,4 +349,40 @@ class Ai_Lover{
             });
         });
     }
+
+    show_edit_avatar_done(data_avatar,carrot){
+        if(data_avatar!=null)
+            carrot.ai_lover.show_box_add_or_edit_avatar(data_avatar,carrot.act_done_add_or_edit);
+         else
+            $.MessageBox("<b>Avatar</b> không còn tồn tại!");
+    }
+
+    show_box_add_or_edit_avatar(data_avatar,act_done){
+        var carrot=this.carrot;
+        var s_title_box='';
+        if(data_avatar==null)s_title_box="<b>Add Avatar</b>";
+        else s_title_box="<b>Update Avatar</b>";
+        var obj_avatar = Object();
+        obj_avatar["tip_avatar"] = { type: "caption", message: "Thông tin cơ bản" };
+        if(data_avatar==null){
+            data_avatar=Object();
+            data_avatar["id"]=carrot.uniq();
+            data_avatar["name"]='';
+            data_avatar["type"]='boy';
+        }else{
+            if(data_avatar["id"]=="") data_avatar["id"]=carrot.uniq();
+        }
+        obj_avatar["id"]={'type':'input','defaultValue':data_avatar["id"], 'label':'ID'};
+        obj_avatar["type"]={'type':'select','defaultValue':data_avatar["type"], 'label':'Type','options':{ "boy": "Boy", "girl": "Girl" }};
+        obj_avatar["icon"]={'type':'input','defaultValue':data_avatar["icon"], 'label':'Image avatar (url)'};
+        customer_field_for_db(obj_avatar,'user-avatar','id','','Add Avatar successfully');
+    
+        $.MessageBox({
+            message: s_title_box,
+            input: obj_avatar,
+            top: "auto",
+            buttonFail: "Cancel"
+        }).done(act_done);
+    }
+    
 }
