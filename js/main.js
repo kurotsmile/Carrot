@@ -120,20 +120,6 @@ async function show_list_background(querySnapshot){
     $("#main_contain").html(html_main_contain);
 }
 
-function show_info_user_login_in_header(data_user){
-    if(data_user==null){
-        $("#btn_acc_info").hide();
-        $("#btn_login").show();
-        $("#menu_account").hide();
-    }else{
-        $("#menu_account").removeAttr("style");
-        $("#btn_acc_info").show();
-        $("#btn_login").hide();
-        $("#acc_info_name").html(data_user.name);
-        if(data_user.avatar!=null&&data_user.avatar!="") $("#acc_info_avatar").attr("src",data_user.avatar);
-    }
-}
-
 function show_box_add_or_edit_wallpaper(data_wallpaper,act_done){
     var s_title_box='';
     if(data_wallpaper==null) s_title_box="<b>Add Wallpaper</b>";

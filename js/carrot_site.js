@@ -1,21 +1,25 @@
 class Carrot_Site{
-    mode_site = "nomal";
     firebaseConfig_mainhost;
+    count_act_dev = 0;
+    mode_site = "nomal";
     is_dev=false;
+    is_localhost=false;
     lang;
     lang_url="";
     lang_web=Object();
     list_link_store=null;
     list_lang;
-    obj_app=Object();
+    version=null;
+    recognition=null;
+
+    obj_app=null;
     obj_lang_web=Object();
     obj_icon=null;
-    version=null;
-
-    recognition=null;
+    obj_login=null;
 
     name_collection_cur="";
     name_document_cur="";
+    id_page;
 
     constructor(){
         var carrot=this;
@@ -29,11 +33,22 @@ class Carrot_Site{
             measurementId: "G-KXDDJ42JFN"
         }
 
+        if (localStorage.getItem("is_localhost") == null) {
+            this.is_localhost = false;
+        } else {
+            if (localStorage.getItem("is_localhost") == "false")
+                this.is_localhost = false;
+            else
+                this.is_localhost = true;
+        }
+
         if(localStorage.getItem("mode_site") != null) this.mode_site = localStorage.getItem("mode_site");
         if(localStorage.getItem("is_dev") != null) this.is_dev = localStorage.getItem("is_dev");
         if(localStorage.getItem("lang_web")!=null) this.lang_web=JSON.parse(localStorage.getItem("lang_web"));
         if(localStorage.getItem("link_store")!=null) this.list_link_store=JSON.parse(localStorage.getItem("link_store"));
         if(localStorage.getItem("lang") == null) this.change_lang("en"); else this.lang = localStorage.getItem("lang");
+        if(localStorage.getItem("obj_login")!=null) obj_login=JSON.parse(localStorage.getItem("obj_login"));
+
         this.list_lang=Array();
         this.load_obj_app();
         this.load_list_lang();
@@ -91,6 +106,17 @@ class Carrot_Site{
         this.recognition.onstart = function(event) {carrot.log('SpeechRecognition.onstart');}
     }
 
+    act_mode_dev() {
+        this.count_act_dev++;
+        if (this.count_act_dev >= 3) {
+            this.is_dev = true;
+            localStorage.setItem("is_dev", this.is_dev);
+            $("#btn_model_site").show();
+            this.count_act_dev = 0;
+            $.MessageBox("Active Model Dev!");
+        }
+    }
+
     change_mode_site(){
         if (this.mode_site == "nomal")
             this.mode_site = "dev";
@@ -111,6 +137,12 @@ class Carrot_Site{
             $("#btn_model_site").hide();
             $(".dev").each(function () { $(this).hide(100); });
         }
+
+        if (this.is_localhost) {
+            $("#btn_mode_host").html('<i class="fa-brands fa-dev fs-6 me-2"></i> Localhost');
+        } else {
+            $("#btn_mode_host").html('<i class="fa-sharp fa-solid fa-database fs-6 me-2"></i> Googlehost');
+        }
     }
 
     start_recognition(){
@@ -127,7 +159,6 @@ class Carrot_Site{
         htm_msg+="</div>";
         htm_msg+="</div>";
         $.MessageBox({message:htm_msg});
-        this.show_home();
     }
 
     async get_all_data_lang_web(){
@@ -179,8 +210,16 @@ class Carrot_Site{
     }
 
     show_home(){
-        this.show_list_app(this.convert_apps_to_list());
-        this.change_title_page("Carrot store", "?p=home");
+        this.load_obj_app();
+        if(this.obj_app==null){
+            this.log("Show Home load data.. Get data from sever");
+            this.get_all_data_app();
+        }
+        else{
+            this.log("Show Home load data.. Cache");
+            this.show_list_app(this.convert_apps_to_list());
+        }
+        this.change_title_page("Carrot store", "?p=home","home");
     }
 
     show_all_app(){
@@ -218,11 +257,7 @@ class Carrot_Site{
     }
 
     load_obj_app(){
-        if (localStorage.getItem("obj_app") == null) {
-            this.obj_app=new Object();
-        } else {
-            this.obj_app=JSON.parse(localStorage.getItem("obj_app"));
-        }
+        if (localStorage.getItem("obj_app") == null) this.obj_app=JSON.parse(localStorage.getItem("obj_app"));
     }
 
     load_obj_icon(){
@@ -247,14 +282,11 @@ class Carrot_Site{
     delete_obj_app(){
         localStorage.removeItem("obj_app");
         this.obj_app=new Object();
-        this.get_all_data_app();
     }
 
     delete_obj_icon(){
         localStorage.removeItem("obj_icon");
         this.obj_icon=null;
-        this.get_all_data_icon();
-        this.show_all_icon();
     }
     
     save_list_lang(){
@@ -271,8 +303,9 @@ class Carrot_Site{
         $("#key_lang").html(s_key);
     }
 
-    change_title_page(s_title,s_url){
+    change_title_page(s_title,s_url,id){
         document.title =s_title;
+        this.id_page=id;
         if(this.lang_url!=""&&s_url!="") s_url=this.get_url()+s_url+"&lang="+this.lang;
         if(s_url!="")
             window.history.pushState(s_title, 'Title', s_url);
@@ -735,10 +768,8 @@ class Carrot_Site{
         }
     }
 
-    show_all_icon(){
-        this.load_obj_icon();
-        if(this.obj_icon==null){$.MessageBox("No list icon");return;}
-        this.change_title_page("Icon", "?p=icon");
+    show_all_icon_from_list_icon(){
+        this.change_title_page("Icon", "?p=icon","icon");
         var list_icon=this.convert_obj_to_list(this.obj_icon);
         $("#main_contain").html("");
         var html_main_contain="";
@@ -787,6 +818,18 @@ class Carrot_Site{
         });
 
         this.check_mode_site();
+    }
+
+    show_all_icon(){
+        this.load_obj_icon();
+        if(this.obj_icon==null){
+            this.get_all_data_icon();
+        }
+        else{
+            this.log("Show all data icon from cache!");
+            this.show_all_icon_from_list_icon();
+        }
+            
     }
 
     show_edit_icon_done(data_icon,carrot){
@@ -885,6 +928,7 @@ class Carrot_Site{
                 carrot.change_lang(key_lang);
                 carrot.get_all_data_lang_web();
                 carrot.load_data_lang_web();
+                carrot.check_show_by_id_page();
                 $(".messagebox_button_done").click();
             };
         });
@@ -902,5 +946,69 @@ class Carrot_Site{
 
     get_url(){
         return location.protocol+"//"+location.hostname+location.pathname;
+    }
+
+    change_host_connection(){
+        if (this.is_localhost){
+            this.is_localhost=false;
+            localStorage.setItem("is_localhost", "false");
+        }
+        else{
+            this.is_localhost=true;
+            localStorage.setItem("is_localhost", "true");
+        }
+            
+        this.check_mode_site();
+        this.delete_obj_app();
+        this.delete_obj_icon();
+        this.setup_sever_db();
+        this.check_version_data();
+        $.MessageBox("Thay đổi kế độ kết nối cơ sở dữ liệu thành công! Load lại trang để làm mới các chức năng!");
+    }
+
+    check_show_by_id_page() {
+        this.id_page = get_param_url("p");
+        if(this.id_page == "privacy_policy") $("#btn_privacy_policy").click();
+        else if(this.id_page=="app"){
+            var id_app=get_param_url("id");
+            if(id_app!=""){
+                id_app=decodeURI(id_app);
+                this.show_app_by_id(id_app);
+            }
+            else this.show_all_app();
+        }
+        else if(this.id_page=="game") this.show_all_game();
+        else if(this.id_page=="about_us") $("#btn_about_us").click();
+        else if(this.id_page=="address_book") $("#btn_address_book").click();
+        else if(this.id_page=="wallpapers") show_all_wallpaper();
+        else if(this.id_page=="icon") this.show_all_icon();
+        else this.show_home();
+        this.log("ID_page:"+this.id_page);
+    }
+
+    set_user_login(data_user){
+        this.obj_login=data_user;
+        localStorage.setItem("obj_login",JSON.stringify(this.obj_login));
+        this.show_info_user_login_in_header();
+    }
+
+    user_logout(){
+        this.obj_login=null;
+        localStorage.removeItem("obj_login");
+        this.show_info_user_login_in_header();
+    }
+
+    show_info_user_login_in_header(){
+        if(this.obj_login==null){
+            $("#btn_acc_info").hide();
+            $("#btn_login").show();
+            $("#menu_account").hide();
+        }else{
+            $("#menu_account").removeAttr("style");
+            $("#btn_acc_info").show();
+            $("#btn_login").hide();
+            $("#acc_info_name").html(this.obj_login.name);
+            if(this.obj_login.avatar!=null&&this.obj_login.avatar!="") $("#acc_info_avatar").attr("src",this.obj_login.avatar);
+        }
     }
 }
