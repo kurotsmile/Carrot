@@ -305,4 +305,47 @@ class Ai_Lover{
             $("#body_table_key_block").append(html_new_field);
         });
     }
+
+    show_list_avatar(list_avatar){
+        var html="<div class='row m-0'>";
+
+        $(list_avatar).each(function(index,avatar_user){
+            var data_avatar=avatar_user.data();
+            data_avatar.id=avatar_user.id;
+            html+="<div class='col-md-3 mb-3' id=\""+data_avatar.id+"\">";
+            html+='<div class="app-cover p-2 shadow-md bg-white">';
+                html+='<div class="row">';
+                    html+='<div class="img-cover pe-0 col-3"><img class="rounded" src="'+data_avatar.icon+'" alt="'+data_avatar.id+'"></div>';
+                    html+='<div class="det mt-2 col-9">';
+                        html+="<h5 class='mb-2 fs-6'>"+data_avatar.type+"</h5>";
+                        html+="<div class='btn btn_app_edit btn-warning btn-sm d-inline' app_id='"+data_avatar.id+"'><i class=\"fa-solid fa-pen-to-square\"></i> Edit</div> ";
+                        html+="<div class='btn btn_app_del btn-danger btn-sm d-inline' app_id='"+data_avatar.id+"'><i class=\"fa-solid fa-trash\"></i> Delete</div>";
+                    html+="</div>";
+                html+="</div>";
+
+            html+="</div>";
+            html+="</div>";
+        });
+        html+="</div>";
+        $("#main_contain").html(html);
+
+        var carrot=this.carrot;
+        $(".btn_app_edit").click(async function () {
+            var id_box_app = $(this).attr("app_id");
+            carrot.get_doc("icon",id_box_app,carrot.show_edit_icon_done);
+        });
+
+        $(".btn_app_del").click(async function () {
+            var id_box_app = $(this).attr("app_id");
+            var item_ui=$(this).parent().parent().parent().parent();
+            $.MessageBox({
+                buttonDone  : "Yes",
+                buttonFail  : "No",
+                message     : "Bạn có chắc chắng là xóa <b>Avatar</b> "+id_box_app+" này không?"
+            }).done(function(){
+                $(item_ui).remove();
+                carrot.act_del_obj("user-avatar",id_box_app);
+            });
+        });
+    }
 }
