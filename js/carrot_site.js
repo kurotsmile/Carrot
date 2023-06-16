@@ -47,7 +47,7 @@ class Carrot_Site{
         if(localStorage.getItem("lang_web")!=null) this.lang_web=JSON.parse(localStorage.getItem("lang_web"));
         if(localStorage.getItem("link_store")!=null) this.list_link_store=JSON.parse(localStorage.getItem("link_store"));
         if(localStorage.getItem("lang") == null) this.change_lang("en"); else this.lang = localStorage.getItem("lang");
-        if(localStorage.getItem("obj_login")!=null) obj_login=JSON.parse(localStorage.getItem("obj_login"));
+        if(localStorage.getItem("obj_login")!=null) this.obj_login=JSON.parse(localStorage.getItem("obj_login"));
 
         this.list_lang=Array();
         this.load_obj_app();
