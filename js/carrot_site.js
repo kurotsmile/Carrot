@@ -180,7 +180,7 @@ class Carrot_Site{
 
     show_home(){
         this.show_list_app(this.convert_apps_to_list());
-        carrot.change_title_page("Carrot store", "?p=home");
+        this.change_title_page("Carrot store", "?p=home");
     }
 
     show_all_app(){
