@@ -608,6 +608,23 @@ class Carrot_Site{
             });
         });
 
+
+        $("#box_input_search").change(function(){
+            var inp_text=$("#box_input_search").val();
+            carrot.act_search(inp_text);
+        });
+
+        $('#register_protocol_url').click(function(){
+           carrot.register_protocol_url(); 
+        });
+
+        this.check_event();
+        this.load_data_lang_web();
+        this.check_mode_site();
+    }
+
+    check_event(){
+        var carrot=this;
         $(".btn_app_export").click(function(){
             var app_id=$(this).attr("app_id");
             var data_collection=$(this).attr("data-collection");
@@ -626,17 +643,6 @@ class Carrot_Site{
         $("#btn_share").click(function(){
             carrot.show_share();
         });
-
-        $("#box_input_search").change(function(){
-            var inp_text=$("#box_input_search").val();
-            carrot.act_search(inp_text);
-        });
-
-        $('#register_protocol_url').click(function(){
-           carrot.register_protocol_url(); 
-        });
-        this.load_data_lang_web();
-        this.check_mode_site();
     }
 
     act_search(s_key_search){
@@ -1005,7 +1011,15 @@ class Carrot_Site{
             else this.show_all_app();
         }
         else if(this.id_page=="game") this.show_all_game();
-        else if(this.id_page=="music"||this.id_page=="songs") this.music.show_list_music();
+        else if(this.id_page=="music"||this.id_page=="songs"){
+            var id_song=get_param_url("id");
+            if(id_song!=''){
+                id_song=decodeURI(id_song);
+                this.music.show_info_music_buy_id(id_song);
+            }else{
+                this.music.show_list_music();
+            }
+        }
         else if(this.id_page=="about_us") $("#btn_about_us").click();
         else if(this.id_page=="address_book") $("#btn_address_book").click();
         else if(this.id_page=="wallpapers") show_all_wallpaper();

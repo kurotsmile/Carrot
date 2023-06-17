@@ -28,7 +28,7 @@ class Carrot_Music{
             $("#m_time_end").html(this.formatTime(duration));
             if (this.audio_player.readyState >= 2){
                 this.audio_player.play();
-                $(this.emp_status_music).html('<i class="fa-regular fa-circle-stop fa-bounce"></i>');
+                $(this.emp_status_music).html('<i class="fa-regular fa-circle-stop fa-bounce fa-2x"></i>');
             }
         });
 
@@ -71,6 +71,16 @@ class Carrot_Music{
             carrot.music.create_audio();
         }
         carrot.check_mode_site();
+        carrot.music.check_event();
+    }
+
+    check_event(){
+        var carrot=this.carrot;
+
+        $(".btn-play-music").click(function(){
+            var aud_name=$(this).attr("aud-name");
+            carrot.music.play_music_by_name(aud_name);
+        });
 
         $('.app_icon').click(function() {
             var aud_song_url=$(this).attr("aud_song");
@@ -78,9 +88,9 @@ class Carrot_Music{
             var aud_artist=$(this).attr("aud_artist");
             var aud_name=$(this).attr("aud_name");
             var aud_index=$(this).attr("aud_index");
-            if(carrot.music.emp_status_music!=null) $(carrot.music.emp_status_music).html('<i class="fa-sharp fa-solid fa-circle-play"></i>');
+            if(carrot.music.emp_status_music!=null) $(carrot.music.emp_status_music).html('<i class="fa-sharp fa-solid fa-circle-play fa-2x"></i>');
             carrot.music.emp_status_music=$(this).parent().find(".status_music");
-            carrot.music.emp_status_music.html('<i class="fa-solid fa-spinner fa-spin-pulse"></i>');
+            carrot.music.emp_status_music.html('<i class="fa-solid fa-spinner fa-spin-pulse fa-2x"></i>');
             carrot.music.audio_player.src=aud_song_url;
             carrot.music.m_index=parseInt(aud_index);
             carrot.music.audio_player.play();
@@ -93,7 +103,7 @@ class Carrot_Music{
         });
 
         $('#m_btn_stop').click(function(){
-            carrot.music.emp_status_music.html('<i class="fa-sharp fa-solid fa-circle-play"></i>');
+            $(".status_music").html('<i class="fa-sharp fa-solid fa-circle-play fa-2x"></i>');
             carrot.music.audio_player.pause();
             carrot.music.audio_player.currentTime=0;
             $("#music_player_mini").hide(100);
@@ -118,10 +128,21 @@ class Carrot_Music{
             $.MessageBox({
                 buttonDone  : "Yes",
                 buttonFail  : "No",
-                message     : "Bạn có chắc chắng là xóa ứng dụng "+id_box_app+" này không?"
+                message     : "Bạn có chắc chắng là xóa Bài hát <b>"+id_box_app+"</b> này không?"
             }).done(function(){
                 carrot.act_del_obj("song",id_box_app);
             });
+        });
+
+        $(".btn_info_music").click(function(){
+            var aud_index=$(this).attr("aud-index");
+            if(aud_index!=""){
+                carrot.music.show_info_music_buy_index(aud_index);
+            }
+            else{
+                var aud_id=$(this).attr("aud-name");
+                arrot.music.show_info_music_buy_id(aud_id);
+            }
         });
     }
 
@@ -142,13 +163,19 @@ class Carrot_Music{
 
         this.m_index=index_play;
         var song=list_music[this.m_index];
-        
+        song["index"]=index_play;
+        this.act_play_song(song);
+    }
 
+    play_music_by_name(s_name_audio){
+        var song=JSON.parse(this.obj_songs[s_name_audio]);
+        this.act_play_song(song);
+    }
+
+    act_play_song(song){
         if(this.carrot.id_page=="music"){
-            $(".status_music").html('<i class="fa-sharp fa-solid fa-circle-play"></i>');
-            var emp_ui_music=$("#m_"+index_play);
-            this.emp_status_music=$(emp_ui_music).parent().find(".status_music");
-            this.emp_status_music.html('<i class="fa-solid fa-spinner fa-spin-pulse"></i>');
+            $(".status_music").html('<i class="fa-sharp fa-solid fa-circle-play fa-2x"></i>');
+            if(song.index!="") $("#status_music_"+song.index).html('<i class="fa-solid fa-spinner fa-spin-pulse fa-2x"></i>');
         }
         
         this.audio_player.src=song.mp3;
@@ -157,6 +184,164 @@ class Carrot_Music{
         $("#m_name").html(song.name);
         $("#m_artist").html(song.artist);
         $("#m_avatar").css("background","url('"+song.avatar+"')");
+    }
+
+    show_info_music_buy_id(s_name_id){
+        var data=JSON.parse(this.obj_songs[s_name_id]);
+        this.show_info_music(data);
+    }
+
+    show_info_music_buy_index(index_music){
+        var list_music=this.carrot.convert_obj_to_list(this.obj_songs);
+        var data=list_music[index_music];
+        data["index"]=index_music;
+        this.show_info_music(data);
+    }
+
+    show_info_music(data){
+        this.carrot.change_title_page(data.name,"?p=music&id="+data.id);
+        var html='<div class="section-container p-2 p-xl-4">';
+        html+='<div class="row">';
+            html+='<div class="col-md-8 ps-4 ps-lg-3">';
+                html+='<div class="row bg-white shadow-sm">';
+                    html+='<div class="col-md-4 p-3 text-center">';
+                        html+='<img class="w-100" src="'+data.avatar+'" alt="'+data.name+'">';
+                        html+='<i role="button" class="fa-sharp fa-solid fa-circle-play fa-5x text-success mt-2 btn-play-music" aud-index="'+data.index+'" aud-name="'+data.name+'"></i>';
+                    html+='</div>';
+                    html+='<div class="col-md-8 p-2">';
+                        html+='<h4 class="fw-semi fs-4 mb-3">'+data.name+'</h4>';
+                        html+="<button class='btn dev btn_app_edit btn-warning w-45 fw-semi fs-8 py-2 me-3' app_id='"+data.id+"'><i class=\"fa-solid fa-pen-to-square\"></i> Edit</button>";
+                        html+="<button class='btn dev btn_app_del btn-danger border ps-3 w-45 fw-semi fs-8 py-2' app_id='"+data.id+"'><i class=\"fa-solid fa-trash\"></i> Delete</button>";
+                        html+="<button class='btn dev btn_app_export btn-dark w-45 fw-semi fs-8 py-2 me-3' app_id='"+data.id+"' data-collection='song'><i class=\"fa-solid fa-download\"></i> Export Json</button>";
+                        html+="<button class='btn dev btn_app_import btn-dark border ps-3 w-45 fw-semi fs-8 py-2' app_id='"+data.id+"'  data-collection='song'><i class=\"fa-solid fa-upload\"></i> Import</button>";
+    
+
+                        html+='<div class="row pt-4">';
+                            html+='<div class="col-md-4 col-6 text-center">';
+                                html+='<b>3.9 <i class="fa-sharp fa-solid fa-eye"></i></b>';
+                                html+='<p>11.6k <l class="lang"  key_lang="count_view">Reviews</l></p>';
+                            html+='</div>';
+                            html+='<div class="col-md-4 col-6 text-center">';
+                                html+='<b>5M+ <i class="fa-solid fa-download"></i></b>';
+                                html+='<p class="lang" key_lang="count_download">Downloads</p>';
+                            html+='</div>';
+                            html+='<div class="col-md-4 col-6 text-center">';
+                                html+='<b><l class="lang" key_lang="genre">Genre</l> <i class="fa-solid fa-guitar"></i></b>';
+                                html+='<p>'+data.genre+'</p>';
+                            html+='</div>';
+                            html+='<div class="col-md-4 col-6 text-center">';
+                                html+='<b>Ads <i class="fa-solid fa-window-restore"></i></b>';
+                                html+='<p class="lang" key_lang="in_app">Contains Ads</p>';
+                            html+='</div>';
+                            html+='<div class="col-md-4 col-6 text-center">';
+                                html+='<b>In-App <i class="fa-solid fa-cart-shopping"></i></b>';
+                                html+='<p class="lang" key_lang="contains_inapp">In-app purchases</p>';
+                            html+='</div>';
+                            html+='<div class="col-md-4 col-6 text-center">';
+                                html+='<b><l class="lang" key_lang="artist">Artist</l> <i class="fa-solid fa-user"></i></b>';
+                                html+='<p>'+data.artist+'</p>';
+                            html+='</div>';
+                        html+='</div>';
+
+                        html+='<div class="row pt-4">';
+                            html+='<div class="col-12 text-center">';
+                            html+='<button id="btn_share" type="button" class="btn d-inline btn-success"><i class="fa-solid fa-share-nodes"></i> <l class="lang" key_lang="share">Share</l> </button> ';
+                            html+='<button id="register_protocol_url" type="button"  class="btn d-inline btn-success" ><i class="fa-solid fa-rocket"></i> <l class="lang" key_lang="open_with">Open with..</l> </button>';
+                            html+='</div>';
+                        html+='</div>';
+
+                    html+='</div>';
+                html+="</div>";
+    
+                html+='<div class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
+                    html+='<h4 class="fw-semi fs-5 lang" key_lang="describe">Lyrics</h4>';
+                    html+='<p class="fs-8 text-justify">'+data.lyrics+'</p>';
+                html+='</div>';
+    
+                html+='<div class="about row p-2 py-3  bg-white mt-4 shadow-sm">';
+                    html+='<h4 class="fw-semi fs-5 lang" key_lang="review">Review</h4>';
+    
+                    html+='<div class="row m-0 reviewrow p-3 px-0 border-bottom">';
+                        html+='<div class="col-md-12 align-items-center col-9 rcolm">';
+                            html+='<div class="review">';
+                                html+='<li class="col-8 ratfac">';
+                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
+                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
+                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
+                                    html+='<i class="bi fa-solid fa-star"></i>';
+                                    html+='<i class="bi fa-solid fa-star"></i>';
+                                html+='</li>';
+                            html+='</div>';
+    
+                            html+='<h3 class="fs-6 fw-semi mt-2">Vinoth kumar<small class="float-end fw-normal"> 20 Aug 2022 </small></h3>';
+                            html+='<div class="review-text">Great work, keep it up</div>';
+    
+                        html+='</div>';
+                        html+='<div class="col-md-2"></div>';
+                    html+='</div>';
+    
+                    html+='<div class="row m-0 reviewrow p-3 px-0 border-bottom">';
+                        html+='<div class="col-md-12 align-items-center col-9 rcolm">';
+                            html+='<div class="review">';
+                                html+='<li class="col-8 ratfac">';
+                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
+                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
+                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
+                                    html+='<i class="bi fa-solid fa-star"></i>';
+                                    html+='<i class="bi fa-solid fa-star"></i>';
+                                html+='</li>';
+                            html+='</div>';
+    
+                            html+='<h3 class="fs-6 fw-semi mt-2">Vinoth kumar<small class="float-end fw-normal"> 20 Aug 2022 </small></h3>';
+                            html+='<div class="review-text">Great work, keep it up</div>';
+    
+                        html+='</div>';
+                        html+='<div class="col-md-2"></div>';
+                    html+='</div>';
+    
+                    html+='<div class="row m-0 reviewrow p-3 px-0 border-bottom">';
+                        html+='<div class="col-md-12 align-items-center col-9 rcolm">';
+                            html+='<div class="review">';
+                                html+='<li class="col-8 ratfac">';
+                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
+                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
+                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
+                                    html+='<i class="bi fa-solid fa-star"></i>';
+                                    html+='<i class="bi fa-solid fa-star"></i>';
+                                html+='</li>';
+                            html+='</div>';
+    
+                            html+='<h3 class="fs-6 fw-semi mt-2">Vinoth kumar<small class="float-end fw-normal"> 20 Aug 2022 </small></h3>';
+                            html+='<div class="review-text">Great work, keep it up</div>';
+    
+                        html+='</div>';
+                        html+='<div class="col-md-2"></div>';
+                    html+='</div>';
+    
+                html+='</div>';
+            html+="</div>";
+    
+            html+='<div class="col-md-4">';
+            html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-3 lang"  key_lang="related_songs">Related Song</h4>';
+            var list_music_other= this.carrot.convert_obj_to_list(this.obj_songs).map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
+            for(var i=0;i<list_music_other.length;i++){
+                var song=list_music_other[i];
+                if(data.id!=song.id) html+=this.carrot.music.box_music_item(song,'col-md-12 mb-3');
+            };
+            html+='</div>';
+    
+        html+="</div>";
+        html+="</div>";
+        this.carrot.body.html(html);
+
+        if(this.carrot.music.audio_player==null){
+            this.carrot.body.parent().parent().append(this.carrot.music.box_music_mini());
+            this.carrot.music.create_audio();
+        }
+
+        this.carrot.check_mode_site();
+        this.carrot.check_event();
+        this.check_event();
     }
 
     box_music_item(data_music,s_class='col-md-4 mb-3'){
@@ -179,10 +364,10 @@ class Carrot_Music{
                                 html_main_contain+='<i class="bi text-warning fa-solid fa-music"></i>';
                                 html_main_contain+='<i class="bi fa-solid fa-music"></i>';
                             html_main_contain+='</li>';
-                 
+                  
                             html_main_contain+='<li class="col-4 d-flex">';
-                                html_main_contain+='<span role="button" class="status_music text-secondary float-end mr-3"><i class="fa-sharp fa-solid fa-circle-play fa-2x"></i></span> ';
-                                html_main_contain+='<span role="button" class="info_music text-secondary float-end" style="margin-left: 6px;"><i class="fa-sharp fa-solid fa-circle-info fa-2x"></i></span> ';
+                                html_main_contain+='<span role="button" class="btn_info_music text-secondary" aud-name="'+data_music.name+'" style="margin-right: 6px;"><i class="fa-sharp fa-solid fa-circle-info fa-2x"></i></span> ';
+                                html_main_contain+='<span role="button" class="status_music text-secondary float-end btn-play-music"  aud-name="'+data_music.name+'"><i class="fa-sharp fa-solid fa-circle-play fa-2x"></i></span> ';
                             html_main_contain+='</li>';
 
                         html_main_contain+='</ul>';
@@ -251,6 +436,7 @@ class Carrot_Music{
             data_music["link_ytb"]='';
             data_music["year"]='';
             data_music["lang"]='';
+            data_music["genre"]='';
         }else{
             if(data_music["name"]=="") data_music["name"]=data_music["id"];
         }
@@ -265,12 +451,28 @@ class Carrot_Music{
         if(data_music["year"]=='') data_music["year"]=year_cur;
         if(data_music["lang"]=='') data_music["lang"]=this.carrot.lang;
 
+        var arr_genre=Array();
+        arr_genre.push("pop");
+        arr_genre.push("rock");
+        arr_genre.push("jazz");
+        arr_genre.push("r&b");
+        arr_genre.push("blues");
+        arr_genre.push("ballad");
+        arr_genre.push("hip hop");
+        arr_genre.push("country");
+        arr_genre.push("dance");
+        arr_genre.push("folk");
+        arr_genre.push("dance");
+        arr_genre.push("EDM");
+        arr_genre.push("k-pop");
+
         if(data_music["id"]!="") obj_music["id"]={'type':'caption',message:"ID:"+data_music["id"]};
         obj_music["name"]={'type':'input','defaultValue':data_music["name"], 'label':'Name'};
         obj_music["avatar"]={'type':'input','defaultValue':data_music["avatar"], 'label':'Avatar (url)'};
         obj_music["artist"]={'type':'input','defaultValue':data_music["artist"], 'label':'Artist'};
         obj_music["mp3"]={'type':'input','defaultValue':data_music["mp3"], 'label':'Mp3 url'};
         obj_music["lyrics"]={'type':'textarea','defaultValue':data_music["lyrics"], 'label':'lyrics','rows':'10'};
+        obj_music["genre"]={'type':'select','label':'Genre','options':arr_genre,defaultValue:data_music["genre"]};
         obj_music["link_ytb"]={'type':'input','defaultValue':data_music["link_ytb"], 'label':'link Youtube (url)'};
         obj_music["year"]={'type':'select','label':'Year','options':arr_year,defaultValue:data_music["year"]};
         obj_music["lang"]={'type':'select','label':'Lang','options':arr_lang,defaultValue:data_music["lang"]};
