@@ -23,9 +23,10 @@ class Carrot_Site{
     id_page;
     body;
 
+    user;
     music;
     ai_lover;
-
+    
     constructor(){
         var carrot=this;
         this.firebaseConfig_mainhost={
@@ -67,6 +68,7 @@ class Carrot_Site{
 
         this.body=$("#main_contain");
 
+        this.user=new Carrot_user(this);
         this.music=new Carrot_Music(this);
         this.ai_lover=new Ai_Lover(this);
     };

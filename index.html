@@ -203,7 +203,9 @@
             if(queryListObj.docs.length>0){
                 var obj_data=Object();
                 queryListObj.forEach((doc) => {
-                    obj_data[doc.id]=JSON.stringify(doc.data());
+                    var item_data=doc.data();
+                    item_data["id"]=doc.id;
+                    obj_data[doc.id]=JSON.stringify(item_data);
                 });
                 act_done(obj_data,carrot);
             }else{
@@ -584,6 +586,7 @@
     <script src="js/main.js?ver=1.10" type="text/javascript" class="emp_js" data-ver="1.6"></script>
     <script src="js/ai_lover.js?ver=1.10" type="text/javascript" class="emp_js" data-ver="1.6"></script>
     <script src="js/carrot_site.js?ver=1.10" type="text/javascript" class="emp_js" data-ver="1.6"></script>
+    <script src="js/carrot_user.js?ver=1.11" type="text/javascript" class="emp_js" data-ver="1.6"></script>
     <script src="js/carrot_music.js?ver=1.10" type="text/javascript" class="emp_js" data-ver="1.6"></script>
     <link rel="stylesheet" href="highlight/styles/default.min.css"/>
     <script src="highlight/highlight.min.js"></script>
