@@ -135,14 +135,8 @@ class Carrot_Music{
         });
 
         $(".btn_info_music").click(function(){
-            var aud_index=$(this).attr("aud-index");
-            if(aud_index!=""){
-                carrot.music.show_info_music_buy_index(aud_index);
-            }
-            else{
-                var aud_id=$(this).attr("aud-name");
-                arrot.music.show_info_music_buy_id(aud_id);
-            }
+            var aud_id=$(this).attr("aud-name");
+            carrot.music.show_info_music_by_id(aud_id);
         });
     }
 
@@ -186,14 +180,16 @@ class Carrot_Music{
         $("#m_avatar").css("background","url('"+song.avatar+"')");
     }
 
-    show_info_music_buy_id(s_name_id){
+    show_info_music_by_id(s_name_id){
+        this.carrot.log("show_info_music_by_id:"+s_name_id);
         var data=JSON.parse(this.obj_songs[s_name_id]);
         this.show_info_music(data);
     }
 
-    show_info_music_buy_index(index_music){
+    show_info_music_by_index(index_music){
+        this.carrot.log("show_info_music_by_index:"+index_music);
         var list_music=this.carrot.convert_obj_to_list(this.obj_songs);
-        var data=list_music[index_music];
+        var data=JSON.parse(list_music[index_music]);
         data["index"]=index_music;
         this.show_info_music(data);
     }
