@@ -1003,6 +1003,7 @@ class Carrot_Site{
             else this.show_all_app();
         }
         else if(this.id_page=="game") this.show_all_game();
+        else if(this.id_page=="music"||this.id_page=="songs") this.music.show_list_music();
         else if(this.id_page=="about_us") $("#btn_about_us").click();
         else if(this.id_page=="address_book") $("#btn_address_book").click();
         else if(this.id_page=="wallpapers") show_all_wallpaper();

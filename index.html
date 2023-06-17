@@ -48,6 +48,7 @@
                     </div>
                     <div class="dropdown-menu">
                         <div class="dropdown-item btn-menu" id="btn_add_app" role="button"><i class="fa-solid fa-add fs-6 me-2"></i> Add App</div>
+                        <div class="dropdown-item btn-menu" id="btn_add_music" role="button"><i class="fa-solid fa-circle-plus fs-6 me-2"></i> Add Music</div>
                         <div class="dropdown-item btn-menu" id="btn_add_icon" role="button"><i class="fa-solid fa-add fs-6 me-2"></i> Add Icon</div>
                         <div class="dropdown-item btn-menu" id="btn_add_wallpaper" role="button"><i class="fa-solid fa-add fs-6 me-2"></i> Add Background</div>
                         <div class="dropdown-item btn-menu" id="btn_add_lang" role="button"><i class="fa-solid fa-add fs-6 me-2"></i> Add Lang</div>
@@ -240,6 +241,7 @@
                 });
             };
         });
+        $("#btn_add_music").click(function(){carrot.music.show_add_or_edit_music(null,carrot.act_done_add_or_edit)});
 
         $(".btn-menu").click(function () {
             $(".btn-menu").removeClass("active");
@@ -354,6 +356,7 @@
         function act_done_edit_version_data_version(data){
             setDoc(doc(collection(db, "setting_web"),"version"), data);
             $.MessageBox("Change version data site success!");
+            carrot.check_version_data();
         }
 
         async function show_all_wallpaper(){
@@ -578,10 +581,10 @@
             carrot.show_info_user_login_in_header();
         });
     </script>
-    <script src="js/main.js?ver=1.9" type="text/javascript" class="emp_js" data-ver="1.6"></script>
-    <script src="js/ai_lover.js?ver=1.9" type="text/javascript" class="emp_js" data-ver="1.6"></script>
-    <script src="js/carrot_site.js?ver=1.9" type="text/javascript" class="emp_js" data-ver="1.6"></script>
-    <script src="js/carrot_music.js?ver=1.9" type="text/javascript" class="emp_js" data-ver="1.6"></script>
+    <script src="js/main.js?ver=1.10" type="text/javascript" class="emp_js" data-ver="1.6"></script>
+    <script src="js/ai_lover.js?ver=1.10" type="text/javascript" class="emp_js" data-ver="1.6"></script>
+    <script src="js/carrot_site.js?ver=1.10" type="text/javascript" class="emp_js" data-ver="1.6"></script>
+    <script src="js/carrot_music.js?ver=1.10" type="text/javascript" class="emp_js" data-ver="1.6"></script>
     <link rel="stylesheet" href="highlight/styles/default.min.css"/>
     <script src="highlight/highlight.min.js"></script>
 </body>
