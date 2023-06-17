@@ -46,7 +46,7 @@ class Carrot_user{
 
     show_all_phone_book(){
         if(this.obj_phone_book==null) 
-            this.get_all_data_phone_book();
+            this.carrot.get_all_data_phone_book();
         else{
             this.carrot.log("Show all data phone book from cache!");
             this.show_all_phone_book_from_list();
