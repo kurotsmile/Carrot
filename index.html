@@ -8,7 +8,6 @@
     <meta property="og:title" content="Carrot Store">
     <meta property="og:description" content="Carrot Store is an app store that introduces my gadgets and games to everyone in the world. These add-ons are all resources that I use in my apps, I don't want to waste them so I share them through this app store">
     <link rel="shortcut icon" href="images/favicon.ico" / type="images/x-icon">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/bootstrap.min.css?ver=1.2">
     <link rel="stylesheet" type="text/css" href="assets/css/style.css" />
     <link rel="stylesheet" type="text/css" href="assets/css/style.css" />
@@ -19,7 +18,16 @@
     <link href="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-message-box@3.2.2/dist/messagebox.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css" />
     <link rel="manifest" href="manifest.json?ver=1.8" />
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5388516931803092" crossorigin="anonymous"></script>
+    <script src="assets/js/jquery-3.2.1.min.js"></script>
+    <script src="https://getbootstrap.com/docs/4.1/assets/js/vendor/popper.min.js"></script>
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/plugins/scroll-fixed/jquery-scrolltofixed-min.js"></script>
+    <script src="assets/plugins/testimonial/js/owl.carousel.min.js"></script>
+    <script src="assets/js/script.js"></script>
+    <script src="assets/js/js-snackbar.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-message-box@3.2.2/dist/messagebox.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
+    <script src="js/carrot_site.js"></script>
 </head>
 
 <body>
@@ -38,6 +46,7 @@
                 <li id="btn_audio" class="border-bottom btn-menu"><i class="fa-solid fa-guitar fs-6 me-2"></i> Instrumental music</li>
                 <li id="btn_wallpapers" class="border-bottom btn-menu"><i class="fa-solid fa-image fs-6 me-2"></i> <lang class="lang" key_lang="wallpaper">Wallpapers</lang></li>
                 <li id="btn_all_icon" class="border-bottom btn-menu"><i class="fa-solid fa-face-smile fs-6 me-2"></i> <lang class="lang" key_lang="icon">Icon</lang></li>
+                <li id="btn_code" class="border-bottom btn-menu"><i class="fa-solid fa-code fs-6 me-2"></i> Code</li>
                 <li id="btn_privacy_policy" class="border-bottom btn-menu"><i class="fa-sharp fa-solid fa-building-shield fs-6 me-2"></i> <lang class="lang" key_lang="privacy_policy">Privacy Policy</lang></li>
                 <li id="btn_about_us" class="border-bottom btn-menu"><i class="fa-solid fa-heart fs-6 me-2"></i> <lang class="lang" key_lang="about_us">About Us</lang></li>
                 <li id="btn_model_site" class="border-bottom btn-menu"><i class="fa-solid fa-window-maximize fs-6 me-2"></i> Development mode</li>
@@ -137,28 +146,12 @@
             </div>
         </div>
         <div id="main_contain" class="section-container p-2 p-xl-4">
-            <div class="row m-0">
+            <div class="row m-0 text-center">
                 Have a nice day!
-            </div>
-        </div>
-
-        <div class="section-container p-2 p-xl-4">
-            <div class="row m-0">
-                <ins class="adsbygoogle" style="display:block" data-ad-format="fluid" data-ad-layout-key="-fb+5w+4e-db+86" data-ad-client="ca-pub-5388516931803092" data-ad-slot="3178591165"></ins>
-                <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
             </div>
         </div>
     </div>
 
-    <script src="assets/js/jquery-3.2.1.min.js"></script>
-    <script src="https://getbootstrap.com/docs/4.1/assets/js/vendor/popper.min.js"></script>
-    <script src="assets/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/plugins/scroll-fixed/jquery-scrolltofixed-min.js"></script>
-    <script src="assets/plugins/testimonial/js/owl.carousel.min.js"></script>
-    <script src="assets/js/script.js"></script>
-    <script src="assets/js/js-snackbar.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-message-box@3.2.2/dist/messagebox.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
@@ -550,13 +543,9 @@
                 }
             } catch (err) {
                 if (err.response) {
-                    carrot.show_error_connect_sever();
-                    carrot.check_show_by_id_page();
                     carrot.log(err.message);
                     return err.response.data;
                 } else if (err.request) {
-                    carrot.show_error_connect_sever();
-                    carrot.check_show_by_id_page();
                     carrot.log(err.message);
                     return err.request;
                 } else {
@@ -582,12 +571,9 @@
             carrot.load_data_lang_web();
             carrot.user.show_info_user_login_in_header();
         });
+
     </script>
     <script src="js/main.js?ver=1.10" type="text/javascript" class="emp_js" data-ver="1.6"></script>
-    <script src="js/ai_lover.js?ver=1.10" type="text/javascript" class="emp_js" data-ver="1.6"></script>
-    <script src="js/carrot_site.js?ver=1.10" type="text/javascript" class="emp_js" data-ver="1.6"></script>
-    <script src="js/carrot_user.js?ver=1.11" type="text/javascript" class="emp_js" data-ver="1.6"></script>
-    <script src="js/carrot_music.js?ver=1.10" type="text/javascript" class="emp_js" data-ver="1.6"></script>
     <link rel="stylesheet" href="highlight/styles/default.min.css"/>
     <script src="highlight/highlight.min.js"></script>
 </body>

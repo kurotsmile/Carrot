@@ -24,6 +24,7 @@ class Carrot_Site{
     user;
     music;
     ai_lover;
+    code;
     
     constructor(){
         var carrot=this;
@@ -63,9 +64,15 @@ class Carrot_Site{
         $("#btn_change_lang").click(function(){ carrot.show_list_lang();});
 
         this.body=$("#main_contain");
+        
+        $('head').append('<script type="text/javascript" src="js/carrot_user.js?ver='+this.version["js"]+'"></script>');
+        $('head').append('<script type="text/javascript" src="js/carrot_music.js?ver='+this.version["js"]+'"></script>');
+        $('head').append('<script type="text/javascript" src="js/carrot_code.js?ver='+this.version["js"]+'"></script>');
+        $('head').append('<script type="text/javascript" src="js/ai_lover.js?ver='+this.version["js"]+'"></script>');
 
         this.user=new Carrot_user(this);
         this.music=new Carrot_Music(this);
+        this.code=new Carrot_Code(this);
         this.ai_lover=new Ai_Lover(this);
     };
 
@@ -266,7 +273,7 @@ class Carrot_Site{
     }
 
     load_obj_app(){
-        if (localStorage.getItem("obj_app") == null) this.obj_app=JSON.parse(localStorage.getItem("obj_app"));
+        if (localStorage.getItem("obj_app") != null) this.obj_app=JSON.parse(localStorage.getItem("obj_app"));
     }
 
     load_obj_icon(){
@@ -397,6 +404,7 @@ class Carrot_Site{
     }
 
     show_app_by_id(id_box_app){
+        this.log("Show app by id:"+id_box_app);
         if(this.obj_app[id_box_app]==null){
             this.log("Load info app "+id_box_app+" from sever");
             this.get_doc("app",id_box_app,this.show_app_info)
@@ -405,6 +413,7 @@ class Carrot_Site{
             var data_app=JSON.parse(this.obj_app[id_box_app]);
             this.show_app_info(data_app,this);
         }
+        return false;
     }
 
     show_app_info(data,carrot){
@@ -984,6 +993,7 @@ class Carrot_Site{
 
     check_show_by_id_page() {
         this.id_page = get_param_url("p");
+        this.log("check_show_by_id_page : "+this.id_page);
         if(this.id_page == "privacy_policy") $("#btn_privacy_policy").click();
         else if(this.id_page=="app"){
             var id_app=get_param_url("id");
