@@ -1006,7 +1006,6 @@ class Carrot_Site{
         else if(this.id_page=="game") this.show_all_game();
         else if(this.id_page=="music"){
             var id_songs=get_param_url("id");
-            alert(this.id_page+" m:"+id_song);
             if(id_songs!=null){
                 id_songs=decodeURI(id_songs);
                 this.music.show_info_music_by_id(id_songs);

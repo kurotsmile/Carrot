@@ -11,7 +11,11 @@ class Carrot_Music{
 
     constructor(carrot){
         this.carrot=carrot;
-        if(localStorage.getItem("obj_songs")!="") this.obj_songs=JSON.parse(localStorage.getItem("obj_songs"));
+        this.load_obj_song();
+    }
+
+    load_obj_song(){
+        if(localStorage.getItem("obj_songs")!=null) this.obj_songs=JSON.parse(localStorage.getItem("obj_songs"));
     }
 
     delete_obj_songs(){
