@@ -354,4 +354,18 @@ class Carrot_user{
     show_user_info_login(){
         this.show_user_info(this.obj_login,this.carrot);
     }
+
+    async picker_contact_from_pc(){
+        var supported = ('contacts' in navigator && 'ContactsManager' in window);
+        if(supported){
+            const props = ['name', 'email', 'tel', 'address', 'icon'];
+            const opts = {multiple: true};
+            
+            try {
+              const contacts = await navigator.contacts.select(props, opts);
+              handleResults(contacts);
+            } catch (ex) {}
+        }
+    }
+    
 }

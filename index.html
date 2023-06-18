@@ -407,7 +407,9 @@
             var querySnapshot = await getDocs(q);
             if(querySnapshot.docs.length>0){
                 querySnapshot.forEach((doc) => {
-                    carrot.user.set_user_login(doc.data());
+                    var data_login=doc.data();
+                    data_login["id"]=doc.id;
+                    carrot.user.set_user_login(data_login);
                 });
             }else{
                 $.MessageBox("Đăng nhập thất bại!");
@@ -570,6 +572,7 @@
             carrot.check_version_data();
             carrot.load_data_lang_web();
             carrot.user.show_info_user_login_in_header();
+            console.log(Navigator.mediaDevices);
         });
 
     </script>
