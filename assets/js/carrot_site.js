@@ -9,12 +9,13 @@ class Carrot_Site{
     lang_web=Object();
     list_link_store=null;
     list_lang;
-    version=null;
     recognition=null;
 
     obj_app=null;
     obj_lang_web=Object();
     obj_icon=null;
+    obj_version_new=null;
+    obj_version_cur=null;
 
     name_collection_cur="";
     name_document_cur="";
@@ -58,17 +59,19 @@ class Carrot_Site{
         this.load_list_lang();
         this.load_obj_icon();
         this.load_recognition();
+        this.load_obj_version_new();
+        this.load_obj_version_cur();
 
-        this.version=this.get_version_data_cur();
         $("#key_lang").html(this.lang);
         $("#btn_change_lang").click(function(){ carrot.show_list_lang();});
 
         this.body=$("#main_contain");
         
-        $('head').append('<script type="text/javascript" src="js/carrot_user.js?ver='+this.version["js"]+'"></script>');
-        $('head').append('<script type="text/javascript" src="js/carrot_music.js?ver='+this.version["js"]+'"></script>');
-        $('head').append('<script type="text/javascript" src="js/carrot_code.js?ver='+this.version["js"]+'"></script>');
-        $('head').append('<script type="text/javascript" src="js/ai_lover.js?ver='+this.version["js"]+'"></script>');
+        $('head').append('<script type="text/javascript" src="assets/js/main.js?ver='+this.get_ver_cur("js")+'"></script>');
+        $('head').append('<script type="text/javascript" src="assets/js/carrot_user.js?ver='+this.get_ver_cur("js")+'"></script>');
+        $('head').append('<script type="text/javascript" src="assets/js/carrot_music.js?ver='+this.get_ver_cur("js")+'"></script>');
+        $('head').append('<script type="text/javascript" src="assets/js/carrot_code.js?ver='+this.get_ver_cur("js")+'"></script>');
+        $('head').append('<script type="text/javascript" src="assets/js/ai_lover.js?ver='+this.get_ver_cur("js")+'"></script>');
 
         this.user=new Carrot_user(this);
         this.music=new Carrot_Music(this);
@@ -190,29 +193,6 @@ class Carrot_Site{
         carrot.load_data_lang_web();
     }
 
-    get_version_data_cur(){
-        var data_version=Object();
-        if(localStorage.getItem('v_app')!=null) data_version["app"]=localStorage.getItem('v_app'); else data_version["app"]="0.0";
-        if(localStorage.getItem('v_lang')!=null) data_version["lang"]=localStorage.getItem('v_lang'); else data_version["lang"]="0.0";
-        if(localStorage.getItem('v_lang_web')!=null) data_version["lang_web"]=localStorage.getItem('v_lang_web'); else data_version["lang_web"]="0.0";
-        if(localStorage.getItem('v_js')!=null) data_version["js"]=localStorage.getItem('v_js'); else data_version["js"]="0.0";
-        if(localStorage.getItem('v_css')!=null) data_version["css"]=localStorage.getItem('v_css'); else data_version["css"]="0.0";
-        if(localStorage.getItem('v_link_store')!=null) data_version["link_store"]=localStorage.getItem('v_link_store'); else data_version["link_store"]="0.0";
-        if(localStorage.getItem('v_page')!=null) data_version["page"]=localStorage.getItem('v_page'); else data_version["page"]="0.0";
-        return data_version;
-    }
-
-    set_version_data_cur(data_version){
-        localStorage.setItem('v_app',data_version["app"]);
-        localStorage.setItem('v_lang',data_version["lang"]);
-        localStorage.setItem('v_lang_web',data_version["lang_web"]);
-        localStorage.setItem('v_js',data_version["js"]);
-        localStorage.setItem('v_css',data_version["css"]);
-        localStorage.setItem('v_link_store',data_version["link_store"]);
-        localStorage.setItem('v_page',data_version["page"]);
-        this.version=data_version;
-    }
-
     convert_apps_to_list(){
         return this.convert_obj_to_list(this.obj_app);
     }
@@ -257,13 +237,10 @@ class Carrot_Site{
     }
     
     show_edit_version_data_version(act_done){
-        var data_version=this.get_version_data_cur();
         var obj_data_ver = Object();
-    
-        $.each(data_version,function(key,value){        
+        $.each(this.obj_version_new,function(key,value){        
             obj_data_ver[key]={'type':'input','defaultValue':value,'label':key};
-        })
-    
+        });
         $.MessageBox({
             message: "Edit version",
             input: obj_data_ver,
@@ -287,12 +264,71 @@ class Carrot_Site{
             this.list_lang=JSON.parse(localStorage.getItem("list_lang"));
     }
 
+    load_obj_version_new(){
+        if(localStorage.getItem("obj_version_new")!=null) this.obj_version_new=JSON.parse(localStorage.getItem("obj_version_new"));
+        else this.obj_version_new=new Object();
+    }
+
+    load_obj_version_cur(){
+        if(localStorage.getItem("obj_version_cur")!=null) this.obj_version_cur=JSON.parse(localStorage.getItem("obj_version_cur"));
+        else this.obj_version_cur=new Object();
+    }
+
     save_obj_app(){
         localStorage.setItem("obj_app", JSON.stringify(this.obj_app));
     }
 
     save_obj_icon(){
         localStorage.setItem("obj_icon", JSON.stringify(this.obj_icon));
+    }
+
+    save_obj_version_new(){
+        localStorage.setItem("obj_version_new", JSON.stringify(this.obj_version_new));
+    }
+
+    save_obj_version_cur(){
+        localStorage.setItem("obj_version_cur", JSON.stringify(this.obj_version_cur));
+    }
+
+    check_ver_cur(s_item){
+        if(this.obj_version_cur==null){ 
+            return false;
+        }
+        else{
+            if(this.obj_version_cur[s_item]!=null){
+                if(this.obj_version_cur[s_item]==this.obj_version_new[s_item]) return true;
+                else return false;
+            }
+            else return false;
+        }
+    }
+
+    update_new_ver_cur(s_item,is_save=false){
+        if(this.obj_version_new[s_item]!=null){
+            this.obj_version_cur[s_item]=this.obj_version_new[s_item];
+            if(is_save) this.save_obj_version_cur();
+        } 
+        else{
+            this.obj_version_cur[s_item]="0.0";
+            this.obj_version_new[s_item]="0.0"
+            if(is_save){
+                this.save_obj_version_cur();
+                this.save_obj_version_new();
+            }
+        }
+        
+    }
+
+    get_ver_cur(s_item){
+        if(this.obj_version_cur==null){ 
+            return "0.0";
+        }
+        else{
+            if(this.obj_version_cur[s_item]!=null)
+                return this.obj_version_cur[s_item];
+            else 
+                return "0.0";
+        }
     }
 
     delete_obj_app(){
@@ -991,12 +1027,23 @@ class Carrot_Site{
         $.MessageBox("Thay đổi kế độ kết nối cơ sở dữ liệu thành công! Load lại trang để làm mới các chức năng!");
     }
 
+    get_param_url(sParam) {
+        var sPageURL = window.location.search.substring(1);
+        var sURLVariables = sPageURL.split('&');
+        for (var i = 0; i < sURLVariables.length; i++) {
+            var sParameterName = sURLVariables[i].split('=');
+            if (sParameterName[0] == sParam) {
+                return sParameterName[1];
+            }
+        }
+    }
+
     check_show_by_id_page() {
-        this.id_page = get_param_url("p");
+        this.id_page = this.get_param_url("p");
         this.log("check_show_by_id_page : "+this.id_page);
         if(this.id_page == "privacy_policy") $("#btn_privacy_policy").click();
         else if(this.id_page=="app"){
-            var id_app=get_param_url("id");
+            var id_app=this.get_param_url("id");
             if(id_app!=""){
                 id_app=decodeURI(id_app);
                 this.show_app_by_id(id_app);
@@ -1005,7 +1052,7 @@ class Carrot_Site{
         }
         else if(this.id_page=="game") this.show_all_game();
         else if(this.id_page=="music"){
-            var id_songs=get_param_url("id");
+            var id_songs=this.get_param_url("id");
             if(id_songs!=null){
                 id_songs=decodeURI(id_songs);
                 this.music.show_info_music_by_id(id_songs);
@@ -1019,6 +1066,13 @@ class Carrot_Site{
         else if(this.id_page=="icon") this.show_all_icon();
         else this.show_home();
         this.log("ID_page:"+this.id_page);
+    }
+
+    show(s_html){
+        this.body.html(s_html);
+        $('html, body').animate({
+            scrollTop: $(this.body).offset().top
+        }, 2000);
     }
 
 }

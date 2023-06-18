@@ -3,7 +3,7 @@ class Carrot_Music{
     obj_songs=null;
     audio_player=null;
 
-    m_timeStamp=null;
+
     m_avatar=null;
     m_index=-1;
 
@@ -28,7 +28,7 @@ class Carrot_Music{
         this.audio_player=new Audio();
         this.audio_player.addEventListener("loadeddata", () => {
             let duration = this.audio_player.duration;
-            $(this.m_timeStamp).attr('max',duration.toFixed(2));
+            $("#m_timeStamp").attr('max',duration.toFixed(2));
             $("#m_time_end").html(this.formatTime(duration));
             if (this.audio_player.readyState >= 2){
                 this.audio_player.play();
@@ -37,10 +37,51 @@ class Carrot_Music{
         });
 
         this.audio_player.addEventListener("timeupdate", (event) => {
-            $(this.m_timeStamp).attr('value',this.audio_player.currentTime.toFixed(2));
-            $(this.m_timeStamp).val(this.audio_player.currentTime.toFixed(2));
+            $("#m_timeStamp").attr('value',this.audio_player.currentTime.toFixed(2));
             $("#m_time_play").html(this.formatTime(this.audio_player.currentTime));
         });
+    }
+
+    create_session(s_title,s_artist,s_album,s_url_avatar){
+        if ("mediaSession" in navigator) {
+            navigator.mediaSession.metadata = new MediaMetadata({
+              title: s_title,
+              artist: s_artist,
+              album: s_album,
+              artwork: [
+                {
+                  src: s_url_avatar,
+                  sizes: "384x384",
+                  type: "image/jpg",
+                }
+              ],
+            });
+          
+            navigator.mediaSession.setActionHandler("play", () => {
+              /* Code excerpted. */
+            });
+            navigator.mediaSession.setActionHandler("pause", () => {
+              /* Code excerpted. */
+            });
+            navigator.mediaSession.setActionHandler("stop", () => {
+              /* Code excerpted. */
+            });
+            navigator.mediaSession.setActionHandler("seekbackward", () => {
+              /* Code excerpted. */
+            });
+            navigator.mediaSession.setActionHandler("seekforward", () => {
+              /* Code excerpted. */
+            });
+            navigator.mediaSession.setActionHandler("seekto", () => {
+              /* Code excerpted. */
+            });
+            navigator.mediaSession.setActionHandler("previoustrack", () => {
+                this.back_music();
+            });
+            navigator.mediaSession.setActionHandler("nexttrack", () => {
+                this.forward_music();
+            });
+        }
     }
     
     show_list_music(){
@@ -86,26 +127,6 @@ class Carrot_Music{
             carrot.music.play_music_by_name(aud_name);
         });
 
-        $('.app_icon').click(function() {
-            var aud_song_url=$(this).attr("aud_song");
-            var aud_avatar_url=$(this).attr("aud_avatar");
-            var aud_artist=$(this).attr("aud_artist");
-            var aud_name=$(this).attr("aud_name");
-            var aud_index=$(this).attr("aud_index");
-            if(carrot.music.emp_status_music!=null) $(carrot.music.emp_status_music).html('<i class="fa-sharp fa-solid fa-circle-play fa-2x"></i>');
-            carrot.music.emp_status_music=$(this).parent().find(".status_music");
-            carrot.music.emp_status_music.html('<i class="fa-solid fa-spinner fa-spin-pulse fa-2x"></i>');
-            carrot.music.audio_player.src=aud_song_url;
-            carrot.music.m_index=parseInt(aud_index);
-            carrot.music.audio_player.play();
-            carrot.music.m_timeStamp=$("#m_timeStamp");
-
-            $("#music_player_mini").removeClass("d-none").hide().show(100);
-            $("#m_name").html(aud_name);
-            $("#m_artist").html(aud_artist);
-            $("#m_avatar").css("background","url('"+aud_avatar_url+"')");
-        });
-
         $('#m_btn_stop').click(function(){
             $(".status_music").html('<i class="fa-sharp fa-solid fa-circle-play fa-2x"></i>');
             carrot.music.audio_player.pause();
@@ -126,7 +147,6 @@ class Carrot_Music{
             carrot.get_doc("song",id_box_app,carrot.music.show_edit_music_done);
         });
 
-        
         $(".btn_app_del").click(async function () {
             var id_box_app = $(this).attr("app_id");
             $.MessageBox({
@@ -142,6 +162,10 @@ class Carrot_Music{
             var aud_id=$(this).attr("aud-name");
             carrot.music.show_info_music_by_id(aud_id);
         });
+
+        $("#btn_mm_play").click(function(){
+            carrot.music.change_status_pause_and_play();
+        });
     }
 
     back_music(){
@@ -152,6 +176,33 @@ class Carrot_Music{
     forward_music(){
         this.m_index++;
         this.play_music_by_index(this.m_index);
+    }
+
+    pause_music(){
+        this.audio_player.pause();
+    }
+
+    play_music(){
+        this.audio_player.play();
+    }
+
+    change_status_pause_and_play(){
+        if(this.audio_player.paused)
+            this.play_music();
+        else
+            this.pause_music();
+
+        this.check_status_mm_player();
+    }
+
+    check_status_mm_player(){
+        $("#btn_mm_play").removeClass("fa-pause");
+        $("#btn_mm_play").removeClass("fa-circle-play");
+        if(this.audio_player.paused){
+            $("#btn_mm_play").addClass("fa-circle-play");
+        }else{
+            $("#btn_mm_play").addClass("fa-pause");
+        }
     }
 
     play_music_by_index(index_play){
@@ -182,6 +233,8 @@ class Carrot_Music{
         $("#m_name").html(song.name);
         $("#m_artist").html(song.artist);
         $("#m_avatar").css("background","url('"+song.avatar+"')");
+
+        this.create_session(song.name,song.artist,"carrotstore.com",song.avatar);
     }
 
     show_info_music_by_id(s_name_id){
@@ -254,7 +307,7 @@ class Carrot_Music{
     
                 html+='<div class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
                     html+='<h4 class="fw-semi fs-5 lang" key_lang="describe">Lyrics</h4>';
-                    html+='<p class="fs-8 text-justify">'+data.lyrics+'</p>';
+                    html+='<p class="fs-8 text-justify">'+data.lyrics.replaceAll(". ","</br>")+'</p>';
                 html+='</div>';
     
                 html+='<div class="about row p-2 py-3  bg-white mt-4 shadow-sm">';
@@ -350,7 +403,7 @@ class Carrot_Music{
         var html_main_contain="<div class='box_app "+s_class+"' id=\""+data_music.id+"\"  key_search=\""+data_music.name+"\">";
             html_main_contain+='<div class="app-cover p-2 shadow-md bg-white">';
                 html_main_contain+='<div class="row">';
-                    html_main_contain+='<div role="button" class="img-cover pe-0 col-3 app_icon" id="m_'+data_music.index+'" aud_index="'+data_music.index+'" aud_artist="'+data_music.artist+'" aud_song="'+data_music.mp3+'" aud_avatar=\"'+data_music.avatar+'\" aud_name=\"'+data_music.name+'\" app_id="'+data_music.id+'"><img class="rounded" src="'+s_url_icon+'" alt="'+data_music.name+'"></div>';
+                    html_main_contain+='<div role="button" class="img-cover pe-0 col-3 btn_info_music" id="m_'+data_music.index+'" aud-name="'+data_music.name+'"><img class="rounded" src="'+s_url_icon+'" alt="'+data_music.name+'"></div>';
                     html_main_contain+='<div class="det mt-2 col-9">';
                         html_main_contain+="<h5 class='mb-0 fs-6'>"+data_music.name+"</h5>";
                         
@@ -366,7 +419,7 @@ class Carrot_Music{
                   
                             html_main_contain+='<li class="col-4 d-flex">';
                                 html_main_contain+='<span role="button" class="btn_info_music text-secondary" aud-name="'+data_music.name+'" style="margin-right: 6px;"><i class="fa-sharp fa-solid fa-circle-info fa-2x"></i></span> ';
-                                html_main_contain+='<span role="button" class="status_music text-secondary float-end btn-play-music"  aud-name="'+data_music.name+'"><i class="fa-sharp fa-solid fa-circle-play fa-2x"></i></span> ';
+                                html_main_contain+='<span role="button" class="status_music float-end text-success btn-play-music"  aud-name="'+data_music.name+'"><i class="fa-sharp fa-solid fa-circle-play fa-2x"></i></span> ';
                             html_main_contain+='</li>';
 
                         html_main_contain+='</ul>';
@@ -394,7 +447,7 @@ class Carrot_Music{
                 html += '<div class="progress--time progress--time__end" id="m_time_end">3:52</div>';
                 html += '</div>';
                 html += '<div class="music-player--controls">';
-                html += '<i class="fa fa-pause controls--play-button"></i>';
+                html += '<i id="btn_mm_play" class="fa fa-pause controls--play-button"></i>';
 
                 html += '<div class="song-info">';
                     html += '<div class="song-info--title" id="m_name">Name song</div>';
@@ -436,6 +489,7 @@ class Carrot_Music{
             data_music["year"]='';
             data_music["lang"]='';
             data_music["genre"]='';
+            data_music["album"]='';
         }else{
             if(data_music["name"]=="") data_music["name"]=data_music["id"];
         }
@@ -473,6 +527,7 @@ class Carrot_Music{
         obj_music["lyrics"]={'type':'textarea','defaultValue':data_music["lyrics"], 'label':'lyrics','rows':'10'};
         obj_music["genre"]={'type':'select','label':'Genre','options':arr_genre,defaultValue:data_music["genre"]};
         obj_music["link_ytb"]={'type':'input','defaultValue':data_music["link_ytb"], 'label':'link Youtube (url)'};
+        obj_music["album"]={'type':'text','label':'Album',defaultValue:data_music["album"]};
         obj_music["year"]={'type':'select','label':'Year','options':arr_year,defaultValue:data_music["year"]};
         obj_music["lang"]={'type':'select','label':'Lang','options':arr_lang,defaultValue:data_music["lang"]};
         customer_field_for_db(obj_music,'song','name','','Add Music Successfully');

@@ -1,14 +1,3 @@
-function get_param_url(sParam) {
-    var sPageURL = window.location.search.substring(1);
-    var sURLVariables = sPageURL.split('&');
-    for (var i = 0; i < sURLVariables.length; i++) {
-        var sParameterName = sURLVariables[i].split('=');
-        if (sParameterName[0] == sParam) {
-            return sParameterName[1];
-        }
-    }
-}
-
 function copy_tag(name_tag) {
     var $temp = $("<input>");$("body").append($temp);
     var s_copy=$("#" + name_tag).val();

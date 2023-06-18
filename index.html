@@ -3,31 +3,34 @@
     <title>Carrot Store</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="theme-color" media="(prefers-color-scheme: light)" content="white">
-    <meta name="theme-color" media="(prefers-color-scheme: dark)"  content="black">
+    <meta name="theme-color" content="#FFFFFF">
     <meta property="og:title" content="Carrot Store">
     <meta property="og:description" content="Carrot Store is an app store that introduces my gadgets and games to everyone in the world. These add-ons are all resources that I use in my apps, I don't want to waste them so I share them through this app store">
-    <link rel="shortcut icon" href="images/favicon.ico" / type="images/x-icon">
-    <link rel="stylesheet" href="assets/css/bootstrap.min.css?ver=1.2">
+
+    <link rel="shortcut icon" href="images/favicon.ico" type="images/x-icon"/>
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="assets/css/style.css" />
     <link rel="stylesheet" type="text/css" href="assets/css/style.css" />
     <link rel="stylesheet" type="text/css" href="assets/css/js-snackbar.min.css" />
     <link href="fontawesome6.4.0/css/fontawesome.css" rel="stylesheet">
     <link href="fontawesome6.4.0/css/brands.css" rel="stylesheet">
     <link href="fontawesome6.4.0/css/solid.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-message-box@3.2.2/dist/messagebox.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css" />
+    <link href="assets/plugins/messagebox/messagebox.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/plugins/dataTables/jquery.dataTables.css" />
+    <link rel="stylesheet" href="assets/plugins/highlight/styles/default.min.css"/>
     <link rel="manifest" href="manifest.json?ver=1.8" />
-    <script src="assets/js/jquery-3.2.1.min.js"></script>
-    <script src="https://getbootstrap.com/docs/4.1/assets/js/vendor/popper.min.js"></script>
-    <script src="assets/js/bootstrap.bundle.min.js"></script>
+
+    <script src="assets/js/jquery-3.7.0.min.js"></script>
+    <script src="assets/js/popper.min.js" ></script>
+    <script src="assets/js/bootstrap.min.js" crossorigin="anonymous"></script>
     <script src="assets/plugins/scroll-fixed/jquery-scrolltofixed-min.js"></script>
     <script src="assets/plugins/testimonial/js/owl.carousel.min.js"></script>
-    <script src="assets/js/script.js"></script>
     <script src="assets/js/js-snackbar.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-message-box@3.2.2/dist/messagebox.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
-    <script src="js/carrot_site.js"></script>
+    <script src="assets/plugins/highlight/highlight.min.js"></script>
+    <script src="assets/plugins/messagebox/messagebox.min.js"></script>
+    <script src="assets/plugins/dataTables/jquery.dataTables.js"></script>
+    <script src="assets/js/carrot_site.js"></script>
+
 </head>
 
 <body>
@@ -60,6 +63,7 @@
                         <div class="dropdown-item btn-menu" id="btn_add_music" role="button"><i class="fa-solid fa-circle-plus fs-6 me-2"></i> Add Music</div>
                         <div class="dropdown-item btn-menu" id="btn_add_icon" role="button"><i class="fa-solid fa-add fs-6 me-2"></i> Add Icon</div>
                         <div class="dropdown-item btn-menu" id="btn_add_wallpaper" role="button"><i class="fa-solid fa-add fs-6 me-2"></i> Add Background</div>
+                        <div class="dropdown-item btn-menu" id="btn_add_code" role="button"><i class="fa-solid fa-square-plus fs-6 me-2"></i> Add Code</div>
                         <div class="dropdown-item btn-menu" id="btn_add_lang" role="button"><i class="fa-solid fa-add fs-6 me-2"></i> Add Lang</div>
                         <div class="dropdown-item btn-menu" id="btn_add_avatar" role="button"><i class="fa-solid fa-square-plus fs-6 me-2"></i> Add Avatar</div>
                     </div>
@@ -124,16 +128,16 @@
 
 
                     <div class="dropdown pt-2 d-inline">
-                        <a id="btn_login" class="btn btn-small btn-light cpfs-8">
+                        <div id="btn_login" class="btn btn-small btn-light cpfs-8">
                             <i class="fa-solid fa-user"></i> <lang class="lang" key_lang="login">Login</lang>
-                        </a>
+                        </div>
 
-                        <a id="btn_acc_info" class="btn btn-small btn-light cpfs-8 dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="true">
+                        <div id="btn_acc_info" type="button" class="btn btn-small btn-light cpfs-8 dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="true">
                             <img id="acc_info_avatar" style="width: 20px;height: 20px;" src="images/avatar_default.png"/> <span id="acc_info_name">User name</span>
-                        </a>
+                        </div>
 
-                        <ul class="dropdown-menu" id="menu_account">
-                            <li><a role="button" id="btn_acc_login_info" class="dropdown-item" href="#"><i class="fa-solid fa-circle-info"></i> <l class="lang" key_lang="acc_info">Edit Info</l></a></li>
+                        <ul class="dropdown-menu" id="menu_account" aria-labelledby="btn_acc_info">
+                            <li><a role="button" id="btn_acc_login_info" class="dropdown-item"><i class="fa-solid fa-circle-info"></i> <l class="lang" key_lang="acc_info">Edit Info</l></a></li>
                             <li><a id="btn_logout" class="dropdown-item" href="#" > <i class="fa-solid fa-right-from-bracket"></i> <l class="lang" key_lang="logout">Logout</l></a></li>
                         </ul>
                     </div>
@@ -238,6 +242,8 @@
         });
         $("#btn_add_music").click(function(){carrot.music.show_add_or_edit_music(null,carrot.act_done_add_or_edit)});
         $("#btn_acc_login_info").click(function(){carrot.user.show_user_info_login();})
+        $("#btn_code").click(function(){carrot.code.show_list_code()});
+        $("#btn_add_code").click(function(){carrot.code.show_add_or_edit_code(null)});
         $(".btn-menu").click(function () {
             $(".btn-menu").removeClass("active");
             $(".btn-menu i").removeClass("fa-bounce");
@@ -261,11 +267,11 @@
             };
 
             if (id_fun == "btn_about_us") {
-                $("#main_contain").load(carrot.get_url()+"/about_us/" + carrot.lang+".html?ver="+carrot.version["page"]);
+                $("#main_contain").load(carrot.get_url()+"about_us/" + carrot.lang+".html?ver="+carrot.get_ver_cur("page"));
                 carrot.change_title_page("About Us", "?p=about_us","about_us");
             };
             if (id_fun == "btn_privacy_policy") {
-                $("#main_contain").load(carrot.get_url()+"/privacy_policy/" + carrot.lang+".html?ver="+carrot.version["page"]);
+                $("#main_contain").load(carrot.get_url()+"privacy_policy/" + carrot.lang+".html?ver="+carrot.get_ver_cur("page"));
                 carrot.change_title_page("Privacy Policy", "?p=privacy_policy","privacy_policy");
             };
             if(id_fun=="btn_mode_host") carrot.change_host_connection();
@@ -532,12 +538,35 @@
                 const verRef = doc(db, "setting_web","version");
                 const verSnap = await getDoc(verRef);
                 if (verSnap.exists()) {
+
                     var ver_data_new=verSnap.data();
-                    if(ver_data_new.link_store!=obj_version_cur["link_store"]) get_all_data_link_store();
-                    if(ver_data_new.lang_web!=obj_version_cur["lang_web"]) carrot.get_all_data_lang_web();
-                    if(ver_data_new.app!=obj_version_cur["app"]) carrot.get_all_data_app();
-                    if(ver_data_new.lang!=obj_version_cur["lang"]) get_all_data_lang();
-                    carrot.set_version_data_cur(ver_data_new);
+                    carrot.obj_version_new=verSnap.data();
+
+                    if(!carrot.check_ver_cur("link_store")){
+                        get_all_data_link_store();
+                        carrot.update_new_ver_cur("link_store");
+                    }
+
+                    if(!carrot.check_ver_cur("lang")){
+                        get_all_data_lang();
+                        carrot.update_new_ver_cur("lang");
+                    }
+
+                    if(!carrot.check_ver_cur("lang_web")){
+                        carrot.get_all_data_lang_web();
+                        carrot.update_new_ver_cur("lang_web");
+                    }
+
+                    if(!carrot.check_ver_cur("app")){
+                        carrot.get_all_data_app();
+                        carrot.update_new_ver_cur("app");
+                    }
+
+                    carrot.update_new_ver_cur("js");
+                    carrot.update_new_ver_cur("page");
+                    carrot.save_obj_version_new();
+                    carrot.save_obj_version_cur();
+
                     carrot.check_show_by_id_page();
                 }else{
                     carrot.show_error_connect_sever();
@@ -560,7 +589,7 @@
         }
 
         $(document).ready(function () {
-            var lang_page=get_param_url("lang");
+            var lang_page=carrot.get_param_url("lang");
             if(lang_page!=null){
                 if(lang_page!=carrot.lang){
                     carrot.lang_url=lang_page;
@@ -572,12 +601,10 @@
             carrot.check_version_data();
             carrot.load_data_lang_web();
             carrot.user.show_info_user_login_in_header();
-            console.log(Navigator.mediaDevices);
         });
 
     </script>
-    <script src="js/main.js?ver=1.10" type="text/javascript" class="emp_js" data-ver="1.6"></script>
-    <link rel="stylesheet" href="highlight/styles/default.min.css"/>
-    <script src="highlight/highlight.min.js"></script>
+
+
 </body>
 </html>

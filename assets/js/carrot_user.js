@@ -154,7 +154,7 @@ class Carrot_user{
         var s_title_box='';
         this.getLocation_for_address_user();
         if(data_user==null){
-            s_title_box=this.l("register","Add User");
+            s_title_box=carrot.l("register","Add User");
             data_user=new Object();
             data_user["id"]=carrot.uniq();
             data_user["lang"]=carrot.lang;
@@ -247,8 +247,8 @@ class Carrot_user{
                                 html+='<p class="lang" key_lang="in_app">Contains Ads</p>';
                             html+='</div>';
                             html+='<div class="col-md-4 col-6 text-center">';
-                                html+='<b>In-App <i class="fa-solid fa-cart-shopping"></i></b>';
-                                html+='<p class="lang" key_lang="contains_inapp">In-app purchases</p>';
+                                html+='<b>In-App <i class="fa-solid fa-language"></i></b>';
+                                html+='<p class="lang" key_lang="contains_inapp">'+data_user.lang+'</p>';
                             html+='</div>';
                             html+='<div class="col-md-4 col-6 text-center">';
                                 html+='<b><l class="lang" key_lang="artist">Artist</l> <i class="fa-solid fa-user"></i></b>';
@@ -345,7 +345,7 @@ class Carrot_user{
     
         html+="</div>";
         html+="</div>";
-        carrot.body.html(html);
+        carrot.show(html);
         carrot.check_event();
         carrot.check_mode_site();
         carrot.user.check_event();
