@@ -124,7 +124,7 @@
                         </a>
 
                         <ul class="dropdown-menu" id="menu_account">
-                            <li><a class="dropdown-item" href="#"><i class="fa-solid fa-circle-info"></i> <l class="lang" key_lang="acc_info">Edit Info</l></a></li>
+                            <li><a role="button" id="btn_acc_login_info" class="dropdown-item" href="#"><i class="fa-solid fa-circle-info"></i> <l class="lang" key_lang="acc_info">Edit Info</l></a></li>
                             <li><a id="btn_logout" class="dropdown-item" href="#" > <i class="fa-solid fa-right-from-bracket"></i> <l class="lang" key_lang="logout">Logout</l></a></li>
                         </ul>
                     </div>
@@ -244,7 +244,7 @@
             };
         });
         $("#btn_add_music").click(function(){carrot.music.show_add_or_edit_music(null,carrot.act_done_add_or_edit)});
-
+        $("#btn_acc_login_info").click(function(){carrot.user.show_user_info_login();})
         $(".btn-menu").click(function () {
             $(".btn-menu").removeClass("active");
             $(".btn-menu i").removeClass("fa-bounce");

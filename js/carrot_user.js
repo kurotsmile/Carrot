@@ -53,60 +53,72 @@ class Carrot_user{
         }
     }
 
+    box_user_item(data_user,s_class="col-md-4 mb-3"){
+        var html="";
+        html+="<div class='box_app "+s_class+"' id=\""+data_user.id+"\">";
+            html+='<div class="app-cover p-2 shadow-md bg-white">';
+                html+='<div class="row">';
+                var url_avatar='';
+                if(data_user.avatar!=null) url_avatar=data_user.avatar;
+                if(url_avatar=="") url_avatar="images/avatar_default.png";
+                html+='<div class="img-cover pe-0 col-3"><img role="button" class="rounded user-avatar" src="'+url_avatar+'" user-id="'+data_user.id+'"  user-lang="'+data_user.lang+'" alt="'+data_user.name+'"></div>';
+                    html+='<div class="det mt-2 col-9">';
+                        html+="<h5 class='mb-0 fs-6'>"+data_user.name+"</h5>";
+                        html+='<ul class="row">';
+                        html+='<li class="col-8 ratfac">';
+                            html+='<i class="bi text-warning fa-solid fa-heart"></i>';
+                            html+='<i class="bi text-warning fa-solid fa-heart"></i>';
+                            html+='<i class="bi text-warning fa-solid fa-heart"></i>';
+                            html+='<i class="bi text-danger fa-solid fa-heart"></i>';
+                            html+='<i class="bi fa-solid fa-heart"></i>';
+                        html+='</li>';
+                        if(data_user.sex=="0")
+                            html+='<li class="col-4"><span class="text-success float-end"><i class="fa-solid fa-mars"></i></span></li>';
+                        else
+                            html+='<li class="col-4"><span class="text-success float-end"><i class="fa-solid fa-venus"></i></span></li>';
+                        html+='</ul>';
+
+                        html+='<ul class="row">';
+                        if(data_user.phone!="") html+='<li class="col-12 fs-8"><i class="fa-solid fa-phone"></i> '+data_user.phone+'</li>';
+                        if(data_user.email!="") html+='<li class="col-12 fs-8"><i class="fa-solid fa-envelope"></i> '+data_user.email+'</li>';
+                        if(data_user.address!=""){
+                            var user_address=data_user.address;
+                            if(user_address.name!="") html+='<li class="col-12 fs-8"><i class="fa-solid fa-location-dot"></i> '+user_address.name+'</li>';
+                        }
+                        html+='</ul>';
+
+                        html+="<div class='row' style='margin-top:6px;'>";
+                        html+="<div class='col-6'><div class='btn dev btn_app_edit btn-warning btn-sm' app_id='"+data_user.id+"'><i class=\"fa-solid fa-pen-to-square\"></i> Edit</div></div>";
+                        html+="<div class='col-6'><div class='btn dev btn_app_del btn-danger btn-sm' app_id='"+data_user.id+"'><i class=\"fa-solid fa-trash\"></i> Delete</div></div>";
+                        html+="</div>";
+
+                    html+="</div>";
+                html+="</div>";
+            html+="</div>";
+        html+="</div>";
+        return html;
+    }
+
     show_all_phone_book_from_list(){
         var carrot=this.carrot;
         var list_phone_book=this.carrot.convert_obj_to_list(this.obj_phone_book);
         this.carrot.change_title_page("Address Book", "?p=address_book","address_book");
         $("#main_contain").html("");
-        var html_main_contain="";
-        html_main_contain+='<div class="row m-0">';
-        $(list_phone_book).each(function(index,data_app) {
-            html_main_contain+="<div class='box_app col-md-4 mb-3' id=\""+data_app.id+"\">";
-                html_main_contain+='<div class="app-cover p-2 shadow-md bg-white">';
-                    html_main_contain+='<div class="row">';
-                    var url_avatar='';
-                    if(data_app.avatar!=null) url_avatar=data_app.avatar;
-                    if(url_avatar=="") url_avatar="images/avatar_default.png";
-                    html_main_contain+='<div class="img-cover pe-0 col-3"><img class="rounded" src="'+url_avatar+'" alt="'+data_app.name+'"></div>';
-                        html_main_contain+='<div class="det mt-2 col-9">';
-                            html_main_contain+="<h5 class='mb-0 fs-6'>"+data_app.name+"</h5>";
-                            html_main_contain+='<ul class="row">';
-                            html_main_contain+='<li class="col-8 ratfac">';
-                                html_main_contain+='<i class="bi text-warning fa-solid fa-heart"></i>';
-                                html_main_contain+='<i class="bi text-warning fa-solid fa-heart"></i>';
-                                html_main_contain+='<i class="bi text-warning fa-solid fa-heart"></i>';
-                                html_main_contain+='<i class="bi text-danger fa-solid fa-heart"></i>';
-                                html_main_contain+='<i class="bi fa-solid fa-heart"></i>';
-                            html_main_contain+='</li>';
-                            if(data_app.sex=="0")
-                                html_main_contain+='<li class="col-4"><span class="text-success float-end"><i class="fa-solid fa-mars"></i></span></li>';
-                            else
-                                html_main_contain+='<li class="col-4"><span class="text-success float-end"><i class="fa-solid fa-venus"></i></span></li>';
-                            html_main_contain+='</ul>';
-    
-                            html_main_contain+='<ul class="row">';
-                            if(data_app.phone!="") html_main_contain+='<li class="col-12 fs-8"><i class="fa-solid fa-phone"></i> '+data_app.phone+'</li>';
-                            if(data_app.email!="") html_main_contain+='<li class="col-12 fs-8"><i class="fa-solid fa-envelope"></i> '+data_app.email+'</li>';
-                            if(data_app.address!=""){
-                                var user_address=data_app.address;
-                                if(user_address.name!="") html_main_contain+='<li class="col-12 fs-8"><i class="fa-solid fa-location-dot"></i> '+user_address.name+'</li>';
-                            }
-                            html_main_contain+='</ul>';
-
-                            html_main_contain+="<div class='row' style='margin-top:6px;'>";
-                            html_main_contain+="<div class='col-6'><div class='btn dev btn_app_edit btn-warning btn-sm' app_id='"+data_app.id+"'><i class=\"fa-solid fa-pen-to-square\"></i> Edit</div></div>";
-                            html_main_contain+="<div class='col-6'><div class='btn dev btn_app_del btn-danger btn-sm' app_id='"+data_app.id+"'><i class=\"fa-solid fa-trash\"></i> Delete</div></div>";
-                            html_main_contain+="</div>";
-    
-                        html_main_contain+="</div>";
-                    html_main_contain+="</div>";
-                html_main_contain+="</div>";
-            html_main_contain+="</div>";
-            
+        var html="";
+        html+='<div class="row m-0">';
+        $(list_phone_book).each(function(index,data_u) {
+            html+=carrot.user.box_user_item(data_u);
         });
-        html_main_contain+="</div>";
-        $("#main_contain").html(html_main_contain);
+        html+="</div>";
+        $("#main_contain").html(html);
 
+        this.carrot.check_mode_site();
+        this.carrot.check_event();
+        this.carrot.user.check_event();
+    }
+
+    check_event(){
+        var carrot=this.carrot;
         $(".btn_app_edit").click(async function () {
             var id_box_app = $(this).attr("app_id");
             carrot.get_doc("user-"+carrot.lang,id_box_app,carrot.user.show_edit_phone_book_done);
@@ -123,8 +135,11 @@ class Carrot_user{
             });
         });
 
-        this.carrot.check_mode_site();
-        this.carrot.check_event();
+        $(".user-avatar").click(function(){
+            var user_id=$(this).attr("user-id");
+            var user_lang=$(this).attr("user-lang");
+            carrot.get_doc("user-"+user_lang,user_id,carrot.user.show_user_info);
+        })
     }
 
     show_edit_phone_book_done(data_user,carrot){
@@ -185,12 +200,158 @@ class Carrot_user{
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(this.showPosition);
         } else {
-          this.log("Geolocation is not supported by this browser.");
+          this.carrot.log("Geolocation is not supported by this browser.");
         }
     }
       
     showPosition(position) {
         $("input[name*='address_lat']").val(position.coords.latitude);
         $("input[name*='address_log']").val(position.coords.longitude);
+    }
+
+    show_user_info(data_user,carrot){
+        if(data_user==null){$.MessageBox("This user no longer exists");return false;}
+        var url_avatar='';
+        if(data_user.avatar!=null) url_avatar=data_user.avatar;
+        if(url_avatar=="") url_avatar="images/avatar_default.png";
+        carrot.change_title_page(data_user.name,"?p=address_book&id="+data_user.id);
+        var html='<div class="section-container p-2 p-xl-4">';
+        html+='<div class="row">';
+            html+='<div class="col-md-8 ps-4 ps-lg-3">';
+                html+='<div class="row bg-white shadow-sm">';
+                    html+='<div class="col-md-4 p-3 text-center">';
+                        html+='<img class="w-100" src="'+url_avatar+'" alt="'+data_user.name+'">';
+                    html+='</div>';
+                    html+='<div class="col-md-8 p-2">';
+                        html+='<h4 class="fw-semi fs-4 mb-3">'+data_user.name+'</h4>';
+                        html+="<button class='btn dev btn_app_edit btn-warning w-45 fw-semi fs-8 py-2 me-3' app_id='"+data_user.id+"'><i class=\"fa-solid fa-pen-to-square\"></i> Edit</button>";
+                        html+="<button class='btn dev btn_app_del btn-danger border ps-3 w-45 fw-semi fs-8 py-2' app_id='"+data_user.id+"'><i class=\"fa-solid fa-trash\"></i> Delete</button>";
+                        html+="<button class='btn dev btn_app_export btn-dark w-45 fw-semi fs-8 py-2 me-3' app_id='"+data_user.id+"' data-collection='user-"+data_user.lang+"'><i class=\"fa-solid fa-download\"></i> Export Json</button>";
+                        html+="<button class='btn dev btn_app_import btn-dark border ps-3 w-45 fw-semi fs-8 py-2' app_id='"+data_user.id+"'  data-collection='user-"+data_user.lang+"'><i class=\"fa-solid fa-upload\"></i> Import</button>";
+
+                        html+='<div class="row pt-4">';
+                            html+='<div class="col-md-4 col-6 text-center">';
+                                html+='<b>3.9 <i class="fa-sharp fa-solid fa-eye"></i></b>';
+                                html+='<p>11.6k <l class="lang"  key_lang="count_view">Reviews</l></p>';
+                            html+='</div>';
+                            html+='<div class="col-md-4 col-6 text-center">';
+                                html+='<b>5M+ <i class="fa-solid fa-envelopes-bulk"></i></b>';
+                                html+='<p class="lang" key_lang="count_download">'+data_user.email+'</p>';
+                            html+='</div>';
+                            html+='<div class="col-md-4 col-6 text-center">';
+                                html+='<b><l class="lang" key_lang="genre">Genre</l> <i class="fa-solid fa-guitar"></i></b>';
+                                html+='<p>'+data_user.sex+'</p>';
+                            html+='</div>';
+                            html+='<div class="col-md-4 col-6 text-center">';
+                                html+='<b>Ads <i class="fa-solid fa-window-restore"></i></b>';
+                                html+='<p class="lang" key_lang="in_app">Contains Ads</p>';
+                            html+='</div>';
+                            html+='<div class="col-md-4 col-6 text-center">';
+                                html+='<b>In-App <i class="fa-solid fa-cart-shopping"></i></b>';
+                                html+='<p class="lang" key_lang="contains_inapp">In-app purchases</p>';
+                            html+='</div>';
+                            html+='<div class="col-md-4 col-6 text-center">';
+                                html+='<b><l class="lang" key_lang="artist">Artist</l> <i class="fa-solid fa-user"></i></b>';
+                                html+='<p>'+data_user.phone+'</p>';
+                            html+='</div>';
+                        html+='</div>';
+
+                        html+='<div class="row pt-4">';
+                            html+='<div class="col-12 text-center">';
+                            html+='<button id="btn_share" type="button" class="btn d-inline btn-success"><i class="fa-solid fa-share-nodes"></i> <l class="lang" key_lang="share">Share</l> </button> ';
+                            html+='<button id="register_protocol_url" type="button"  class="btn d-inline btn-success" ><i class="fa-solid fa-rocket"></i> <l class="lang" key_lang="open_with">Open with..</l> </button>';
+                            html+='</div>';
+                        html+='</div>';
+
+                    html+='</div>';
+                html+="</div>";
+    
+                html+='<div class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
+                    html+='<h4 class="fw-semi fs-5 lang" key_lang="describe">Describe yourself</h4>';
+                    html+='<p class="fs-8 text-justify">'+data_user.email+'</p>';
+                html+='</div>';
+    
+                html+='<div class="about row p-2 py-3  bg-white mt-4 shadow-sm">';
+                    html+='<h4 class="fw-semi fs-5 lang" key_lang="review">Review</h4>';
+    
+                    html+='<div class="row m-0 reviewrow p-3 px-0 border-bottom">';
+                        html+='<div class="col-md-12 align-items-center col-9 rcolm">';
+                            html+='<div class="review">';
+                                html+='<li class="col-8 ratfac">';
+                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
+                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
+                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
+                                    html+='<i class="bi fa-solid fa-star"></i>';
+                                    html+='<i class="bi fa-solid fa-star"></i>';
+                                html+='</li>';
+                            html+='</div>';
+    
+                            html+='<h3 class="fs-6 fw-semi mt-2">Vinoth kumar<small class="float-end fw-normal"> 20 Aug 2022 </small></h3>';
+                            html+='<div class="review-text">Great work, keep it up</div>';
+    
+                        html+='</div>';
+                        html+='<div class="col-md-2"></div>';
+                    html+='</div>';
+    
+                    html+='<div class="row m-0 reviewrow p-3 px-0 border-bottom">';
+                        html+='<div class="col-md-12 align-items-center col-9 rcolm">';
+                            html+='<div class="review">';
+                                html+='<li class="col-8 ratfac">';
+                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
+                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
+                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
+                                    html+='<i class="bi fa-solid fa-star"></i>';
+                                    html+='<i class="bi fa-solid fa-star"></i>';
+                                html+='</li>';
+                            html+='</div>';
+    
+                            html+='<h3 class="fs-6 fw-semi mt-2">Vinoth kumar<small class="float-end fw-normal"> 20 Aug 2022 </small></h3>';
+                            html+='<div class="review-text">Great work, keep it up</div>';
+    
+                        html+='</div>';
+                        html+='<div class="col-md-2"></div>';
+                    html+='</div>';
+    
+                    html+='<div class="row m-0 reviewrow p-3 px-0 border-bottom">';
+                        html+='<div class="col-md-12 align-items-center col-9 rcolm">';
+                            html+='<div class="review">';
+                                html+='<li class="col-8 ratfac">';
+                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
+                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
+                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
+                                    html+='<i class="bi fa-solid fa-star"></i>';
+                                    html+='<i class="bi fa-solid fa-star"></i>';
+                                html+='</li>';
+                            html+='</div>';
+    
+                            html+='<h3 class="fs-6 fw-semi mt-2">Vinoth kumar<small class="float-end fw-normal"> 20 Aug 2022 </small></h3>';
+                            html+='<div class="review-text">Great work, keep it up</div>';
+    
+                        html+='</div>';
+                        html+='<div class="col-md-2"></div>';
+                    html+='</div>';
+    
+                html+='</div>';
+            html+="</div>";
+    
+            html+='<div class="col-md-4">';
+            html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-3 lang"  key_lang="related_songs">Related User</h4>';
+            var list_user_other= carrot.convert_obj_to_list(carrot.user.obj_phone_book).map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
+            for(var i=0;i<list_user_other.length;i++){
+                var u_data=list_user_other[i];
+                if(data_user.id!=u_data.id) html+=carrot.user.box_user_item(u_data,'col-md-12 mb-3');
+            };
+            html+='</div>';
+    
+        html+="</div>";
+        html+="</div>";
+        carrot.body.html(html);
+        carrot.check_event();
+        carrot.check_mode_site();
+        carrot.user.check_event();
+    }
+
+    show_user_info_login(){
+        this.show_user_info(this.obj_login,this.carrot);
     }
 }
