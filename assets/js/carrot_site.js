@@ -68,6 +68,7 @@ class Carrot_Site{
         this.body=$("#main_contain");
         
         $('head').append('<script type="text/javascript" src="assets/js/main.js?ver='+this.get_ver_cur("js")+'"></script>');
+        $('head').append('<script type="text/javascript" src="assets/js/carrot_form.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_user.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_music.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_code.js?ver='+this.get_ver_cur("js")+'"></script>');
@@ -414,10 +415,7 @@ class Carrot_Site{
                             if(html_store_link!="") html_main_contain+="<div class='row'><div class='col-12'>"+html_store_link+"</div></div>";
                         }
     
-                        html_main_contain+="<div class='row' style='margin-top:6px;'>";
-                        html_main_contain+="<div class='col-6'><div class='btn dev btn_app_edit btn-warning btn-sm' app_id='"+data_app.id+"'><i class=\"fa-solid fa-pen-to-square\"></i> Edit</div></div>";
-                        html_main_contain+="<div class='col-6'><div class='btn dev btn_app_del btn-danger btn-sm' app_id='"+data_app.id+"'><i class=\"fa-solid fa-trash\"></i> Delete</div></div>";
-                        html_main_contain+="</div>";
+                        html_main_contain+=this.btn_dev("app",data_app.id);
     
                     html_main_contain+="</div>";
                 html_main_contain+="</div>";
@@ -464,11 +462,9 @@ class Carrot_Site{
                     html+='</div>';
                     html+='<div class="col-md-8 p-2">';
                         html+='<h4 class="fw-semi fs-4 mb-3">'+data["name_"+carrot.lang]+'</h4>';
-                        html+="<button class='btn dev btn_app_edit btn-warning w-45 fw-semi fs-8 py-2 me-3' app_id='"+data.id+"'><i class=\"fa-solid fa-pen-to-square\"></i> Edit</button>";
-                        html+="<button class='btn dev btn_app_del btn-danger border ps-3 w-45 fw-semi fs-8 py-2' app_id='"+data.id+"'><i class=\"fa-solid fa-trash\"></i> Delete</button>";
-                        html+="<button class='btn dev btn_app_export btn-dark w-45 fw-semi fs-8 py-2 me-3' app_id='"+data.id+"' data-collection='app'><i class=\"fa-solid fa-download\"></i> Export Json</button>";
-                        html+="<button class='btn dev btn_app_import btn-dark border ps-3 w-45 fw-semi fs-8 py-2' app_id='"+data.id+"'  data-collection='app'><i class=\"fa-solid fa-upload\"></i> Import</button>";
-    
+
+                        html+=carrot.btn_dev("app",data.id);
+
                         if(this.list_link_store!=null){
                             var html_store_link="";
                             var html_store_link_lager="";
@@ -620,57 +616,65 @@ class Carrot_Site{
             carrot.show_app_by_id(id_box_app);
         });
 
-        $(".btn_app_edit").click(async function () {
-            var id_box_app = $(this).attr("app_id");
-            carrot.get_doc("app",id_box_app,carrot.show_edit_app_done);
-        });
+        this.check_event();
+        this.load_data_lang_web();
+    }
 
-        $(".btn_app_del").click(async function () {
-            var id_box_app = $(this).attr("app_id");
-            $.MessageBox({
-                buttonDone  : "Yes",
-                buttonFail  : "No",
-                message     : "Bạn có chắc chắng là xóa ứng dụng "+id_box_app+" này không?"
-            }).done(function(){
-                carrot.act_del_obj("app",id_box_app);
-            });
-        });
-
-
+    check_event(){
+        var carrot=this;
+        
         $("#box_input_search").change(function(){
             var inp_text=$("#box_input_search").val();
             carrot.act_search(inp_text);
         });
 
-        $('#register_protocol_url').click(function(){
-           carrot.register_protocol_url(); 
-        });
-
-        this.check_event();
-        this.load_data_lang_web();
-        this.check_mode_site();
-    }
-
-    check_event(){
-        var carrot=this;
         $(".btn_app_export").click(function(){
-            var app_id=$(this).attr("app_id");
-            var data_collection=$(this).attr("data-collection");
-            carrot.act_download_json_by_collection_and_doc(data_collection,app_id);
+            var db_collection=$(this).attr("db_collection");
+            var db_document=$(this).attr("db_document");
+            carrot.act_download_json_by_collection_and_doc(db_collection,db_document);
         });
 
         $(".btn_app_import").click(function(){
-            var app_id=$(this).attr("app_id");
-            var data_collection=$(this).attr("data-collection");
+            var db_collection=$(this).attr("db_collection");
+            var db_document=$(this).attr("db_document");
             var obj_data=new Object();
-            obj_data["collection"]=data_collection;
-            obj_data["document"]=app_id;
+            obj_data["collection"]=db_collection;
+            obj_data["document"]=db_document;
             carrot.show_import_json_box(obj_data);
+        });
+
+        $(".btn_app_edit").click(function(){
+            var db_collection=$(this).attr("db_collection");
+            var db_document=$(this).attr("db_document");
+            carrot.log("Edit "+db_collection+" : "+db_document);
+            if(db_collection=="app") carrot.get_doc(db_collection,db_document,carrot.show_edit_app_done);
+            if(db_collection=="icon") carrot.get_doc(db_collection,db_document,carrot.show_edit_icon_done);
+            if(db_collection=="user-avatar") carrot.get_doc(db_collection,db_document,carrot.ai_lover.show_edit_avatar_done);
+            if(db_collection=="song") carrot.get_doc(db_collection,db_document,carrot.music.show_edit_music_done);
+            if(db_collection=="code") carrot.get_doc(db_collection,db_document,carrot.code.show_add_or_edit_code);
+        });
+
+        $(".btn_app_del").click(function(){
+            var db_collection=$(this).attr("db_collection");
+            var db_document=$(this).attr("db_document");
+            $.MessageBox({
+                buttonDone  : "Yes",
+                buttonFail  : "No",
+                message     : "Bạn có chắc chắng là xóa  <b>"+db_collection+"</b>.<b class='text-info'>"+db_document+"</b> này không?"
+            }).done(function(){
+                carrot.act_del_obj(db_collection,db_document);
+            });
         });
 
         $("#btn_share").click(function(){
             carrot.show_share();
         });
+
+        $('#register_protocol_url').click(function(){
+            carrot.register_protocol_url(); 
+        });
+
+        this.check_mode_site();
     }
 
     act_search(s_key_search){
@@ -830,6 +834,7 @@ class Carrot_Site{
     }
 
     show_all_icon_from_list_icon(){
+        var carrot=this;
         this.change_title_page("Icon", "?p=icon","icon");
         var list_icon=this.convert_obj_to_list(this.obj_icon);
         $("#main_contain").html("");
@@ -850,10 +855,7 @@ class Carrot_Site{
                         html_main_contain+="</div>";
                     html_main_contain+="</div>";
 
-                    html_main_contain+="<div class='row'>";
-                    html_main_contain+="<div class='col-6'><div class='btn dev btn_app_edit btn-warning btn-sm' app_id='"+data_icon.id+"'><i class=\"fa-solid fa-pen-to-square\"></i> Edit</div></div>";
-                    html_main_contain+="<div class='col-6'><div class='btn dev btn_app_del btn-danger btn-sm' app_id='"+data_icon.id+"'><i class=\"fa-solid fa-trash\"></i> Delete</div></div>";
-                    html_main_contain+="</div>";
+                    html_main_contain+=carrot.btn_dev("icon",data_icon.id);
 
                 html_main_contain+="</div>";
             html_main_contain+="</div>";
@@ -861,24 +863,13 @@ class Carrot_Site{
         html_main_contain+="</div>";
         $("#main_contain").html(html_main_contain);
 
-        var carrot=this;
+        
         $(".btn_app_edit").click(async function () {
             var id_box_app = $(this).attr("app_id");
             carrot.get_doc("icon",id_box_app,carrot.show_edit_icon_done);
         });
 
-        $(".btn_app_del").click(async function () {
-            var id_box_app = $(this).attr("app_id");
-            $.MessageBox({
-                buttonDone  : "Yes",
-                buttonFail  : "No",
-                message     : "Bạn có chắc chắng là xóa biểu tượng "+id_box_app+" này không?"
-            }).done(function(){
-                carrot.act_del_obj("icon",id_box_app);
-            });
-        });
-
-        this.check_mode_site();
+        this.check_event();
     }
 
     show_all_icon(){
@@ -1002,7 +993,7 @@ class Carrot_Site{
             html+='<div class="editor language-js"></div>';
         html+='</div>';
         $("#main_contain").html(html);
-        this.create_editor_js();
+        this.create_editor_code();
     }
 
     get_url(){
@@ -1032,9 +1023,7 @@ class Carrot_Site{
         var sURLVariables = sPageURL.split('&');
         for (var i = 0; i < sURLVariables.length; i++) {
             var sParameterName = sURLVariables[i].split('=');
-            if (sParameterName[0] == sParam) {
-                return sParameterName[1];
-            }
+            if (sParameterName[0] == sParam) return sParameterName[1];
         }
     }
 
@@ -1062,7 +1051,7 @@ class Carrot_Site{
         }
         else if(this.id_page=="about_us") $("#btn_about_us").click();
         else if(this.id_page=="address_book") $("#btn_address_book").click();
-        else if(this.id_page=="wallpapers") show_all_wallpaper();
+        else if(this.id_page=="wallpapers") this.show_all_wallpaper();
         else if(this.id_page=="icon") this.show_all_icon();
         else this.show_home();
         this.log("ID_page:"+this.id_page);
@@ -1071,8 +1060,21 @@ class Carrot_Site{
     show(s_html){
         this.body.html(s_html);
         $('html, body').animate({
-            scrollTop: $(this.body).offset().top
+            scrollTop: $("body").offset().top
         }, 2000);
+    }
+
+    btn_dev(db_collection,db_document){
+        var html='';
+        html+="<div class='row dev d-flex'>";
+            html+="<div class='dev col-12 d-flex btn-group'>";
+                html+="<div role='button' class='dev btn btn_app_edit btn-warning btn-sm mr-2' db_collection='"+db_collection+"' db_document='"+db_document+"'><i class=\"fa-solid fa-pen-to-square\"></i></div> ";
+                html+="<div role='button' class='dev btn btn_app_del btn-danger btn-sm mr-2'  db_collection='"+db_collection+"' db_document='"+db_document+"'><i class=\"fa-solid fa-trash\"></i></div> ";
+                html+="<div role='button' class='dev btn btn_app_export btn-dark btn-sm mr-2'  db_collection='"+db_collection+"' db_document='"+db_document+"'><i class=\"fa-solid fa-download\"></i></div> ";
+                html+="<div role='button' class='dev btn btn_app_import btn-info btn-sm mr-2'  db_collection='"+db_collection+"' db_document='"+db_document+"'><i class=\"fa-solid fa-upload\"></i></div>";
+            html+="</div>";
+        html+="</div>";
+        return html;
     }
 
 }

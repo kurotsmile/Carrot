@@ -55,7 +55,7 @@ class Carrot_user{
 
     box_user_item(data_user,s_class="col-md-4 mb-3"){
         var html="";
-        html+="<div class='box_app "+s_class+"' id=\""+data_user.id+"\">";
+        html+="<div class='box_app "+s_class+"' id=\""+data_user.id+"\" key_search=\""+data_user.name+"\">";
             html+='<div class="app-cover p-2 shadow-md bg-white">';
                 html+='<div class="row">';
                 var url_avatar='';
@@ -87,10 +87,7 @@ class Carrot_user{
                         }
                         html+='</ul>';
 
-                        html+="<div class='row' style='margin-top:6px;'>";
-                        html+="<div class='col-6'><div class='btn dev btn_app_edit btn-warning btn-sm' app_id='"+data_user.id+"'><i class=\"fa-solid fa-pen-to-square\"></i> Edit</div></div>";
-                        html+="<div class='col-6'><div class='btn dev btn_app_del btn-danger btn-sm' app_id='"+data_user.id+"'><i class=\"fa-solid fa-trash\"></i> Delete</div></div>";
-                        html+="</div>";
+                        html+=this.carrot.btn_dev("user-"+data_user.lang,data_user.id);
 
                     html+="</div>";
                 html+="</div>";
@@ -111,9 +108,6 @@ class Carrot_user{
         });
         html+="</div>";
         $("#main_contain").html(html);
-
-        this.carrot.check_mode_site();
-        this.carrot.check_event();
         this.carrot.user.check_event();
     }
 
@@ -124,22 +118,13 @@ class Carrot_user{
             carrot.get_doc("user-"+carrot.lang,id_box_app,carrot.user.show_edit_phone_book_done);
         });
 
-        $(".btn_app_del").click(async function () {
-            var id_box_app = $(this).attr("app_id");
-            $.MessageBox({
-                buttonDone  : "Yes",
-                buttonFail  : "No",
-                message     : "Bạn có chắc chắng là xóa ứng dụng "+id_box_app+" này không?"
-            }).done(function(){
-                carrot.act_del_obj("user-"+carrot.lang,id_box_app);
-            });
-        });
-
         $(".user-avatar").click(function(){
             var user_id=$(this).attr("user-id");
             var user_lang=$(this).attr("user-lang");
             carrot.get_doc("user-"+user_lang,user_id,carrot.user.show_user_info);
         })
+        carrot.check_event();
+        carrot.check_mode_site();
     }
 
     show_edit_phone_book_done(data_user,carrot){
@@ -224,10 +209,7 @@ class Carrot_user{
                     html+='</div>';
                     html+='<div class="col-md-8 p-2">';
                         html+='<h4 class="fw-semi fs-4 mb-3">'+data_user.name+'</h4>';
-                        html+="<button class='btn dev btn_app_edit btn-warning w-45 fw-semi fs-8 py-2 me-3' app_id='"+data_user.id+"'><i class=\"fa-solid fa-pen-to-square\"></i> Edit</button>";
-                        html+="<button class='btn dev btn_app_del btn-danger border ps-3 w-45 fw-semi fs-8 py-2' app_id='"+data_user.id+"'><i class=\"fa-solid fa-trash\"></i> Delete</button>";
-                        html+="<button class='btn dev btn_app_export btn-dark w-45 fw-semi fs-8 py-2 me-3' app_id='"+data_user.id+"' data-collection='user-"+data_user.lang+"'><i class=\"fa-solid fa-download\"></i> Export Json</button>";
-                        html+="<button class='btn dev btn_app_import btn-dark border ps-3 w-45 fw-semi fs-8 py-2' app_id='"+data_user.id+"'  data-collection='user-"+data_user.lang+"'><i class=\"fa-solid fa-upload\"></i> Import</button>";
+                        html+=carrot.btn_dev("user-"+data_user.lang,data_user.id);
 
                         html+='<div class="row pt-4">';
                             html+='<div class="col-md-4 col-6 text-center">';
@@ -346,8 +328,6 @@ class Carrot_user{
         html+="</div>";
         html+="</div>";
         carrot.show(html);
-        carrot.check_event();
-        carrot.check_mode_site();
         carrot.user.check_event();
     }
 

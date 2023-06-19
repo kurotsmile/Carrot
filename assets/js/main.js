@@ -36,13 +36,13 @@ function paste_tag(name_tag) {
     navigator.clipboard.readText().then(text => {$("#"+name_tag).val(text.trim());});
 }
 
-async function show_list_background(querySnapshot){
+function show_list_background(querySnapshot,carrot){
     $("#main_contain").html("");
     var html_main_contain="";
     html_main_contain+='<div class="row m-0">';
     querySnapshot.forEach((doc) => {
         var data_app=doc.data();
-        html_main_contain+="<div class='col-md-3 mb-3' id=\""+doc.id+"\">";
+        html_main_contain+="<div class='box_app col-md-3 mb-3' id=\""+doc.id+"\"  key_search=\""+doc.id+"\">";
             html_main_contain+='<div class="app-cover p-2 shadow-md bg-white">';
                 html_main_contain+='<div class="row">';
                 var url_avatar='';
@@ -52,13 +52,17 @@ async function show_list_background(querySnapshot){
                     html_main_contain+='<div class="det mt-2 col-9">';
                         html_main_contain+="<h5 class='mb-0 fs-6'>"+doc.id+"</h5>";
                     html_main_contain+="</div>";
+
+                    html_main_contain+=carrot.btn_dev("background",doc.id);
+
                 html_main_contain+="</div>";
             html_main_contain+="</div>";
         html_main_contain+="</div>";
         
     });
     html_main_contain+="</div>";
-    $("#main_contain").html(html_main_contain);
+    carrot.body.html(html_main_contain);
+    carrot.check_event();
 }
 
 function show_box_add_or_edit_wallpaper(data_wallpaper,act_done){

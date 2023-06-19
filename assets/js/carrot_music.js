@@ -115,7 +115,6 @@ class Carrot_Music{
             carrot.body.parent().parent().append(carrot.music.box_music_mini());
             carrot.music.create_audio();
         }
-        carrot.check_mode_site();
         carrot.music.check_event();
     }
 
@@ -147,17 +146,6 @@ class Carrot_Music{
             carrot.get_doc("song",id_box_app,carrot.music.show_edit_music_done);
         });
 
-        $(".btn_app_del").click(async function () {
-            var id_box_app = $(this).attr("app_id");
-            $.MessageBox({
-                buttonDone  : "Yes",
-                buttonFail  : "No",
-                message     : "Bạn có chắc chắng là xóa Bài hát <b>"+id_box_app+"</b> này không?"
-            }).done(function(){
-                carrot.act_del_obj("song",id_box_app);
-            });
-        });
-
         $(".btn_info_music").click(function(){
             var aud_id=$(this).attr("aud-name");
             carrot.music.show_info_music_by_id(aud_id);
@@ -166,6 +154,8 @@ class Carrot_Music{
         $("#btn_mm_play").click(function(){
             carrot.music.change_status_pause_and_play();
         });
+
+        carrot.check_event();
     }
 
     back_music(){
@@ -263,11 +253,8 @@ class Carrot_Music{
                     html+='</div>';
                     html+='<div class="col-md-8 p-2">';
                         html+='<h4 class="fw-semi fs-4 mb-3">'+data.name+'</h4>';
-                        html+="<button class='btn dev btn_app_edit btn-warning w-45 fw-semi fs-8 py-2 me-3' app_id='"+data.id+"'><i class=\"fa-solid fa-pen-to-square\"></i> Edit</button>";
-                        html+="<button class='btn dev btn_app_del btn-danger border ps-3 w-45 fw-semi fs-8 py-2' app_id='"+data.id+"'><i class=\"fa-solid fa-trash\"></i> Delete</button>";
-                        html+="<button class='btn dev btn_app_export btn-dark w-45 fw-semi fs-8 py-2 me-3' app_id='"+data.id+"' data-collection='song'><i class=\"fa-solid fa-download\"></i> Export Json</button>";
-                        html+="<button class='btn dev btn_app_import btn-dark border ps-3 w-45 fw-semi fs-8 py-2' app_id='"+data.id+"'  data-collection='song'><i class=\"fa-solid fa-upload\"></i> Import</button>";
-
+                        html+=this.carrot.btn_dev("song",data.id);
+                        
                         html+='<div class="row pt-4">';
                             html+='<div class="col-md-4 col-6 text-center">';
                                 html+='<b>3.9 <i class="fa-sharp fa-solid fa-eye"></i></b>';
@@ -390,9 +377,6 @@ class Carrot_Music{
             this.carrot.body.parent().parent().append(this.carrot.music.box_music_mini());
             this.carrot.music.create_audio();
         }
-
-        this.carrot.check_mode_site();
-        this.carrot.check_event();
         this.check_event();
     }
 
@@ -424,10 +408,7 @@ class Carrot_Music{
 
                         html_main_contain+='</ul>';
         
-                        html_main_contain+="<div class='row' style='margin-top:6px;'>";
-                        html_main_contain+="<div class='col-6'><div class='btn dev btn_app_edit btn-warning btn-sm' app_id='"+data_music.id+"'><i class=\"fa-solid fa-pen-to-square\"></i> Edit</div></div>";
-                        html_main_contain+="<div class='col-6'><div class='btn dev btn_app_del btn-danger btn-sm' app_id='"+data_music.id+"'><i class=\"fa-solid fa-trash\"></i> Delete</div></div>";
-                        html_main_contain+="</div>";
+                        html_main_contain+=this.carrot.btn_dev("song",data_music.id);
     
                     html_main_contain+="</div>";
                 html_main_contain+="</div>";

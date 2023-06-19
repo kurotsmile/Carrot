@@ -253,7 +253,7 @@
 
             if (id_fun == "btn_address_book") carrot.user.show_all_phone_book();
             if (id_fun == "btn_all_icon") carrot.show_all_icon();
-            if (id_fun == "btn_wallpapers") show_all_wallpaper();
+            if (id_fun == "btn_wallpapers") carrot.show_all_wallpaper();
             if (id_fun == "btn_home"||id_fun=='logo_carrot') carrot.show_home();
             if(id_fun=="btn_list_music") carrot.music.show_list_music();
             if (id_fun == "btn_all_app") { 
@@ -360,10 +360,10 @@
             carrot.check_version_data();
         }
 
-        async function show_all_wallpaper(){
+        carrot.show_all_wallpaper=async()=>{
             var q = query(collection(db, "background"));
             var querySnapshot = await getDocs(q);
-            show_list_background(querySnapshot);
+            show_list_background(querySnapshot,carrot);
             carrot.change_title_page("Wallpapers", "?p=wallpapers","wallpapers");
         }
 
@@ -527,8 +527,8 @@
             carrot.show_all_icon_from_list_icon();
         }
 
-        carrot.create_editor_js=()=>{
-            CodeJar(document.querySelector('.editor'), hljs.highlightElement);
+        carrot.create_editor_code=()=>{
+            return CodeJar(document.querySelector('.editor'), hljs.highlightElement);
         }
 
         carrot.check_version_data=async()=>{
