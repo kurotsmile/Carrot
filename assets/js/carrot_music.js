@@ -99,7 +99,6 @@ class Carrot_Music{
                 this.show_list_music_by_obj_songs(this.carrot);
             }
         }
-
     }
 
     act_done_list_music(obj_data,carrot){

@@ -13,7 +13,6 @@ class Carrot_Site{
 
     obj_app=null;
     obj_lang_web=Object();
-    obj_icon=null;
     obj_version_new=null;
     obj_version_cur=null;
 
@@ -26,6 +25,8 @@ class Carrot_Site{
     music;
     ai_lover;
     code;
+    icon;
+    background;
     
     constructor(){
         var carrot=this;
@@ -57,7 +58,6 @@ class Carrot_Site{
         this.list_lang=Array();
         this.load_obj_app();
         this.load_list_lang();
-        this.load_obj_icon();
         this.load_recognition();
         this.load_obj_version_new();
         this.load_obj_version_cur();
@@ -72,14 +72,16 @@ class Carrot_Site{
         $('head').append('<script type="text/javascript" src="assets/js/carrot_user.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_music.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_code.js?ver='+this.get_ver_cur("js")+'"></script>');
+        $('head').append('<script type="text/javascript" src="assets/js/carrot_icon.js?ver='+this.get_ver_cur("js")+'"></script>');
+        $('head').append('<script type="text/javascript" src="assets/js/carrot_background.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/ai_lover.js?ver='+this.get_ver_cur("js")+'"></script>');
 
         this.user=new Carrot_user(this);
         this.music=new Carrot_Music(this);
         this.code=new Carrot_Code(this);
+        this.icon=new Carrot_Icon(this);
+        this.background=new Carrot_Background(this);
         this.ai_lover=new Ai_Lover(this);
-
-       
     };
 
     load_recognition(){
@@ -256,10 +258,6 @@ class Carrot_Site{
         if (localStorage.getItem("obj_app") != null) this.obj_app=JSON.parse(localStorage.getItem("obj_app"));
     }
 
-    load_obj_icon(){
-        if (localStorage.getItem("obj_icon") != null) this.obj_icon=JSON.parse(localStorage.getItem("obj_icon"));
-    }
-
     load_list_lang(){
         if (localStorage.getItem("list_lang") == null)
             this.list_lang=new Array();
@@ -279,10 +277,6 @@ class Carrot_Site{
 
     save_obj_app(){
         localStorage.setItem("obj_app", JSON.stringify(this.obj_app));
-    }
-
-    save_obj_icon(){
-        localStorage.setItem("obj_icon", JSON.stringify(this.obj_icon));
     }
 
     save_obj_version_new(){
@@ -337,11 +331,6 @@ class Carrot_Site{
     delete_obj_app(){
         localStorage.removeItem("obj_app");
         this.obj_app=new Object();
-    }
-
-    delete_obj_icon(){
-        localStorage.removeItem("obj_icon");
-        this.obj_icon=null;
     }
 
     save_list_lang(){
@@ -650,7 +639,7 @@ class Carrot_Site{
             var db_document=$(this).attr("db_document");
             carrot.log("Edit "+db_collection+" : "+db_document);
             if(db_collection=="app") carrot.get_doc(db_collection,db_document,carrot.show_edit_app_done);
-            if(db_collection=="icon") carrot.get_doc(db_collection,db_document,carrot.show_edit_icon_done);
+            if(db_collection=="icon") carrot.get_doc(db_collection,db_document,carrot.icon.show_edit_icon_done);
             if(db_collection=="user-avatar") carrot.get_doc(db_collection,db_document,carrot.ai_lover.show_edit_avatar_done);
             if(db_collection=="song") carrot.get_doc(db_collection,db_document,carrot.music.show_edit_music_done);
             if(db_collection=="code") carrot.get_doc(db_collection,db_document,carrot.code.show_add_or_edit_code);
@@ -835,97 +824,11 @@ class Carrot_Site{
         }
     }
 
-    show_all_icon_from_list_icon(){
-        var carrot=this;
-        this.change_title_page("Icon", "?p=icon","icon");
-        var list_icon=this.convert_obj_to_list(this.obj_icon);
-        $("#main_contain").html("");
-        var html_main_contain="";
-        html_main_contain+='<div class="row m-0">';
-        $(list_icon).each(function(index,data_icon) {
-            var s_url_icon="";
-            if(data_icon.icon!=null) s_url_icon=data_icon.icon;
-            if(s_url_icon=="") s_url_icon="images/64.png";
-
-            html_main_contain+="<div class='col-md-3 mb-3' id=\""+data_icon.id+"\">";
-                html_main_contain+='<div class="app-cover p-2 shadow-md bg-white">';
-                    html_main_contain+='<div class="row">';
-                    html_main_contain+='<div class="img-cover pe-0 col-3"><img class="rounded" src="'+s_url_icon+'" alt="'+data_icon.id+'"></div>';
-                        html_main_contain+='<div class="det mt-2 col-9">';
-                            html_main_contain+="<h5 class='mb-0 fs-6'>"+data_icon.id+"</h5>";
-                            html_main_contain+="<span class='fs-8' style='color:"+data_icon.color+"'>"+data_icon.color+"</span>";
-                        html_main_contain+="</div>";
-                    html_main_contain+="</div>";
-
-                    html_main_contain+=carrot.btn_dev("icon",data_icon.id);
-
-                html_main_contain+="</div>";
-            html_main_contain+="</div>";
-        });
-        html_main_contain+="</div>";
-        $("#main_contain").html(html_main_contain);
-
-        
-        $(".btn_app_edit").click(async function () {
-            var id_box_app = $(this).attr("app_id");
-            carrot.get_doc("icon",id_box_app,carrot.show_edit_icon_done);
-        });
-
-        this.check_event();
-    }
-
-    show_all_icon(){
-        this.load_obj_icon();
-        if(this.obj_icon==null){
-            this.get_all_data_icon();
-        }
-        else{
-            this.log("Show all data icon from cache!");
-            this.show_all_icon_from_list_icon();
-        }
-            
-    }
-
-    show_edit_icon_done(data_icon,carrot){
-        if(data_icon!=null)
-            carrot.show_box_add_or_edit_icon(data_icon,carrot.act_done_add_or_edit);
-        else
-            $.MessageBox("Icon không còn tồn tại!");
-    }
-
-    show_box_add_or_edit_icon(data_icon,act_done){
-        var s_title_box='';
-        if(data_icon==null)s_title_box="<b>Add Icon</b>";
-        else s_title_box="<b>Update Icon</b>";
-        var obj_icon = Object();
-        obj_icon["tip_icon"] = { type: "caption", message: "Thông tin cơ bản" };
-        if(data_icon==null){
-            data_icon=Object();
-            data_icon["name"]='';
-            data_icon["icon"]='';
-            data_icon["color"]='';
-        }else{
-            if(data_icon["name"]=="") data_icon["name"]=data_icon["id"];
-        }
-        obj_icon["id"]={'type':'input','defaultValue':data_icon["id"], 'label':'ID'};
-        obj_icon["name"]={'type':'input','defaultValue':data_icon["name"], 'label':'Name'};
-        obj_icon["icon"]={'type':'input','defaultValue':data_icon["icon"], 'label':'Icon (url)'};
-        obj_icon["color"]={'type':'color','defaultValue':data_icon["color"], 'label':'Color'};
-        customer_field_for_db(obj_icon,'icon','id','show_all_icon','Add App successfully');
-    
-        $.MessageBox({
-            message: s_title_box,
-            input: obj_icon,
-            top: "auto",
-            buttonFail: "Cancel"
-        }).done(act_done);
-    }
-
     show_import_json_file(){
         var carrot=this;
         var html='';
         html+='<div class="row"><div class="col-12"><input type="file" id="input-file-import"></div></div>';
-        html+='<div class="row"><div id="file_contain" class="col-12"></div></div>';
+        html+='<div class="row"><pre><code class="language-json col-12" id="file_contain"></code></pre></div>';
         $("#main_contain").html(html);
         $("#input-file-import").on('change',function() {
             var file = $(this).get(0).files;
@@ -938,6 +841,7 @@ class Carrot_Site{
                 carrot.import_json_by_data(obj_json);
                 var jsonPretty = JSON.stringify(obj_json, null, '\t');
                 $("#file_contain").html(jsonPretty);
+                hljs.highlightAll();
             })
         });
     }
@@ -1014,7 +918,8 @@ class Carrot_Site{
             
         this.check_mode_site();
         this.delete_obj_app();
-        this.delete_obj_icon();
+        this.icon.delete_obj_icon();
+        this.music.delete_obj_songs();
         this.setup_sever_db();
         this.check_version_data();
         $.MessageBox("Thay đổi kế độ kết nối cơ sở dữ liệu thành công! Load lại trang để làm mới các chức năng!");
@@ -1054,7 +959,7 @@ class Carrot_Site{
         else if(this.id_page=="about_us") $("#btn_about_us").click();
         else if(this.id_page=="address_book") $("#btn_address_book").click();
         else if(this.id_page=="wallpapers") this.show_all_wallpaper();
-        else if(this.id_page=="icon") this.show_all_icon();
+        else if(this.id_page=="icon") this.icon.show_all_icon();
         else if(this.id_page=="code") this.code.show_list_code();
         else this.show_home();
         this.log("ID_page:"+this.id_page);

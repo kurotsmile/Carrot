@@ -6,11 +6,11 @@ class Carrot_Code{
         this.carrot=cr;
     }
 
-    show_add_or_edit_code(data_code,carrot){
-        var frm=new Carrot_Form('add_code',carrot);
+    show_add_or_edit_code(data_code){
+        var frm=new Carrot_Form('add_code',this.carrot);
         frm.set_title("Add code");
         frm.create_field("title","Title");
-        frm.set_db("code","code-"+carrot.uniq());
+        frm.set_db("code","code-"+this.carrot.uniq());
         var code_code=frm.create_field("code","Code");
         code_code.set_type("code");
         code_code.set_tip("Hãy đóng góp những mã nguồn thật hay để chia sẻ những kiến thức bổ ích đến với các lập trình viên khác!")
@@ -74,7 +74,7 @@ class Carrot_Code{
         });
 
         $("#btn-add-code").click(function(){
-            carrot.code.show_add_or_edit_code(null,carrot);
+            carrot.code.show_add_or_edit_code(null);
         });
         this.carrot.check_event();
     }
