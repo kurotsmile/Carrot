@@ -6,13 +6,25 @@ class Carrot_Code{
         this.carrot=cr;
     }
 
+    show_add_new(){
+        this.show_add_or_edit_code(null);
+    }
+
+    show_edit(id){
+        var data=JSON.parse(this.obj_codes[id]);
+        this.show_add_or_edit_code(data);
+    }
+
     show_add_or_edit_code(data_code){
-        var frm=new Carrot_Form('add_code',this.carrot);
+        console.log(data_code);
+        var carrot=this.carrot;
+        var frm=new Carrot_Form('add_code',carrot);
         frm.set_title("Add code");
         frm.create_field("title","Title");
         frm.set_db("code","code-"+this.carrot.uniq());
         var code_code=frm.create_field("code","Code");
         code_code.set_type("code");
+        code_code.set_val(data_code.code);
         code_code.set_tip("Hãy đóng góp những mã nguồn thật hay để chia sẻ những kiến thức bổ ích đến với các lập trình viên khác!")
         frm.act_done();
     }
@@ -193,7 +205,7 @@ class Carrot_Code{
     
         html+="</div>";
         html+="</div>";
-        carrot.body.html(html);
+        carrot.show(html);
         carrot.code.check_event();
         hljs.highlightAll();
     }

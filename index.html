@@ -156,6 +156,11 @@
         </div>
     </div>
 
+    <div class="modal" tabindex="-1" role="dialog" id="box"  data-target=".bd-example-modal-lg">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content" id="box_body"></div>
+        </div>
+      </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
@@ -348,7 +353,7 @@
             delete(data.act_name_before);
             setDoc(doc(collection(db,db_collection),data[db_doc]), data);
             if(db_collection=="app") carrot.delete_obj_app();
-            if(db_collection=="icon") carrot.delete_obj_icon();
+            if(db_collection=="icon") carrot.icon.delete_obj_icon();
             $.MessageBox(act_msg_success);
             if(act_name_before!=null&&act_name_before!='') eval(act_name_before + "()");
         }
@@ -587,7 +592,6 @@
             carrot.load_data_lang_web();
             carrot.user.show_info_user_login_in_header();
         });
-
     </script>
 
 

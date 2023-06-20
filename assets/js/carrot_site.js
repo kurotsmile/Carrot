@@ -642,7 +642,7 @@ class Carrot_Site{
             if(db_collection=="icon") carrot.get_doc(db_collection,db_document,carrot.icon.show_edit_icon_done);
             if(db_collection=="user-avatar") carrot.get_doc(db_collection,db_document,carrot.ai_lover.show_edit_avatar_done);
             if(db_collection=="song") carrot.get_doc(db_collection,db_document,carrot.music.show_edit_music_done);
-            if(db_collection=="code") carrot.get_doc(db_collection,db_document,carrot.code.show_add_or_edit_code);
+            if(db_collection=="code") carrot.code.show_edit(db_document);
         });
 
         $(".btn_app_del").click(function(){
@@ -983,6 +983,11 @@ class Carrot_Site{
             html+="</div>";
         html+="</div>";
         return html;
+    }
+
+    box(html){
+        $('#box').modal('show');
+        $('#box_body').html(html);
     }
 
 }

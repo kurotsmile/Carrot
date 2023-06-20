@@ -81,7 +81,7 @@ class Carrot_Field{
             html+='<div class="page-wrapper box-content">';
             html+='<link rel="stylesheet" href="assets/plugins/richtex/richtext.min.css">';
             html+='<script type="text/javascript" src="assets/plugins/richtex/jquery.richtext.js"></script>';
-            html+='<textarea class="content" name="'+this.name+'"></textarea>';
+            html+='<textarea class="content" name="'+this.name+'">'+this.value+'</textarea>';
             html+='<script>$(document).ready(function(){$(".content").richText();});</script>';
             html+='</div>';
         }
@@ -145,26 +145,29 @@ class Carrot_Form{
     
     html(){
         var html='';
-        html+='<div class="col-md-12">';
-        html+='<form id="'+this.name+'" class="shadow-md p-4 rounded bg-white">';
         if(this.title=="") this.title=this.name;
-        html+='<h4 class="fs-6 fw-bolder mb-3">'+this.title+'</h4>';
+
+        html+='<div class="modal-header">';
+        html+='<h5 class="modal-title">'+this.title+'</h5>';
+        html+='<button type="button" class="close box_close" data-dismiss="modal" aria-label="Close"><i class="fa-solid fa-circle-xmark"></i></button>';
+        html+='</div>';
+
+        html+='<form id="'+this.name+'" class="modal-body">';
         for(var i=0;i<this.list_field.length;i++){
             if(this.list_field[i].type=="code") this.is_editor_code=true;
             html+=this.list_field[i].html();
         }
-
-        html+='<div class="form-group">';
-            html+='<div id="btn_'+this.name+'_done" class="btn btn-primary"><i class="fa-sharp fa-solid fa-circle-check"></i> Done</div>';
-        html+='</div>';
-
         html+='</form>';
+
+        html+='<div class="modal-footer">';
+        html+='<button id="btn_'+this.name+'_done" type="button" class="btn btn-primary"><i class="fa-sharp fa-solid fa-circle-check"></i> Done</button>';
+        html+='<button id="btn_'+this.name+'_close" type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa-solid fa-circle-xmark"></i> Close</button>';
         html+='</div>';
         return html;
     }
 
     act_done(){
-        this.carrot.body.html(this.html());
+        this.carrot.box(this.html());
         
         var frm=this;
         var carrot=this.carrot;
@@ -208,6 +211,11 @@ class Carrot_Form{
 
             carrot.set_doc(frm.db_collection,frm.db_document,obj_frm);
             $.MessageBox("Add code success!");
+            $('#box').modal('toggle'); 
+        });
+
+        $("#btn_"+this.name+"_close,.box_close").click(function(){
+            $('#box').modal('toggle'); 
         });
     }
 }
