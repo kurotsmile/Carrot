@@ -1,43 +1,74 @@
 {
-    "short_name": "Carrot",
-    "name": "Carrot Store",
-    "description": "Great apps to make your life better",
-    "categories": ["App", "Game", "Medical","Icons","Background","Book Phone"],
-    "icons": [
-      {
-        "src": "/images/192.png",
-        "type": "image/png",
-        "sizes": "192x192"
-      },
-      {
-        "src": "/images/512.png",
-        "type": "image/png",
-        "sizes": "512x512"
-      }
-    ],
-    "id": "/?p=all_app",
-    "start_url": "/?p=all_app",
-    "background_color": "#FFFFFF",
-    "display": "standalone",
-    "scope": "/",
-    "theme_color": "#FFFFFF",
-    "related_applications": [
-      {
-        "platform": "play",
-        "url": "https://play.google.com/store/apps/details?id=com.carrotstore.ailover",
-        "id": "com.carrotstore.ailover"
-      }, {
-        "platform": "windows",
-        "url": "https://apps.microsoft.com/store/detail/9N4F0SQKPQC6"
-      }
-    ],
-    "protocol_handlers": [
-      {
-        "protocol": "web+call",
-        "url": "/bookphone?=phone%s"
-      },      {
-        "protocol": "web+app",
-        "url": "/?p=app&id=%s"
-      }
-    ]
+  "short_name": "Carrot",
+  "name": "Carrot Store",
+  "description": "Great apps to make your life better",
+  "categories": [
+    "books",
+    "games",
+    "lifestyle",
+    "medical",
+    "music",
+    "photo",
+    "utilities"
+  ],
+  "icons": [
+    {
+      "src": "/images/48.png",
+      "type": "image/png",
+      "sizes": "48x48"
+    },{
+      "src": "/images/64.png",
+      "type": "image/png",
+      "sizes": "64x64"
+    },{
+      "src": "/images/72.png",
+      "type": "image/png",
+      "sizes": "72x72"
+    },{
+      "src": "/images/128.png",
+      "type": "image/png",
+      "sizes": "128x128"
+    },
+    {
+      "src": "/images/192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/images/512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#FFFFFF",
+  "display": "standalone",
+  "scope": "/",
+  "theme_color": "#FFFFFF",
+  "prefer_related_applications": true,
+  "iarc_rating_id": "970a0da4-a549-4560-9743-93df33417b9c",
+  "related_applications": [
+    {
+      "platform": "play",
+      "url": "https://play.google.com/store/apps/details?id=com.carrotstore.ailover",
+      "id": "com.carrotstore.ailover"
+    },
+    {
+      "platform": "windows",
+      "url": "https://apps.microsoft.com/store/detail/9N4F0SQKPQC6"
+    }
+  ],
+  "protocol_handlers": [
+    {
+      "protocol": "web+call",
+      "url": "/bookphone?=phone%s"
+    },
+    {
+      "protocol": "web+app",
+      "url": "/?p=app&id=%s"
+    }
+  ],
+  "edge_side_panel": {
+    "preferred_width": 300
   }
+}

@@ -75,7 +75,6 @@ class Carrot_Code{
     show_list_from_data(){
         var carrot=this.carrot;
         var html='';
-        console.log(carrot.code.obj_codes);
         var list_code=carrot.convert_obj_to_list(carrot.code.obj_codes);
 
         html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-4"><button id="btn-add-code" class="btn btn-dark btn-sm"><i class="fa-solid fa-square-plus"></i> Add Code</button>  <a class="float-end" href=""><small class="fs-8">View All</small></a></h4>';

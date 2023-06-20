@@ -18,7 +18,7 @@
     <link href="assets/plugins/messagebox/messagebox.min.css" rel="stylesheet">
     <link rel="stylesheet" href="assets/plugins/dataTables/jquery.dataTables.css" />
     <link rel="stylesheet" href="assets/plugins/highlight/styles/tomorrow-night-blue.min.css" id="code_theme"/>
-    <link rel="manifest" href="manifest.json?ver=1.8" />
+    <link rel="manifest" href="manifest.json?ver=1.9" />
 
     <script src="assets/js/jquery-3.7.0.min.js"></script>
     <script src="assets/js/popper.min.js" ></script>
@@ -40,7 +40,7 @@
             <a class="navbar-toggler d-block d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"><i class="bi fa-solid fa-bars"></i></a>
         </div>
         <div id="navbarNav" class="navcol pt-0 d-none d-lg-block overflow-auto">
-            <ul>
+            <ul id="list_menu">
                 <li id="btn_home" class="border-bottom btn-menu"><i class="fa-solid fa-home fs-6 me-2"></i> <lang class="lang" key_lang="home">Home</lang></li>
                 <li id="btn_all_app" class="border-bottom btn-menu"><i class="fa-solid fa-mobile bi fs-6 me-2"></i> <i class="bi fs-6  bi-google-play"></i> <lang class="lang" key_lang="app">Applications</lang></li>
                 <li id="btn_all_game" class="border-bottom btn-menu"><i class="fa-solid fa-gamepad bi me-2 fs-6"></i> <lang class="lang" key_lang="game">Games</lang></li>
@@ -109,7 +109,6 @@
 
                 <li id="btn_mode_host" class="border-bottom btn-menu dev"><i class="fa-solid fa-dev fs-6 me-2"></i> Localhost</li>
                 <li id="btn_version_data" class="border-bottom btn-menu dev"><i class="fa-regular fa-code-compare fs-6 me-2"></i> Version</li>
-                <li id="btn_code_js" class="border-bottom btn-menu dev"><i class="fa-regular fa-code fs-6 me-2"></i> Code Editer</li>
             </ul>
         </div>
     </header>
@@ -164,7 +163,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, setDoc, doc, getDoc, query, where, getDocs, deleteDoc, connectFirestoreEmulator,disableNetwork } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, setDoc, doc, getDoc, query, where, getDocs, deleteDoc, connectFirestoreEmulator,disableNetwork,limit } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
         import {CodeJar} from "https://medv.io/codejar/codejar.js";
         var db;
         var carrot=new Carrot_Site();
@@ -199,7 +198,7 @@
         }
 
         carrot.get_list_doc=async(s_collection,act_done)=>{
-            var q = query(collection(db, s_collection));
+            var q = query(collection(db, s_collection),where('key','!=',''),limit(200));
             var queryListObj = await getDocs(q);
             if(queryListObj.docs.length>0){
                 var obj_data=Object();
@@ -232,7 +231,6 @@
 
         $("#logo_carrot").on("contextmenu", function () { carrot.act_mode_dev(); return false; });
         $("#btn_download_json").click(function () {download_json();});
-        $("#btn_code_js").click(function(){carrot.show_editor_code_js();});
         $("#btn_recognition").click(function(){carrot.start_recognition();});
         $("#btn_import_json_url").click(function () {
             var url_json = prompt("Enter url json", "Enter url");
@@ -561,6 +559,9 @@
             carrot.check_version_data();
             carrot.load_data_lang_web();
             carrot.user.show_info_user_login_in_header();
+
+            var menu_sd=carrot.menu.create_menu("chat-vi").set_act(function(){carrot.show_lis_by_collection("chat-vi");});
+            carrot.menu.show();
         });
     </script>
 

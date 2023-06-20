@@ -77,7 +77,7 @@ class Carrot_App{
         this.show_list_app_and_game("game");
     }
 
-    box_app_item(data_app,s_class){
+    box_app_item(data_app,s_class='col-md-4 mb-3'){
         var key_name="name_"+this.carrot.lang;
         var s_url_icon="";
         if(data_app.icon!=null) s_url_icon=data_app.icon;
@@ -311,6 +311,7 @@ class Carrot_App{
     
         html+="</div>";
         html+="</div>";
+        carrot.app.type_show="all";
         carrot.show(html);
         carrot.app.check_btn_for_list_app();
     }

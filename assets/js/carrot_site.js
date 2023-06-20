@@ -27,6 +27,7 @@ class Carrot_Site{
     code;
     icon;
     background;
+    menu;
     
     constructor(){
         var carrot=this;
@@ -76,6 +77,8 @@ class Carrot_Site{
         $('head').append('<script type="text/javascript" src="assets/js/carrot_icon.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_background.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/ai_lover.js?ver='+this.get_ver_cur("js")+'"></script>');
+        $('head').append('<script type="text/javascript" src="assets/js/carrot_menu.js?ver='+this.get_ver_cur("js")+'"></script>');
+        $('head').append('<script type="text/javascript" src="assets/js/carrot_list_item.js?ver='+this.get_ver_cur("js")+'"></script>');
 
         this.app=new Carrot_App(this);
         this.user=new Carrot_user(this);
@@ -84,6 +87,7 @@ class Carrot_Site{
         this.icon=new Carrot_Icon(this);
         this.background=new Carrot_Background(this);
         this.ai_lover=new Ai_Lover(this);
+        this.menu=new Carrot_Menu(this);
     };
 
     load_recognition(){
@@ -533,16 +537,6 @@ class Carrot_Site{
         });
     }
 
-    show_editor_code_js(){
-        var html='';
-        html+='<style>.editor {border-radius: 6px;box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);font-family:  monospace;font-size: 14px;font-weight: 400;height: 340px;letter-spacing: normal;line-height: 20px;padding: 10px;tab-size: 4;}</style>';
-        html+='<div class="row m-0">';
-            html+='<div class="editor language-js"></div>';
-        html+='</div>';
-        $("#main_contain").html(html);
-        this.create_editor_code();
-    }
-
     get_url(){
         return location.protocol+"//"+location.hostname+location.pathname;
     }
@@ -635,5 +629,23 @@ class Carrot_Site{
         if(db_collection=="song") this.song.delete_obj_song();
         if(db_collection=="code") this.code.delete_obj_code();
         if(this.id_page=="address_book") this.user.delete_obj_phone_book();
+    }
+
+    show_lis_by_collection(db_collection){
+        this.get_list_doc(db_collection,this.act_done_show_collection);
+    }
+
+    act_done_show_collection(datas,carrot){
+        var html='';
+        html+='<div class="row m-0">';
+        var list_data=carrot.convert_obj_to_list(datas);
+        $(list_data).each(function(index,data){
+            var item_list=new Carrot_List_Item(carrot);
+            item_list.set_name(data.key);
+            item_list.set_tip(data.msg);
+            html+=item_list.html();
+        });
+        html+='</div>';
+        carrot.show(html);
     }
 }
