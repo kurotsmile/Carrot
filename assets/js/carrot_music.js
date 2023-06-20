@@ -85,14 +85,21 @@ class Carrot_Music{
     }
     
     show_list_music(){
-        if(this.obj_songs==null){
+        if(this.carrot.check_ver_cur("song")==false){
             this.carrot.log("Get list song from sever and show");
             this.carrot.get_list_doc("song",this.act_done_list_music);
+            this.carrot.update_new_ver_cur("song",true);
+        }else{
+            if(this.obj_songs==null){
+                this.carrot.log("Get list song from sever and show");
+                this.carrot.get_list_doc("song",this.act_done_list_music);
+            }
+            else{
+                this.carrot.log("Show list song from cache");
+                this.show_list_music_by_obj_songs(this.carrot);
+            }
         }
-        else{
-            this.carrot.log("Show list song from cache");
-            this.show_list_music_by_obj_songs(this.carrot);
-        }
+
     }
 
     act_done_list_music(obj_data,carrot){

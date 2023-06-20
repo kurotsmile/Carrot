@@ -944,7 +944,7 @@ class Carrot_Site{
 
     log(s_msg,s_status="info") {
         console.log(s_msg);
-        if(this.mode_site=="dev") SnackBar({message: s_msg,timeout: 3000,status:s_status});
+        if(this.mode_site=="dev") SnackBar({message: s_msg,timeout: 5000,status:s_status});
     }
 
     show_list_lang(){
