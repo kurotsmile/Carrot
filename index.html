@@ -198,7 +198,7 @@
         }
 
         carrot.get_list_doc=async(s_collection,act_done)=>{
-            var q = query(collection(db, s_collection),where('key','!=',''),limit(200));
+            var q = query(collection(db, s_collection));
             var queryListObj = await getDocs(q);
             if(queryListObj.docs.length>0){
                 var obj_data=Object();
