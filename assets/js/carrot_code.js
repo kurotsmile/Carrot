@@ -1,7 +1,7 @@
 class Carrot_Code{
     carrot;
     obj_codes;
-    
+
     constructor(cr){
         this.carrot=cr;
     }
@@ -24,6 +24,7 @@ class Carrot_Code{
 
     act_done_list(codes,carrot){
         var html='';
+        carrot.code.obj_codes=codes;
         var list_code=carrot.convert_obj_to_list(codes);
 
         html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-4"><button id="btn-add-code" class="btn btn-dark btn-sm"><i class="fa-solid fa-square-plus"></i> Add Code</button>  <a class="float-end" href=""><small class="fs-8">View All</small></a></h4>';
@@ -85,8 +86,7 @@ class Carrot_Code{
             html+='<div class="col-md-8 ps-4 ps-lg-3">';
                 html+='<div class="row bg-white shadow-sm">';
                     html+='<div class="col-md-4 p-3 text-center">';
-                        html+='<img class="w-100">';
-                        html+='<i role="button" class="fa-sharp fa-solid fa-circle-play fa-5x text-success mt-2 btn-play-music"></i>';
+                        html+='<br/><i class="fa-sharp fa-solid fa-code fa-5x"></i>';
                     html+='</div>';
                     html+='<div class="col-md-8 p-2">';
                         html+='<h4 class="fw-semi fs-4 mb-3">'+data.title+'</h4>';
@@ -115,7 +115,7 @@ class Carrot_Code{
     
                 html+='<div class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
                     html+='<h4 class="fw-semi fs-5 lang" key_lang="code">Code</h4>';
-                    html+='<p class="fs-8 text-justify">'+data.code+'</p>';
+                    html+='<pre><code class="'+data.code_type+'">'+data.code+'</code></pre>';
                 html+='</div>';
     
                 html+='<div class="about row p-2 py-3  bg-white mt-4 shadow-sm">';
@@ -181,20 +181,20 @@ class Carrot_Code{
                 html+='</div>';
             html+="</div>";
     
-            /*
+
             html+='<div class="col-md-4">';
             html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-3 lang"  key_lang="related_songs">Related Code</h4>';
             var list_code_other= carrot.convert_obj_to_list(carrot.code.obj_codes).map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
             for(var i=0;i<list_code_other.length;i++){
                 var codes=list_code_other[i];
-                if(data.id!=codes.id) html+=this.carrot.code.box_item_code(codes,'col-md-12 mb-3');
+                if(data.id!=codes.id) html+=carrot.code.box_item_code(codes,'col-md-12 mb-3');
             };
             html+='</div>';
-            */
     
         html+="</div>";
         html+="</div>";
         carrot.body.html(html);
         carrot.code.check_event();
+        hljs.highlightAll();
     }
 }
