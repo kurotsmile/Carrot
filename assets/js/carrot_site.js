@@ -1055,6 +1055,7 @@ class Carrot_Site{
         else if(this.id_page=="address_book") $("#btn_address_book").click();
         else if(this.id_page=="wallpapers") this.show_all_wallpaper();
         else if(this.id_page=="icon") this.show_all_icon();
+        else if(this.id_page=="code") this.code.show_list_code();
         else this.show_home();
         this.log("ID_page:"+this.id_page);
     }

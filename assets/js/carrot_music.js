@@ -242,7 +242,7 @@ class Carrot_Music{
     }
 
     show_info_music(data){
-        this.carrot.change_title_page(data.name,"?p=music&id="+data.id);
+        this.carrot.change_title_page(data.name,"?p=code&id="+data.id,"code");
         var html='<div class="section-container p-2 p-xl-4">';
         html+='<div class="row">';
             html+='<div class="col-md-8 ps-4 ps-lg-3">';
