@@ -255,21 +255,13 @@
             $(this).find("i").addClass("fa-bounce");
             var id_fun = $(this).attr("id");
 
+            if (id_fun == "btn_home") carrot.show_home();
             if (id_fun == "btn_address_book") carrot.user.show_all_phone_book();
             if (id_fun == "btn_all_icon") carrot.icon.show_all_icon();
             if (id_fun == "btn_wallpapers") carrot.background.show_all_background();
-            if (id_fun == "btn_home"||id_fun=='logo_carrot') carrot.show_home();
-            if(id_fun=="btn_list_music") carrot.music.show_list_music();
-            if (id_fun == "btn_all_app") { 
-                carrot.show_all_app();
-                carrot.change_title_page("Apps", "?p=all_app","app");
-            };
-
-            if (id_fun == "btn_all_game") { 
-                carrot.show_all_game();
-                carrot.change_title_page("Games", "?p=game","game");
-            };
-
+            if (id_fun == "btn_list_music") carrot.music.show_list_music();
+            if (id_fun == "btn_all_app") carrot.app.show_all_app();
+            if (id_fun == "btn_all_game") carrot.app.show_all_game();
             if (id_fun == "btn_about_us") {
                 $("#main_contain").load(carrot.get_url()+"about_us/" + carrot.lang+".html?ver="+carrot.get_ver_cur("page"));
                 carrot.change_title_page("About Us", "?p=about_us","about_us");
@@ -462,20 +454,6 @@
             carrot.act_download_json_by_collection_and_doc(name_collection,name_document);
         }
 
-        carrot.get_all_data_app=async()=>{
-            carrot.log("get_all_data_app from sever");
-            var q = query(collection(db, "app"));
-            var querySnapshot_app = await getDocs(q);
-            carrot.obj_app=Object();
-            querySnapshot_app.forEach((doc) => {
-                var data_app=doc.data();
-                data_app["id"]=doc.id;
-                carrot.obj_app[doc.id]=JSON.stringify(data_app);
-            });
-            carrot.save_obj_app();
-            carrot.show_home();
-        };
-
         carrot.get_all_data_phone_book=async()=>{
             carrot.log("get_all_data_phone_book from sever");
             var q = query(collection(db, "user-"+carrot.lang), where("status_share", "==", "0"));
@@ -542,11 +520,6 @@
                     if(!carrot.check_ver_cur("lang_web")){
                         carrot.get_all_data_lang_web();
                         carrot.update_new_ver_cur("lang_web");
-                    }
-
-                    if(!carrot.check_ver_cur("app")){
-                        carrot.get_all_data_app();
-                        carrot.update_new_ver_cur("app");
                     }
 
                     carrot.update_new_ver_cur("js");
