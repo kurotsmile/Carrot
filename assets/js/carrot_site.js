@@ -78,6 +78,8 @@ class Carrot_Site{
         this.music=new Carrot_Music(this);
         this.code=new Carrot_Code(this);
         this.ai_lover=new Ai_Lover(this);
+
+       
     };
 
     load_recognition(){

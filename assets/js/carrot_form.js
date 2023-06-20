@@ -42,19 +42,17 @@ class Carrot_Field{
         if(this.type=="code"){
             html+='<div class="form-group">';
                 html+='<label for="'+this.name+'_type">'+this.label+' Type Language</label>';
-                html+='<select id="'+this.name+'_type" type="select" class="form-control '+s_class+' cr_field">';
-                html+='<option>1</option>';
-                html+='<option>2</option>';
-                html+='<option>3</option>';
-                html+='option>4</option>';
-                html+='<option>5</option>';
+                html+='<select id="'+this.name+'_type" type="select" class="form-control '+s_class+' cr_field cr_field_code_type">';
+                console.log();
+                var lis_lang_code=hljs.listLanguages();
+                for(var i=0;i<lis_lang_code.length;i++) html+='<option value="'+lis_lang_code[i]+'">'+lis_lang_code[i]+'</option>';
                 html+='</select>';
             html+='</div>';
 
             html+='<div class="form-group">';
                 html+='<label for="'+this.name+'">'+this.label+' Editor</label>';
                 html+='<style>.editor {border-radius: 6px;box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);font-family:  monospace;font-size: 14px;font-weight: 400;height: 340px;letter-spacing: normal;line-height: 20px;padding: 10px;tab-size: 4;}</style>';
-                html+='<div id="'+this.name+'" type="'+this.type+'" class="editor language-js '+s_class+' cr_field"></div>';
+                html+='<div id="'+this.name+'" type="'+this.type+'" class="editor '+s_class+' cr_field"></div>';
             html+='</div>';
         }else{
             html+='<input type="'+this.type+'" class="form-control '+s_class+' cr_field" id="'+this.name+'" placeholder="'+this.placeholder+'">';
@@ -136,6 +134,15 @@ class Carrot_Form{
         var code_editor=this.carrot.create_editor_code();
         var frm=this;
         var carrot=this.carrot;
+
+        $(".cr_field_code_type").change(function(){
+            var type_code=$(this).val();
+            var lis_lang_code=hljs.listLanguages();
+            $(".editor").removeClass("language-undefined");
+            for(var i=0;i<lis_lang_code.length;i++) $(".editor").removeClass("language-"+lis_lang_code[i]);
+            $(".editor").addClass("language-"+type_code);
+        });
+        
         $("#btn_"+this.name+"_done").click(function(){
             var obj_frm=Object();
             $(".cr_field").each(function(){
