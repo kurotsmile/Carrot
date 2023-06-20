@@ -352,8 +352,7 @@
             delete(data.db_doc);
             delete(data.act_name_before);
             setDoc(doc(collection(db,db_collection),data[db_doc]), data);
-            if(db_collection=="app") carrot.delete_obj_app();
-            if(db_collection=="icon") carrot.icon.delete_obj_icon();
+            carrot.delete_cache_obj_by_collection(db_collection);
             $.MessageBox(act_msg_success);
             if(act_name_before!=null&&act_name_before!='') eval(act_name_before + "()");
         }
@@ -429,9 +428,7 @@
         carrot.act_del_obj=async (db_collection,db_doc_id)=>{
             await deleteDoc(doc(db, db_collection, db_doc_id));
             $.MessageBox("Delete object ('" + db_doc_id + "') Success!");
-            if(db_collection=="app") carrot.delete_obj_app();
-            if(db_collection=="icon") carrot.delete_obj_icon();
-            if(carrot.id_page=="address_book") carrot.user.delete_obj_phone_book();
+            carrot.delete_cache_obj_by_collection(db_collection);
         }
 
         async function download_json() {

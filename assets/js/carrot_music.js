@@ -18,7 +18,7 @@ class Carrot_Music{
         if(localStorage.getItem("obj_songs")!=null) this.obj_songs=JSON.parse(localStorage.getItem("obj_songs"));
     }
 
-    delete_obj_songs(){
+    delete_obj_song(){
         localStorage.removeItem("obj_songs");
         this.obj_songs=null;
     }

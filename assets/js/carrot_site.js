@@ -919,7 +919,7 @@ class Carrot_Site{
         this.check_mode_site();
         this.delete_obj_app();
         this.icon.delete_obj_icon();
-        this.music.delete_obj_songs();
+        this.music.delete_obj_song();
         this.setup_sever_db();
         this.check_version_data();
         $.MessageBox("Thay đổi kế độ kết nối cơ sở dữ liệu thành công! Load lại trang để làm mới các chức năng!");
@@ -988,6 +988,14 @@ class Carrot_Site{
     box(html){
         $('#box').modal('show');
         $('#box_body').html(html);
+    }
+
+    delete_cache_obj_by_collection(db_collection){
+        if(db_collection=="app") this.delete_obj_app();
+        if(db_collection=="icon") this.icon.delete_obj_icon();
+        if(db_collection=="song") this.song.delete_obj_song();
+        if(db_collection=="code") this.code.delete_obj_code();
+        if(this.id_page=="address_book") this.user.delete_obj_phone_book();
     }
 
 }

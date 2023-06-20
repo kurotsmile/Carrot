@@ -4,10 +4,28 @@ class Carrot_Code{
 
     constructor(cr){
         this.carrot=cr;
+        this.load
+    }
+
+    load_obj_code(){
+        if (localStorage.getItem("obj_codes") != null) this.obj_codes=JSON.parse(localStorage.getItem("obj_codes"));
+    }
+
+    save_obj_code(){
+        localStorage.setItem("obj_codes", JSON.stringify(this.obj_codes));
+    }
+
+    delete_obj_code(){
+        localStorage.removeItem("obj_codes");
+        this.obj_codes=null;
     }
 
     show_add_new(){
-        this.show_add_or_edit_code(null);
+        var new_data=new Object();
+        new_data["id"]="code-"+this.carrot.uniq();
+        new_data["title"]="";
+        new_data["code"]="";
+        this.show_add_or_edit_code(new_data);
     }
 
     show_edit(id){
@@ -16,12 +34,17 @@ class Carrot_Code{
     }
 
     show_add_or_edit_code(data_code){
-        console.log(data_code);
         var carrot=this.carrot;
         var frm=new Carrot_Form('add_code',carrot);
         frm.set_title("Add code");
-        frm.create_field("title","Title");
-        frm.set_db("code","code-"+this.carrot.uniq());
+
+        var id_code=frm.create_field("id","ID");
+        id_code.set_val(data_code["id"]);
+        id_code.set_type("id");
+
+        var title_code=frm.create_field("title","Title");
+        title_code.set_val(data_code.title);
+        frm.set_db("code",data_code.id);
         var code_code=frm.create_field("code","Code");
         code_code.set_type("code");
         code_code.set_val(data_code.code);
@@ -31,13 +54,29 @@ class Carrot_Code{
 
     show_list_code(){
         this.carrot.change_title_page("Code","?p=code","Code");
-        this.carrot.get_list_doc("code",this.act_done_list);
+        if(this.carrot.get_ver_cur("code")){
+            if(this.obj_codes==null)
+                this.carrot.get_list_doc("code",this.act_get_list_code_from_sever);
+             else
+                this.show_list_from_data();
+        }else{
+            this.carrot.get_list_doc("code",this.act_get_list_code_from_sever);
+        }
+
     }
 
-    act_done_list(codes,carrot){
-        var html='';
+    act_get_list_code_from_sever(codes,carrot){
         carrot.code.obj_codes=codes;
-        var list_code=carrot.convert_obj_to_list(codes);
+        carrot.code.save_obj_code();
+        carrot.update_new_ver_cur("code",true);
+        carrot.code.show_list_from_data();
+    }
+
+    show_list_from_data(){
+        var carrot=this.carrot;
+        var html='';
+        console.log(carrot.code.obj_codes);
+        var list_code=carrot.convert_obj_to_list(carrot.code.obj_codes);
 
         html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-4"><button id="btn-add-code" class="btn btn-dark btn-sm"><i class="fa-solid fa-square-plus"></i> Add Code</button>  <a class="float-end" href=""><small class="fs-8">View All</small></a></h4>';
         html+='<div class="row m-0">';
@@ -86,8 +125,9 @@ class Carrot_Code{
         });
 
         $("#btn-add-code").click(function(){
-            carrot.code.show_add_or_edit_code(null);
+            carrot.code.show_add_new();
         });
+
         this.carrot.check_event();
     }
 

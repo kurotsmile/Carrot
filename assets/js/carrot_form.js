@@ -57,7 +57,7 @@ class Carrot_Field{
             html+='<div class="form-group">';
                 html+='<label for="'+this.name+'">'+this.label+' Editor</label>';
                 html+='<style>.editor {border-radius: 6px;box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);font-family:  monospace;font-size: 14px;font-weight: 400;height: 340px;letter-spacing: normal;line-height: 20px;padding: 10px;tab-size: 4;}</style>';
-                html+='<div id="'+this.name+'" type="'+this.type+'" class="editor '+s_class+' cr_field"></div>';
+                html+='<div id="'+this.name+'" type="'+this.type+'" class="editor '+s_class+' cr_field">'+this.value+'</div>';
             html+='</div>';
 
             html+='<div class="form-group">';
@@ -85,8 +85,11 @@ class Carrot_Field{
             html+='<script>$(document).ready(function(){$(".content").richText();});</script>';
             html+='</div>';
         }
+        else if(this.type=='id'){
+            html+='<p id="'+this.name+'" class="cr_field">'+this.value+'</p>';
+        }
         else{
-            html+='<input type="'+this.type+'" class="form-control '+s_class+' cr_field" id="'+this.name+'" placeholder="'+this.placeholder+'">';
+            html+='<input type="'+this.type+'" value="'+this.value+'" class="form-control '+s_class+' cr_field" id="'+this.name+'" placeholder="'+this.placeholder+'">';
         }
 
         if(this.tip!=null) html+='<small id="emailHelp" class="form-text text-muted">'+this.tip+'</small>';
@@ -102,12 +105,13 @@ class Carrot_Form{
     carrot;
     db_collection;
     db_document;
-
+    type;
     is_editor_code=false;
 
     constructor(name,carrot){
         this.name=name;
         this.carrot=carrot;
+        this.type="add";
     }
 
     set_db(s_collection,s_document){

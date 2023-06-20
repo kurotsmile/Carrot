@@ -35,7 +35,6 @@ class Carrot_Icon{
                 this.show_all_icon_from_list_icon();
             }
         }
-  
     }
 
     act_done_get_data_list_icon(ions,carrot){
