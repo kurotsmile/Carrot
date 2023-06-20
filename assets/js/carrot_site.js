@@ -608,9 +608,7 @@ class Carrot_Site{
 
     show(s_html){
         this.body.html(s_html);
-        $('html, body').animate({
-            scrollTop: $("body").offset().top
-        }, 2000);
+        $('body').animate({scrollTop:0}, 1000);
     }
 
     btn_dev(db_collection,db_document){
