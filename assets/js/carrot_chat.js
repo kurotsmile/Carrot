@@ -9,6 +9,7 @@ class Carrot_Chat{
     }
 
     show_add_or_chat(data){
-        
+        var frm=new Carrot_Form();
+        frm.set_
     }
 }

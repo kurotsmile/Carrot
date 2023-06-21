@@ -142,26 +142,51 @@ class Carrot_Site{
         });
     }
 
+    get_all_data_link_store() {
+        this.log("get_all_data_link_store");
+        this.db.collection("link_store").get().then((querySnapshot) => {
+            if(querySnapshot.docs.length>0){
+                this.list_link_store=Array();
+                querySnapshot.forEach((doc) => {
+                    var data_link_store=doc.data();
+                    data_link_store["id"]=doc.id;
+                    this.list_link_store.push(data_link_store);
+                });
+                this.save_list_link_store();
+                this.update_new_ver_cur("link_store");
+            }
+        }).catch((error) => {
+            this.log(error.message)
+        });
+    };
+
+    get_all_data_lang() {
+        this.db.collection("lang").get().then((querySnapshot) => {
+            if(querySnapshot.docs.length>0){
+                this.list_lang=Array();
+                querySnapshot.forEach((doc) => {
+                    var lang_data = doc.data();
+                    lang_data["id"]=doc.id;
+                    this.list_lang.push(lang_data);
+                });
+                this.save_list_lang();
+                this.update_new_ver_cur("lang");
+            }
+        }).catch((error) => {
+            this.log(error.message)
+        });
+    };
+
+
     check_version_data(){
         this.db.collection("setting_web").doc("version").get().then((doc) => {
             if (doc.exists) {
                 var ver_data_new=doc.data();
                 this.obj_version_new=ver_data_new;
 
-                if(!this.check_ver_cur("link_store")){
-                    get_all_data_link_store();
-                    carrot.update_new_ver_cur("link_store");
-                }
-
-                if(!this.check_ver_cur("lang")){
-                    get_all_data_lang();
-                    this.update_new_ver_cur("lang");
-                }
-
-                if(!this.check_ver_cur("lang_web")){
-                    this.get_all_data_lang_web();
-                    this.update_new_ver_cur("lang_web");
-                }
+                if(!this.check_ver_cur("link_store")) this.get_all_data_link_store();
+                if(!this.check_ver_cur("lang")) this.get_all_data_lang();
+                if(!this.check_ver_cur("lang_web")) this.get_all_data_lang_web();
 
                 this.update_new_ver_cur("js");
                 this.update_new_ver_cur("page");
@@ -302,7 +327,7 @@ class Carrot_Site{
         $.MessageBox({message:htm_msg});
     }
 
-    async get_all_data_lang_web(){
+    get_all_data_lang_web(){
         this.log("get_all_data_lang_web");
         this.get_doc("lang_web",this.lang,this.get_data_lang_web_done);
     }
@@ -511,6 +536,7 @@ class Carrot_Site{
             if(db_collection=="song") carrot.get_doc(db_collection,db_document,carrot.music.show_add_or_edit_music);
             if(db_collection=="code") carrot.code.show_edit(db_document);
             if(carrot.id_page=="chat") carrot.get_doc(db_collection,db_document,carrot.ai_lover.show_edit_object);
+            if(carrot.id_page=="address_book") carrot.get_doc(db_collection,db_document,carrot.user.show_box_add_or_edit_phone_book);
         });
 
         $(".btn_app_del").click(function(){
@@ -623,17 +649,18 @@ class Carrot_Site{
         var html='';
         html+='<div class="row"><div class="col-12"><input type="file" id="input-file-import"></div></div>';
         html+='<div class="row"><pre><code class="language-json col-12" id="file_contain"></code></pre></div>';
+        this.show(html);
+
         $("#input-file-import").on('change',function() {
             var file = $(this).get(0).files;
             var reader = new FileReader();
             reader.readAsText(file[0]);
             reader.addEventListener("load", function(e) {
                 var textFromFileLoaded = e.target.result;
-                console.log(textFromFileLoaded);
                 var obj_json=JSON.parse(textFromFileLoaded);
                 carrot.import_json_by_data(obj_json);
                 var jsonPretty = JSON.stringify(obj_json, null, '\t');
-                carrot.body.html(jsonPretty);
+                $("#file_contain").html(jsonPretty);
                 hljs.highlightAll();
             })
         });

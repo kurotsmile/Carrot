@@ -8,8 +8,8 @@ class Ai_Lover{
         this.setting_lang_change='';
         this.setting_lang_collection='';
 
-        this.carrot.menu.create_menu("list_chat").set_label("List Chat").set_type("dev").set_act(function(){ carrot.ai_lover.show_all_chat(carrot.lang);});
-        this.carrot.menu.create_menu("add_chat").set_label("Add Chat").set_type("add").set_act(function(){ carrot.ai_lover.show_all_chat(carrot.lang);});
+        this.carrot.menu.create_menu("list_chat").set_label("List Chat").set_icon("fa-solid fa-comments").set_type("dev").set_act(function(){ carrot.ai_lover.show_all_chat(carrot.lang);});
+        this.carrot.menu.create_menu("add_chat").set_label("Add Chat").set_icon("fa-solid fa-message-plus").set_type("add").set_act(function(){ carrot.ai_lover.show_all_chat(carrot.lang);});
     }
 
     show_all_chat(lang_show){

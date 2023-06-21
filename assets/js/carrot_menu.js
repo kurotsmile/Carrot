@@ -1,5 +1,5 @@
 class Menu_Item{
-    icon;
+    icon="fa-solid fa-star-of-life";
     name;
     label=null;
     act_click;
@@ -20,6 +20,11 @@ class Menu_Item{
         return this;
     }
 
+    set_icon(icon){
+        this.icon=icon;
+        return this;
+    }
+
     set_type(type='main'){
         if(type=='main') this.father="list_menu_main";
         else if(type=="dev") this.father="list_menu_dev";
@@ -32,7 +37,7 @@ class Menu_Item{
         if(this.label==null) this.label=this.name;
         var html='';
         html+='<li id="'+this.name+'" class="border-bottom btn-menu dev">';
-        html+='<i class="fa-solid fa-star-of-life fs-6 me-2"></i> '+this.label+'</li>';
+        html+='<i class="'+this.icon+' fs-6 me-2"></i> '+this.label+'</li>';
         html+='</li>';
         return html;
     }
@@ -55,7 +60,6 @@ class Carrot_Menu{
 
     show(){
         for(var i=0;i<this.list_menu.length;i++){
-            console.log(this.list_menu[i].father+"->"+this.list_menu[i].html());
             $("#"+this.list_menu[i].father).append(this.list_menu[i].html());
         }
 

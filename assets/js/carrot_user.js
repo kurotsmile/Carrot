@@ -9,6 +9,26 @@ class Carrot_user{
         if (localStorage.getItem("obj_phone_book") != null) this.obj_phone_book=JSON.parse(localStorage.getItem("obj_phone_book"));
     }
 
+    get_all_data_phone_book(){
+        this.carrot.log("get_all_data_phone_book from sever");
+        this.carrot.db.collection("user-"+this.carrot.lang).where("status_share", "==", "0").limit(200).get().then((querySnapshot) => {
+            if(querySnapshot.docs.length>0){
+                this.obj_phone_book=Object();
+                querySnapshot.forEach((doc) => {
+                    var data_phone=doc.data();
+                    data_phone["id"]=doc.id;
+                    this.obj_phone_book[doc.id]=JSON.stringify(data_phone);
+                });
+                this.save_obj_phone_book();
+                this.show_all_phone_book();
+            }
+        })
+        .catch((error) => {
+            this.log(error.message)
+            act_done(null,this);
+        });
+    }
+
     save_obj_phone_book(){
         localStorage.setItem("obj_phone_book", JSON.stringify(this.obj_phone_book));
     }
@@ -46,7 +66,7 @@ class Carrot_user{
 
     show_all_phone_book(){
         if(this.obj_phone_book==null) 
-            this.carrot.get_all_data_phone_book();
+            this.get_all_data_phone_book();
         else{
             this.carrot.log("Show all data phone book from cache!");
             this.show_all_phone_book_from_list();
@@ -113,31 +133,21 @@ class Carrot_user{
 
     check_event(){
         var carrot=this.carrot;
-        $(".btn_app_edit").click(async function () {
-            var id_box_app = $(this).attr("app_id");
-            carrot.get_doc("user-"+carrot.lang,id_box_app,carrot.user.show_edit_phone_book_done);
-        });
-
         $(".user-avatar").click(function(){
             var user_id=$(this).attr("user-id");
             var user_lang=$(this).attr("user-lang");
             carrot.get_doc("user-"+user_lang,user_id,carrot.user.show_user_info);
         })
         carrot.check_event();
-        carrot.check_mode_site();
     }
 
-    show_edit_phone_book_done(data_user,carrot){
-        if(data_user!=null)
-            carrot.user.show_box_add_or_edit_phone_book(data_user);
-        else
-            $.MessageBox("Danh bạ không còn tồn tại!");
+    show_register(){
+        this.show_box_add_or_edit_phone_book(null,this.carrot);
     }
 
-    show_box_add_or_edit_phone_book(data_user){
-        var carrot=this.carrot;
+    show_box_add_or_edit_phone_book(data_user,carrot){
         var s_title_box='';
-        this.getLocation_for_address_user();
+        carrot.user.getLocation_for_address_user();
         if(data_user==null){
             s_title_box=carrot.l("register","Add User");
             data_user=new Object();
@@ -168,7 +178,7 @@ class Carrot_user{
         obj_user["status_share"]={type:'select','title':'Information sharing status','label':'Information sharing status',options:obj_type_share,defaultValue:data_user["status_share"]};
 
         var arr_lang=Array();
-        $(this.carrot.list_lang).each(function(index,lang){arr_lang.push(lang.key);});
+        $(carrot.list_lang).each(function(index,lang){arr_lang.push(lang.key);});
 
         obj_user["lang"]={'type':'select','label':'Lang','options':arr_lang,defaultValue:data_user["lang"]};
         customer_field_for_db(obj_user,'user-'+data_user["lang"],'id','Add User successfully');
@@ -346,6 +356,24 @@ class Carrot_user{
               handleResults(contacts);
             } catch (ex) {}
         }
+    }
+
+    check_user_login(username,password){
+        this.carrot.db.collection("user-"+this.carrot.lang).where("phone", "==", username).where("password", "==", password).get().then((querySnapshot) => {
+            if(querySnapshot.docs.length>0){
+                querySnapshot.forEach((doc) => {
+                    var data_login=doc.data();
+                    data_login["id"]=doc.id;
+                    carrot.user.set_user_login(data_login);
+                });
+            }else{
+                $.MessageBox("Đăng nhập thất bại!");
+            }
+        })
+        .catch((error) => {
+            this.log(error.message)
+            $.MessageBox("Đăng nhập thất bại!");
+        });
     }
     
 }
