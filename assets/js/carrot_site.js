@@ -85,6 +85,7 @@ class Carrot_Site{
         $('head').append('<script type="text/javascript" src="assets/js/carrot_menu.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_list_item.js?ver='+this.get_ver_cur("js")+'"></script>');
 
+        this.menu=new Carrot_Menu(this);
         this.app=new Carrot_App(this);
         this.user=new Carrot_user(this);
         this.music=new Carrot_Music(this);
@@ -92,7 +93,7 @@ class Carrot_Site{
         this.icon=new Carrot_Icon(this);
         this.background=new Carrot_Background(this);
         this.ai_lover=new Ai_Lover(this);
-        this.menu=new Carrot_Menu(this);
+        
     };
 
     setup_sever_db(){
@@ -190,16 +191,13 @@ class Carrot_Site{
         var act_msg_success=data.act_msg_success;
         var db_collection=data.db_collection;
         var db_doc=data.db_doc;
-        var act_name_before=data.act_name_before;
 
         delete(data.act_msg_success);
         delete(data.db_collection);
         delete(data.db_doc);
-        delete(data.act_name_before);
         this.db.collection(db_collection).doc(data[db_doc]).set(data);
         this.delete_cache_obj_by_collection(db_collection);
         $.MessageBox(act_msg_success);
-        if(act_name_before!=null&&act_name_before!='') eval(act_name_before + "()");
     }
 
     load_recognition(){
@@ -758,7 +756,7 @@ class Carrot_Site{
         else if(this.id_page=="wallpapers") this.show_all_wallpaper();
         else if(this.id_page=="icon") this.icon.show_all_icon();
         else if(this.id_page=="code") this.code.show_list_code();
-        else if(this.id_page=="chat") this.ai_lover.show_all_chat();
+        else if(this.id_page=="chat") this.ai_lover.show_all_chat(this.lang);
         else this.show_home();
         this.log("ID_page:"+this.id_page);
     }

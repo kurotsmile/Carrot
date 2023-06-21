@@ -61,7 +61,7 @@ class Carrot_Icon{
         obj_icon["name"]={'type':'input','defaultValue':data_icon["name"], 'label':'Name'};
         obj_icon["icon"]={'type':'input','defaultValue':data_icon["icon"], 'label':'Icon (url)'};
         obj_icon["color"]={'type':'color','defaultValue':data_icon["color"], 'label':'Color'};
-        customer_field_for_db(obj_icon,'icon','id','show_all_icon','Add App successfully');
+        customer_field_for_db(obj_icon,'icon','id','Add App successfully');
     
         $.MessageBox({
             message: s_title_box,

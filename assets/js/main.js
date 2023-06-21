@@ -36,11 +36,10 @@ function paste_tag(name_tag) {
     navigator.clipboard.readText().then(text => {$("#"+name_tag).val(text.trim());});
 }
 
-function customer_field_for_db(data,collection,key_name_doc,name_fuc_callback,smg_success){
+function customer_field_for_db(data,collection,key_name_doc,smg_success){
     data["act_msg_success"]={'defaultValue':smg_success,'customClass':'d-none'};
     data["db_collection"]={'defaultValue':collection,'customClass':'d-none'};
     data["db_doc"]={'defaultValue':key_name_doc,'customClass':'d-none'};
-    data["act_name_before"]={'defaultValue':name_fuc_callback,'customClass':'d-none'};
 }
 
 function show_box_add_or_edit_lang(data_lang,act_done){
@@ -63,7 +62,7 @@ function show_box_add_or_edit_lang(data_lang,act_done){
     obj_lang["name"]={'type':'input','defaultValue':data_lang["name"], 'label':'Name'};
     obj_lang["icon"]={'type':'input','defaultValue':data_lang["icon"], 'label':'Icon (url)'};
 
-    customer_field_for_db(obj_lang,'lang','key','','Add lang successfully');
+    customer_field_for_db(obj_lang,'lang','key','Add lang successfully');
 
     $.MessageBox({
         message: s_title_box,

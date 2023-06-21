@@ -7,12 +7,15 @@ class Ai_Lover{
         this.carrot=cr;
         this.setting_lang_change='';
         this.setting_lang_collection='';
+
+        this.carrot.menu.create_menu("list_chat").set_label("List Chat").set_type("dev").set_act(function(){ carrot.ai_lover.show_all_chat(carrot.lang);});
+        this.carrot.menu.create_menu("add_chat").set_label("Add Chat").set_type("add").set_act(function(){ carrot.ai_lover.show_all_chat(carrot.lang);});
     }
 
-    show_all_chat(){
-        this.setting_lang_change=this.carrot.lang;
+    show_all_chat(lang_show){
+        this.setting_lang_change=lang_show;
         this.carrot.change_title_page("Ai Lover", "?p=chat","chat");
-        this.carrot.db.collection("chat-"+this.carrot.lang).where("status","==","pending").limit(100).get().then((querySnapshot) => {
+        this.carrot.db.collection("chat-"+this.setting_lang_change).where("status","==","pending").limit(100).get().then((querySnapshot) => {
             var obj_data=Object();
             querySnapshot.forEach((doc) => {
                 var item_data=doc.data();
@@ -29,18 +32,34 @@ class Ai_Lover{
     act_done_show_all_chat(datas,carrot){
         var html='';
         html+='<div class="row m-0">';
+            html+='<div class="col-12 m-0 btn-toolba" role="toolbar" aria-label="Toolbar with button groups">';
+            html+='<div role="group" aria-label="First group">';
+            html+=this.list_btn_lang_select();
+            html+='</div>';
+            html+='</div>';
+        html+='</div>';
+        html+='<div class="row m-0">';
         var list_data=carrot.convert_obj_to_list(datas);
         $(list_data).each(function(index,data){
             var item_list=new Carrot_List_Item(carrot);
             item_list.set_id(data.id);
             item_list.set_name(data.key);
             item_list.set_tip(data.msg);
-            item_list.set_db_collection("chat-"+carrot.lang);
+            item_list.set_db_collection("chat-"+carrot.ai_lover.setting_lang_change);
             html+=item_list.html();
         });
         html+='</div>';
         carrot.show(html);
-        carrot.check_event();
+        carrot.ai_lover.check_event();
+    }
+
+    check_event(){
+        var ai_lover=this;
+        $(".btn-setting-lang-change").click(function(){
+            var key_change=$(this).attr("key_change");
+            ai_lover.show_all_chat(key_change);
+        });
+        this.carrot.check_event();
     }
 
     show_all_chat_ai_lover=async (s_lang="")=>{
@@ -140,7 +159,7 @@ class Ai_Lover{
 
     show_edit_object(data_obj,carrot){
         var obj_input=new Object();
-        customer_field_for_db(data_obj,"chat-"+carrot.ai_lover.setting_lang_change,'id','','Edit Obj Success');
+        customer_field_for_db(data_obj,"chat-"+carrot.ai_lover.setting_lang_change,'id','Edit Obj Success');
         $.each(data_obj,function(key,val){
             var obj_emp=data_obj[key];
             if(key=="act_msg_success"){
@@ -417,7 +436,7 @@ class Ai_Lover{
         obj_avatar["id"]={'type':'input','defaultValue':data_avatar["id"], 'label':'ID'};
         obj_avatar["type"]={'type':'select','defaultValue':data_avatar["type"], 'label':'Type','options':{ "boy": "Boy", "girl": "Girl" }};
         obj_avatar["icon"]={'type':'input','defaultValue':data_avatar["icon"], 'label':'Image avatar (url)'};
-        customer_field_for_db(obj_avatar,'user-avatar','id','','Add Avatar successfully');
+        customer_field_for_db(obj_avatar,'user-avatar','id','Add Avatar successfully');
     
         $.MessageBox({
             message: s_title_box,
@@ -426,5 +445,4 @@ class Ai_Lover{
             buttonFail: "Cancel"
         }).done(act_done);
     }
-    
 }

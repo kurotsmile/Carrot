@@ -171,7 +171,7 @@ class Carrot_user{
         $(this.carrot.list_lang).each(function(index,lang){arr_lang.push(lang.key);});
 
         obj_user["lang"]={'type':'select','label':'Lang','options':arr_lang,defaultValue:data_user["lang"]};
-        customer_field_for_db(obj_user,'user-'+data_user["lang"],'id','','Add User successfully');
+        customer_field_for_db(obj_user,'user-'+data_user["lang"],'id','Add User successfully');
     
         $.MessageBox({
             title: s_title_box,

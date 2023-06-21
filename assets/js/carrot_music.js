@@ -505,7 +505,7 @@ class Carrot_Music{
         obj_music["album"]={'type':'text','label':'Album',defaultValue:data_music["album"]};
         obj_music["year"]={'type':'select','label':'Year','options':arr_year,defaultValue:data_music["year"]};
         obj_music["lang"]={'type':'select','label':'Lang','options':arr_lang,defaultValue:data_music["lang"]};
-        customer_field_for_db(obj_music,'song','name','','Add Music Successfully');
+        customer_field_for_db(obj_music,'song','name','Add Music Successfully');
     
         $.MessageBox({
             message: s_title_box,

@@ -40,7 +40,7 @@
             <a class="navbar-toggler d-block d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"><i class="bi fa-solid fa-bars"></i></a>
         </div>
         <div id="navbarNav" class="navcol pt-0 d-none d-lg-block overflow-auto">
-            <ul id="list_menu">
+            <ul id="list_menu_main">
                 <li id="btn_home" class="border-bottom btn-menu"><i class="fa-solid fa-home fs-6 me-2"></i> <lang class="lang" key_lang="home">Home</lang></li>
                 <li id="btn_all_app" class="border-bottom btn-menu"><i class="fa-solid fa-mobile bi fs-6 me-2"></i> <i class="bi fs-6  bi-google-play"></i> <lang class="lang" key_lang="app">Applications</lang></li>
                 <li id="btn_all_game" class="border-bottom btn-menu"><i class="fa-solid fa-gamepad bi me-2 fs-6"></i> <lang class="lang" key_lang="game">Games</lang></li>
@@ -58,7 +58,7 @@
                     <div type="button" class="dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                         <i class="fa-solid fa-add fs-6 me-2"></i> Add Obj
                     </div>
-                    <div class="dropdown-menu">
+                    <div class="dropdown-menu" id="list_menu_add">
                         <div class="dropdown-item btn-menu" id="btn_add_app" role="button"><i class="fa-solid fa-add fs-6 me-2"></i> Add App</div>
                         <div class="dropdown-item btn-menu" id="btn_add_music" role="button"><i class="fa-solid fa-circle-plus fs-6 me-2"></i> Add Music</div>
                         <div class="dropdown-item btn-menu" id="btn_add_icon" role="button"><i class="fa-solid fa-add fs-6 me-2"></i> Add Icon</div>
@@ -110,6 +110,8 @@
                 <li id="btn_mode_host" class="border-bottom btn-menu dev"><i class="fa-solid fa-dev fs-6 me-2"></i> Localhost</li>
                 <li id="btn_version_data" class="border-bottom btn-menu dev"><i class="fa-regular fa-code-compare fs-6 me-2"></i> Version</li>
             </ul>
+
+            <ul id="list_menu_dev" class="dev"></ul>
         </div>
     </header>
     <div class="main-content">
@@ -358,12 +360,8 @@
             carrot.check_version_data();
             carrot.load_data_lang_web();
             carrot.user.show_info_user_login_in_header();
-
-            var menu_sd=carrot.menu.create_menu("chat-vi").set_act(function(){carrot.ai_lover.show_all_chat();});
             carrot.menu.show();
         });
     </script>
-
-
 </body>
 </html>

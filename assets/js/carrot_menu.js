@@ -3,18 +3,29 @@ class Menu_Item{
     name;
     label=null;
     act_click;
+    father="list_menu_main";
     
     constructor(name){
         this.name=name;
-        this.set_act(function(){ alert("Thanh");});
+        this.set_act(function(){ alert("No set");});
     }
 
     set_label(label){
         this.label=label;
+        return this;
     }
 
     set_act(act){
         this.act_click=act;
+        return this;
+    }
+
+    set_type(type='main'){
+        if(type=='main') this.father="list_menu_main";
+        else if(type=="dev") this.father="list_menu_dev";
+        else if(type=="add") this.father="list_menu_add";
+        else this.father=type;
+        return this;
     }
 
     html(){
@@ -28,13 +39,11 @@ class Menu_Item{
 }
 
 class Carrot_Menu{
-    emp_menu;
     carrot;
     list_menu;
     
     constructor(carrot){
         this.carrot=carrot;
-        this.emp_menu=$("#list_menu");
         this.list_menu=Array();
     }
 
@@ -45,11 +54,10 @@ class Carrot_Menu{
     }
 
     show(){
-        var html='';
         for(var i=0;i<this.list_menu.length;i++){
-            html+=this.list_menu[i].html();
+            console.log(this.list_menu[i].father+"->"+this.list_menu[i].html());
+            $("#"+this.list_menu[i].father).append(this.list_menu[i].html());
         }
-        $(this.emp_menu).append(html);
 
         for(var i=0;i<this.list_menu.length;i++){
             var item_m=this.list_menu[i];

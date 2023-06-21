@@ -87,7 +87,7 @@ class Carrot_Background{
         obj_wallpaper["name"]={'type':'input','defaultValue':data_wallpaper["name"], 'label':'Name'};
         obj_wallpaper["icon"]={'type':'input','defaultValue':data_wallpaper["icon"], 'label':'Icon (url)'};
     
-        customer_field_for_db(obj_wallpaper,'background','name','show_all_wallpaper','Add wallpaper successfully');
+        customer_field_for_db(obj_wallpaper,'background','name','Add wallpaper successfully');
     
         $.MessageBox({
             message: s_title_box,
