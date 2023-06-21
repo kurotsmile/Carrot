@@ -147,11 +147,6 @@ class Carrot_Music{
             carrot.music.forward_music();
         });
 
-        $(".btn_app_edit").click(async function () {
-            var id_box_app = $(this).attr("app_id");
-            carrot.get_doc("song",id_box_app,carrot.music.show_edit_music_done);
-        });
-
         $(".btn_info_music").click(function(){
             var aud_id=$(this).attr("aud-name");
             carrot.music.show_info_music_by_id(aud_id);
@@ -452,14 +447,7 @@ class Carrot_Music{
         return html;
     }
 
-    show_edit_music_done(data_song,carrot){
-        if(data_song!=null)
-            carrot.music.show_add_or_edit_music(data_song);
-        else
-            $.MessageBox("Bài hát không còn tồn tại!");
-    }
-
-    show_add_or_edit_music(data_music){
+    show_add_or_edit_music(data_music,carrot){
         var s_title_box='';
         if(data_music==null)s_title_box="<b>Add Music</b>";
         else s_title_box="<b>Update Music</b>";
@@ -482,14 +470,14 @@ class Carrot_Music{
         }
 
         var arr_lang=Array();
-        $(this.carrot.list_lang).each(function(index,lang){arr_lang.push(lang.key);});
+        $(carrot.list_lang).each(function(index,lang){arr_lang.push(lang.key);});
 
         var arr_year=Array();
         var year_cur=new Date().getFullYear();
         for(var i=1980;i<=(year_cur+1);i++) arr_year.push(i);
 
         if(data_music["year"]=='') data_music["year"]=year_cur;
-        if(data_music["lang"]=='') data_music["lang"]=this.carrot.lang;
+        if(data_music["lang"]=='') data_music["lang"]=carrot.lang;
 
         var arr_genre=Array();
         arr_genre.push("pop");
@@ -524,7 +512,7 @@ class Carrot_Music{
             input: obj_music,
             top: "auto",
             buttonFail: "Cancel"
-        }).done(this.carrot.act_done_add_or_edit);
+        }).done(carrot.act_done_add_or_edit);
     }
 
     formatTime(seconds) {

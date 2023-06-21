@@ -4,9 +4,15 @@ class Carrot_List_Item{
     carrot;
     name;
     tip;
+    body=null;
     class="col-md-4 mb-3";
+    db_collection=null;
     constructor(carrot){
         this.carrot=carrot;
+    }
+
+    set_body(body){
+        this.body=body;
     }
 
     set_id(id){
@@ -25,6 +31,10 @@ class Carrot_List_Item{
         this.tip=tip;
     }
 
+    set_db_collection(db_collection){
+        this.db_collection=db_collection;
+    }
+
     html(){
         var html='';
         var html="<div class='box_app "+this.class+"' id=\""+this.id+"\" key_search=\""+this.name+"\">";
@@ -35,18 +45,12 @@ class Carrot_List_Item{
                     html+='<div class="det mt-2 col-11">';
                     html+="<h5 class='mb-0 fs-6'>"+this.name+"</h5>";
                         html+="<span class='fs-8'>"+this.tip+"</span>";
-                            /*
-                                html+='<ul class="row">';
-                                html+='<li class="col-8 ratfac">';
-                                html+='<i class="bi text-warning fa-solid fa-star"></i>';
-                                html+='<i class="bi text-warning fa-solid fa-star"></i>';
-                                html+='<i class="bi text-warning fa-solid fa-star"></i>';
-                                html+='<i class="bi text-warning fa-solid fa-star"></i>';
-                                html+='<i class="bi fa-solid fa-star"></i>';
-                                html+='</li>';
-                                html+='</ul>';
-                            */
-                        html+=this.carrot.btn_dev("app",this.id);
+                        if(this.body!=null){
+                            html+="<div class='row'>";
+                            html+=this.body;
+                            tml+="</div>";
+                        }
+                        if(this.db_collection!=null)html+=this.carrot.btn_dev(this.db_collection,this.id);
                         html+="</div>";
                     html+="</div>";
                 html+="</div>";

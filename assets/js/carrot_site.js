@@ -1,5 +1,6 @@
 class Carrot_Site{
     firebaseConfig_mainhost;
+    firebaseConfig_testhost;
     count_act_dev = 0;
     mode_site = "nomal";
     is_dev=false;
@@ -20,7 +21,9 @@ class Carrot_Site{
     id_page;
     body;
 
+    db;
     app;
+
     user;
     music;
     ai_lover;
@@ -49,6 +52,8 @@ class Carrot_Site{
             else
                 this.is_localhost = true;
         }
+
+        this.setup_sever_db();
 
         if(localStorage.getItem("mode_site") != null) this.mode_site = localStorage.getItem("mode_site");
         if(localStorage.getItem("is_dev") != null) this.is_dev = localStorage.getItem("is_dev");
@@ -89,6 +94,113 @@ class Carrot_Site{
         this.ai_lover=new Ai_Lover(this);
         this.menu=new Carrot_Menu(this);
     };
+
+    setup_sever_db(){
+        this.log("setup_sever_db");
+        this.app =firebase.initializeApp(this.firebaseConfig_mainhost);
+        this.db = this.app.firestore();
+        if (this.is_localhost) this.db.useEmulator('localhost', 8082);
+        if(this.db==null) this.show_error_connect_sever();
+    }
+
+    set_doc(s_collection,s_document,data){
+        this.log("Set doc: collection:" + s_collection+" document:"+s_document);
+        this.db.collection(s_collection).doc(s_document).set(data);
+    }
+
+    get_doc(s_collection,s_id_document,act_done){
+        this.log("Get doc: collection:" + s_collection+" document:"+s_id_document);
+        this.db.collection(s_collection).doc(s_id_document).get().then((doc) => {
+            if (doc.exists) {
+                var data_obj = doc.data();
+                data_obj["id"]=doc.id;
+                act_done(data_obj,this);
+            } else {
+                console.log("No such document!");
+                act_done(null,this)
+            }
+        }).catch((error) => {
+            act_done(null,this);
+            console.log("Error getting document:", error);
+        });
+    }
+
+    get_list_doc(s_collection,act_done){
+        this.db.collection(s_collection).get().then((querySnapshot) => {
+            var obj_data=Object();
+            querySnapshot.forEach((doc) => {
+                var item_data=doc.data();
+                item_data["id"]=doc.id;
+                obj_data[doc.id]=JSON.stringify(item_data);
+            });
+            act_done(obj_data,this);
+        })
+        .catch((error) => {
+            this.log(error.message)
+            act_done(null,this);
+        });
+    }
+
+    check_version_data(){
+        this.db.collection("setting_web").doc("version").get().then((doc) => {
+            if (doc.exists) {
+                var ver_data_new=doc.data();
+                this.obj_version_new=ver_data_new;
+
+                if(!this.check_ver_cur("link_store")){
+                    get_all_data_link_store();
+                    carrot.update_new_ver_cur("link_store");
+                }
+
+                if(!this.check_ver_cur("lang")){
+                    get_all_data_lang();
+                    this.update_new_ver_cur("lang");
+                }
+
+                if(!this.check_ver_cur("lang_web")){
+                    this.get_all_data_lang_web();
+                    this.update_new_ver_cur("lang_web");
+                }
+
+                this.update_new_ver_cur("js");
+                this.update_new_ver_cur("page");
+                this.save_obj_version_new();
+                this.save_obj_version_cur();
+
+                this.check_show_by_id_page();
+            } else {
+                this.log("No new verstion data");
+                this.check_show_by_id_page();
+            }
+        }).catch((error) => {
+            this.log(err.message);
+            this.show_error_connect_sever();
+            this.check_show_by_id_page();
+        });
+    }
+
+    act_done_edit_version_data_version(data){
+        carrot.db.collection("setting_web").doc("version").set(data)
+        $.MessageBox("Change version data site success!");
+        carrot.check_version_data();
+    }
+
+    act_done_add_or_edit=(data)=>{
+        this.log("act_done_add_or_edit");
+        var act_msg_success=data.act_msg_success;
+        var db_collection=data.db_collection;
+        var db_doc=data.db_doc;
+        var act_name_before=data.act_name_before;
+
+        delete(data.act_msg_success);
+        delete(data.db_collection);
+        delete(data.db_doc);
+        delete(data.act_name_before);
+        this.db.collection(db_collection).doc(data[db_doc]).set(data);
+        this.delete_cache_obj_by_collection(db_collection);
+        $.MessageBox(act_msg_success);
+        if(act_name_before!=null&&act_name_before!='') eval(act_name_before + "()");
+    }
 
     load_recognition(){
         var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
@@ -218,7 +330,7 @@ class Carrot_Site{
         this.change_title_page("Carrot store", "?p=home","home");
     }
 
-    show_edit_version_data_version(act_done){
+    show_edit_version_data_version(){
         var obj_data_ver = Object();
         $.each(this.obj_version_new,function(key,value){        
             obj_data_ver[key]={'type':'input','defaultValue':value,'label':key};
@@ -228,7 +340,7 @@ class Carrot_Site{
             input: obj_data_ver,
             top: "auto",
             buttonFail: "Cancel"
-        }).done(act_done);
+        }).done(this.act_done_edit_version_data_version);
     }
 
     load_list_lang(){
@@ -254,6 +366,44 @@ class Carrot_Site{
 
     save_obj_version_cur(){
         localStorage.setItem("obj_version_cur", JSON.stringify(this.obj_version_cur));
+    }
+
+    act_del_obj(db_collection,db_doc_id){
+        this.db.collection(db_collection).doc(db_doc_id).delete().then(() => {
+            $.MessageBox("Document "+db_doc_id+"successfully deleted!");
+            this.delete_cache_obj_by_collection(db_collection);
+            console.log("Document "+db_doc_id+"successfully deleted!");
+        }).catch((error) => {
+            console.error("Error removing document: ", error);
+        });
+    }
+
+    download_json() {
+        var name_collection = prompt("Enter collection json", "Enter name collection");
+        if (name_collection == "") return;
+        var data_json = Object();
+        data_json["all_item"] = Array();
+        data_json["collection"] = name_collection;
+        this.db.collection(name_collection).get().then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                var data_app = doc.data();
+                data_app["id_import"] = doc.id;
+                data_json.all_item.push(data_app);
+            });
+            this.act_download_file_json(data_json,name_collection)
+        }).catch((error) => {
+            this.log(error.message)
+        });
+    }
+
+    act_download_file_json(data_json,name_file){
+        var fileContents = JSON.stringify(data_json, null, 2);
+        var fileName = name_file + ".json";
+
+        var pp = document.createElement('a');
+        pp.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(fileContents));
+        pp.setAttribute('download', fileName);
+        pp.click();
     }
 
     check_ver_cur(s_item){
@@ -339,9 +489,9 @@ class Carrot_Site{
         });
 
         $(".btn_app_export").click(function(){
-            var db_collection=$(this).attr("db_collection");
-            var db_document=$(this).attr("db_document");
-            carrot.act_download_json_by_collection_and_doc(db_collection,db_document);
+            carrot.name_collection_cur=$(this).attr("db_collection");
+            carrot.name_document_cur=$(this).attr("db_document");
+            carrot.act_download_json_by_collection_and_doc();
         });
 
         $(".btn_app_import").click(function(){
@@ -360,8 +510,9 @@ class Carrot_Site{
             if(db_collection=="app") carrot.get_doc(db_collection,db_document,carrot.app.show_edit_app_done);
             if(db_collection=="icon") carrot.get_doc(db_collection,db_document,carrot.icon.show_edit_icon_done);
             if(db_collection=="user-avatar") carrot.get_doc(db_collection,db_document,carrot.ai_lover.show_edit_avatar_done);
-            if(db_collection=="song") carrot.get_doc(db_collection,db_document,carrot.music.show_edit_music_done);
+            if(db_collection=="song") carrot.get_doc(db_collection,db_document,carrot.music.show_add_or_edit_music);
             if(db_collection=="code") carrot.code.show_edit(db_document);
+            if(carrot.id_page=="chat") carrot.get_doc(db_collection,db_document,carrot.ai_lover.show_edit_object);
         });
 
         $(".btn_app_del").click(function(){
@@ -411,21 +562,21 @@ class Carrot_Site{
         }  
     }
 
-    async act_download_json_by_collection_and_doc(name_collection, name_document) {
-        this.name_collection_cur=name_collection;
-        this.name_document_cur=name_document;
-        this.get_doc(name_collection,name_document,this.done_get_file_json)
+    download_json_doc() {
+        this.name_collection_cur = prompt("Enter collection", "Enter name collection");
+        if(this.name_collection_cur=="") return;
+        this.name_document_cur = prompt("Enter document", "Enter document in collection");
+        if (this.name_document_cur== "") return;
+        this.act_download_json_by_collection_and_doc();
+    }
+
+    act_download_json_by_collection_and_doc() {
+        this.get_doc(this.name_collection_cur,this.name_document_cur,this.done_get_file_json)
     }
 
     done_get_file_json(data_json,carrot){
-        if(data_json==null){ $.MessageBox(carrot.l("no_obj")); return;}
-        var fileContents = JSON.stringify(data_json, null, 2);
         var fileName = carrot.name_collection_cur+"-"+carrot.name_document_cur+ ".json";
-
-        var pp = document.createElement('a');
-        pp.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(fileContents));
-        pp.setAttribute('download', fileName);
-        pp.click();
+        carrot.act_download_file_json(data_json,fileName);
     }
 
     show_import_json_box(data_show){
@@ -474,7 +625,6 @@ class Carrot_Site{
         var html='';
         html+='<div class="row"><div class="col-12"><input type="file" id="input-file-import"></div></div>';
         html+='<div class="row"><pre><code class="language-json col-12" id="file_contain"></code></pre></div>';
-        $("#main_contain").html(html);
         $("#input-file-import").on('change',function() {
             var file = $(this).get(0).files;
             var reader = new FileReader();
@@ -485,10 +635,22 @@ class Carrot_Site{
                 var obj_json=JSON.parse(textFromFileLoaded);
                 carrot.import_json_by_data(obj_json);
                 var jsonPretty = JSON.stringify(obj_json, null, '\t');
-                $("#file_contain").html(jsonPretty);
+                carrot.body.html(jsonPretty);
                 hljs.highlightAll();
             })
         });
+    }
+
+    import_json_by_data(data){
+        var name_collection = data.collection;
+        var all_item = data.all_item;
+        var carrot=this;
+        $.each(all_item, function (index, d) {
+            var doc_id = d["id_import"];
+            delete d["id_import"];
+            carrot.db.collection(name_collection).doc(doc_id).set(d);
+        });
+        $.MessageBox("Import Success!");
     }
 
     log(s_msg,s_status="info") {
@@ -596,6 +758,7 @@ class Carrot_Site{
         else if(this.id_page=="wallpapers") this.show_all_wallpaper();
         else if(this.id_page=="icon") this.icon.show_all_icon();
         else if(this.id_page=="code") this.code.show_list_code();
+        else if(this.id_page=="chat") this.ai_lover.show_all_chat();
         else this.show_home();
         this.log("ID_page:"+this.id_page);
     }
@@ -608,7 +771,7 @@ class Carrot_Site{
     btn_dev(db_collection,db_document){
         var html='';
         html+="<div class='row dev d-flex'>";
-            html+="<div class='dev col-12 d-flex btn-group'>";
+            html+="<div class='dev col-6 d-flex btn-group'>";
                 html+="<div role='button' class='dev btn btn_app_edit btn-warning btn-sm mr-2' db_collection='"+db_collection+"' db_document='"+db_document+"'><i class=\"fa-solid fa-pen-to-square\"></i></div> ";
                 html+="<div role='button' class='dev btn btn_app_del btn-danger btn-sm mr-2'  db_collection='"+db_collection+"' db_document='"+db_document+"'><i class=\"fa-solid fa-trash\"></i></div> ";
                 html+="<div role='button' class='dev btn btn_app_export btn-dark btn-sm mr-2'  db_collection='"+db_collection+"' db_document='"+db_document+"'><i class=\"fa-solid fa-download\"></i></div> ";
@@ -626,7 +789,7 @@ class Carrot_Site{
     delete_cache_obj_by_collection(db_collection){
         if(db_collection=="app") this.app.delete_obj_app();
         if(db_collection=="icon") this.icon.delete_obj_icon();
-        if(db_collection=="song") this.song.delete_obj_song();
+        if(db_collection=="song") this.music.delete_obj_song();
         if(db_collection=="code") this.code.delete_obj_code();
         if(this.id_page=="address_book") this.user.delete_obj_phone_book();
     }
@@ -641,11 +804,14 @@ class Carrot_Site{
         var list_data=carrot.convert_obj_to_list(datas);
         $(list_data).each(function(index,data){
             var item_list=new Carrot_List_Item(carrot);
+            item_list.set_id(data.id);
             item_list.set_name(data.key);
             item_list.set_tip(data.msg);
+            item_list.set_db_collection("app");
             html+=item_list.html();
         });
         html+='</div>';
         carrot.show(html);
+        carrot.check_event();
     }
 }

@@ -161,14 +161,76 @@
         </div>
       </div>
 
-      <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-      <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-      <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-      <script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, setDoc, doc, getDoc, query, where, getDocs, deleteDoc, connectFirestoreEmulator,limit,limitToLast,QueryConstraint } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+        import {CodeJar} from "https://medv.io/codejar/codejar.js";
+        var db;
         var carrot=new Carrot_Site();
+        var app=null;
+
+        carrot.setup_sever_db=()=>{
+            carrot.log("setup_sever_db");
+            app = initializeApp(carrot.firebaseConfig_mainhost);
+            db = getFirestore();
+            if (carrot.is_localhost) connectFirestoreEmulator(db,'localhost', 8082);
+            if(db==null) carrot.show_error_connect_sever();
+        }
+
+        carrot.setup_sever_db();
+
+        carrot.set_doc=(s_collection,s_document,data)=>{
+            carrot.log("Set doc: collection:" + s_collection+" document:"+s_document);
+            setDoc(doc(collection(db,s_collection),s_document),data);
+        }
+
+        carrot.get_doc=async (s_collection,s_id_document,act_done)=>{
+            carrot.log("Get doc: collection:" + s_collection+" document:"+s_id_document);
+            const dataRef = doc(db, s_collection, s_id_document);
+            const dataSnap = await getDoc(dataRef);
+            if (dataSnap.exists()) {
+                var data_obj = dataSnap.data();
+                data_obj["id"]=dataSnap.id;
+                act_done(data_obj,carrot);
+            } else {
+                act_done(null,carrot);
+            }
+        }
+
+        carrot.get_list_doc=async(s_collection,act_done)=>{
+            var q = query(collection(db, s_collection));
+            var queryListObj = await getDocs(q);
+            if(queryListObj.docs.length>0){
+                var obj_data=Object();
+                queryListObj.forEach((doc) => {
+                    var item_data=doc.data();
+                    item_data["id"]=doc.id;
+                    obj_data[doc.id]=JSON.stringify(item_data);
+                });
+                act_done(obj_data,carrot);
+            }else{
+                act_done(null,carrot);
+            }
+        }
+
+        async function show_list_by_collection(collection_name) {
+            var q = query(collection(db, collection_name));
+            var querySnapshot = await getDocs(q);
+            var t = "<table>";
+            querySnapshot.forEach(doc => {
+                var data_doc = doc.data();
+                t += "<tr>";
+                $.each(data_doc, function (k, v) {
+                    t += "<td>" + k + "</td><td>" + v + "</td>";
+                });
+                t += "</tr>";
+            });
+            t += "</table>";
+            $("#all_app").html(t);
+        }
 
         $("#logo_carrot").on("contextmenu", function () { carrot.act_mode_dev(); return false; });
-        $("#btn_download_json").click(function () {carrot.download_json();});
+        $("#btn_download_json").click(function () {download_json();});
         $("#btn_recognition").click(function(){carrot.start_recognition();});
         $("#btn_import_json_url").click(function () {
             var url_json = prompt("Enter url json", "Enter url");
@@ -211,11 +273,11 @@
             if(id_fun=="btn_add_app") carrot.show_box_add_or_edit_app(null,carrot.act_done_add_or_edit);
             if(id_fun=='btn_add_icon') carrot.icon.show_box_add_or_edit_icon(null,carrot.act_done_add_or_edit);
             if(id_fun=='btn_add_wallpaper') carrot.background.show_box_add_or_edit_wallpaper(null);
-            if(id_fun=='btn_add_lang') carrot.show_box_add_or_edit_lang(null);
-            if(id_fun=='btn_version_data') carrot.show_edit_version_data_version();
+            if(id_fun=='btn_add_lang') show_box_add_or_edit_lang(null,carrot.act_done_add_or_edit);
+            if(id_fun=='btn_version_data') carrot.show_edit_version_data_version(act_done_edit_version_data_version);
             if(id_fun=='btn_ai_lover_all_chat') carrot.ai_lover.show_all_chat_ai_lover();
             if(id_fun=='btn_block_chat') carrot.show_all_block_chat_by_lang();
-            if(id_fun=='btn_download_json_doc') carrot.download_json_doc();
+            if(id_fun=='btn_download_json_doc') download_json_doc();
             if(id_fun=='btn_import_json_doc') carrot.show_import_json_box(null);
             if(id_fun=='btn_import_json_file') carrot.show_import_json_file();
             if(id_fun=='btn_setting_lang_app') carrot.show_setting_lang_by_key(carrot.lang,'lang_app');
@@ -245,6 +307,13 @@
                 carrot.ai_lover.show_setting_lang(data_obj_lang_tag,data_obj_lang_change);
         }
 
+        carrot.ai_lover.show_all_chat_ai_lover=async (s_lang="")=>{
+            if(s_lang=="") s_lang=carrot.lang;
+            carrot.ai_lover.setting_lang_change=s_lang;
+            var querySnapshot = await getDocs(query(collection(db, "chat-"+s_lang),where("status","==","pending")));
+            carrot.ai_lover.show_all_chat(querySnapshot);
+        }
+
         carrot.show_all_block_chat_by_lang=async (s_key_lang='')=>{
             if(s_key_lang=='') s_key_lang=carrot.lang;
             const appSnap = await getDoc(doc(db, "block",s_key_lang));
@@ -259,6 +328,48 @@
                 data_list_key_block["chat"]=Array("new_key_block");
                 carrot.ai_lover.show_list_block_chat(data_list_key_block);
             }
+        }
+
+        carrot.act_done_add_or_edit=(data)=>{
+            carrot.log("act_done_add_or_edit");
+            var act_msg_success=data.act_msg_success;
+            var db_collection=data.db_collection;
+            var db_doc=data.db_doc;
+            var act_name_before=data.act_name_before;
+
+            delete(data.act_msg_success);
+            delete(data.db_collection);
+            delete(data.db_doc);
+            delete(data.act_name_before);
+            setDoc(doc(collection(db,db_collection),data[db_doc]), data);
+            carrot.delete_cache_obj_by_collection(db_collection);
+            $.MessageBox(act_msg_success);
+            if(act_name_before!=null&&act_name_before!='') eval(act_name_before + "()");
+        }
+
+        function act_done_edit_version_data_version(data){
+            setDoc(doc(collection(db, "setting_web"),"version"), data);
+            $.MessageBox("Change version data site success!");
+            carrot.check_version_data();
+        }
+
+        carrot.show_all_wallpaper=async()=>{
+            var q = query(collection(db, "background"));
+            var querySnapshot = await getDocs(q);
+            show_list_background(querySnapshot,carrot);
+            carrot.change_title_page("Wallpapers", "?p=wallpapers","wallpapers");
+        }
+
+        carrot.import_json_by_data=(data)=>{
+            var name_collection = data.collection;
+            var all_item = data.all_item;
+            var cr_data = collection(db, name_collection);
+            $.each(all_item, function (index, d) {
+                var doc_id = d["id_import"];
+                delete d["id_import"];
+                setDoc(doc(cr_data, doc_id), d);
+            });
+            $.MessageBox("Import Success!");
         }
 
         $("#btn_login").click(function () {
@@ -284,7 +395,9 @@
         $("#btn_user_avatar").click(async function(){
             var q = query(collection(db, "user-avatar"));
             var queryUserAvatar = await getDocs(q);
-            if(queryUserAvatar.docs.length>0) carrot.ai_lover.show_list_avatar(queryUserAvatar.docs);
+            if(queryUserAvatar.docs.length>0){
+                carrot.ai_lover.show_list_avatar(queryUserAvatar.docs);
+            }
         });
         $("#btn_add_avatar").click(function(){carrot.ai_lover.show_box_add_or_edit_avatar(null,carrot.act_done_add_or_edit);});
 
@@ -302,6 +415,42 @@
             }
         }
 
+        carrot.act_del_obj=async (db_collection,db_doc_id)=>{
+            await deleteDoc(doc(db, db_collection, db_doc_id));
+            $.MessageBox("Delete object ('" + db_doc_id + "') Success!");
+            carrot.delete_cache_obj_by_collection(db_collection);
+        }
+
+        async function download_json() {
+            var name_collection = prompt("Enter collection json", "Enter name collection");
+            if (name_collection == "") return;
+            var data_json = Object();
+            data_json["all_item"] = Array();
+            data_json["collection"] = name_collection;
+            var q = query(collection(db, name_collection));
+            var querySnapshot = await getDocs(q);
+            querySnapshot.forEach((doc) => {
+                var data_app = doc.data();
+                data_app["id_import"] = doc.id;
+                data_json.all_item.push(data_app);
+            });
+
+            var fileContents = JSON.stringify(data_json, null, 2);
+            var fileName = name_collection + ".json";
+
+            var pp = document.createElement('a');
+            pp.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(fileContents));
+            pp.setAttribute('download', fileName);
+            pp.click();
+        }
+
+        function download_json_doc() {
+            var name_collection = prompt("Enter collection", "Enter name collection");
+            if(name_collection=="") return;
+            var name_document = prompt("Enter document", "Enter document in collection");
+            if (name_document== "") return;
+            carrot.act_download_json_by_collection_and_doc(name_collection,name_document);
+        }
 
         carrot.get_all_data_phone_book=async()=>{
             carrot.log("get_all_data_phone_book from sever");
@@ -345,6 +494,59 @@
             return CodeJar(document.querySelector('.editor'), hljs.highlightElement);
         }
 
+        carrot.check_version_data=async()=>{
+            carrot.log("check_version_data");
+            try {
+                var obj_version_cur =carrot.version;
+                const verRef = doc(db, "setting_web","version");
+                const verSnap = await getDoc(verRef);
+                if (verSnap.exists()) {
+
+                    var ver_data_new=verSnap.data();
+                    carrot.obj_version_new=verSnap.data();
+
+                    if(!carrot.check_ver_cur("link_store")){
+                        get_all_data_link_store();
+                        carrot.update_new_ver_cur("link_store");
+                    }
+
+                    if(!carrot.check_ver_cur("lang")){
+                        get_all_data_lang();
+                        carrot.update_new_ver_cur("lang");
+                    }
+
+                    if(!carrot.check_ver_cur("lang_web")){
+                        carrot.get_all_data_lang_web();
+                        carrot.update_new_ver_cur("lang_web");
+                    }
+
+                    carrot.update_new_ver_cur("js");
+                    carrot.update_new_ver_cur("page");
+                    carrot.save_obj_version_new();
+                    carrot.save_obj_version_cur();
+
+                    carrot.check_show_by_id_page();
+                }else{
+                    carrot.show_error_connect_sever();
+                    carrot.check_show_by_id_page();
+                }
+            } catch (err) {
+                if (err.response) {
+                    carrot.log(err.message);
+                    return err.response.data;
+                } else if (err.request) {
+                    carrot.log(err.message);
+                    return err.request;
+                } else {
+                    carrot.show_error_connect_sever();
+                    carrot.check_show_by_id_page();
+                    carrot.log(err.message);
+                    return err.message;
+                }
+            }
+        }
+
+        
         $(document).ready(function () {
             var lang_page=carrot.get_param_url("lang");
             if(lang_page!=null){
@@ -359,7 +561,7 @@
             carrot.load_data_lang_web();
             carrot.user.show_info_user_login_in_header();
 
-            var menu_sd=carrot.menu.create_menu("chat-vi").set_act(function(){carrot.ai_lover.show_all_chat();});
+            var menu_sd=carrot.menu.create_menu("chat-vi").set_act(function(){carrot.show_lis_by_collection("chat-vi");});
             carrot.menu.show();
         });
     </script>

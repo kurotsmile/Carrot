@@ -9,6 +9,47 @@ class Ai_Lover{
         this.setting_lang_collection='';
     }
 
+    show_all_chat(){
+        this.setting_lang_change=this.carrot.lang;
+        this.carrot.change_title_page("Ai Lover", "?p=chat","chat");
+        this.carrot.db.collection("chat-"+this.carrot.lang).where("status","==","pending").limit(100).get().then((querySnapshot) => {
+            var obj_data=Object();
+            querySnapshot.forEach((doc) => {
+                var item_data=doc.data();
+                item_data["id"]=doc.id;
+                obj_data[doc.id]=JSON.stringify(item_data);
+            });
+            this.act_done_show_all_chat(obj_data,this.carrot);
+        })
+        .catch((error) => {
+            this.carrot.log(error.message)
+        });
+    }
+
+    act_done_show_all_chat(datas,carrot){
+        var html='';
+        html+='<div class="row m-0">';
+        var list_data=carrot.convert_obj_to_list(datas);
+        $(list_data).each(function(index,data){
+            var item_list=new Carrot_List_Item(carrot);
+            item_list.set_id(data.id);
+            item_list.set_name(data.key);
+            item_list.set_tip(data.msg);
+            item_list.set_db_collection("chat-"+carrot.lang);
+            html+=item_list.html();
+        });
+        html+='</div>';
+        carrot.show(html);
+        carrot.check_event();
+    }
+
+    show_all_chat_ai_lover=async (s_lang="")=>{
+        if(s_lang=="") s_lang=this.carrot.lang;
+        this.carrot.ai_lover.setting_lang_change=s_lang;
+        var querySnapshot = await getDocs(query(collection(db, "chat-"+s_lang),where("status","==","pending")));
+        this.carrot.ai_lover.show_all_chat(querySnapshot);
+    }
+
     list_btn_lang_select(){
         var html='';
         var ai_lover=this;
@@ -21,7 +62,7 @@ class Ai_Lover{
         return html;
     }
 
-    async show_all_chat(querySnapshot) {
+    async show_all_chats(querySnapshot) {
         var html = '';
         var carrot=this.carrot;
         var ai_lover=this;
@@ -91,14 +132,15 @@ class Ai_Lover{
         });
     }
 
-    done_edit_chat(data,carrot,ai_lover){
+    done_edit_chat(data,carrot){
         if(data==null) $.MessageBox("Ứng dụng không còn tồn tại!");
-        customer_field_for_db(data,"chat-"+ai_lover.setting_lang_change,'id','','Edit Obj Success');
-        ai_lover.show_edit_object(data,carrot.act_done_add_or_edit);
+        
+        carrot.ai_lover.show_edit_object(data,carrot);
     }
 
-    show_edit_object(data_obj,act_done){
+    show_edit_object(data_obj,carrot){
         var obj_input=new Object();
+        customer_field_for_db(data_obj,"chat-"+carrot.ai_lover.setting_lang_change,'id','','Edit Obj Success');
         $.each(data_obj,function(key,val){
             var obj_emp=data_obj[key];
             if(key=="act_msg_success"){
@@ -133,7 +175,7 @@ class Ai_Lover{
             buttonDone  : "Yes",
             buttonFail  : "No",
             message     : "Cập nhật đối tượng"
-        }).done(act_done);
+        }).done(carrot.act_done_add_or_edit);
     }
 
     show_setting_lang(data_lang_tag,data_lang_change){
