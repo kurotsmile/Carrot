@@ -1,27 +1,24 @@
-class Menu_Item{
+class Menu_Item extends HTMLLIElement{
     icon="fa-solid fa-star-of-life";
     name;
     label=null;
-    act_click;
     father="list_menu_main";
     
     constructor(name){
-        this.name=name;
-        this.set_act(function(){ alert("No set");});
+        super();
+        this.innerHTML=this.html();
+        this.className="border-bottom btn-menu dev";
     }
 
     set_label(label){
         this.label=label;
-        return this;
-    }
-
-    set_act(act){
-        this.act_click=act;
+        this.innerHTML=this.html();
         return this;
     }
 
     set_icon(icon){
         this.icon=icon;
+        this.innerHTML=this.html();
         return this;
     }
 
@@ -36,12 +33,11 @@ class Menu_Item{
     html(){
         if(this.label==null) this.label=this.name;
         var html='';
-        html+='<li id="'+this.name+'" class="border-bottom btn-menu dev">';
         html+='<i class="'+this.icon+' fs-6 me-2"></i> '+this.label+'</li>';
-        html+='</li>';
         return html;
     }
 }
+customElements.define("menuitems-li", Menu_Item,{extends: 'li'});
 
 class Carrot_Menu{
     carrot;
@@ -60,14 +56,7 @@ class Carrot_Menu{
 
     show(){
         for(var i=0;i<this.list_menu.length;i++){
-            $("#"+this.list_menu[i].father).append(this.list_menu[i].html());
-        }
-
-        for(var i=0;i<this.list_menu.length;i++){
-            var item_m=this.list_menu[i];
-            $("#"+item_m.name).click(function(){
-                item_m.act_click();
-            });
+            $("#"+this.list_menu[i].father).append(this.list_menu[i]);
         }
     }
 }

@@ -16,22 +16,26 @@ class Carrot_Field{
 
     set_type(type){
         this.type=type;
+        return this;
     }
 
     set_label(label){
         this.label=label;
+        return this;
     }
 
     add_class(s_class){
         this.list_class.push(s_class);
+        return this;
     }
 
     set_tip(tip){
         this.tip=tip;
+        return this;
     }
 
-    val(val){this.set_val(val)}
-    set_val(val){this.value=val;}
+    val(val){this.set_val(val);return this;}
+    set_val(val){this.value=val;return this;}
 
     html(){
         var html='';
@@ -56,8 +60,8 @@ class Carrot_Field{
 
             html+='<div class="form-group">';
                 html+='<label for="'+this.name+'">'+this.label+' Editor</label>';
-                html+='<style>.editor {border-radius: 6px;box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);font-family:  monospace;font-size: 14px;font-weight: 400;height: 340px;letter-spacing: normal;line-height: 20px;padding: 10px;tab-size: 4;}</style>';
-                html+='<div id="'+this.name+'" type="'+this.type+'" class="editor '+s_class+' cr_field">'+this.value+'</div>';
+                html+='<style>.editor {overflow-wrap: break-word;word-wrap: break-word;border-radius: 6px;box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);font-family:  monospace;font-size: 14px;font-weight: 400;height: 340px;letter-spacing: normal;line-height: 20px;padding: 10px;tab-size: 4;}</style>';
+                html+='<pre><code id="'+this.name+'" type="'+this.type+'" contenteditable="true" class="editor '+s_class+' hljs cr_field">'+this.value+'</code></pre>';
             html+='</div>';
 
             html+='<div class="form-group">';
@@ -177,7 +181,6 @@ class Carrot_Form{
         var carrot=this.carrot;
 
         if(this.is_editor_code){
-            var code_editor=this.carrot.create_editor_code();
 
             function sel_code_type(emp){
                 var type_code=$(emp).val();
@@ -186,6 +189,11 @@ class Carrot_Form{
                 $(".editor").removeClass("language-undefined");
                 for(var i=0;i<lis_lang_code.length;i++) $(".editor").removeClass("language-"+lis_lang_code[i]);
                 $(".editor").addClass("language-"+type_code);
+                /*
+                var txt=$(".editor").html();
+                $(".editor").html(txt.replaceAll("<br>", "\n"));
+                hljs.highlightAll();
+                */
             }
     
             $(".cr_field_code_type").change(function(){
@@ -208,7 +216,7 @@ class Carrot_Form{
                 var id_emp=$(this).attr("id");
                 var type_emp=$(this).attr("type");
                 var val_emp='';
-                if(type_emp=="code") val_emp=code_editor.toString();
+                if(type_emp=="code") val_emp=$(this).html();
                 else val_emp=$(this).val();
                 obj_frm[id_emp]=val_emp;
             });

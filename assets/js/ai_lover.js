@@ -1,4 +1,5 @@
 class Ai_Lover{
+    chat;
     carrot;
     setting_lang_change;
     setting_lang_collection;
@@ -8,8 +9,13 @@ class Ai_Lover{
         this.setting_lang_change='';
         this.setting_lang_collection='';
 
-        this.carrot.menu.create_menu("list_chat").set_label("List Chat").set_icon("fa-solid fa-comments").set_type("dev").set_act(function(){ carrot.ai_lover.show_all_chat(carrot.lang);});
-        this.carrot.menu.create_menu("add_chat").set_label("Add Chat").set_icon("fa-solid fa-message-plus").set_type("add").set_act(function(){ carrot.ai_lover.show_all_chat(carrot.lang);});
+        this.chat=new AI_Chat(this.carrot);
+
+        var ai=this;
+        var btn_list_chat=this.carrot.menu.create_menu("list_chat").set_label("List Chat").set_icon("fa-solid fa-comments").set_type("dev");
+        $(btn_list_chat).click(function(){ai.show_all_chat(ai.carrot.lang);});
+        var btn_add_chat=this.carrot.menu.create_menu("add_chat").set_label("Add Chat").set_icon("fa-solid fa-list").set_type("add");
+        $(btn_add_chat).click(function(){ai.chat.show_add();});
     }
 
     show_all_chat(lang_show){
@@ -62,13 +68,6 @@ class Ai_Lover{
         this.carrot.check_event();
     }
 
-    show_all_chat_ai_lover=async (s_lang="")=>{
-        if(s_lang=="") s_lang=this.carrot.lang;
-        this.carrot.ai_lover.setting_lang_change=s_lang;
-        var querySnapshot = await getDocs(query(collection(db, "chat-"+s_lang),where("status","==","pending")));
-        this.carrot.ai_lover.show_all_chat(querySnapshot);
-    }
-
     list_btn_lang_select(){
         var html='';
         var ai_lover=this;
@@ -81,75 +80,6 @@ class Ai_Lover{
         return html;
     }
 
-    async show_all_chats(querySnapshot) {
-        var html = '';
-        var carrot=this.carrot;
-        var ai_lover=this;
-        html +=this.list_btn_lang_select();
-        html += '<table class="table table-striped mt-6" id="table_all_chat">';
-        html += '<thead class="thead-light">';
-        html += '<tr>';
-        html += '<th scope="col">Key</th>';
-        html += '<th scope="col">Msg</th>';
-        html += '<th scope="col">Icon</th>';
-        html += '<th scope="col">Action</th>';
-        html += '</tr>';
-        html += '</thead>';
-    
-        html += '<tbody>';
-        querySnapshot.forEach((doc) => {
-            var data_chat=doc.data();
-            var s_icon_sex_character;
-            var s_icon_sex_user;
-
-            if(data_chat.sex_character=="0") s_icon_sex_character='<i class="fa-solid fa-venus"></i>';
-            else  s_icon_sex_character='<i class="fa-solid fa-mars"></i>';
-
-            if(data_chat.sex_user=="0") s_icon_sex_user='<i class="fa-solid fa-venus"></i>';
-            else  s_icon_sex_user='<i class="fa-solid fa-mars"></i>';
-
-            data_chat["id"]=doc.id;
-            html += '<tr>';
-            html += '<td>'+s_icon_sex_user+' '+data_chat['key']+'</td>';
-            html += '<td>'+s_icon_sex_character+' '+data_chat['msg']+'</td>';
-            html += '<td>'+data_chat['icon']+'</td>';
-            html += '<td>';
-            html += '<span type="button"  role="button" class="btn  .text-warning ai_lover_edit_chat btn-sm mr-1" id_doc="'+data_chat['id']+'"><i class="fa-solid fa-edit"></i> Edit</span> ';
-            html += '<span type="button"  role="button" class="btn text-danger ai_lover_del_chat btn-sm" id_doc="'+data_chat['id']+'"><i class="fa-solid fa-trash"></i> Delete</span>';
-            html += '</td>';
-            html += '</tr>';
-        });
-        html += '</tbody>';
-        html += '</table>';
-        $("#main_contain").html(html);
-        new DataTable('#table_all_chat', {responsive: true,pageLength:100});
-
-        $(".btn-setting-lang-change").click(function(){
-            var key_change=$(this).attr("key_change");
-            ai_lover.show_all_chat_ai_lover(key_change);
-        });
-
-        $(".ai_lover_del_chat").each(function(index,emp){
-            $(emp).click(function(){
-                var id_doc=$(emp).attr("id_doc");
-                $.MessageBox({
-                    buttonDone  : "Yes",
-                    buttonFail  : "No",
-                    message     : "Bạn có chắc chắng là xóa Trò chuyện "+id_doc+" này không?"
-                }).done(function(){
-                    carrot.act_del_obj("chat-"+carrot.lang,id_doc);
-                    $(emp).parent().parent().remove();
-                });
-            });
-        });
-
-        $(".ai_lover_edit_chat").each(function(index,emp){
-            $(emp).click(async function(){
-                var id_doc=$(emp).attr("id_doc");
-                carrot.get_doc("chat-"+ai_lover.setting_lang_change,id_doc,ai_lover.done_edit_chat);
-            });
-        });
-    }
 
     done_edit_chat(data,carrot){
         if(data==null) $.MessageBox("Ứng dụng không còn tồn tại!");

@@ -166,7 +166,6 @@
       <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
       <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
       <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-      <script src="https://cdn.jsdelivr.net/npm/codejar@3.7.0/codejar.min.js"></script>
       <script>
         var carrot=new Carrot_Site();
 
@@ -216,7 +215,7 @@
             if(id_fun=='btn_add_wallpaper') carrot.background.show_box_add_or_edit_wallpaper(null);
             if(id_fun=='btn_add_lang') carrot.show_box_add_or_edit_lang(null);
             if(id_fun=='btn_version_data') carrot.show_edit_version_data_version();
-            if(id_fun=='btn_ai_lover_all_chat') carrot.ai_lover.show_all_chat_ai_lover();
+            if(id_fun=='btn_ai_lover_all_chat') carrot.ai_lover.show_all_chat(carrot.lang);
             if(id_fun=='btn_block_chat') carrot.show_all_block_chat_by_lang();
             if(id_fun=='btn_download_json_doc') carrot.download_json_doc();
             if(id_fun=='btn_import_json_doc') carrot.show_import_json_box(null);
