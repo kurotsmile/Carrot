@@ -856,22 +856,20 @@ class Carrot_Site{
             if (doc.exists) {
                 data_obj_lang_tag = doc.data();
                 data_obj_lang_tag["id"]=doc.id;
+                this.db.collection(s_collection).doc(s_key_lang_change).get().then((doc) => {
+                    if (doc.exists) {
+                        data_obj_lang_change = doc.data();
+                        data_obj_lang_change["id"]=doc.id;
+                        this.ai.setting_lang_collection=s_collection;
+                        this.ai.show_setting_lang(data_obj_lang_tag,data_obj_lang_change);
+                    }
+                }).catch((error) => {
+                    this.log(error.message)
+                });
             }
         }).catch((error) => {
             this.log(error.message)
         });
-
-        this.db.collection(s_collection).doc(s_key_lang_change).get().then((doc) => {
-            if (doc.exists) {
-                data_obj_lang_change = doc.data();
-                data_obj_lang_change["id"]=doc.id;
-            }
-        }).catch((error) => {
-            this.log(error.message)
-        });
-
-        this.ai.setting_lang_collection=s_collection;
-        this.ai.show_setting_lang(data_obj_lang_tag,data_obj_lang_change);
     }
 
     show_all_block_chat_by_lang(s_key_lang=''){
