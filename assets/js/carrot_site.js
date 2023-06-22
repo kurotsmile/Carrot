@@ -730,7 +730,9 @@ class Carrot_Site{
     }
 
     get_url(){
-        return location.protocol+"//"+location.hostname+location.pathname;
+        var s_port='';
+        if(location.port!="") s_port=":"+location.port;
+        return location.protocol+"//"+location.hostname+s_port+location.pathname;
     }
 
     change_host_connection(){
