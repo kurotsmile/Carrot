@@ -4,6 +4,10 @@ class Carrot_Background{
 
     constructor(carrot){
         this.carrot=carrot;
+        var add_bk=this.carrot.menu.create("add_background").set_label("Add Background").set_type("add");
+        $(add_bk).click(function(){carrot.background.show_box_add_or_edit_wallpaper(null);});
+        var list_bk=this.carrot.menu.create("list_background").set_label("List Background").set_type("main").set_icon("fa-image fa-solid").set_lang("wallpaper");
+        $(list_bk).click(function(){carrot.background.show_all_background()});
     }
 
     load_obj_background(){

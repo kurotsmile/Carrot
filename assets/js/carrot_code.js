@@ -4,7 +4,7 @@ class Carrot_Code{
 
     constructor(cr){
         this.carrot=cr;
-        this.load
+        this.load_obj_code();
     }
 
     load_obj_code(){
@@ -48,7 +48,7 @@ class Carrot_Code{
         code_code.set_type("code");
         code_code.set_val(data_code.code);
         code_code.set_tip("Hãy đóng góp những mã nguồn thật hay để chia sẻ những kiến thức bổ ích đến với các lập trình viên khác!")
-        frm.act_done();
+        frm.show();
     }
 
     show_list_code(){

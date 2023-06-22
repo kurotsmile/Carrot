@@ -49,6 +49,10 @@ class Ai_Lover{
         $(list_data).each(function(index,data){
             var item_list=new Carrot_List_Item(carrot);
             item_list.set_id(data.id);
+            if(data.parent==null)
+                item_list.set_icon_font("fa-sharp fa-solid fa-comment");
+            else
+                item_list.set_icon_font("fa-solid fa-comments");
             item_list.set_name(data.key);
             item_list.set_tip(data.msg);
             item_list.set_db_collection("chat-"+carrot.ai_lover.setting_lang_change);
@@ -71,12 +75,20 @@ class Ai_Lover{
     list_btn_lang_select(){
         var html='';
         var ai_lover=this;
+        html+='<div class="dropdown">';
+        html+='<button class="btn btn-secondary dropdown-toggle btn-sm mr-1 mt-1 mb-1" type="button" id="btn_list_lang_ai" data-bs-toggle="dropdown" aria-expanded="true" >';
+        html+='<i class="fa-solid fa-rectangle-list"></i> Change country';
+        html+='</button>';
+        html+='<div class="dropdown-menu" aria-labelledby="btn_list_lang_ai">';
         $.each(this.carrot.list_lang,function(i,lang){
             if(lang.key==ai_lover.setting_lang_change)
-                html+='<button type="button" class="btn btn-light btn-sm mr-1 mt-1 mb-1 btn-setting-lang-change" key_change="'+lang.key+'"><img src="'+lang.icon+'" style="width:20px"/>'+lang.name+'</button> ';
+                html+='<button type="button" class="dropdown-item active btn-setting-lang-change" key_change="'+lang.key+'"><img src="'+lang.icon+'" style="width:20px"/>'+lang.name+'</button> ';
             else
-                html+='<button type="button" class="btn btn-secondary btn-sm mr-1 mt-1 mb-1 btn-setting-lang-change" key_change="'+lang.key+'"><img src="'+lang.icon+'" style="width:20px"/>'+lang.name+'</button> ';
+                html+='<button type="button" class="dropdown-item  btn-setting-lang-change" key_change="'+lang.key+'"><img src="'+lang.icon+'" style="width:20px"/>'+lang.name+'</button> ';
         });
+        html+='</div>';
+        html+='</div>';
+ 
         return html;
     }
 

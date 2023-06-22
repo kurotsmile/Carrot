@@ -1,6 +1,7 @@
 class Carrot_List_Item{
     id;
-    icon=null;
+    icon_img=null;
+    icon_font="fa-solid fa-star-of-life";
     carrot;
     name;
     tip;
@@ -24,7 +25,11 @@ class Carrot_List_Item{
     }
 
     set_icon(s_url){
-        this.icon=s_url;
+        this.icon_img=s_url;
+    }
+
+    set_icon_font(s_name_font){
+        this.icon_font=s_name_font;
     }
 
     set_tip(tip){
@@ -35,13 +40,17 @@ class Carrot_List_Item{
         this.db_collection=db_collection;
     }
 
+    set_db(db_collection){
+        this.set_db_collection(db_collection);
+    }
+
     html(){
         var html='';
         var html="<div class='box_app "+this.class+"' id=\""+this.id+"\" key_search=\""+this.name+"\">";
             html+='<div class="app-cover p-2 shadow-md bg-white">';
             html+='<div class="row">';
-                if(this.icon!=null) html+='<div role="button" class="img-cover pe-0 col-3 app_icon" app_id="'+this.id+'"><img class="rounded" src="'+this.icon+'" alt="'+this.name+'"></div>';
-                else html+='<div class="pe-0 col-1 text-center"><i class="fa-sharp fa-solid fa-comment-dots fa-2x"></i></div>';
+                if(this.icon_img!=null) html+='<div role="button" class="img-cover pe-0 col-3 app_icon" app_id="'+this.id+'"><img class="rounded" src="'+this.icon_img+'" alt="'+this.name+'"></div>';
+                else html+='<div class="pe-0 col-1 text-center"><i class="'+this.icon_font+' fa-2x"></i></div>';
                     html+='<div class="det mt-2 col-11">';
                     html+="<h5 class='mb-0 fs-6'>"+this.name+"</h5>";
                         html+="<span class='fs-8'>"+this.tip+"</span>";

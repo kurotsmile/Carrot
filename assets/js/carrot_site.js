@@ -29,6 +29,7 @@ class Carrot_Site{
     ai_lover;ai;
     code;
     icon;
+    audio;
     background;
     menu;
     
@@ -85,6 +86,7 @@ class Carrot_Site{
         $('head').append('<script type="text/javascript" src="assets/js/ai_chat.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_menu.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_list_item.js?ver='+this.get_ver_cur("js")+'"></script>');
+        $('head').append('<script type="text/javascript" src="assets/js/carrot_audio.js?ver='+this.get_ver_cur("js")+'"></script>');
 
         this.menu=new Carrot_Menu(this);
         this.app=new Carrot_App(this);
@@ -92,6 +94,7 @@ class Carrot_Site{
         this.music=new Carrot_Music(this);
         this.code=new Carrot_Code(this);
         this.icon=new Carrot_Icon(this);
+        this.audio=new Carrot_Audio(this);
         this.background=new Carrot_Background(this);
         this.ai_lover=new Ai_Lover(this);
         this.ai=this.ai_lover;
@@ -538,6 +541,7 @@ class Carrot_Site{
             if(db_collection=="code") carrot.get_doc(db_collection,db_document,carrot.code.show_edit);
             if(carrot.id_page=="chat") carrot.get_doc(db_collection,db_document,carrot.ai_lover.chat.show_edit);
             if(carrot.id_page=="address_book") carrot.get_doc(db_collection,db_document,carrot.user.show_box_add_or_edit_phone_book);
+            if(db_collection=="audio") carrot.get_doc(db_collection,db_document,carrot.audio.edit);
         });
 
         $(".btn_app_del").click(function(){
@@ -893,5 +897,9 @@ class Carrot_Site{
             data_list_key_block["chat"]=Array("new_key_block");
             carrot.ai_lover.show_list_block_chat(data_list_key_block);
         });
+    }
+
+    msg(msg){
+        Swal.fire({icon: 'success',title: msg,showConfirmButton: false,timer: 1500})
     }
 }

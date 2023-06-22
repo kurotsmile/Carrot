@@ -52,6 +52,6 @@ class AI_Chat{
         frm.create_field("user").set_label("User").set_val(data["user"]);
         frm.create_field("limit").set_label("Limit Chat").set_val(data["limit"]).set_type("slider");
         frm.create_field("lang").set_label("Lang").set_val(data["lang"]);
-        frm.act_done();
+        frm.show();
     }
 }

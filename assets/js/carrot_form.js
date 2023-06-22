@@ -146,7 +146,7 @@ class Carrot_Field{
             html+='<textarea class="form-control cr_field" id="'+this.name+'" placeholder="'+this.placeholder+'" rows="3">'+this.value+'</textarea>';
         }
         else if(this.type=='id'){
-            html+='<p id="'+this.name+'" class="cr_field">'+this.value+'</p>';
+            html+='<p id="'+this.name+'" type="id" class="cr_field" value="'+this.value+'">'+this.value+'</p>';
         }
         else{
             html+='<input type="'+this.type+'" value="'+this.value+'" class="form-control '+s_class+' cr_field" id="'+this.name+'" placeholder="'+this.placeholder+'">';
@@ -230,7 +230,7 @@ class Carrot_Form{
         return html;
     }
 
-    act_done(){
+    show(){
         this.carrot.box(this.html());
         
         var frm=this;
@@ -294,6 +294,7 @@ class Carrot_Form{
                 if(type_emp=="code") val_emp=$(this).html();
                 else if(type_emp=="color") val_emp=$("#"+id_emp).colorpicker("val");
                 else if(type_emp=="icon") val_emp=$(this).attr("value");
+                else if(type_emp=="id") val_emp=$(this).attr("value");
                 else val_emp=$(this).val();
 
                 obj_frm[id_emp]=val_emp;

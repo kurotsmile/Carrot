@@ -3,11 +3,7 @@ class Carrot_Music{
     obj_songs=null;
     audio_player=null;
 
-
-    m_avatar=null;
     m_index=-1;
-
-    emp_status_music=null;
 
     constructor(carrot){
         this.carrot=carrot;
@@ -32,7 +28,6 @@ class Carrot_Music{
             $("#m_time_end").html(this.formatTime(duration));
             if (this.audio_player.readyState >= 2){
                 this.audio_player.play();
-                $(this.emp_status_music).html('<i class="fa-regular fa-circle-stop fa-bounce fa-2x"></i>');
             }
         });
 

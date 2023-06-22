@@ -3,11 +3,13 @@ class Menu_Item extends HTMLLIElement{
     name;
     label=null;
     father="list_menu_main";
-    
+    mode="pub";
+    key_lang=null;
     constructor(name){
         super();
         this.innerHTML=this.html();
-        this.className="border-bottom btn-menu dev";
+        this.className="border-bottom btn-menu "+this.mode;
+        this.name=name;
     }
 
     set_label(label){
@@ -23,17 +25,38 @@ class Menu_Item extends HTMLLIElement{
     }
 
     set_type(type='main'){
-        if(type=='main') this.father="list_menu_main";
-        else if(type=="dev") this.father="list_menu_dev";
-        else if(type=="add") this.father="list_menu_add";
+        if(type=='main'){
+            this.father="list_menu_main";
+            this.mode="pub";
+        }
+        else if(type=="dev"){
+            this.father="list_menu_dev";
+            this.mode="dev";
+        }
+        else if(type=="add"){
+            this.father="list_menu_add";
+            this.mode="dev";
+        }
         else this.father=type;
+
+        this.className="border-bottom btn-menu "+this.mode;
+        this.innerHTML=this.html();
+        return this;
+    }
+
+    set_lang(key){
+        this.key_lang=key;
+        this.innerHTML=this.html();
         return this;
     }
 
     html(){
         if(this.label==null) this.label=this.name;
         var html='';
-        html+='<i class="'+this.icon+' fs-6 me-2"></i> '+this.label+'</li>';
+        html='<i class="'+this.icon+' fs-6 me-2"></i>';
+        if(this.key_lang!=""&&this.key_lang!=null) html+='<l class="lang" key_lang="'+this.key_lang+'">';
+        html+=this.label;
+        if(this.key_lang!=""&&this.key_lang!=null) html+='</l>';
         return html;
     }
 }
@@ -52,6 +75,10 @@ class Carrot_Menu{
         var menu=new Menu_Item(name);
         this.list_menu.push(menu);
         return menu;
+    }
+
+    create(name){
+        return this.create_menu(name);
     }
 
     show(){
