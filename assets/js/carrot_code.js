@@ -28,9 +28,8 @@ class Carrot_Code{
         this.show_add_or_edit_code(new_data);
     }
 
-    show_edit(id){
-        var data=JSON.parse(this.obj_codes[id]);
-        this.show_add_or_edit_code(data);
+    show_edit(data,carrot){
+        carrot.code.show_add_or_edit_code(data);
     }
 
     show_add_or_edit_code(data_code){
@@ -39,7 +38,7 @@ class Carrot_Code{
         frm.set_title("Add code");
 
         var id_code=frm.create_field("id","ID");
-        id_code.set_val(data_code["id"]);
+        id_code.set_val(data_code.id);
         id_code.set_type("id");
 
         var title_code=frm.create_field("title","Title");

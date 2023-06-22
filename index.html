@@ -133,14 +133,12 @@
                     </div>
                 </div>
                 <div class="col-md-7 text-end">
-
-
                     <div class="dropdown pt-2 d-inline">
                         <div id="btn_login" class="btn btn-small btn-light cpfs-8">
                             <i class="fa-solid fa-user"></i> <lang class="lang" key_lang="login">Login</lang>
                         </div>
 
-                        <div id="btn_acc_info" type="button" class="btn btn-small btn-light cpfs-8 dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="true">
+                        <div id="btn_acc_info" type="button" class="btn btn-small btn-light cpfs-8 dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="true" style="display: none;">
                             <img id="acc_info_avatar" style="width: 20px;height: 20px;" src="images/avatar_default.png"/> <span id="acc_info_name">User name</span>
                         </div>
 
@@ -153,7 +151,6 @@
                     <a id="btn_change_lang" class="btn btn-small btn-light cpfs-8 d-inline">
                         <i class="fa-solid fa-globe"></i> <lang class="lang" key_lang="select_lang">Change Language</lang> <span class="fs-8 text-warning" id="key_lang">en</span>
                     </a>
-
                 </div>
             </div>
         </div>
@@ -187,7 +184,7 @@
         $("#btn_add_music").click(function(){carrot.music.show_add_or_edit_music(null,carrot.act_done_add_or_edit)});
         $("#btn_acc_login_info").click(function(){carrot.user.show_user_info_login();})
         $("#btn_code").click(function(){carrot.code.show_list_code()});
-        $("#btn_add_code").click(function(){carrot.code.show_add_or_edit_code(null)});
+        $("#btn_add_code").click(function(){carrot.code.show_add_new();});
         $(".btn-menu").click(function () {
             $(".btn-menu").removeClass("active");
             $(".btn-menu i").removeClass("fa-bounce");
@@ -226,44 +223,6 @@
             if(id_fun=='btn_setting_lang_ailover') carrot.show_setting_lang_by_key(carrot.lang,'lang_app_ai_lover');
             if(id_fun=='btn_setting_lang_web') carrot.show_setting_lang_by_key(carrot.lang,'lang_web');
         });
-
-        carrot.show_setting_lang_by_key=async(s_key_lang_change="",s_collection)=>{    
-                carrot.ai_lover.setting_lang_change=s_key_lang_change;
-                const langRef_tag = doc(db, s_collection, "en");
-                const langSnap_tag = await getDoc(langRef_tag);
-                var data_obj_lang_tag=new Object();
-                if (langSnap_tag.exists()) {
-                    data_obj_lang_tag = langSnap_tag.data();
-                    data_obj_lang_tag["id"]=langSnap_tag.id;
-                }
-
-                const langRef_change = doc(db, s_collection, s_key_lang_change);
-                const langSnap_change = await getDoc(langRef_change);
-                var data_obj_lang_change=new Object();
-                if (langSnap_change.exists()) {
-                    data_obj_lang_change = langSnap_change.data();
-                    data_obj_lang_change["id"]=langSnap_change.id;
-                }
-
-                carrot.ai_lover.setting_lang_collection=s_collection;
-                carrot.ai_lover.show_setting_lang(data_obj_lang_tag,data_obj_lang_change);
-        }
-
-        carrot.show_all_block_chat_by_lang=async (s_key_lang='')=>{
-            if(s_key_lang=='') s_key_lang=carrot.lang;
-            const appSnap = await getDoc(doc(db, "block",s_key_lang));
-            if (appSnap.exists()) {
-                var data_list_key_block=appSnap.data();
-                data_list_key_block["lang"]=appSnap.id;
-                carrot.ai_lover.show_list_block_chat(data_list_key_block);
-            } else {
-                $.MessageBox("Chưa có danh sách từ cấm!");
-                var data_list_key_block=new Object();
-                data_list_key_block["lang"]=s_key_lang;
-                data_list_key_block["chat"]=Array("new_key_block");
-                carrot.ai_lover.show_list_block_chat(data_list_key_block);
-            }
-        }
 
         $("#btn_login").click(function () {
             $.MessageBox({
@@ -306,6 +265,7 @@
             carrot.load_data_lang_web();
             carrot.user.show_info_user_login_in_header();
             carrot.menu.show();
+            alert(location.port);
         });
     </script>
 </body>

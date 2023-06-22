@@ -535,7 +535,7 @@ class Carrot_Site{
             if(db_collection=="icon") carrot.get_doc(db_collection,db_document,carrot.icon.show_edit_icon_done);
             if(db_collection=="user-avatar") carrot.get_doc(db_collection,db_document,carrot.ai_lover.show_edit_avatar_done);
             if(db_collection=="song") carrot.get_doc(db_collection,db_document,carrot.music.show_add_or_edit_music);
-            if(db_collection=="code") carrot.code.show_edit(db_document);
+            if(db_collection=="code") carrot.get_doc(db_collection,db_document,carrot.code.show_edit);
             if(carrot.id_page=="chat") carrot.get_doc(db_collection,db_document,carrot.ai_lover.chat.show_edit);
             if(carrot.id_page=="address_book") carrot.get_doc(db_collection,db_document,carrot.user.show_box_add_or_edit_phone_book);
         });
@@ -843,5 +843,55 @@ class Carrot_Site{
         html+='</div>';
         carrot.show(html);
         carrot.check_event();
+    }
+
+    show_setting_lang_by_key(s_key_lang_change="",s_collection){    
+        var data_obj_lang_tag=new Object();
+        var data_obj_lang_change=new Object();
+        
+        this.ai.setting_lang_change=s_key_lang_change;
+        this.db.collection(s_collection).doc("en").get().then((doc) => {
+            if (doc.exists) {
+                data_obj_lang_tag = doc.data();
+                data_obj_lang_tag["id"]=doc.id;
+            }
+        }).catch((error) => {
+            this.log(error.message)
+        });
+
+        this.db.collection(s_collection).doc(s_key_lang_change).get().then((doc) => {
+            if (doc.exists) {
+                data_obj_lang_change = doc.data();
+                data_obj_lang_change["id"]=doc.id;
+            }
+        }).catch((error) => {
+            this.log(error.message)
+        });
+
+        this.ai.setting_lang_collection=s_collection;
+        this.ai.show_setting_lang(data_obj_lang_tag,data_obj_lang_change);
+    }
+
+    show_all_block_chat_by_lang(s_key_lang=''){
+        if(s_key_lang=='') s_key_lang=this.lang;
+        this.db.collection("block").doc(s_key_lang).get().then((doc) => {
+            if (doc.exists) {
+                var data_list_key_block=doc.data();
+                data_list_key_block["lang"]=doc.id;
+                this.ai.show_list_block_chat(data_list_key_block);
+            }else{
+                $.MessageBox("Chưa có danh sách từ cấm!");
+                var data_list_key_block=new Object();
+                data_list_key_block["lang"]=s_key_lang;
+                data_list_key_block["chat"]=Array("new_key_block");
+                carrot.ai_lover.show_list_block_chat(data_list_key_block);
+            }
+        }).catch((error) => {
+            $.MessageBox("Chưa có danh sách từ cấm!");
+            var data_list_key_block=new Object();
+            data_list_key_block["lang"]=s_key_lang;
+            data_list_key_block["chat"]=Array("new_key_block");
+            carrot.ai_lover.show_list_block_chat(data_list_key_block);
+        });
     }
 }
