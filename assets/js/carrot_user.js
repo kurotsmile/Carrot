@@ -380,5 +380,14 @@ class Carrot_user{
             $.MessageBox("Đăng nhập thất bại!");
         });
     }
+
+    get_user_login_id(){
+        if(this.obj_login!=null){
+            return this.obj_login["id"];
+        }else{
+            return "";
+        }
+        
+    }
     
 }

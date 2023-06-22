@@ -26,7 +26,7 @@ class Carrot_Site{
 
     user;
     music;
-    ai_lover;
+    ai_lover;ai;
     code;
     icon;
     background;
@@ -94,7 +94,7 @@ class Carrot_Site{
         this.icon=new Carrot_Icon(this);
         this.background=new Carrot_Background(this);
         this.ai_lover=new Ai_Lover(this);
-        
+        this.ai=this.ai_lover;
     };
 
     setup_sever_db(){
@@ -536,7 +536,7 @@ class Carrot_Site{
             if(db_collection=="user-avatar") carrot.get_doc(db_collection,db_document,carrot.ai_lover.show_edit_avatar_done);
             if(db_collection=="song") carrot.get_doc(db_collection,db_document,carrot.music.show_add_or_edit_music);
             if(db_collection=="code") carrot.code.show_edit(db_document);
-            if(carrot.id_page=="chat") carrot.get_doc(db_collection,db_document,carrot.ai_lover.show_edit_object);
+            if(carrot.id_page=="chat") carrot.get_doc(db_collection,db_document,carrot.ai_lover.chat.show_edit);
             if(carrot.id_page=="address_book") carrot.get_doc(db_collection,db_document,carrot.user.show_box_add_or_edit_phone_book);
         });
 

@@ -6,6 +6,7 @@ class Carrot_Field{
     value;
     tip=null;
     list_class=Array();
+    options=Array();
 
     constructor(name,label,type='input',placeholder='Enter data here'){
         this.name=name;
@@ -34,8 +35,26 @@ class Carrot_Field{
         return this;
     }
 
+    set_placeholder(p){
+        this.placeholder=p;
+        return this;
+    }
+
     val(val){this.set_val(val);return this;}
     set_val(val){this.value=val;return this;}
+
+    set_option(arr_options){
+        this.options=arr_options;
+        return this;
+    }
+
+    add_option(key,val){
+        var obj_option=new Object();
+        obj_option["key"]=key;
+        obj_option["val"]=val;
+        this.options.push(obj_option);
+        return this;
+    }
 
     html(){
         var html='';
@@ -89,6 +108,43 @@ class Carrot_Field{
             html+='<script>$(document).ready(function(){$(".content").richText();});</script>';
             html+='</div>';
         }
+        else if(this.type=='select'){
+            html+='<select id="'+this.name+'" type="select" class="cr_field form-select">';
+            for(var i=0;i<this.options.length;i++){
+                var item_option=this.options[i];
+                if(item_option.key==this.value)
+                    html+='<option value="'+item_option.key+'" selected>'+item_option.val+'</option>';
+                else
+                    html+='<option value="'+item_option.key+'">'+item_option.val+'</option>';
+            }
+            html+='</select>';
+        }
+        else if(this.type=='color'){
+            html+='<div id="'+this.name+'" class="form-control cr_field" value_color="'+this.value+'" type="color"></div>';
+        }
+        else if(this.type=='slider'||this.type=='range'){
+            html+='<input type="range" min="1" max="4" value="'+this.value+'" class="form-range cr_field" id="'+this.name+'"></input>'
+        }
+        else if(this.type=='icon'){
+            html+='<div id="'+this.name+'" class="form-control cr_field" type="icon" value="'+this.value+'">';
+            html+='<div id="'+this.name+'_show_val"  class="d-block text-info">'+this.value+'</div>';
+            var obj_icon=JSON.parse(localStorage.getItem("obj_icon"));
+            var list_obj=Array();
+            var id_icon_cur=this.value;
+            $.each(obj_icon,function(key,val){list_obj.push(JSON.parse(val));});
+            $(list_obj).each(function(index,icon_obj){
+                if(icon_obj.icon!=""){
+                    if(icon_obj.id==id_icon_cur)
+                        html+='<img class="rounded float-left m-2 frm_icon_field btn-info" style="width:48px;" role="button" icon-id="'+icon_obj.id+'" src="'+icon_obj.icon+'"/>';
+                    else
+                        html+='<img class="rounded float-left m-2 frm_icon_field" style="width:48px;" role="button" icon-id="'+icon_obj.id+'" src="'+icon_obj.icon+'"/>';
+                }
+            });
+            html+='</div>';
+        }
+        else if(this.type=='textarea'){
+            html+='<textarea class="form-control cr_field" id="'+this.name+'" placeholder="'+this.placeholder+'" rows="3">'+this.value+'</textarea>';
+        }
         else if(this.type=='id'){
             html+='<p id="'+this.name+'" class="cr_field">'+this.value+'</p>';
         }
@@ -96,7 +152,7 @@ class Carrot_Field{
             html+='<input type="'+this.type+'" value="'+this.value+'" class="form-control '+s_class+' cr_field" id="'+this.name+'" placeholder="'+this.placeholder+'">';
         }
 
-        if(this.tip!=null) html+='<small id="emailHelp" class="form-text text-muted">'+this.tip+'</small>';
+        if(this.tip!=null) html+='<small id="'+this.name+'_tip" class="form-text text-muted">'+this.tip+'</small>';
         html+='</div>';
         return html;
     }
@@ -210,14 +266,36 @@ class Carrot_Form{
             });
         }
 
+        $(".cr_field").each(function(){
+            var id_emp=$(this).attr("id");
+            var type_emp=$(this).attr("type");
+            if(type_emp=="color"){
+                var value_emp=$("#"+id_emp).attr("value_color");
+                $("#"+id_emp).colorpicker({color: value_emp,defaultPalette: "web",});
+            }
+            if(type_emp=="icon"){
+                $(".frm_icon_field").click(function(){
+                    var id_name_icon=$(this).attr("icon-id");
+                    $(".frm_icon_field").removeClass("btn-info");
+                    $("#"+id_emp).attr("value",id_name_icon);
+                    $("#"+id_emp+"_show_val").html(id_name_icon);
+                    $(this).addClass("btn-info");
+                });
+            }
+        });
+
         $("#btn_"+this.name+"_done").click(function(){
             var obj_frm=Object();
             $(".cr_field").each(function(){
                 var id_emp=$(this).attr("id");
                 var type_emp=$(this).attr("type");
                 var val_emp='';
+
                 if(type_emp=="code") val_emp=$(this).html();
+                else if(type_emp=="color") val_emp=$("#"+id_emp).colorpicker("val");
+                else if(type_emp=="icon") val_emp=$(this).attr("value");
                 else val_emp=$(this).val();
+
                 obj_frm[id_emp]=val_emp;
             });
 

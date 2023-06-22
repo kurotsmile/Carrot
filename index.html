@@ -1,4 +1,4 @@
-<html lang="en-US" class="dark">
+<html lang="en-US">
 <head>
     <title>Carrot Store</title>
     <meta charset="utf-8">
@@ -7,28 +7,35 @@
     <meta property="og:title" content="Carrot Store">
     <meta property="og:description" content="Carrot Store is an app store that introduces my gadgets and games to everyone in the world. These add-ons are all resources that I use in my apps, I don't want to waste them so I share them through this app store">
 
-    <link rel="shortcut icon" href="images/favicon.ico" type="images/x-icon"/>
-    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="assets/css/style.css" />
-    <link rel="stylesheet" type="text/css" href="assets/css/style.css" />
-    <link rel="stylesheet" type="text/css" href="assets/css/js-snackbar.min.css" />
-    <link href="fontawesome6.4.0/css/fontawesome.css" rel="stylesheet">
-    <link href="fontawesome6.4.0/css/brands.css" rel="stylesheet">
-    <link href="fontawesome6.4.0/css/solid.css" rel="stylesheet">
-    <link href="assets/plugins/messagebox/messagebox.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="assets/plugins/dataTables/jquery.dataTables.css" />
-    <link rel="stylesheet" href="assets/plugins/highlight/styles/tomorrow-night-blue.min.css" id="code_theme"/>
-    <link rel="manifest" href="manifest.json?ver=1.9" />
+    <link href="images/favicon.ico" rel="shortcut icon"  type="images/x-icon"/>
+    <link href="assets/plugins/bootstrap/bootstrap.min.css" rel="stylesheet"/>
+    <link href="assets/css/style.css" rel="stylesheet" type="text/css"/>
+    <link href="assets/css/all.min.css" rel="stylesheet" type="text/css"/>
+    <link href="fontawesome6.4.0/css/fontawesome.css" rel="stylesheet"/>
+    <link href="fontawesome6.4.0/css/brands.css" rel="stylesheet"/>
+    <link href="fontawesome6.4.0/css/solid.css" rel="stylesheet"/>
+    <link href="assets/plugins/messagebox/messagebox.min.css" rel="stylesheet"/>
+    <link href="assets/plugins/js-snackbar/js-snackbar.min.css" rel="stylesheet" type="text/css"/>
+    <link href="assets/plugins/dataTables/jquery.dataTables.css" rel="stylesheet"/>
+    <link href="assets/plugins/highlight/styles/tomorrow-night-blue.min.css" rel="stylesheet" id="code_theme"/>
+    <link href="assets/plugins/jquery-ui/jquery-ui.css" rel="stylesheet"/>
+    <link href="assets/plugins/evol-colorpicker/evol-colorpicker.min.css" rel="stylesheet"/>
+    <link href="manifest.json?ver=1.9" rel="manifest" />
 
-    <script src="assets/js/jquery-3.7.0.min.js"></script>
-    <script src="assets/js/popper.min.js" ></script>
-    <script src="assets/js/bootstrap.min.js" crossorigin="anonymous"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    <script src="assets/plugins/jquery/jquery-3.7.0.min.js"></script>
+    <script src="assets/plugins/jquery-ui/jquery-ui.min.js"></script>
+    <script src="assets/plugins/evol-colorpicker/evol-colorpicker.min.js"></script>
+    <script src="assets/plugins/bootstrap/popper.min.js" ></script>
+    <script src="assets/plugins/bootstrap/bootstrap.min.js" crossorigin="anonymous"></script>
     <script src="assets/plugins/scroll-fixed/jquery-scrolltofixed-min.js"></script>
     <script src="assets/plugins/testimonial/js/owl.carousel.min.js"></script>
-    <script src="assets/js/js-snackbar.min.js"></script>
-    <script src="assets/plugins/highlight/highlight.min.js"></script>
+    <script src="assets/plugins/js-snackbar/js-snackbar.min.js"></script>
     <script src="assets/plugins/messagebox/messagebox.min.js"></script>
     <script src="assets/plugins/dataTables/jquery.dataTables.js"></script>
+    <script src="assets/plugins/highlight/highlight.min.js" ></script>
     <script src="assets/js/carrot_site.js"></script>
 
 </head>
@@ -162,13 +169,8 @@
           <div class="modal-content" id="box_body"></div>
         </div>
       </div>
-
-      <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-      <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-      <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
       <script>
         var carrot=new Carrot_Site();
-
         $("#logo_carrot").on("contextmenu", function () { carrot.act_mode_dev(); return false; });
         $("#btn_download_json").click(function () {carrot.download_json();});
         $("#btn_recognition").click(function(){carrot.start_recognition();});
@@ -210,7 +212,7 @@
             };
             if(id_fun=="btn_mode_host") carrot.change_host_connection();
             if(id_fun=="btn_model_site") carrot.change_mode_site();
-            if(id_fun=="btn_add_app") carrot.show_box_add_or_edit_app(null,carrot.act_done_add_or_edit);
+            if(id_fun=="btn_add_app") carrot.app.show_box_add_or_edit_app(null);
             if(id_fun=='btn_add_icon') carrot.icon.show_box_add_or_edit_icon(null,carrot.act_done_add_or_edit);
             if(id_fun=='btn_add_wallpaper') carrot.background.show_box_add_or_edit_wallpaper(null);
             if(id_fun=='btn_add_lang') carrot.show_box_add_or_edit_lang(null);
@@ -289,10 +291,6 @@
             if(queryUserAvatar.docs.length>0) carrot.ai_lover.show_list_avatar(queryUserAvatar.docs);
         });
         $("#btn_add_avatar").click(function(){carrot.ai_lover.show_box_add_or_edit_avatar(null,carrot.act_done_add_or_edit);});
-
-        carrot.create_editor_code=()=>{
-            return CodeJar(document.querySelector('.editor'), hljs.highlightElement);
-        }
 
         $(document).ready(function () {
             var lang_page=carrot.get_param_url("lang");
