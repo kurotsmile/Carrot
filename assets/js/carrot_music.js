@@ -9,8 +9,11 @@ class Carrot_Music{
         this.carrot=carrot;
         this.load_obj_song();
 
-        carrot.register_page("music","?p=music","music");
-        carrot.menu.create("list_music").set_label("Music").set_lang("music").set_icon("fa-solid fa-music");
+        carrot.register_page("music","carrot.music.show_list_music()","carrot.music.edit()");
+        var btn_add=carrot.menu.create("add_music").set_label("Add Music").set_icon("fa-solid fa-square-plus").set_type("add");
+        $(btn_add).click(function(){carrot.music.add();});
+        var btn_list=carrot.menu.create("list_music").set_label("Music").set_lang("music").set_icon("fa-solid fa-music").set_type("main");
+        $(btn_list).click(function(){carrot.music.show_list_music();});
     }
 
     load_obj_song(){
@@ -519,6 +522,39 @@ class Carrot_Music{
         var seconds = Math.floor(seconds % 60);
         seconds = (seconds >= 10) ? seconds : "0" + seconds;
         return minutes + ":" + seconds;
+    }
+
+    add(){
+        var data_music=new Object();
+        data_music["id"]=this.carrot.create_id();
+        data_music["name"]="";
+        data_music["avatar"]="";
+        data_music["artist"]="";
+        data_music["mp3"]="";
+        data_music["lyrics"]="";
+        data_music["genre"]="";
+        data_music["link_ytb"]="";
+        data_music["album"]="";
+        data_music["year"]="";
+        data_music["lang"]=this.carrot.lang;
+        this.add_or_edit(data_music);
+    }
+
+    add_or_edit(data){
+        var frm=new Carrot_Form("frm_music",this.carrot);
+        frm.set_title("Add or Edit Music");
+        frm.create_field("id").set_label("ID").set_val(data["id"]).set_type("id");
+        frm.create_field("name").set_label("Name").set_val(data["name"]);
+        frm.create_field("avatar").set_label("Avatar (url)").set_val(data["avatar"]);
+        frm.create_field("artist").set_label("Artist").set_val(data["artist"]);
+        frm.create_field("mp3").set_label("Mp3 (Url)").set_val(data["mp3"]);
+        frm.create_field("lyrics").set_label("lyrics").set_val(data["lyrics"]).set_type("textarea");
+        frm.create_field("genre").set_label("Genre").set_val(data["genre"]);
+        frm.create_field("link_ytb").set_label("link ytb").set_val(data["genre"]);
+        frm.create_field("album").set_label("Album").set_val(data["album"]);
+        frm.create_field("year").set_label("Year").set_val(data["year"]);
+        frm.create_field("lang").set_label("Lang").set_val(data["lang"]);
+        frm.show();
     }
 }
 

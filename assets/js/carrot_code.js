@@ -85,8 +85,23 @@ class Carrot_Code{
         var carrot=this.carrot;
         var html='';
         var list_code=carrot.convert_obj_to_list(carrot.code.obj_codes);
+        var lis_lang_code=hljs.listLanguages();
 
-        html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-4"><button id="btn-add-code" class="btn btn-dark btn-sm"><i class="fa-solid fa-square-plus"></i> Add Code</button>  <a class="float-end" href=""><small class="fs-8">View All</small></a></h4>';
+        html+='<div class="row mb-2">';
+            html+='<div class="col-12 btn-group btn-sm" role="group" aria-label="Menu Lang Code">';
+                html+='<div class="btn-group mr-2 btn-sm" role="group" aria-label="First group">';
+                    html+='<button id="btn-add-code" class="btn btn-secondary btn-sm"><i class="fa-solid fa-square-plus"></i> Add Code</button>';
+
+                    html+='<div class="btn-group" role="group">';
+                        html+='<button class="btn btn-secondary dropdown-toggle btn-sm" type="button" id="btn_list_type_code" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-rectangle-list"></i> Select source code type</button>';
+                    html+='<div class="dropdown-menu" aria-labelledby="btn_list_type_code">';
+                        for(var i=0;i<lis_lang_code.length;i++) html+='<button role="button" class="btn btn-secondary btn-sm m-1"><i class="fa-brands fa-codepen"></i> '+lis_lang_code[i]+'</button>';
+                    html+='</div>';
+                    html+='</div>';
+                html+='</div>';
+            html+='</div>';
+        html+='</div>';
+
         html+='<div class="row m-0">';
         $(list_code).each(function(index,code){
             html+=carrot.code.box_item_code(code);

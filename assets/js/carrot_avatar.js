@@ -45,6 +45,7 @@ class Carrot_Avatar{
             item_avatar.set_icon(avt.icon);
             item_avatar.set_tip(avt.type);
             item_avatar.set_title(avt.id);
+            item_avatar.set_class("col-md-2 mb-3")
             html+=item_avatar.html();
         });
         html+="</div>";

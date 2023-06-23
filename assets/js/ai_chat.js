@@ -3,7 +3,7 @@ class AI_Chat{
     constructor(carrot){
         this.carrot=carrot;
         carrot.register_page("chat","carrot.ai.chat.list()","carrot.ai.chat.edit");
-        var btn_list_chat=carrot.menu.create_menu("list_chat").set_label("List Chat").set_icon("fa-solid fa-comments").set_type("main");
+        var btn_list_chat=carrot.menu.create_menu("list_chat").set_label("List Chat").set_icon("fa-solid fa-comments").set_type("main").set_lang("chat");
         $(btn_list_chat).click(function(){carrot.ai.chat.show_all_chat(carrot.lang);});
         var btn_add_chat=carrot.menu.create_menu("add_chat").set_label("Add Chat").set_icon("fa-solid fa-list").set_type("add");
         $(btn_add_chat).click(function(){carrot.ai.chat.show_add();});

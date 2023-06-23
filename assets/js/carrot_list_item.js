@@ -48,6 +48,10 @@ class Carrot_List_Item{
         this.set_db_collection(db_collection);
     }
 
+    set_class(s_class){
+        this.class=s_class;
+    }
+
     html(){
         var html='';
         var html="<div class='box_app "+this.class+"' id=\""+this.id+"\" key_search=\""+this.name+"\">";
@@ -57,7 +61,7 @@ class Carrot_List_Item{
                 else html+='<div class="pe-0 col-1 text-center"><i class="'+this.icon_font+' fa-2x"></i></div>';
                     html+='<div class="det mt-2 col-11">';
                     html+="<h5 class='mb-0 fs-6'>"+this.name+"</h5>";
-                        html+="<span class='fs-8'>"+this.tip+"</span>";
+                        html+="<span class='fs-8'>"+this.tip+"</span>"; 
                         if(this.body!=null){
                             html+="<div class='row'>";
                             html+=this.body;
