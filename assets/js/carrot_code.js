@@ -55,12 +55,17 @@ class Carrot_Code{
 
     show_list_code(){
         this.carrot.change_title_page("Code","?p=code","code");
-        if(this.carrot.get_ver_cur("code")){
-            if(this.obj_codes==null)
+        if(this.carrot.check_ver_cur("code")){
+            if(this.obj_codes==null){
+                this.carrot.log("Get data code from sever");
                 this.carrot.get_list_doc("code",this.act_get_list_code_from_sever);
-             else
+            }  
+            else{
+                this.carrot.log("Load data code from cache");
                 this.show_list_from_data();
+            }  
         }else{
+            this.carrot.log("Get data code from sever");
             this.carrot.get_list_doc("code",this.act_get_list_code_from_sever);
         }
 
