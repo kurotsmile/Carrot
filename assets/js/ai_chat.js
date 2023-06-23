@@ -2,7 +2,7 @@ class AI_Chat{
     carrot;
     constructor(carrot){
         this.carrot=carrot;
-        carrot.register_page("chat","carrot.ai.chat.list()","");
+        carrot.register_page("chat","carrot.ai.chat.list()","carrot.ai.chat.edit");
         var btn_list_chat=carrot.menu.create_menu("list_chat").set_label("List Chat").set_icon("fa-solid fa-comments").set_type("dev");
         $(btn_list_chat).click(function(){carrot.ai.chat.show_all_chat(carrot.lang);});
         var btn_add_chat=carrot.menu.create_menu("add_chat").set_label("Add Chat").set_icon("fa-solid fa-list").set_type("add");
@@ -27,12 +27,12 @@ class AI_Chat{
         data_new_chat["pater"]="0";
         data_new_chat["user"]=this.carrot.user.get_user_login_id();
         data_new_chat["limit"]="1";
-        data_new_chat["lang"]=this.carrot.lang;
+        data_new_chat["lang"]=this.carrot.ai.setting_lang_change;
         this.show_add_or_edit_chat(data_new_chat);
     }
 
-    show_edit(data,carrot){
-        if(data["lang"]==null) data["lang"]=carrot.ai.setting_lang_change;
+    edit(data,carrot){
+        if(data["lang"]!="") data["lang"]=carrot.ai.setting_lang_change;
         carrot.ai_lover.chat.show_add_or_edit_chat(data);
     }
 
@@ -101,12 +101,12 @@ class AI_Chat{
                 item_list.set_icon_font("fa-solid fa-comments");
             item_list.set_name(data.key);
             item_list.set_tip(data.msg);
-            item_list.set_db_collection("chat-"+carrot.ai_lover.setting_lang_change);
+            item_list.set_db_collection("chat-"+carrot.ai.setting_lang_change);
             html+=item_list.html();
         });
         html+='</div>';
         carrot.show(html);
-        carrot.ai_lover.check_event();
+        carrot.ai.chat.check_event();
     }
 
     check_event(){

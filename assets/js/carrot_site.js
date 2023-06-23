@@ -554,7 +554,7 @@ class Carrot_Site{
             var db_document=$(this).attr("db_document");
             carrot.log("Edit "+db_collection+" : "+db_document);
             if(carrot.obj_page[carrot.id_page]!=null){
-                carrot.get_doc(carrot.id_page,db_document,carrot.act_edit_by_page_register);
+                carrot.get_doc(db_collection,db_document,carrot.act_edit_by_page_register);
             }else{
                 if(db_collection=="app") carrot.get_doc(db_collection,db_document,carrot.app.show_edit_app_done);
                 if(db_collection=="icon") carrot.get_doc(db_collection,db_document,carrot.icon.show_edit_icon_done);

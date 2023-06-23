@@ -2,7 +2,7 @@ class Ai_Lover{
     key_block;
     chat;
     carrot;
-    setting_lang_change;
+    setting_lang_change="en";
     setting_lang_collection;
 
     constructor(cr) {
