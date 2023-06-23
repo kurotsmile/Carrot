@@ -4,7 +4,7 @@ class Carrot_List_Item{
     icon_font="fa-solid fa-star-of-life";
     carrot;
     name;
-    tip;
+    tip=null;
     body=null;
     class="col-md-4 mb-3";
     class_icon="pe-0 col-3";
@@ -66,11 +66,11 @@ class Carrot_List_Item{
                 else html+='<div class="pe-0 col-1 text-center"><i class="'+this.icon_font+' fa-2x"></i></div>';
                     html+='<div class="det mt-2 col-11">';
                     html+="<h5 class='mb-0 fs-6'>"+this.name+"</h5>";
-                        html+="<span class='fs-8'>"+this.tip+"</span>"; 
+                        if(this.tip!=null)html+="<span class='fs-8'>"+this.tip+"</span>"; 
                         if(this.body!=null){
                             html+="<div class='row'>";
                             html+=this.body;
-                            tml+="</div>";
+                            html+="</div>";
                         }
                         if(this.db_collection!=null)html+=this.carrot.btn_dev(this.db_collection,this.id);
                         html+="</div>";

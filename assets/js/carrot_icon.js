@@ -5,6 +5,11 @@ class Carrot_Icon{
     constructor(carrot){
         this.carrot=carrot;
         this.load_obj_icon();
+
+        var btn_add=carrot.menu.create("add_icon").set_label("Add Icon").set_type("add");
+        $(btn_add).click(function(){carrot.icon.show_box_add_or_edit_icon(null);});
+        var btn_list=carrot.menu.create("list_icon").set_label("Add Icon").set_type("add").set_lang("icon").set_icon("fa-solid fa-face-smile");
+        $(btn_list).click(function(){carrot.icon.show_all_icon();});
     }
 
     load_obj_icon(){
@@ -82,30 +87,23 @@ class Carrot_Icon{
         var carrot=this.carrot;
         carrot.change_title_page("Icon", "?p=icon","icon");
         var list_icon=carrot.convert_obj_to_list(this.obj_icon);
-        var html_main_contain="";
-        html_main_contain+='<div class="row m-0">';
+        var html="";
+        html+='<div class="row m-0">';
         $(list_icon).each(function(index,data_icon) {
             var s_url_icon="";
             if(data_icon.icon!=null) s_url_icon=data_icon.icon;
             if(s_url_icon=="") s_url_icon="images/64.png";
-
-            html_main_contain+="<div class='col-md-3 mb-3' id=\""+data_icon.id+"\" key_search=\""+data_icon.id+"\">";
-                html_main_contain+='<div class="app-cover p-2 shadow-md bg-white">';
-                    html_main_contain+='<div class="row">';
-                    html_main_contain+='<div class="img-cover pe-0 col-3"><img class="rounded" src="'+s_url_icon+'" alt="'+data_icon.id+'"></div>';
-                        html_main_contain+='<div class="det mt-2 col-9">';
-                            html_main_contain+="<h5 class='mb-0 fs-6'>"+data_icon.id+"</h5>";
-                            html_main_contain+="<span class='fs-8' style='color:"+data_icon.color+"'>"+data_icon.color+"</span>";
-                        html_main_contain+="</div>";
-                    html_main_contain+="</div>";
-
-                    html_main_contain+=carrot.btn_dev("icon",data_icon.id);
-
-                html_main_contain+="</div>";
-            html_main_contain+="</div>";
+            var item_icon=new Carrot_List_Item(carrot);
+            item_icon.set_db("icon");
+            item_icon.set_class("col-md-2 mb-2 col-sm-3")
+            item_icon.set_class_icon("col-md-12 mb-3 col-12 text-center");
+            item_icon.set_icon(s_url_icon);
+            item_icon.set_name(data_icon.id);
+            item_icon.set_body("<span class='fs-8' style='color:"+data_icon.color+"'>"+data_icon.color+"</span>");
+            html+=item_icon.html();
         });
-        html_main_contain+="</div>";
-        carrot.body.html(html_main_contain);
+        html+="</div>";
+        carrot.body.html(html);
         this.carrot.check_event();
     }
 }
