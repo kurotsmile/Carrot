@@ -94,7 +94,8 @@ class Carrot_Site{
         $('head').append('<script type="text/javascript" src="assets/js/carrot_list_item.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_audio.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_avatar.js?ver='+this.get_ver_cur("js")+'"></script>');
-
+        $('head').append('<script type="text/javascript" src="assets/js/ai_key_block.js?ver='+this.get_ver_cur("js")+'"></script>');
+    
         this.menu=new Carrot_Menu(this);
         this.app=new Carrot_App(this);
         this.user=new Carrot_user(this);
@@ -558,7 +559,6 @@ class Carrot_Site{
                 if(db_collection=="app") carrot.get_doc(db_collection,db_document,carrot.app.show_edit_app_done);
                 if(db_collection=="icon") carrot.get_doc(db_collection,db_document,carrot.icon.show_edit_icon_done);
                 if(db_collection=="song") carrot.get_doc(db_collection,db_document,carrot.music.show_add_or_edit_music);
-                if(carrot.id_page=="chat") carrot.get_doc(db_collection,db_document,carrot.ai_lover.chat.show_edit);
                 if(carrot.id_page=="address_book") carrot.get_doc(db_collection,db_document,carrot.user.show_box_add_or_edit_phone_book);
             }
         });
@@ -819,7 +819,6 @@ class Carrot_Site{
             else if(this.id_page=="address_book") $("#btn_address_book").click();
             else if(this.id_page=="wallpapers") this.show_all_wallpaper();
             else if(this.id_page=="icon") this.icon.show_all_icon();
-            else if(this.id_page=="chat") this.ai_lover.show_all_chat(this.lang);
             else this.show_home();
         };
     }

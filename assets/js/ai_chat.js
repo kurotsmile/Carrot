@@ -2,6 +2,11 @@ class AI_Chat{
     carrot;
     constructor(carrot){
         this.carrot=carrot;
+        carrot.register_page("chat","carrot.ai.chat.list()","");
+        var btn_list_chat=carrot.menu.create_menu("list_chat").set_label("List Chat").set_icon("fa-solid fa-comments").set_type("dev");
+        $(btn_list_chat).click(function(){carrot.ai.chat.show_all_chat(carrot.lang);});
+        var btn_add_chat=carrot.menu.create_menu("add_chat").set_label("Add Chat").set_icon("fa-solid fa-list").set_type("add");
+        $(btn_add_chat).click(function(){carrot.ai.chat.show_add();});
     }
 
     show_add(){
@@ -53,5 +58,63 @@ class AI_Chat{
         frm.create_field("limit").set_label("Limit Chat").set_val(data["limit"]).set_type("slider");
         frm.create_field("lang").set_label("Lang").set_val(data["lang"]);
         frm.show();
+    }
+
+    list(){
+        this.show_all_chat(this.carrot.lang);
+    }
+
+    show_all_chat(lang_show){
+        this.carrot.ai.setting_lang_change=lang_show;
+        this.carrot.change_title_page("Ai Lover", "?p=chat","chat");
+        this.carrot.db.collection("chat-"+this.carrot.ai.setting_lang_change).where("status","==","pending").limit(100).get().then((querySnapshot) => {
+            var obj_data=Object();
+            querySnapshot.forEach((doc) => {
+                var item_data=doc.data();
+                item_data["id"]=doc.id;
+                obj_data[doc.id]=JSON.stringify(item_data);
+            });
+            this.act_done_show_all_chat(obj_data,this.carrot);
+        })
+        .catch((error) => {
+            this.carrot.log(error.message)
+        });
+    }
+
+    act_done_show_all_chat(datas,carrot){
+        var html='';
+        html+='<div class="row m-0">';
+            html+='<div class="col-12 m-0 btn-toolba" role="toolbar" aria-label="Toolbar with button groups">';
+            html+='<div role="group" aria-label="First group">';
+            html+=carrot.ai.list_btn_lang_select();
+            html+='</div>';
+            html+='</div>';
+        html+='</div>';
+        html+='<div class="row m-0">';
+        var list_data=carrot.convert_obj_to_list(datas);
+        $(list_data).each(function(index,data){
+            var item_list=new Carrot_List_Item(carrot);
+            item_list.set_id(data.id);
+            if(data.parent==null)
+                item_list.set_icon_font("fa-sharp fa-solid fa-comment");
+            else
+                item_list.set_icon_font("fa-solid fa-comments");
+            item_list.set_name(data.key);
+            item_list.set_tip(data.msg);
+            item_list.set_db_collection("chat-"+carrot.ai_lover.setting_lang_change);
+            html+=item_list.html();
+        });
+        html+='</div>';
+        carrot.show(html);
+        carrot.ai_lover.check_event();
+    }
+
+    check_event(){
+        var ai_lover=this;
+        $(".btn-setting-lang-change").click(function(){
+            var key_change=$(this).attr("key_change");
+            ai_lover.show_all_chat(key_change);
+        });
+        this.carrot.check_event();
     }
 }

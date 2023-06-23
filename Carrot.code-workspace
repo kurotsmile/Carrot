@@ -4,5 +4,7 @@
 			"path": "."
 		}
 	],
-	"settings": {}
+	"settings": {
+		"firestore-explorer.serviceAccountKeyPath": "firebase-adminsdk-cxn3p@carrotstore.iam.gserviceaccount.com"
+	}
 }

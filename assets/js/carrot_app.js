@@ -209,11 +209,11 @@ class Carrot_App{
                             html+='</div>';
                             html+='<div class="col-md-4 col-6 text-center">';
                                 html+='<b>Ads <i class="fa-solid fa-window-restore"></i></b>';
-                                html+='<p class="lang" key_lang="in_app">Contains Ads</p>';
+                                html+='<p class="lang" key_lang="ads_in_app">Contains Ads</p>';
                             html+='</div>';
                             html+='<div class="col-md-4 col-6 text-center">';
                                 html+='<b>In-App <i class="fa-solid fa-cart-shopping"></i></b>';
-                                html+='<p class="lang" key_lang="contains_inapp">In-app purchases</p>';
+                                html+='<p class="lang" key_lang="in_app">In-app purchases</p>';
                             html+='</div>';
                             html+='<div class="col-md-4 col-6 text-center">';
                                 html+='<b><l class="lang" key_lang="author">Author</l> <i class="fa-solid fa-user-group-simple"></i></b>';

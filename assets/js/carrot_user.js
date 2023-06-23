@@ -232,23 +232,29 @@ class Carrot_user{
                                 html+='<p>11.6k <l class="lang"  key_lang="count_view">Reviews</l></p>';
                             html+='</div>';
                             html+='<div class="col-md-4 col-6 text-center">';
-                                html+='<b>5M+ <i class="fa-solid fa-envelopes-bulk"></i></b>';
-                                html+='<p class="lang" key_lang="count_download">'+data_user.email+'</p>';
+                                html+='<b>Email <i class="fa-solid fa-envelopes-bulk"></i></b>';
+                                html+='<p class="lang" key_lang="email">'+data_user.email+'</p>';
                             html+='</div>';
                             html+='<div class="col-md-4 col-6 text-center">';
-                                html+='<b><l class="lang" key_lang="genre">Genre</l> <i class="fa-solid fa-guitar"></i></b>';
-                                html+='<p>'+data_user.sex+'</p>';
+                                if(data_user.sex=="0"){
+                                    html+='<b><l class="lang" key_lang="gender">Sex</l> <i class="fa-solid fa-mars"></i></b>';
+                                    html+='<p class="lang" key_lang="boy">'+data_user.sex+'</p>';
+                                }
+                                else{
+                                    html+='<b><l class="lang" key_lang="sex">Sex</l> <i class="fa-solid fa-venus"></i></b>';
+                                    html+='<p class="lang" key_lang="girl">'+data_user.sex+'</p>';
+                                }
                             html+='</div>';
                             html+='<div class="col-md-4 col-6 text-center">';
                                 html+='<b>Ads <i class="fa-solid fa-window-restore"></i></b>';
-                                html+='<p class="lang" key_lang="in_app">Contains Ads</p>';
+                                html+='<p class="lang" key_lang="contains_ads">Contains Ads</p>';
                             html+='</div>';
                             html+='<div class="col-md-4 col-6 text-center">';
-                                html+='<b>In-App <i class="fa-solid fa-language"></i></b>';
-                                html+='<p class="lang" key_lang="contains_inapp">'+data_user.lang+'</p>';
+                                html+='<b>Country <i class="fa-solid fa-language"></i></b>';
+                                html+='<p>'+data_user.lang+'</p>';
                             html+='</div>';
                             html+='<div class="col-md-4 col-6 text-center">';
-                                html+='<b><l class="lang" key_lang="artist">Artist</l> <i class="fa-solid fa-user"></i></b>';
+                                html+='<b><l class="lang" key_lang="phone">Phone</l> <i class="fa-solid fa-user"></i></b>';
                                 html+='<p>'+data_user.phone+'</p>';
                             html+='</div>';
                         html+='</div>';
