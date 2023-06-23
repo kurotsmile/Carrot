@@ -17,8 +17,8 @@ class Ai_Lover{
     list_btn_lang_select(){
         var html='';
         var ai_lover=this;
-        html+='<div class="dropdown">';
-        html+='<button class="btn btn-secondary dropdown-toggle btn-sm mr-1 mt-1 mb-1" type="button" id="btn_list_lang_ai" data-bs-toggle="dropdown" aria-expanded="true" >';
+        html+='<div class="btn-group" role="group"">';
+        html+='<button class="btn btn-secondary dropdown-toggle btn-sm" type="button" id="btn_list_lang_ai" data-bs-toggle="dropdown" aria-expanded="true" >';
         html+='<i class="fa-solid fa-rectangle-list"></i> Change country';
         html+='</button>';
         html+='<div class="dropdown-menu" aria-labelledby="btn_list_lang_ai">';

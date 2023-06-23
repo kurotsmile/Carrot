@@ -8,6 +8,9 @@ class Carrot_Music{
     constructor(carrot){
         this.carrot=carrot;
         this.load_obj_song();
+
+        carrot.register_page("music","?p=music","music");
+        carrot.menu.create("list_music").set_label("Music").set_lang("music").set_icon("fa-solid fa-music");
     }
 
     load_obj_song(){

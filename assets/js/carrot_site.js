@@ -123,17 +123,21 @@ class Carrot_Site{
     }
 
     get_doc(s_collection,s_id_document,act_done){
+        Swal.showLoading();
         this.log("Get doc: collection:" + s_collection+" document:"+s_id_document);
         this.db.collection(s_collection).doc(s_id_document).get().then((doc) => {
             if (doc.exists) {
                 var data_obj = doc.data();
                 data_obj["id"]=doc.id;
+                Swal.close();
                 act_done(data_obj,this);
             } else {
                 console.log("No such document!");
-                act_done(null,this)
+                Swal.close();
+                act_done(null,this);
             }
         }).catch((error) => {
+            Swal.close();
             act_done(null,this);
             console.log("Error getting document:", error);
         });
@@ -897,29 +901,6 @@ class Carrot_Site{
             }
         }).catch((error) => {
             this.log(error.message)
-        });
-    }
-
-    show_all_block_chat_by_lang(s_key_lang=''){
-        if(s_key_lang=='') s_key_lang=this.lang;
-        this.db.collection("block").doc(s_key_lang).get().then((doc) => {
-            if (doc.exists) {
-                var data_list_key_block=doc.data();
-                data_list_key_block["lang"]=doc.id;
-                this.ai.show_list_block_chat(data_list_key_block);
-            }else{
-                $.MessageBox("Chưa có danh sách từ cấm!");
-                var data_list_key_block=new Object();
-                data_list_key_block["lang"]=s_key_lang;
-                data_list_key_block["chat"]=Array("new_key_block");
-                carrot.ai_lover.show_list_block_chat(data_list_key_block);
-            }
-        }).catch((error) => {
-            $.MessageBox("Chưa có danh sách từ cấm!");
-            var data_list_key_block=new Object();
-            data_list_key_block["lang"]=s_key_lang;
-            data_list_key_block["chat"]=Array("new_key_block");
-            carrot.ai_lover.show_list_block_chat(data_list_key_block);
         });
     }
 

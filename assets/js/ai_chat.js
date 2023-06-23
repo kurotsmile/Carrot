@@ -3,7 +3,7 @@ class AI_Chat{
     constructor(carrot){
         this.carrot=carrot;
         carrot.register_page("chat","carrot.ai.chat.list()","carrot.ai.chat.edit");
-        var btn_list_chat=carrot.menu.create_menu("list_chat").set_label("List Chat").set_icon("fa-solid fa-comments").set_type("dev");
+        var btn_list_chat=carrot.menu.create_menu("list_chat").set_label("List Chat").set_icon("fa-solid fa-comments").set_type("main");
         $(btn_list_chat).click(function(){carrot.ai.chat.show_all_chat(carrot.lang);});
         var btn_add_chat=carrot.menu.create_menu("add_chat").set_label("Add Chat").set_icon("fa-solid fa-list").set_type("add");
         $(btn_add_chat).click(function(){carrot.ai.chat.show_add();});
@@ -83,10 +83,11 @@ class AI_Chat{
 
     act_done_show_all_chat(datas,carrot){
         var html='';
-        html+='<div class="row m-0">';
+        html+='<div class="row mb-3">';
             html+='<div class="col-12 m-0 btn-toolba" role="toolbar" aria-label="Toolbar with button groups">';
-            html+='<div role="group" aria-label="First group">';
-            html+=carrot.ai.list_btn_lang_select();
+            html+='<div role="group" aria-label="First group"  class="btn-group mr-2">';
+                html+='<button type="button" class="btn btn-secondary btn-sm"><i class="fa-solid fa-circle-plus"></i> Add Chat</button>';
+                html+=carrot.ai.list_btn_lang_select();
             html+='</div>';
             html+='</div>';
         html+='</div>';
