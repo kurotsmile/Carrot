@@ -9,6 +9,8 @@ class Carrot_Code{
         carrot.register_page("code","carrot.code.show_list_code()","carrot.code.show_edit");
         var btn_add=carrot.menu.create("add_code").set_label("Add Code").set_icon("fa-solid fa-code").set_type("add");
         $(btn_add).click(function(){carrot.code.show_add_new();});
+        var btn_list=carrot.menu.create("list_code").set_label("Code").set_icon("fa-solid fa-code").set_type("main").set_lang("code");
+        $(btn_list).click(function(){carrot.code.show_list_code();});
     }
 
     load_obj_code(){
@@ -176,6 +178,10 @@ class Carrot_Code{
                                 html+='<b>5M+ <i class="fa-solid fa-download"></i></b>';
                                 html+='<p class="lang" key_lang="count_download">Downloads</p>';
                             html+='</div>';
+                            html+='<div class="col-md-4 col-6 text-center">';
+                                html+='<b><l class="lang" key_lang="interface">Interface</l> <i class="fa-solid fa-brush"></i></b>';
+                                html+='<p>'+data.code_theme+'</p>';
+                            html+='</div>';
                         html+='</div>';
 
                         html+='<div class="row pt-4">';
@@ -252,11 +258,9 @@ class Carrot_Code{
                         html+='</div>';
                         html+='<div class="col-md-2"></div>';
                     html+='</div>';
-    
                 html+='</div>';
             html+="</div>";
     
-
             html+='<div class="col-md-4">';
             html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-3 lang"  key_lang="related_songs">Related Code</h4>';
             var list_code_other= carrot.convert_obj_to_list(carrot.code.obj_codes).map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);

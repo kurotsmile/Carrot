@@ -43,7 +43,7 @@
 </head>
 
 <body>
-    <header class="head">
+    <header class="head" id="head">
         <div class="logo border-bottom">
             <img id="logo_carrot" class="w-100" src="images/logo.jpg" alt="Carrot Store" />
             <a class="navbar-toggler d-block d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"><i class="bi fa-solid fa-bars"></i></a>
@@ -54,18 +54,13 @@
                 <li id="btn_all_app" class="border-bottom btn-menu"><i class="fa-solid fa-mobile bi fs-6 me-2"></i> <i class="bi fs-6  bi-google-play"></i> <lang class="lang" key_lang="app">Applications</lang></li>
                 <li id="btn_all_game" class="border-bottom btn-menu"><i class="fa-solid fa-gamepad bi me-2 fs-6"></i> <lang class="lang" key_lang="game">Games</lang></li>
                 <li id="btn_address_book" class="border-bottom btn-menu"><i class="fa-solid fa-address-book fs-6 me-2"></i> <lang class="lang" key_lang="phone_book">Phone book</lang></li>
-                <li id="btn_list_music" class="border-bottom btn-menu"><i class="fa-solid fa-music fs-6 me-2"></i> Music</li>
                 <li id="btn_all_icon" class="border-bottom btn-menu"><i class="fa-solid fa-face-smile fs-6 me-2"></i> <lang class="lang" key_lang="icon">Icon</lang></li>
-                <li id="btn_code" class="border-bottom btn-menu"><i class="fa-solid fa-code fs-6 me-2"></i> Code</li>
-                <li id="btn_privacy_policy" class="border-bottom btn-menu"><i class="fa-sharp fa-solid fa-building-shield fs-6 me-2"></i> <lang class="lang" key_lang="privacy_policy">Privacy Policy</lang></li>
-                <li id="btn_about_us" class="border-bottom btn-menu"><i class="fa-solid fa-heart fs-6 me-2"></i> <lang class="lang" key_lang="about_us">About Us</lang></li>
                 <li class="btn-group dropup border-bottom dev btn-menu">
                     <div type="button" class="dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                         <i class="fa-solid fa-add fs-6 me-2"></i> Add Obj
                     </div>
                     <div class="dropdown-menu" id="list_menu_add">
                         <div class="dropdown-item btn-menu" id="btn_add_app" role="button"><i class="fa-solid fa-add fs-6 me-2"></i> Add App</div>
-                        <div class="dropdown-item btn-menu" id="btn_add_music" role="button"><i class="fa-solid fa-circle-plus fs-6 me-2"></i> Add Music</div>
                         <div class="dropdown-item btn-menu" id="btn_add_icon" role="button"><i class="fa-solid fa-add fs-6 me-2"></i> Add Icon</div>
                         <div class="dropdown-item btn-menu" id="btn_add_lang" role="button"><i class="fa-solid fa-add fs-6 me-2"></i> Add Lang</div>
                     </div>
@@ -166,10 +161,7 @@
                 });
             };
         });
-        $("#btn_add_music").click(function(){carrot.music.show_add_or_edit_music(null,carrot.act_done_add_or_edit)});
         $("#btn_acc_login_info").click(function(){carrot.user.show_user_info_login();})
-        $("#btn_code").click(function(){carrot.code.show_list_code()});
-        $("#btn_add_code").click(function(){carrot.code.show_add_new();});
         $(".btn-menu").click(function () {
             $(".btn-menu").removeClass("active");
             $(".btn-menu i").removeClass("fa-bounce");
@@ -184,14 +176,6 @@
             if (id_fun == "btn_list_music") carrot.music.show_list_music();
             if (id_fun == "btn_all_app") carrot.app.show_all_app();
             if (id_fun == "btn_all_game") carrot.app.show_all_game();
-            if (id_fun == "btn_about_us") {
-                $("#main_contain").load(carrot.get_url()+"about_us/" + carrot.lang+".html?ver="+carrot.get_ver_cur("page"));
-                carrot.change_title_page("About Us", "?p=about_us","about_us");
-            };
-            if (id_fun == "btn_privacy_policy") {
-                $("#main_contain").load(carrot.get_url()+"privacy_policy/" + carrot.lang+".html?ver="+carrot.get_ver_cur("page"));
-                carrot.change_title_page("Privacy Policy", "?p=privacy_policy","privacy_policy");
-            };
             if(id_fun=="btn_mode_host") carrot.change_host_connection();
             if(id_fun=="btn_model_site") carrot.change_mode_site();
             if(id_fun=="btn_add_app") carrot.app.show_box_add_or_edit_app(null);

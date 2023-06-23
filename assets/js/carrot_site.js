@@ -95,6 +95,8 @@ class Carrot_Site{
         $('head').append('<script type="text/javascript" src="assets/js/carrot_audio.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_avatar.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/ai_key_block.js?ver='+this.get_ver_cur("js")+'"></script>');
+        $('head').append('<script type="text/javascript" src="assets/js/carrot_about_us.js?ver='+this.get_ver_cur("js")+'"></script>');
+        $('head').append('<script type="text/javascript" src="assets/js/carrot_privacy_policy.js?ver='+this.get_ver_cur("js")+'"></script>');
     
         this.menu=new Carrot_Menu(this);
         this.app=new Carrot_App(this);
@@ -104,9 +106,11 @@ class Carrot_Site{
         this.icon=new Carrot_Icon(this);
         this.audio=new Carrot_Audio(this);
         this.background=new Carrot_Background(this);
+        this.avatar=new Carrot_Avatar(this);
         this.ai_lover=new Ai_Lover(this);
         this.ai=this.ai_lover;
-        this.avatar=new Carrot_Avatar(this);
+        this.privacy_policy=new Carrot_Privacy_Policy(this);
+        this.about_us=new Carrot_About_Us(this);
     };
 
     setup_sever_db(){
@@ -800,8 +804,7 @@ class Carrot_Site{
         if(this.obj_page[this.id_page]!=null){
             eval( this.obj_page[this.id_page].show);
         }else{
-            if(this.id_page == "privacy_policy") $("#btn_privacy_policy").click();
-            else if(this.id_page=="app"){
+            if(this.id_page=="app"){
                 var id_app=this.get_param_url("id");
                 if(id_app!=""){
                     id_app=decodeURI(id_app);
@@ -819,7 +822,6 @@ class Carrot_Site{
                     this.music.show_list_music();
                 }
             }
-            else if(this.id_page=="about_us") $("#btn_about_us").click();
             else if(this.id_page=="address_book") $("#btn_address_book").click();
             else if(this.id_page=="wallpapers") this.show_all_wallpaper();
             else if(this.id_page=="icon") this.icon.show_all_icon();

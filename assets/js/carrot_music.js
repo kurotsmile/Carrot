@@ -447,75 +447,7 @@ class Carrot_Music{
         html += '</section>';
         return html;
     }
-
-    show_add_or_edit_music(data_music,carrot){
-        var s_title_box='';
-        if(data_music==null)s_title_box="<b>Add Music</b>";
-        else s_title_box="<b>Update Music</b>";
-        var obj_music = Object();
-        obj_music["tip_icon"] = { type: "caption", message: "Thông tin cơ bản" };
-        if(data_music==null){
-            data_music=Object();
-            data_music["name"]='';
-            data_music["avatar"]='';
-            data_music["artist"]='';
-            data_music["mp3"]='';
-            data_music["lyrics"]='';
-            data_music["link_ytb"]='';
-            data_music["year"]='';
-            data_music["lang"]='';
-            data_music["genre"]='';
-            data_music["album"]='';
-        }else{
-            if(data_music["name"]=="") data_music["name"]=data_music["id"];
-        }
-
-        var arr_lang=Array();
-        $(carrot.list_lang).each(function(index,lang){arr_lang.push(lang.key);});
-
-        var arr_year=Array();
-        var year_cur=new Date().getFullYear();
-        for(var i=1980;i<=(year_cur+1);i++) arr_year.push(i);
-
-        if(data_music["year"]=='') data_music["year"]=year_cur;
-        if(data_music["lang"]=='') data_music["lang"]=carrot.lang;
-
-        var arr_genre=Array();
-        arr_genre.push("pop");
-        arr_genre.push("rock");
-        arr_genre.push("jazz");
-        arr_genre.push("r&b");
-        arr_genre.push("blues");
-        arr_genre.push("ballad");
-        arr_genre.push("hip hop");
-        arr_genre.push("country");
-        arr_genre.push("dance");
-        arr_genre.push("folk");
-        arr_genre.push("dance");
-        arr_genre.push("EDM");
-        arr_genre.push("k-pop");
-
-        if(data_music["id"]!="") obj_music["id"]={'type':'caption',message:"ID:"+data_music["id"]};
-        obj_music["name"]={'type':'input','defaultValue':data_music["name"], 'label':'Name'};
-        obj_music["avatar"]={'type':'input','defaultValue':data_music["avatar"], 'label':'Avatar (url)'};
-        obj_music["artist"]={'type':'input','defaultValue':data_music["artist"], 'label':'Artist'};
-        obj_music["mp3"]={'type':'input','defaultValue':data_music["mp3"], 'label':'Mp3 url'};
-        obj_music["lyrics"]={'type':'textarea','defaultValue':data_music["lyrics"], 'label':'lyrics','rows':'10'};
-        obj_music["genre"]={'type':'select','label':'Genre','options':arr_genre,defaultValue:data_music["genre"]};
-        obj_music["link_ytb"]={'type':'input','defaultValue':data_music["link_ytb"], 'label':'link Youtube (url)'};
-        obj_music["album"]={'type':'text','label':'Album',defaultValue:data_music["album"]};
-        obj_music["year"]={'type':'select','label':'Year','options':arr_year,defaultValue:data_music["year"]};
-        obj_music["lang"]={'type':'select','label':'Lang','options':arr_lang,defaultValue:data_music["lang"]};
-        customer_field_for_db(obj_music,'song','name','Add Music Successfully');
     
-        $.MessageBox({
-            message: s_title_box,
-            input: obj_music,
-            top: "auto",
-            buttonFail: "Cancel"
-        }).done(carrot.act_done_add_or_edit);
-    }
-
     formatTime(seconds) {
         var minutes = Math.floor(seconds / 60);
         minutes = (minutes >= 10) ? minutes : "0" + minutes;
@@ -542,6 +474,7 @@ class Carrot_Music{
 
     add_or_edit(data){
         var frm=new Carrot_Form("frm_music",this.carrot);
+        frm.set_db("song",data.id);
         frm.set_title("Add or Edit Music");
         frm.create_field("id").set_label("ID").set_val(data["id"]).set_type("id");
         frm.create_field("name").set_label("Name").set_val(data["name"]);
@@ -549,11 +482,32 @@ class Carrot_Music{
         frm.create_field("artist").set_label("Artist").set_val(data["artist"]);
         frm.create_field("mp3").set_label("Mp3 (Url)").set_val(data["mp3"]);
         frm.create_field("lyrics").set_label("lyrics").set_val(data["lyrics"]).set_type("textarea");
-        frm.create_field("genre").set_label("Genre").set_val(data["genre"]);
+
+        var genre_field=frm.create_field("genre").set_label("Genre").set_val(data["genre"]).set_type("select");
+        genre_field.add_option("pop","Pop music");
+        genre_field.add_option("pop","Pop");
+        genre_field.add_option("rock","Rock");
+        genre_field.add_option("jazz","jazz");
+        genre_field.add_option("r&b","R&B");
+        genre_field.add_option("blues","Blues");
+        genre_field.add_option("ballad","Ballad");
+        genre_field.add_option("hip hop","Hip Hop");
+        genre_field.add_option("country","Country");
+        genre_field.add_option("dance","Dance");
+        genre_field.add_option("folk","Folk");
+        genre_field.add_option("EDM","EDM");
+        genre_field.add_option("k-pop","K-POP");
+
         frm.create_field("link_ytb").set_label("link ytb").set_val(data["genre"]);
         frm.create_field("album").set_label("Album").set_val(data["album"]);
-        frm.create_field("year").set_label("Year").set_val(data["year"]);
-        frm.create_field("lang").set_label("Lang").set_val(data["lang"]);
+        var year_field=frm.create_field("year").set_label("Year").set_val(data["year"]).set_type("select");
+
+        for(var i=new Date().getFullYear();i>1980;i--) year_field.add_option(i,"Year "+i);
+
+        var lang_field=frm.create_field("lang").set_label("Lang").set_val(data["lang"]).set_type("select");
+        $(this.carrot.list_lang).each(function(index,lang_data){
+            lang_field.add_option(lang_data.key,lang_data.name);
+        });
         frm.show();
     }
 }

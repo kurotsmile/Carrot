@@ -7,6 +7,7 @@ class Carrot_List_Item{
     tip;
     body=null;
     class="col-md-4 mb-3";
+    class_icon="pe-0 col-3";
     db_collection=null;
     constructor(carrot){
         this.carrot=carrot;
@@ -52,12 +53,16 @@ class Carrot_List_Item{
         this.class=s_class;
     }
 
+    set_class_icon(s_class){
+        this.class_icon=s_class;
+    }
+
     html(){
         var html='';
         var html="<div class='box_app "+this.class+"' id=\""+this.id+"\" key_search=\""+this.name+"\">";
             html+='<div class="app-cover p-2 shadow-md bg-white">';
             html+='<div class="row">';
-                if(this.icon_img!=null) html+='<div role="button" class="img-cover pe-0 col-3 app_icon" app_id="'+this.id+'"><img class="rounded" src="'+this.icon_img+'" alt="'+this.name+'"></div>';
+                if(this.icon_img!=null) html+='<div role="button" class="img-cover '+this.class_icon+' app_icon" app_id="'+this.id+'"><img class="rounded" src="'+this.icon_img+'" alt="'+this.name+'"></div>';
                 else html+='<div class="pe-0 col-1 text-center"><i class="'+this.icon_font+' fa-2x"></i></div>';
                     html+='<div class="det mt-2 col-11">';
                     html+="<h5 class='mb-0 fs-6'>"+this.name+"</h5>";
