@@ -4,8 +4,9 @@ class Carrot_Background{
 
     constructor(carrot){
         this.carrot=carrot;
+        carrot.register_page("background","carrot.background.show_all_background()","carrot.background.edit")
         var add_bk=this.carrot.menu.create("add_background").set_label("Add Background").set_type("add");
-        $(add_bk).click(function(){carrot.background.show_box_add_or_edit_wallpaper(null);});
+        $(add_bk).click(function(){carrot.background.add();});
         var list_bk=this.carrot.menu.create("list_background").set_label("List Background").set_type("main").set_icon("fa-image fa-solid").set_lang("wallpaper");
         $(list_bk).click(function(){carrot.background.show_all_background()});
     }
@@ -50,6 +51,7 @@ class Carrot_Background{
         var carrot=this.carrot;
         var list_background=carrot.convert_obj_to_list(this.obj_background);
         var html="";
+        carrot.change_title_page("Background","?p=background","background");
         html+='<div class="row m-0">';
         $(list_background).each(function(index,data) {
             html+="<div class='box_app col-md-3 mb-3' id=\""+data.id+"\"  key_search=\""+data.id+"\">";
@@ -71,35 +73,27 @@ class Carrot_Background{
         carrot.body.html(html);
         carrot.check_event();
     }
-    
-    show_box_add_or_edit_wallpaper(data_wallpaper){
-        var s_title_box='';
-        var carrot=this.carrot;
-        if(data_wallpaper==null) s_title_box="<b>Add Wallpaper</b>";
-        else s_title_box="<b>Update Wallpaper</b>";
-    
-        var obj_wallpaper = Object();
-        obj_wallpaper["tip_wallpaper"] = { type: "caption", message: "Thông tin cơ bản" };
-    
-        if(data_wallpaper==null){
-            data_wallpaper=Object();
-            data_wallpaper["name"]='';
-            data_wallpaper["icon"]='';
-        }else{
-            if(data_wallpaper["name"]=="") data_wallpaper["name"]=data_wallpaper["id"];
-        }
-        obj_wallpaper["name"]={'type':'input','defaultValue':data_wallpaper["name"], 'label':'Name'};
-        obj_wallpaper["icon"]={'type':'input','defaultValue':data_wallpaper["icon"], 'label':'Icon (url)'};
-    
-        customer_field_for_db(obj_wallpaper,'background','name','Add wallpaper successfully');
-    
-        $.MessageBox({
-            message: s_title_box,
-            input: obj_wallpaper,
-            top: "auto",
-            buttonFail: "Cancel"
-        }).done(carrot.act_done_add_or_edit);
+
+    add(){
+        var data_bk=new Object();
+        data_bk["id"]=this.carrot.create_id();
+        data_bk["name"]="";
+        data_bk["icon"]="";
+        this.add_or_edit(data_bk);
+    }
+
+    edit(data,carrot){
+        carrot.background.add_or_edit(data);
     }
     
+    add_or_edit(data){
+        var frm=new Carrot_Form("frm_background",this.carrot);
+        frm.set_db("background",data.id);
+        frm.set_title("Add or Edit Background");
+        frm.create_field("id").set_label("ID").set_val(data.id).set_type("id");
+        frm.create_field("name").set_label("Name").set_val(data.name);
+        frm.create_field("icon").set_label("Icon (url)").set_val(data.icon);
+        frm.show();
+    }
 
 }

@@ -557,7 +557,6 @@ class Carrot_Site{
             }else{
                 if(db_collection=="app") carrot.get_doc(db_collection,db_document,carrot.app.show_edit_app_done);
                 if(db_collection=="icon") carrot.get_doc(db_collection,db_document,carrot.icon.show_edit_icon_done);
-                if(db_collection=="user-avatar") carrot.get_doc(db_collection,db_document,carrot.ai_lover.show_edit_avatar_done);
                 if(db_collection=="song") carrot.get_doc(db_collection,db_document,carrot.music.show_add_or_edit_music);
                 if(carrot.id_page=="chat") carrot.get_doc(db_collection,db_document,carrot.ai_lover.chat.show_edit);
                 if(carrot.id_page=="address_book") carrot.get_doc(db_collection,db_document,carrot.user.show_box_add_or_edit_phone_book);

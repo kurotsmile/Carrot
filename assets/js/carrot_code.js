@@ -4,8 +4,11 @@ class Carrot_Code{
 
     constructor(carrot){
         this.carrot=carrot;
-        carrot.register_page("code","carrot.code.show_list_code()","carrot.code.show_edit");
         this.load_obj_code();
+
+        carrot.register_page("code","carrot.code.show_list_code()","carrot.code.show_edit");
+        var btn_add=carrot.menu.create("add_code").set_label("Add Code").set_icon("fa-solid fa-code").set_type("add");
+        $(btn_add).click(function(){carrot.code.show_add_new();});
     }
 
     load_obj_code(){
