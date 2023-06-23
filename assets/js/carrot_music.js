@@ -9,7 +9,7 @@ class Carrot_Music{
         this.carrot=carrot;
         this.load_obj_song();
 
-        carrot.register_page("music","carrot.music.show_list_music()","carrot.music.edit()");
+        carrot.register_page("music","carrot.music.show_list_music()","carrot.music.edit");
         var btn_add=carrot.menu.create("add_music").set_label("Add Music").set_icon("fa-solid fa-square-plus").set_type("add");
         $(btn_add).click(function(){carrot.music.add();});
         var btn_list=carrot.menu.create("list_music").set_label("Music").set_lang("music").set_icon("fa-solid fa-music").set_type("main");
@@ -447,7 +447,7 @@ class Carrot_Music{
         html += '</section>';
         return html;
     }
-    
+
     formatTime(seconds) {
         var minutes = Math.floor(seconds / 60);
         minutes = (minutes >= 10) ? minutes : "0" + minutes;
@@ -470,6 +470,10 @@ class Carrot_Music{
         data_music["year"]="";
         data_music["lang"]=this.carrot.lang;
         this.add_or_edit(data_music);
+    }
+
+    edit(data,carrot){
+        carrot.music.add_or_edit(data);
     }
 
     add_or_edit(data){
@@ -498,7 +502,7 @@ class Carrot_Music{
         genre_field.add_option("EDM","EDM");
         genre_field.add_option("k-pop","K-POP");
 
-        frm.create_field("link_ytb").set_label("link ytb").set_val(data["genre"]);
+        frm.create_field("link_ytb").set_label("link ytb").set_val(data["link_ytb"]);
         frm.create_field("album").set_label("Album").set_val(data["album"]);
         var year_field=frm.create_field("year").set_label("Year").set_val(data["year"]).set_type("select");
 
