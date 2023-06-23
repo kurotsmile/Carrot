@@ -1,9 +1,10 @@
 class Carrot_Code{
     carrot;
-    obj_codes;
+    obj_codes=null;
 
-    constructor(cr){
-        this.carrot=cr;
+    constructor(carrot){
+        this.carrot=carrot;
+        carrot.register_page("code","carrot.code.show_list_code()","carrot.code.show_edit");
         this.load_obj_code();
     }
 
@@ -29,6 +30,7 @@ class Carrot_Code{
     }
 
     show_edit(data,carrot){
+        if(data==null) carrot.msg("Mã code này không còn tồn tại!","error");
         carrot.code.show_add_or_edit_code(data);
     }
 
@@ -52,7 +54,7 @@ class Carrot_Code{
     }
 
     show_list_code(){
-        this.carrot.change_title_page("Code","?p=code","Code");
+        this.carrot.change_title_page("Code","?p=code","code");
         if(this.carrot.get_ver_cur("code")){
             if(this.obj_codes==null)
                 this.carrot.get_list_doc("code",this.act_get_list_code_from_sever);

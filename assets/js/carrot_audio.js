@@ -3,6 +3,7 @@ class Carrot_Audio{
     constructor(carrot){
         this.carrot=carrot;
         var audio=this;
+        carrot.register_page("audio","carrot.audio.list()","carrot.audio.edit");
         var btn_add=this.carrot.menu.create("add_audio").set_label("Add audio").set_type("add");
         $(btn_add).click(function(){audio.add();});
         var btn_list=this.carrot.menu.create("list_aduio").set_label("List Audio").set_type("main").set_lang("audio").set_icon("fa-solid fa-guitar");

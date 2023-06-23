@@ -1,10 +1,12 @@
 class Carrot_Site{
+    /*Config Mode Web*/
     firebaseConfig_mainhost;
-    firebaseConfig_testhost;
     count_act_dev = 0;
     mode_site = "nomal";
     is_dev=false;
     is_localhost=false;
+
+    /*Obj page*/
     lang;
     lang_url="";
     lang_web=Object();
@@ -20,10 +22,13 @@ class Carrot_Site{
     name_document_cur="";
     id_page;
     body;
+    obj_page=new Object();
 
+    /*Firebase*/
     db;
     app;
 
+    /*Obj Main*/
     user;
     music;
     ai_lover;ai;
@@ -32,6 +37,7 @@ class Carrot_Site{
     audio;
     background;
     menu;
+    avatar;
     
     constructor(){
         var carrot=this;
@@ -87,6 +93,7 @@ class Carrot_Site{
         $('head').append('<script type="text/javascript" src="assets/js/carrot_menu.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_list_item.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_audio.js?ver='+this.get_ver_cur("js")+'"></script>');
+        $('head').append('<script type="text/javascript" src="assets/js/carrot_avatar.js?ver='+this.get_ver_cur("js")+'"></script>');
 
         this.menu=new Carrot_Menu(this);
         this.app=new Carrot_App(this);
@@ -98,6 +105,7 @@ class Carrot_Site{
         this.background=new Carrot_Background(this);
         this.ai_lover=new Ai_Lover(this);
         this.ai=this.ai_lover;
+        this.avatar=new Carrot_Avatar(this);
     };
 
     setup_sever_db(){
@@ -180,7 +188,6 @@ class Carrot_Site{
             this.log(error.message)
         });
     };
-
 
     check_version_data(){
         this.db.collection("setting_web").doc("version").get().then((doc) => {
@@ -275,6 +282,10 @@ class Carrot_Site{
         this.recognition.onstart = function(event) {carrot.log('SpeechRecognition.onstart');}
     }
 
+    start_recognition(){
+        this.recognition.start();
+    }
+
     act_mode_dev() {
         this.count_act_dev++;
         if (this.count_act_dev >= 3) {
@@ -315,10 +326,6 @@ class Carrot_Site{
         this.load_data_lang_web();
     }
 
-    start_recognition(){
-        this.recognition.start();
-    }
-
     show_error_connect_sever(){
         var htm_msg="<div class='row text-center'>";
         htm_msg="<div class='col-12 text-center'>";
@@ -350,6 +357,17 @@ class Carrot_Site{
             list_obj.push(JSON.parse(val));
         });
         return list_obj;
+    }
+
+    obj_to_array(objs){
+        return this.convert_obj_to_list(objs);
+    }
+
+    register_page(id_page,event_show_page,event_edit){
+        var obj_data=new Object();
+        obj_data["edit"]=event_edit;
+        obj_data["show"]= event_show_page;
+        this.obj_page[id_page]=obj_data;
     }
 
     show_home(){
@@ -534,14 +552,16 @@ class Carrot_Site{
             var db_collection=$(this).attr("db_collection");
             var db_document=$(this).attr("db_document");
             carrot.log("Edit "+db_collection+" : "+db_document);
-            if(db_collection=="app") carrot.get_doc(db_collection,db_document,carrot.app.show_edit_app_done);
-            if(db_collection=="icon") carrot.get_doc(db_collection,db_document,carrot.icon.show_edit_icon_done);
-            if(db_collection=="user-avatar") carrot.get_doc(db_collection,db_document,carrot.ai_lover.show_edit_avatar_done);
-            if(db_collection=="song") carrot.get_doc(db_collection,db_document,carrot.music.show_add_or_edit_music);
-            if(db_collection=="code") carrot.get_doc(db_collection,db_document,carrot.code.show_edit);
-            if(carrot.id_page=="chat") carrot.get_doc(db_collection,db_document,carrot.ai_lover.chat.show_edit);
-            if(carrot.id_page=="address_book") carrot.get_doc(db_collection,db_document,carrot.user.show_box_add_or_edit_phone_book);
-            if(db_collection=="audio") carrot.get_doc(db_collection,db_document,carrot.audio.edit);
+            if(carrot.obj_page[carrot.id_page]!=null){
+                carrot.get_doc(carrot.id_page,db_document,carrot.act_edit_by_page_register);
+            }else{
+                if(db_collection=="app") carrot.get_doc(db_collection,db_document,carrot.app.show_edit_app_done);
+                if(db_collection=="icon") carrot.get_doc(db_collection,db_document,carrot.icon.show_edit_icon_done);
+                if(db_collection=="user-avatar") carrot.get_doc(db_collection,db_document,carrot.ai_lover.show_edit_avatar_done);
+                if(db_collection=="song") carrot.get_doc(db_collection,db_document,carrot.music.show_add_or_edit_music);
+                if(carrot.id_page=="chat") carrot.get_doc(db_collection,db_document,carrot.ai_lover.chat.show_edit);
+                if(carrot.id_page=="address_book") carrot.get_doc(db_collection,db_document,carrot.user.show_box_add_or_edit_phone_book);
+            }
         });
 
         $(".btn_app_del").click(function(){
@@ -565,6 +585,10 @@ class Carrot_Site{
         });
 
         this.check_mode_site();
+    }
+
+    act_edit_by_page_register(data,carrot){
+        eval(carrot.obj_page[carrot.id_page].edit)(data,carrot);
     }
 
     act_search(s_key_search){
@@ -770,33 +794,35 @@ class Carrot_Site{
     check_show_by_id_page() {
         this.id_page = this.get_param_url("p");
         this.log("check_show_by_id_page : "+this.id_page);
-        if(this.id_page == "privacy_policy") $("#btn_privacy_policy").click();
-        else if(this.id_page=="app"){
-            var id_app=this.get_param_url("id");
-            if(id_app!=""){
-                id_app=decodeURI(id_app);
-                this.app.show_app_by_id(id_app);
+        if(this.obj_page[this.id_page]!=null){
+            eval( this.obj_page[this.id_page].show);
+        }else{
+            if(this.id_page == "privacy_policy") $("#btn_privacy_policy").click();
+            else if(this.id_page=="app"){
+                var id_app=this.get_param_url("id");
+                if(id_app!=""){
+                    id_app=decodeURI(id_app);
+                    this.app.show_app_by_id(id_app);
+                }
+                else this.app.show_all_app();
             }
-            else this.app.show_all_app();
-        }
-        else if(this.id_page=="game") this.app.show_all_game();
-        else if(this.id_page=="music"){
-            var id_songs=this.get_param_url("id");
-            if(id_songs!=null){
-                id_songs=decodeURI(id_songs);
-                this.music.show_info_music_by_id(id_songs);
-            }else{
-                this.music.show_list_music();
+            else if(this.id_page=="game") this.app.show_all_game();
+            else if(this.id_page=="music"){
+                var id_songs=this.get_param_url("id");
+                if(id_songs!=null){
+                    id_songs=decodeURI(id_songs);
+                    this.music.show_info_music_by_id(id_songs);
+                }else{
+                    this.music.show_list_music();
+                }
             }
-        }
-        else if(this.id_page=="about_us") $("#btn_about_us").click();
-        else if(this.id_page=="address_book") $("#btn_address_book").click();
-        else if(this.id_page=="wallpapers") this.show_all_wallpaper();
-        else if(this.id_page=="icon") this.icon.show_all_icon();
-        else if(this.id_page=="code") this.code.show_list_code();
-        else if(this.id_page=="chat") this.ai_lover.show_all_chat(this.lang);
-        else this.show_home();
-        this.log("ID_page:"+this.id_page);
+            else if(this.id_page=="about_us") $("#btn_about_us").click();
+            else if(this.id_page=="address_book") $("#btn_address_book").click();
+            else if(this.id_page=="wallpapers") this.show_all_wallpaper();
+            else if(this.id_page=="icon") this.icon.show_all_icon();
+            else if(this.id_page=="chat") this.ai_lover.show_all_chat(this.lang);
+            else this.show_home();
+        };
     }
 
     show(s_html){
@@ -899,7 +925,7 @@ class Carrot_Site{
         });
     }
 
-    msg(msg){
-        Swal.fire({icon: 'success',title: msg,showConfirmButton: false,timer: 1500})
+    msg(msg,s_icon='success'){
+        Swal.fire({icon:s_icon,title: msg,showConfirmButton: false,timer: 1500})
     }
 }
