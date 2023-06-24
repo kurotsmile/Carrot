@@ -664,7 +664,7 @@ class Carrot_Site{
             delete(data.db_document);
             delete(data.data);
             carrot.set_doc(s_collection,s_document,data_import);
-            if(s_collection=="app") carrot.delete_obj_app();
+            if(s_collection=="app") carrot.app.delete_obj_app();
             $.MessageBox("Import Data Json Success!!!");
         });
     }
@@ -783,7 +783,7 @@ class Carrot_Site{
         }
             
         this.check_mode_site();
-        this.delete_obj_app();
+        this.app.delete_obj_app();
         this.icon.delete_obj_icon();
         this.music.delete_obj_song();
         this.setup_sever_db();
