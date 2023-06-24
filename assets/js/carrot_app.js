@@ -8,9 +8,9 @@ class Carrot_App{
         this.carrot=carrot;
         this.load_obj_app();
 
-        carrot.register_page("home","carrot.app.list()","carrot.app.show_edit_app_done");
-        carrot.register_page("app","carrot.app.list_app()","carrot.app.show_edit_app_done");
-        carrot.register_page("game","carrot.app.list_game()","carrot.app.show_edit_app_done");
+        carrot.register_page("home","carrot.app.list()","carrot.app.show_edit_app_done","carrot.app.show_app_by_id");
+        carrot.register_page("app","carrot.app.list_app()","carrot.app.show_edit_app_done","carrot.app.show_app_by_id");
+        carrot.register_page("game","carrot.app.list_game()","carrot.app.show_edit_app_done","carrot.app.show_app_by_id");
 
         var btn_home=carrot.menu.create("home").set_label("Home").set_lang("home").set_icon("fa-solid fa-home").set_type("main");
         var btn_apps=carrot.menu.create("app").set_label("Applications").set_lang("app").set_icon("fa-solid fa-mobile").set_type("main");
@@ -146,7 +146,7 @@ class Carrot_App{
         var html_main_contain="";
         var carrot=this.carrot;
         html_main_contain+='<div id="all_app" class="row m-0">';
-        $(list_app).each(function(intdex,data_app) {
+        $(list_app).each(function(index,data_app) {
             html_main_contain+=carrot.app.box_app_item(data_app,'col-md-4 mb-3');
         });
         html_main_contain+="</div>";
@@ -155,24 +155,16 @@ class Carrot_App{
         this.check_btn_for_list_app();
     }
 
-    show_app_by_id(id_box_app){
-        this.carrot.log("Show app by id:"+id_box_app);
-        if(this.obj_app==null){
-            this.type_show="";
-            this.carrot.get_list_doc("app",this.get_data_app_done);
-            this.get_data_app
-            this.carrot.log("Load info app "+id_box_app+" from sever");
-            this.carrot.get_doc("app",id_box_app,this.show_app_info)
-        }else{
-            if(this.obj_app[id_box_app]==null){
-                this.carrot.log("Load info app "+id_box_app+" from sever");
-                this.carrot.get_doc("app",id_box_app,this.show_app_info)
+    show_app_by_id(id_box_app,carrot){
+        carrot.log("Show app by id:"+id_box_app);
+            if(carrot.app.obj_app[id_box_app]==null){
+                carrot.log("Load info app "+id_box_app+" from sever");
+                carrot.get_doc("app",id_box_app,carrot.app.show_app_info);
             }else{
-                this.carrot.log("Load info app "+id_box_app+" from cache");
-                var data_app=JSON.parse(this.obj_app[id_box_app]);
-                this.show_app_info(data_app,this.carrot);
+                carrot.log("Load info app "+id_box_app+" from cache");
+                var data_app=JSON.parse(carrot.app.obj_app[id_box_app]);
+                carrot.app.show_app_info(data_app,carrot);
             }
-        }
     }
 
     show_app_info(data,carrot){
@@ -338,7 +330,7 @@ class Carrot_App{
         var carrot=this.carrot;
         $(".app_icon").click(async function(){
             var id_box_app = $(this).attr("app_id");
-            carrot.app.show_app_by_id(id_box_app);
+            carrot.app.show_app_by_id(id_box_app,carrot);
         });
         carrot.check_event();
     }

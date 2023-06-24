@@ -8,6 +8,7 @@ class Carrot_Site{
 
     /*Obj page*/
     lang;
+    langs;
     lang_url="";
     lang_web=Object();
     list_link_store=null;
@@ -80,6 +81,7 @@ class Carrot_Site{
 
         this.body=$("#main_contain");
         
+        $('head').append('<script type="text/javascript" src="assets/js/carrot_langs.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/main.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_app.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_form.js?ver='+this.get_ver_cur("js")+'"></script>');
@@ -97,7 +99,8 @@ class Carrot_Site{
         $('head').append('<script type="text/javascript" src="assets/js/ai_key_block.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_about_us.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_privacy_policy.js?ver='+this.get_ver_cur("js")+'"></script>');
-    
+
+        this.langs=new Carrot_Langs(this);
         this.menu=new Carrot_Menu(this);
         this.app=new Carrot_App(this);
         this.user=new Carrot_user(this);
@@ -219,7 +222,7 @@ class Carrot_Site{
                 this.check_show_by_id_page();
             }
         }).catch((error) => {
-            this.log(err.message);
+            this.log(error.message);
             this.show_error_connect_sever();
             this.check_show_by_id_page();
         });
@@ -379,10 +382,11 @@ class Carrot_Site{
         return this.convert_obj_to_list(objs);
     }
 
-    register_page(id_page,event_show_page,event_edit){
+    register_page(id_page,event_show_page,event_edit,event_info=''){
         var obj_data=new Object();
         obj_data["edit"]=event_edit;
         obj_data["show"]= event_show_page;
+        obj_data["info"]= event_info;
         this.obj_page[id_page]=obj_data;
     }
 
@@ -788,7 +792,7 @@ class Carrot_Site{
         this.music.delete_obj_song();
         this.setup_sever_db();
         this.check_version_data();
-        $.MessageBox("Thay đổi kế độ kết nối cơ sở dữ liệu thành công! Load lại trang để làm mới các chức năng!");
+        this.msg("Thay đổi chế độ kết nối cơ sở dữ liệu thành công! Load lại trang để làm mới các chức năng!");
     }
 
     get_param_url(sParam) {
@@ -801,30 +805,22 @@ class Carrot_Site{
     }
 
     check_show_by_id_page() {
+        var carrot=this;
         this.id_page = this.get_param_url("p");
         this.log("check_show_by_id_page : "+this.id_page);
-        if(this.obj_page[this.id_page]!=null){
-            eval( this.obj_page[this.id_page].show);
+        var obj_page_show=this.obj_page[this.id_page];
+        console.log(obj_page_show);
+        if(obj_page_show!=null){
+            var id_obj=this.get_param_url("id");
+            if(id_obj!=undefined){
+                id_obj=decodeURI(id_obj);
+                eval(obj_page_show.info)(id_obj,carrot);
+            }
+            else{
+                eval(obj_page_show.show);
+            }
         }else{
-            if(this.id_page=="app"){
-                var id_app=this.get_param_url("id");
-                if(id_app!=""){
-                    id_app=decodeURI(id_app);
-                    this.app.show_app_by_id(id_app);
-                }
-                else this.app.show_all_app();
-            }
-            else if(this.id_page=="game") this.app.show_all_game();
-            else if(this.id_page=="music"){
-                var id_songs=this.get_param_url("id");
-                if(id_songs!=null){
-                    id_songs=decodeURI(id_songs);
-                    this.music.show_info_music_by_id(id_songs);
-                }else{
-                    this.music.show_list_music();
-                }
-            }
-            else this.app.list();
+            this.app.list();
         };
     }
 
