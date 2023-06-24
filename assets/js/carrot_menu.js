@@ -37,6 +37,10 @@ class Menu_Item extends HTMLLIElement{
             this.father="list_menu_add";
             this.mode="dropdown-item btn";
         }
+        else if(type=="setting"){
+            this.father="list_menu_setting";
+            this.mode="dropdown-item btn";
+        }
         else this.father=type;
 
         this.className=this.mode;

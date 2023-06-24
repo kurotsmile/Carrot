@@ -100,8 +100,8 @@ class Carrot_Site{
         $('head').append('<script type="text/javascript" src="assets/js/carrot_about_us.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_privacy_policy.js?ver='+this.get_ver_cur("js")+'"></script>');
 
-        this.langs=new Carrot_Langs(this);
         this.menu=new Carrot_Menu(this);
+        this.langs=new Carrot_Langs(this);
         this.app=new Carrot_App(this);
         this.user=new Carrot_user(this);
         this.music=new Carrot_Music(this);
