@@ -9,7 +9,7 @@ class Carrot_Music{
         this.carrot=carrot;
         this.load_obj_song();
 
-        carrot.register_page("music","carrot.music.show_list_music()","carrot.music.edit");
+        carrot.register_page("music","carrot.music.show_list_music()","carrot.music.edit","carrot.music.show_info_music_by_id");
         var btn_add=carrot.menu.create("add_music").set_label("Add Music").set_icon("fa-solid fa-square-plus").set_type("add");
         $(btn_add).click(function(){carrot.music.add();});
         var btn_list=carrot.menu.create("list_music").set_label("Music").set_lang("music").set_icon("fa-solid fa-music").set_type("main");
@@ -150,7 +150,7 @@ class Carrot_Music{
 
         $(".btn_info_music").click(function(){
             var aud_id=$(this).attr("aud-name");
-            carrot.music.show_info_music_by_id(aud_id);
+            carrot.music.show_info_music_by_id(aud_id,carrot);
         });
 
         $("#btn_mm_play").click(function(){
@@ -229,10 +229,10 @@ class Carrot_Music{
         this.create_session(song.name,song.artist,"carrotstore.com",song.avatar);
     }
 
-    show_info_music_by_id(s_name_id){
-        this.carrot.log("show_info_music_by_id:"+s_name_id);
-        var data=JSON.parse(this.obj_songs[s_name_id]);
-        this.show_info_music(data);
+    show_info_music_by_id(s_name_id,carrot){
+        carrot.log("show_info_music_by_id:"+s_name_id);
+        var data=JSON.parse(carrot.music.obj_songs[s_name_id]);
+        carrot.music.show_info_music(data);
     }
 
     show_info_music_by_index(index_music){
@@ -275,8 +275,8 @@ class Carrot_Music{
                                 html+='<p class="lang" key_lang="in_app">Contains Ads</p>';
                             html+='</div>';
                             html+='<div class="col-md-4 col-6 text-center">';
-                                html+='<b>In-App <i class="fa-solid fa-cart-shopping"></i></b>';
-                                html+='<p class="lang" key_lang="contains_inapp">In-app purchases</p>';
+                                html+='<b><l class="lang" key_lang="year">Year</l> <i class="fa-solid fa-calendar-days"></i></b>';
+                                html+='<p class="lang" key_lang="contains_inapp">'+data.year+'</p>';
                             html+='</div>';
                             html+='<div class="col-md-4 col-6 text-center">';
                                 html+='<b><l class="lang" key_lang="artist">Artist</l> <i class="fa-solid fa-user"></i></b>';
