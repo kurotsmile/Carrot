@@ -24,7 +24,7 @@ class Carrot_Langs{
         var langs=this;
         html+='<div class="btn-group" role="group"">';
         html+='<button class="btn btn-secondary dropdown-toggle btn-sm" type="button" id="btn_list_lang_ai" data-bs-toggle="dropdown" aria-expanded="true" >';
-        html+='<i class="fa-solid fa-rectangle-list"></i> Change country ('+langs.lang_setting+')';
+        html+='<i class="fa-solid fa-rectangle-list"></i> <l class="lang" key_lang="select_lang">Change country</l> ('+langs.lang_setting+')';
         html+='</button>';
         html+='<div class="dropdown-menu" aria-labelledby="btn_list_lang_ai">';
         $.each(this.carrot.list_lang,function(i,lang){

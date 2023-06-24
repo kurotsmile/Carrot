@@ -8,7 +8,7 @@ class Carrot_user{
         if(localStorage.getItem("obj_login")!=null) this.obj_login=JSON.parse(localStorage.getItem("obj_login"));
         if (localStorage.getItem("obj_phone_book") != null) this.obj_phone_book=JSON.parse(localStorage.getItem("obj_phone_book"));
 
-        carrot.register_page("phone_book","carrot.user.list()","carrot.user.show_box_add_or_edit_phone_book");
+        carrot.register_page("phone_book","carrot.user.list()","carrot.user.show_box_add_or_edit_phone_book","carrot.user.show_user_info");
         var btn_list=carrot.menu.create("phone_book").set_label("Phone book").set_lang("phone_book").set_icon("fa-solid fa-address-book").set_type("main");
         $(btn_list).click(function(){carrot.user.list();});
     }
@@ -128,7 +128,7 @@ class Carrot_user{
     show_all_phone_book_from_list(){
         var carrot=this.carrot;
         var list_phone_book=this.carrot.convert_obj_to_list(this.obj_phone_book);
-        this.carrot.change_title_page("Address Book", "?p=address_book","address_book");
+        this.carrot.change_title_page("Phone Book", "?p=phone_book","phone_book");
         $("#main_contain").html("");
         var html="";
         html+='<div class="row m-0">';
@@ -218,7 +218,7 @@ class Carrot_user{
         var url_avatar='';
         if(data_user.avatar!=null) url_avatar=data_user.avatar;
         if(url_avatar=="") url_avatar="images/avatar_default.png";
-        carrot.change_title_page(data_user.name,"?p=address_book&id="+data_user.id);
+        carrot.change_title_page(data_user.name,"?p=phone_book&id="+data_user.id);
         var html='<div class="section-container p-2 p-xl-4">';
         html+='<div class="row">';
             html+='<div class="col-md-8 ps-4 ps-lg-3">';

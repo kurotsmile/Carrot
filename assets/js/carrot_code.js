@@ -276,6 +276,7 @@ class Carrot_Code{
     
         html+="</div>";
         html+="</div>";
+        $("#code_theme").attr("href","assets/plugins/highlight/styles/"+data.code_theme);
         carrot.show(html);
         carrot.code.check_event();
         hljs.highlightAll();
