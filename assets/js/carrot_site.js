@@ -809,7 +809,6 @@ class Carrot_Site{
         this.id_page = this.get_param_url("p");
         this.log("check_show_by_id_page : "+this.id_page);
         var obj_page_show=this.obj_page[this.id_page];
-        console.log(obj_page_show);
         if(obj_page_show!=null){
             var id_obj=this.get_param_url("id");
             if(id_obj!=undefined){

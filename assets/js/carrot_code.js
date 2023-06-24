@@ -50,7 +50,7 @@ class Carrot_Code{
 
         var title_code=frm.create_field("title","Title");
         title_code.set_val(data_code.title);
-        frm.set_db("code",data_code.id);
+        frm.set_db("code","id");
         var code_code=frm.create_field("code","Code");
         code_code.set_type("code");
         code_code.set_val(data_code.code);

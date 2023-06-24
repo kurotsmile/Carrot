@@ -83,13 +83,13 @@ class Carrot_Icon{
     }
 
     edit(data_icon,carrot){
-        this.add_or_edit(data_icon);
+        carrot.icon.add_or_edit(data_icon);
     }
 
     add_or_edit(data){
         var frm=new Carrot_Form("frm_icon",this.carrot);
         frm.set_title("Add icon or_update");
-        frm.set_db("icon",data.id);
+        frm.set_db("icon","name");
         frm.create_field("id").set_label("ID").set_val(data["id"]).set_type("id");
         frm.create_field("name").set_label("Name").set_val(data["name"]);
         frm.create_field("icon").set_label("Icon (Url)").set_val(data["icon"]);

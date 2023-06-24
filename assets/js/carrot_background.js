@@ -88,7 +88,7 @@ class Carrot_Background{
     
     add_or_edit(data){
         var frm=new Carrot_Form("frm_background",this.carrot);
-        frm.set_db("background",data.id);
+        frm.set_db("background","id");
         frm.set_title("Add or Edit Background");
         frm.create_field("id").set_label("ID").set_val(data.id).set_type("id");
         frm.create_field("name").set_label("Name").set_val(data.name);

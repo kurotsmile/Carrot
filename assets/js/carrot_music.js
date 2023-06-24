@@ -478,7 +478,7 @@ class Carrot_Music{
 
     add_or_edit(data){
         var frm=new Carrot_Form("frm_music",this.carrot);
-        frm.set_db("song",data.id);
+        frm.set_db("song","id");
         frm.set_title("Add or Edit Music");
         frm.create_field("id").set_label("ID").set_val(data["id"]).set_type("id");
         frm.create_field("name").set_label("Name").set_val(data["name"]);

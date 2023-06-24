@@ -39,7 +39,7 @@ class AI_Chat{
     show_add_or_edit_chat(data){
         var frm=new Carrot_Form("chat",this.carrot);
         frm.set_title("Add Chat");
-        frm.set_db("chat-"+data["lang"],data["id"]);
+        frm.set_db("chat-"+data["lang"],"id");
         frm.create_field("id").set_label("Id chat").set_val(data["id"]).set_type("id");
         frm.create_field("key").set_label("Key").set_val(data["key"]).set_tip("Câu hỏi người dùng đối với Ai")
         frm.create_field("msg").set_label("Msg").set_val(data["msg"]).set_tip("Câu trả lời của Ai khi được hỏi đúng với từ khóa").set_type("textarea");

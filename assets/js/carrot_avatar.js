@@ -23,7 +23,7 @@ class Carrot_Avatar{
     add_or_edit(data){
         var frm=new Carrot_Form("frm_avatar",this.carrot);
         frm.set_title("Add or Edit Avatar");
-        frm.set_db("user-avatar",data.id);
+        frm.set_db("user-avatar","id");
         frm.create_field("id").set_label("ID").set_type("id").set_val(data.id);
         frm.create_field("type").set_label("Type").add_option("boy","Boy").add_option("girl","Girl").set_val(data.type).set_type("select");
         frm.create_field("icon").set_label("Icon").set_val(data.icon);

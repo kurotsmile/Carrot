@@ -25,7 +25,7 @@ class Carrot_Audio{
 
     add_or_edit(data){
         var frm_add=new Carrot_Form("frm_audio",this.carrot);
-        frm_add.set_db("audio",data.id);
+        frm_add.set_db("audio","id");
         frm_add.set_title("Add Or Edit Audio");
         frm_add.create_field("id").set_label("ID").set_type("id").set_val(data["id"]);
         frm_add.create_field("name").set_label("Name").set_val(data["name"]);

@@ -28,7 +28,7 @@ class Carrot_Field{
     add_class(s_class){
         this.list_class.push(s_class);
         return this;
-    }
+    } 
 
     set_tip(tip){
         this.tip=tip;
@@ -42,6 +42,7 @@ class Carrot_Field{
 
     val(val){this.set_val(val);return this;}
     set_val(val){this.value=val;return this;}
+    set_value(val){this.value=val;return this;}
 
     set_option(arr_options){
         this.options=arr_options;
@@ -167,6 +168,7 @@ class Carrot_Form{
     db_document;
     type;
     is_editor_code=false;
+    msg_done="Add or Edit success!";
 
     constructor(name,carrot){
         this.name=name;
@@ -177,18 +179,22 @@ class Carrot_Form{
     set_db(s_collection,s_document){
         this.set_collection(s_collection);
         this.set_document(s_document);
+        return this;
     }
 
     set_collection(s_collection){
         this.db_collection=s_collection;
+        return this;
     }
 
     set_document(s_document){
         this.db_document=s_document;
+        return this;
     }
 
     set_title(title){
         this.title=title;
+        return this;
     }
 
     create_field(name){
@@ -205,6 +211,17 @@ class Carrot_Form{
 
     add_field(field){
         this.list_field.push(field);
+        return this;
+    }
+
+    set_msg(s_msg){
+        this.msg_done=s_msg;
+        return this;
+    }
+
+    set_msg_done(s_msg){
+        this.msg_done=s_msg;
+        return this;
     }
     
     html(){
@@ -300,8 +317,8 @@ class Carrot_Form{
                 obj_frm[id_emp]=val_emp;
             });
 
-            carrot.set_doc(frm.db_collection,frm.db_document,obj_frm);
-            $.MessageBox("Add code success!");
+            carrot.set_doc(frm.db_collection,obj_frm[frm.db_document],obj_frm);
+            carrot.msg(frm.msg_done);
             $('#box').modal('toggle'); 
         });
 
