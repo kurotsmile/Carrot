@@ -120,7 +120,7 @@ class Carrot_Site{
         this.log("setup_sever_db");
         this.app =firebase.initializeApp(this.firebaseConfig_mainhost);
         this.db = this.app.firestore();
-        if (this.is_localhost) this.db.useEmulator('localhost', 8082);
+        if (this.is_localhost) this.db.useEmulator('localhost', 8080);
         if(this.db==null) this.show_error_connect_sever();
     }
 
@@ -873,31 +873,6 @@ class Carrot_Site{
         html+='</div>';
         carrot.show(html);
         carrot.check_event();
-    }
-
-    show_setting_lang_by_key(s_key_lang_change="",s_collection){    
-        var data_obj_lang_tag=new Object();
-        var data_obj_lang_change=new Object();
-        
-        this.ai.setting_lang_change=s_key_lang_change;
-        this.db.collection(s_collection).doc("en").get().then((doc) => {
-            if (doc.exists) {
-                data_obj_lang_tag = doc.data();
-                data_obj_lang_tag["id"]=doc.id;
-                this.db.collection(s_collection).doc(s_key_lang_change).get().then((doc) => {
-                    if (doc.exists) {
-                        data_obj_lang_change = doc.data();
-                        data_obj_lang_change["id"]=doc.id;
-                        this.ai.setting_lang_collection=s_collection;
-                        this.ai.show_setting_lang(data_obj_lang_tag,data_obj_lang_change);
-                    }
-                }).catch((error) => {
-                    this.log(error.message)
-                });
-            }
-        }).catch((error) => {
-            this.log(error.message)
-        });
     }
 
     msg(msg,s_icon='success'){

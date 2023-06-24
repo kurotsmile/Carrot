@@ -23,9 +23,9 @@
     <link href="assets/plugins/sweetalert2/sweetalert2.min.css" rel="stylesheet"/>
     <link href="manifest.json?ver=1.9" rel="manifest" />
 
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    <script src="assets/plugins/firebase/firebase-app-compat.js"></script>
+    <script src="assets/plugins/firebase/firebase-firestore-compat.js"></script>
+    <script src="assets/plugins/firebase/firebase-auth-compat.js"></script>
     <script src="assets/plugins/jquery/jquery-3.7.0.min.js"></script>
     <script src="assets/plugins/jquery-ui/jquery-ui.min.js"></script>
     <script src="assets/plugins/evol-colorpicker/evol-colorpicker.min.js"></script>
@@ -62,18 +62,6 @@
                         <div class="dropdown-item btn-menu" id="btn_import_json_file" role="button"><i class="fa-solid fa-file-import fs-6 me-2"></i> Import Collection (File)</div>
                         <div class="dropdown-item btn-menu" id="btn_download_json_doc" role="button"><i class="fa-solid fa-file-lines fs-6 me-2"></i> Export Doc</div>
                         <div class="dropdown-item btn-menu" id="btn_import_json_doc" role="button"><i class="fa-solid fa-file-lines fs-6 me-2"></i> Import Doc (Url)</div>
-                    </div>
-                </li>
-
-                <li class="btn-group dropup border-bottom dev btn-menu">
-                    <div type="button" class="dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                        <i class="fa-solid fa-language fs-6 me-2"></i> Language Data
-                    </div>
-
-                    <div class="dropdown-menu">
-                        <div class="dropdown-item btn-menu" id="btn_setting_lang_app" role="button"><i class="fa-solid fa-language fs-6 me-2"></i> Lang all app</div>
-                        <div class="dropdown-item btn-menu" id="btn_setting_lang_ailover" role="button"><i class="fa-solid fa-language fs-6 me-2"></i> Lang Ai Lover</div>
-                        <div class="dropdown-item btn-menu" id="btn_setting_lang_web" role="button"><i class="fa-solid fa-language fs-6 me-2"></i> Lang web</div>
                     </div>
                 </li>
 
@@ -171,9 +159,6 @@
             if(id_fun=='btn_download_json_doc') carrot.download_json_doc();
             if(id_fun=='btn_import_json_doc') carrot.show_import_json_box(null);
             if(id_fun=='btn_import_json_file') carrot.show_import_json_file();
-            if(id_fun=='btn_setting_lang_app') carrot.show_setting_lang_by_key(carrot.lang,'lang_app');
-            if(id_fun=='btn_setting_lang_ailover') carrot.show_setting_lang_by_key(carrot.lang,'lang_app_ai_lover');
-            if(id_fun=='btn_setting_lang_web') carrot.show_setting_lang_by_key(carrot.lang,'lang_web');
         });
 
         $("#btn_login").click(function () {

@@ -5,6 +5,49 @@
 		}
 	],
 	"settings": {
-		"firestore-explorer.serviceAccountKeyPath": "firebase-adminsdk-cxn3p@carrotstore.iam.gserviceaccount.com"
+		"firestore-explorer.serviceAccountKeyPath": "firebase-adminsdk-cxn3p@carrotstore.iam.gserviceaccount.com",
+		"vscode-edge-devtools.browserFlavor": "Default",
+		"vscode-edge-devtools.port": 8080
+	},
+	"launch": {
+		"configurations": [
+			{
+				"name": "Launch Edge",
+				"request": "launch",
+				"type": "msedge",
+				"url": "http://localhost:8080",
+				"webRoot": "${workspaceFolder}"
+			},
+			{
+				"name": "Launch Edge",
+				"request": "launch",
+				"type": "msedge",
+				"url": "http://localhost:8080",
+				"webRoot": "${workspaceFolder}"
+			},
+			{
+				"type": "chrome",
+				"request": "launch",
+				"name": "Carrot Store",
+				"url": "http://localhost",
+				"webRoot": "${workspaceFolder}"
+			}
+		],
+		"compounds": [
+			{
+				"name": "Launch Edge Headless and attach DevTools",
+				"configurations": [
+					"Launch Microsoft Edge in headless mode",
+					"Open Edge DevTools"
+				]
+			},
+			{
+				"name": "Launch Edge and attach DevTools",
+				"configurations": [
+					"Launch Microsoft Edge",
+					"Open Edge DevTools"
+				]
+			}
+		]
 	}
 }

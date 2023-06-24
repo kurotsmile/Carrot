@@ -169,6 +169,7 @@ class Carrot_Form{
     type;
     is_editor_code=false;
     msg_done="Add or Edit success!";
+    icon_font="fa-solid fa-window-restore";
 
     constructor(name,carrot){
         this.name=name;
@@ -223,13 +224,18 @@ class Carrot_Form{
         this.msg_done=s_msg;
         return this;
     }
+
+    set_icon_font(s_icon){
+        this.icon_font=s_icon;
+        return this;
+    }
     
     html(){
         var html='';
         if(this.title=="") this.title=this.name;
 
         html+='<div class="modal-header">';
-        html+='<h5 class="modal-title">'+this.title+'</h5>';
+        html+='<h5 class="modal-title"><i class="'+this.icon_font+'"></i> '+this.title+'</h5>';
         html+='<button type="button" class="close box_close" data-dismiss="modal" aria-label="Close"><i class="fa-solid fa-circle-xmark"></i></button>';
         html+='</div>';
 

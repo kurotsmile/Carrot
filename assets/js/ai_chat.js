@@ -1,11 +1,12 @@
 class AI_Chat{
     carrot;
+    icon="fa-solid fa-comments";
     constructor(carrot){
         this.carrot=carrot;
         carrot.register_page("chat","carrot.ai.chat.list()","carrot.ai.chat.edit");
-        var btn_list_chat=carrot.menu.create_menu("list_chat").set_label("List Chat").set_icon("fa-solid fa-comments").set_type("main").set_lang("chat");
+        var btn_list_chat=carrot.menu.create_menu("list_chat").set_label("List Chat").set_icon(this.icon).set_type("main").set_lang("chat");
+        var btn_add_chat=carrot.menu.create_menu("add_chat").set_label("Add Chat").set_icon(this.icon).set_type("add");
         $(btn_list_chat).click(function(){carrot.ai.chat.show_all_chat(carrot.lang);});
-        var btn_add_chat=carrot.menu.create_menu("add_chat").set_label("Add Chat").set_icon("fa-solid fa-list").set_type("add");
         $(btn_add_chat).click(function(){carrot.ai.chat.show_add();});
     }
 
@@ -28,17 +29,17 @@ class AI_Chat{
         data_new_chat["user"]=this.carrot.user.get_user_login_id();
         data_new_chat["limit"]="1";
         data_new_chat["lang"]=this.carrot.ai.setting_lang_change;
-        this.show_add_or_edit_chat(data_new_chat);
+        this.show_add_or_edit_chat(data_new_chat).set_title("Add chat").show();
     }
 
     edit(data,carrot){
         if(data["lang"]!="") data["lang"]=carrot.ai.setting_lang_change;
-        carrot.ai_lover.chat.show_add_or_edit_chat(data);
+        carrot.ai_lover.chat.show_add_or_edit_chat(data).set_title("Update Chat").show();
     }
 
     show_add_or_edit_chat(data){
         var frm=new Carrot_Form("chat",this.carrot);
-        frm.set_title("Add Chat");
+        frm.set_icon_font(this.icon);
         frm.set_db("chat-"+data["lang"],"id");
         frm.create_field("id").set_label("Id chat").set_val(data["id"]).set_type("id");
         frm.create_field("key").set_label("Key").set_val(data["key"]).set_tip("Câu hỏi người dùng đối với Ai")
@@ -57,7 +58,7 @@ class AI_Chat{
         frm.create_field("user").set_label("User").set_val(data["user"]);
         frm.create_field("limit").set_label("Limit Chat").set_val(data["limit"]).set_type("slider");
         frm.create_field("lang").set_label("Lang").set_val(data["lang"]);
-        frm.show();
+        return frm;
     }
 
     list(){
@@ -87,7 +88,7 @@ class AI_Chat{
             html+='<div class="col-12 m-0 btn-toolba" role="toolbar" aria-label="Toolbar with button groups">';
             html+='<div role="group" aria-label="First group"  class="btn-group mr-2">';
                 html+='<button id="btn_add_chat" type="button" class="btn btn-secondary btn-sm"><i class="fa-solid fa-circle-plus"></i> Add Chat</button>';
-                html+=carrot.ai.list_btn_lang_select();
+                html+=carrot.langs.list_btn_lang_select();
             html+='</div>';
             html+='</div>';
         html+='</div>';
@@ -97,11 +98,12 @@ class AI_Chat{
             var item_list=new Carrot_List_Item(carrot);
             item_list.set_id(data.id);
             if(data.parent==null)
-                item_list.set_icon_font("fa-sharp fa-solid fa-comment");
+                item_list.set_icon_font("fa-sharp fa-solid fa-comment mt-2");
             else
-                item_list.set_icon_font("fa-solid fa-comments");
+                item_list.set_icon_font("fa-solid fa-comments mt-2");
             item_list.set_name(data.key);
             item_list.set_tip(data.msg);
+            item_list.set_class_body("mt-2 col-9");
             item_list.set_db_collection("chat-"+carrot.ai.setting_lang_change);
             html+=item_list.html();
         });

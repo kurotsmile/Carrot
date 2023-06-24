@@ -6,7 +6,7 @@ class Carrot_Code{
         this.carrot=carrot;
         this.load_obj_code();
 
-        carrot.register_page("code","carrot.code.show_list_code()","carrot.code.show_edit");
+        carrot.register_page("code","carrot.code.show_list_code()","carrot.code.show_edit","carrot.code.show");
         var btn_add=carrot.menu.create("add_code").set_label("Add Code").set_icon("fa-solid fa-code").set_type("add");
         $(btn_add).click(function(){carrot.code.show_add_new();});
         var btn_list=carrot.menu.create("list_code").set_label("Code").set_icon("fa-solid fa-code").set_type("main").set_lang("code");
@@ -40,6 +40,7 @@ class Carrot_Code{
     }
 
     show_add_or_edit_code(data_code){
+        console.log(data_code);
         var carrot=this.carrot;
         var frm=new Carrot_Form('add_code',carrot);
         frm.set_title("Add code");
@@ -73,7 +74,6 @@ class Carrot_Code{
             this.carrot.log("Get data code from sever");
             this.carrot.get_list_doc("code",this.act_get_list_code_from_sever);
         }
-
     }
 
     act_get_list_code_from_sever(codes,carrot){
@@ -154,6 +154,10 @@ class Carrot_Code{
         });
 
         this.carrot.check_event();
+    }
+
+    show(id,carrot){
+        carrot.get_doc("code",id,carrot.code.show_info_code);
     }
 
     show_info_code(data,carrot){
