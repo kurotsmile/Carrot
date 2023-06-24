@@ -6,10 +6,11 @@ class Carrot_Icon{
         this.carrot=carrot;
         this.load_obj_icon();
 
+        carrot.register_page("icon","carrot.icon.list()","carrot.icon.edit");
         var btn_add=carrot.menu.create("add_icon").set_label("Add Icon").set_type("add");
-        $(btn_add).click(function(){carrot.icon.show_box_add_or_edit_icon(null);});
-        var btn_list=carrot.menu.create("list_icon").set_label("Add Icon").set_type("add").set_lang("icon").set_icon("fa-solid fa-face-smile");
-        $(btn_list).click(function(){carrot.icon.show_all_icon();});
+        $(btn_add).click(function(){carrot.icon.add();});
+        var btn_list=carrot.menu.create("list_icon").set_label("Add Icon").set_type("main").set_lang("icon").set_icon("fa-solid fa-face-smile");
+        $(btn_list).click(function(){carrot.icon.list();});
     }
 
     load_obj_icon(){
@@ -25,11 +26,10 @@ class Carrot_Icon{
         this.obj_icon=null;
     }
 
-    show_all_icon(){
+    list(){
         if(this.carrot.check_ver_cur("icon")==false){
             this.carrot.log("Get list icon from sever and show");
             this.carrot.get_list_doc("icon",this.act_done_get_data_list_icon);
-            this.carrot.update_new_ver_cur("icon",true);
         }else{
             if(this.obj_icon==null){
                 this.carrot.log("Get list icon from sever and show");
@@ -46,41 +46,7 @@ class Carrot_Icon{
         carrot.icon.obj_icon=ions;
         carrot.icon.save_obj_icon();
         carrot.icon.show_all_icon_from_list_icon();
-    }
-
-    show_box_add_or_edit_icon(data_icon){
-        var s_title_box='';
-        if(data_icon==null)s_title_box="<b>Add Icon</b>";
-        else s_title_box="<b>Update Icon</b>";
-        var obj_icon = Object();
-        obj_icon["tip_icon"] = { type: "caption", message: "Thông tin cơ bản" };
-        if(data_icon==null){
-            data_icon=Object();
-            data_icon["name"]='';
-            data_icon["icon"]='';
-            data_icon["color"]='';
-        }else{
-            if(data_icon["name"]=="") data_icon["name"]=data_icon["id"];
-        }
-        obj_icon["id"]={'type':'input','defaultValue':data_icon["id"], 'label':'ID'};
-        obj_icon["name"]={'type':'input','defaultValue':data_icon["name"], 'label':'Name'};
-        obj_icon["icon"]={'type':'input','defaultValue':data_icon["icon"], 'label':'Icon (url)'};
-        obj_icon["color"]={'type':'color','defaultValue':data_icon["color"], 'label':'Color'};
-        customer_field_for_db(obj_icon,'icon','id','Add App successfully');
-    
-        $.MessageBox({
-            message: s_title_box,
-            input: obj_icon,
-            top: "auto",
-            buttonFail: "Cancel"
-        }).done(this.carrot.act_done_add_or_edit);
-    }
-
-    show_edit_icon_done(data_icon,carrot){
-        if(data_icon!=null)
-            carrot.icon.show_box_add_or_edit_icon(data_icon);
-        else
-            $.MessageBox("Icon không còn tồn tại!");
+        carrot.update_new_ver_cur("icon",true);
     }
 
     show_all_icon_from_list_icon(){
@@ -105,5 +71,29 @@ class Carrot_Icon{
         html+="</div>";
         carrot.body.html(html);
         this.carrot.check_event();
+    }
+
+    add(){
+        var data_icon=new Object();
+        data_icon["id"]=this.carrot.create_id();
+        data_icon["name"]="";
+        data_icon["icon"]="";
+        data_icon["color"]="";
+        this.add_or_edit(data_icon);
+    }
+
+    edit(data_icon,carrot){
+        this.add_or_edit(data_icon);
+    }
+
+    add_or_edit(data){
+        var frm=new Carrot_Form("frm_icon",this.carrot);
+        frm.set_title("Add icon or_update");
+        frm.set_db("icon",data.id);
+        frm.create_field("id").set_label("ID").set_val(data["id"]).set_type("id");
+        frm.create_field("name").set_label("Name").set_val(data["name"]);
+        frm.create_field("icon").set_label("Icon (Url)").set_val(data["icon"]);
+        frm.create_field("color").set_label("Color").set_val(data["color"]).set_type("color");
+        frm.show();
     }
 }

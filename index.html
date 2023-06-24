@@ -50,21 +50,6 @@
         </div>
         <div id="navbarNav" class="navcol pt-0 d-none d-lg-block overflow-auto">
             <ul id="list_menu_main">
-                <li id="btn_home" class="border-bottom btn-menu"><i class="fa-solid fa-home fs-6 me-2"></i> <lang class="lang" key_lang="home">Home</lang></li>
-                <li id="btn_all_app" class="border-bottom btn-menu"><i class="fa-solid fa-mobile bi fs-6 me-2"></i> <i class="bi fs-6  bi-google-play"></i> <lang class="lang" key_lang="app">Applications</lang></li>
-                <li id="btn_all_game" class="border-bottom btn-menu"><i class="fa-solid fa-gamepad bi me-2 fs-6"></i> <lang class="lang" key_lang="game">Games</lang></li>
-                <li id="btn_address_book" class="border-bottom btn-menu"><i class="fa-solid fa-address-book fs-6 me-2"></i> <lang class="lang" key_lang="phone_book">Phone book</lang></li>
-                <li id="btn_all_icon" class="border-bottom btn-menu"><i class="fa-solid fa-face-smile fs-6 me-2"></i> <lang class="lang" key_lang="icon">Icon</lang></li>
-                <li class="btn-group dropup border-bottom dev btn-menu">
-                    <div type="button" class="dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                        <i class="fa-solid fa-add fs-6 me-2"></i> Add Obj
-                    </div>
-                    <div class="dropdown-menu" id="list_menu_add">
-                        <div class="dropdown-item btn-menu" id="btn_add_app" role="button"><i class="fa-solid fa-add fs-6 me-2"></i> Add App</div>
-                        <div class="dropdown-item btn-menu" id="btn_add_icon" role="button"><i class="fa-solid fa-add fs-6 me-2"></i> Add Icon</div>
-                        <div class="dropdown-item btn-menu" id="btn_add_lang" role="button"><i class="fa-solid fa-add fs-6 me-2"></i> Add Lang</div>
-                    </div>
-                </li>
 
                 <li class="btn-group dropup border-bottom dev btn-menu">
                     <div type="button" class="dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -111,7 +96,13 @@
                     </div>
                 </div>
                 <div class="col-md-7 text-end">
-                    <div id="btn_model_site" class="btn-menu btn btn-small btn-light cpfs-8 d-inline"><i class="fa-solid fa-window-maximize"></i></div>
+
+                    <div class="dropdown pt-2 dev btn-dev d-none">
+                        <div id="btn_add_obj" class="btn btn-small btn-light cpfs-8" data-bs-toggle="dropdown" aria-expanded="true"><i class="fa-solid fa-square-plus"></i></div>
+                        <ul class="dropdown-menu" id="list_menu_add" aria-labelledby="btn_add_obj"></ul>
+                    </div>
+
+                    <div id="btn_model_site" class="btn-menu btn btn-small btn-light cpfs-8 d-none" ><i class="fa-solid fa-window-maximize"></i></div>
 
                     <div class="dropdown pt-2 d-inline">
                         <div id="btn_login" class="btn btn-small btn-light cpfs-8">
@@ -169,17 +160,8 @@
             $(this).find("i").addClass("fa-bounce");
             var id_fun = $(this).attr("id");
 
-            if (id_fun == "btn_home") carrot.show_home();
-            if (id_fun == "btn_address_book") carrot.user.show_all_phone_book();
-            if (id_fun == "btn_all_icon") carrot.icon.show_all_icon();
-            if (id_fun == "btn_all_app") carrot.app.show_all_app();
-            if (id_fun == "btn_all_game") carrot.app.show_all_game();
             if(id_fun=="btn_mode_host") carrot.change_host_connection();
             if(id_fun=="btn_model_site") carrot.change_mode_site();
-            if(id_fun=="btn_add_app") carrot.app.show_box_add_or_edit_app(null);
-            if(id_fun=='btn_add_icon') carrot.icon.show_box_add_or_edit_icon(null,carrot.act_done_add_or_edit);
-            if(id_fun=='btn_add_wallpaper') carrot.background.show_box_add_or_edit_wallpaper(null);
-            if(id_fun=='btn_add_lang') carrot.show_box_add_or_edit_lang(null);
             if(id_fun=='btn_version_data') carrot.show_edit_version_data_version();
             if(id_fun=='btn_download_json_doc') carrot.download_json_doc();
             if(id_fun=='btn_import_json_doc') carrot.show_import_json_box(null);

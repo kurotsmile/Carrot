@@ -86,7 +86,7 @@ class AI_Chat{
         html+='<div class="row mb-3">';
             html+='<div class="col-12 m-0 btn-toolba" role="toolbar" aria-label="Toolbar with button groups">';
             html+='<div role="group" aria-label="First group"  class="btn-group mr-2">';
-                html+='<button type="button" class="btn btn-secondary btn-sm"><i class="fa-solid fa-circle-plus"></i> Add Chat</button>';
+                html+='<button id="btn_add_chat" type="button" class="btn btn-secondary btn-sm"><i class="fa-solid fa-circle-plus"></i> Add Chat</button>';
                 html+=carrot.ai.list_btn_lang_select();
             html+='</div>';
             html+='</div>';
@@ -111,10 +111,14 @@ class AI_Chat{
     }
 
     check_event(){
-        var ai_lover=this;
+        var chat=this;
         $(".btn-setting-lang-change").click(function(){
             var key_change=$(this).attr("key_change");
-            ai_lover.show_all_chat(key_change);
+            chat.show_all_chat(key_change);
+        });
+
+        $("#btn_add_chat").click(function(){
+            chat.show_add();
         });
         this.carrot.check_event();
     }

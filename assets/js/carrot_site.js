@@ -317,14 +317,21 @@ class Carrot_Site{
 
     check_mode_site() {
         if (this.is_dev) {
-            $("#btn_model_site").show();
-            if (this.mode_site == "nomal")
+            $("#btn_model_site").removeClass("d-none").addClass("d-inline").show();
+            if (this.mode_site == "nomal"){
+                $("#btn_model_site").removeClass("d-none").show().html('<i class="fa-solid fa-box"></i>');
+                $(".dev.btn-dev").each(function () { $(this).removeClass("d-none").removeClass("d-inline") });
                 $(".dev").each(function () { $(this).hide(100); });
-            else
+            }
+            else{
+                $("#btn_model_site").removeClass("d-none").removeClass("d-inline").show().html('<i class="fa-brands fa-dev"></i>');
+                $(".dev.btn-dev").each(function () { $(this).removeClass("d-none").addClass("d-inline") });
                 $(".dev").each(function () { $(this).show(100); });
+            }
         } else {
-            $("#btn_model_site").hide();
+            $("#btn_model_site").removeClass("d-none").removeClass("d-inline").hide();
             $(".dev").each(function () { $(this).hide(100); });
+            $(".dev.btn-dev").each(function () { $(this).removeClass("d-none").removeClass("d-inline") });
         }
 
         if (this.is_localhost) {
@@ -377,11 +384,6 @@ class Carrot_Site{
         obj_data["edit"]=event_edit;
         obj_data["show"]= event_show_page;
         this.obj_page[id_page]=obj_data;
-    }
-
-    show_home(){
-        this.app.show_list_app_and_game();
-        this.change_title_page("Carrot store", "?p=home","home");
     }
 
     show_edit_version_data_version(){
@@ -608,7 +610,7 @@ class Carrot_Site{
     }
 
     uniq = function(){
-        return 'id' + (new Date()).getTime();
+        return (new Date()).getTime();
     }
 
     create_id(){
@@ -822,10 +824,7 @@ class Carrot_Site{
                     this.music.show_list_music();
                 }
             }
-            else if(this.id_page=="address_book") $("#btn_address_book").click();
-            else if(this.id_page=="wallpapers") this.show_all_wallpaper();
-            else if(this.id_page=="icon") this.icon.show_all_icon();
-            else this.show_home();
+            else this.app.list();
         };
     }
 

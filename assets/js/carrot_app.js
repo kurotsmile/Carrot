@@ -7,6 +7,19 @@ class Carrot_App{
         this.type_show="all";
         this.carrot=carrot;
         this.load_obj_app();
+
+        carrot.register_page("home","carrot.app.list()","carrot.app.show_edit_app_done");
+        carrot.register_page("app","carrot.app.list_app()","carrot.app.show_edit_app_done");
+        carrot.register_page("game","carrot.app.list_game()","carrot.app.show_edit_app_done");
+
+        var btn_home=carrot.menu.create("home").set_label("Home").set_lang("home").set_icon("fa-solid fa-home").set_type("main");
+        var btn_apps=carrot.menu.create("app").set_label("Applications").set_lang("app").set_icon("fa-solid fa-mobile").set_type("main");
+        var btn_games=carrot.menu.create("game").set_label("Games").set_lang("game").set_icon("fa-solid fa-gamepad").set_type("main");
+        var btn_add_apps=carrot.menu.create("app").set_label("Add App").set_icon("fa-solid fa-mobile").set_type("add");
+        $(btn_home).click(function(){carrot.app.list();});
+        $(btn_apps).click(function(){carrot.app.list_app();});
+        $(btn_games).click(function(){carrot.app.list_game();});
+        $(btn_add_apps).click(function(){carrot.app.show_box_add_or_edit_app(null);});
     }
     
     load_obj_app(){
@@ -49,6 +62,7 @@ class Carrot_App{
         var carrot=this.carrot;
         var list_app=Array();
         if(carrot.app.type_show=="all"){
+            carrot.change_title_page("Carrot store", "?p=home","home");
             list_app=carrot.convert_obj_to_list(this.obj_app);
         }
 
@@ -69,11 +83,15 @@ class Carrot_App{
         this.show_list_app(list_app);
     }
 
-    show_all_app(){
+    list(){
+        this.show_list_app_and_game("all");
+    }
+
+    list_app(){
         this.show_list_app_and_game("app");
     }
 
-    show_all_game(){
+    list_game(){
         this.show_list_app_and_game("game");
     }
 

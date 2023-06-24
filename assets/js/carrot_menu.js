@@ -27,19 +27,19 @@ class Menu_Item extends HTMLLIElement{
     set_type(type='main'){
         if(type=='main'){
             this.father="list_menu_main";
-            this.mode="pub";
+            this.mode="pub border-bottom btn-menu";
         }
         else if(type=="dev"){
             this.father="list_menu_dev";
-            this.mode="dev";
+            this.mode="dev border-bottom btn-menu";
         }
         else if(type=="add"){
             this.father="list_menu_add";
-            this.mode="dev";
+            this.mode="dropdown-item btn";
         }
         else this.father=type;
 
-        this.className="border-bottom btn-menu "+this.mode;
+        this.className=this.mode;
         this.innerHTML=this.html();
         return this;
     }

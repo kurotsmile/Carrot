@@ -4,8 +4,6 @@ class AI_Key_Block{
         this.carrot=carrot;
         var key_block=this;
         carrot.register_page("block","carrot.ai.key_block.list()","carrot.ai.key_block.edit");
-        var btn_add=carrot.menu.create_menu("add_key_block").set_label("Add Key Block").set_type("add");
-        $(btn_add).click(function(){key_block.add();})
         var btn_list=carrot.menu.create_menu("list_key_block").set_label("List Key Block").set_type("dev").set_icon("fa-solid fa-shield-halved");
         $(btn_list).click(function(){key_block.list();});
     }
@@ -23,7 +21,7 @@ class AI_Key_Block{
                 var data=doc.data();
                 this.show_list_block_chat(data);
                 Swal.close();
-            } else {
+            } else { 
                 console.log("No such document!");
                 this.show_list_block_chat({chat:Array()});
                 Swal.close();

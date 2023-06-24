@@ -3,10 +3,14 @@ class Carrot_user{
     obj_login=null;
     obj_phone_book=null;
 
-    constructor(cr){
-        this.carrot=cr;
+    constructor(carrot){
+        this.carrot=carrot;
         if(localStorage.getItem("obj_login")!=null) this.obj_login=JSON.parse(localStorage.getItem("obj_login"));
         if (localStorage.getItem("obj_phone_book") != null) this.obj_phone_book=JSON.parse(localStorage.getItem("obj_phone_book"));
+
+        carrot.register_page("phone_book","carrot.user.list()","carrot.user.show_box_add_or_edit_phone_book");
+        var btn_list=carrot.menu.create("phone_book").set_label("Phone book").set_lang("phone_book").set_icon("fa-solid fa-address-book").set_type("main");
+        $(btn_list).click(function(){carrot.user.list();});
     }
 
     get_all_data_phone_book(){
@@ -65,7 +69,7 @@ class Carrot_user{
         }
     }
 
-    show_all_phone_book(){
+    list(){
         if(this.carrot.get_ver_cur("user")){
             if(this.obj_phone_book==null) 
                 this.get_all_data_phone_book();
@@ -364,7 +368,7 @@ class Carrot_user{
             
             try {
               const contacts = await navigator.contacts.select(props, opts);
-              handleResults(contacts);
+              console.log(contacts);
             } catch (ex) {}
         }
     }
@@ -393,7 +397,6 @@ class Carrot_user{
         }else{
             return "";
         }
-        
     }
     
 }
