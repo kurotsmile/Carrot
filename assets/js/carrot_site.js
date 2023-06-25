@@ -155,7 +155,7 @@ class Carrot_Site{
     }
 
     set_doc(s_collection,s_document,data){
-        this.log("Get " + s_collection+"."+s_id_document+" from server","alert");
+        this.log("Get " + s_collection+"."+s_document+" from server","alert");
         this.db.collection(s_collection).doc(s_document).set(data);
     }
 
