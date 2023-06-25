@@ -67,9 +67,9 @@ class AI_Chat{
 
     show_all_chat(lang_show){
         Swal.showLoading();
-        this.carrot.ai.setting_lang_change=lang_show;
+        this.carrot.langs.lang_setting=lang_show;
         this.carrot.change_title_page("Ai Lover", "?p=chat","chat");
-        this.carrot.db.collection("chat-"+this.carrot.ai.setting_lang_change).where("status","==","pending").limit(100).get().then((querySnapshot) => {
+        this.carrot.db.collection("chat-"+this.carrot.langs.lang_setting).where("status","==","pending").limit(100).get().then((querySnapshot) => {
             var obj_data=Object();
             querySnapshot.forEach((doc) => {
                 var item_data=doc.data();
@@ -113,7 +113,7 @@ class AI_Chat{
 
             item_list.set_body('<div class="col-12">'+s_body+'</div>');
             item_list.set_class_body("mt-2 col-9");
-            item_list.set_db_collection("chat-"+carrot.ai.setting_lang_change);
+            item_list.set_db_collection("chat-"+carrot.langs.lang_setting);
             html+=item_list.html();
         });
         html+='</div>';

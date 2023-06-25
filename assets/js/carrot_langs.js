@@ -17,6 +17,9 @@ class Carrot_Langs{
         $(btn_add).click(function(){carrot.langs.add_lang();});
         $(btn_list).click(function(){carrot.langs.list();});
         $(btn_setting).click(function(){carrot.langs.show_setting_lang_by_key(carrot.lang,"lang_app");});
+
+        $("#key_lang").html(carrot.lang);
+        $("#btn_change_lang").click(function(){ carrot.langs.show_list_change_lang();});
     }
 
     list_btn_lang_select(){
@@ -249,6 +252,47 @@ class Carrot_Langs{
             html_new_field+='</td>';
             html_new_field+='</tr>';
             $("#body_table_lang_setting").append(html_new_field);
+        });
+    }
+
+    show_list_change_lang(){
+        var carrot=this.carrot;
+        var obj_list_lang=Object();
+        var userLang = navigator.language || navigator.userLanguage; 
+        var n_lang=userLang.split("-")[0];
+
+        $(carrot.list_lang).each(function(index,lang){
+            var m_activer_color='';
+            if(lang.key==carrot.lang)
+                m_activer_color='btn-primary';
+            else{
+                if(carrot.obj_lang_web[lang.key]!=null)
+                    m_activer_color='btn-secondary';
+                else if(n_lang==lang.key) 
+                    m_activer_color='btn-info';
+                else
+                    m_activer_color='btn-dark';
+            }
+                
+            var m_lang="<div role='button' style='margin:3px;float:left' class='item_lang btn d-inline btn-sm text-left "+m_activer_color+"' key='"+lang.key+"'><img src='"+lang.icon+"' width='20px'/> "+lang.name+"</div>";
+            obj_list_lang["lang_"+index]={'type':'caption',message:m_lang,'customClass':'d-inline'};
+        });
+
+        $.MessageBox({
+            title :carrot.l("select_lang"),
+            input:obj_list_lang,
+            width:'360'
+        });
+
+        $(".item_lang").click(function(){
+            var key_lang = $(this).attr("key");
+            if (key_lang != carrot.lang) {
+                carrot.change_lang(key_lang);
+                carrot.get_all_data_lang_web();
+                carrot.load_data_lang_web();
+                carrot.check_show_by_id_page();
+                $(".messagebox_button_done").click();
+            };
         });
     }
 }

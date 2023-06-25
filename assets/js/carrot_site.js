@@ -70,9 +70,7 @@ class Carrot_Site{
 
     load_all_object_main(){
         var carrot=this;
-        $("#key_lang").html(this.lang);
-        $("#btn_change_lang").click(function(){ carrot.show_list_lang();});
-        this.log("Load js ..."+this.get_ver_cur("js"));
+        this.log("Load js ..."+this.get_ver_cur("js"),"null");
         this.body=$("#main_contain");
 
         $('head').append('<script type="text/javascript" src="assets/js/carrot_langs.js?ver='+this.get_ver_cur("js")+'"></script>');
@@ -140,7 +138,7 @@ class Carrot_Site{
     }
 
     setup_sever_db(){
-        this.log("setup_sever_db");
+        this.log("setup_sever_db","alert");
         if (localStorage.getItem("is_localhost") == null) {
             this.is_localhost = false;
         } else {
@@ -157,13 +155,13 @@ class Carrot_Site{
     }
 
     set_doc(s_collection,s_document,data){
-        this.log("Set doc: collection:" + s_collection+" document:"+s_document);
+        this.log("Get " + s_collection+"."+s_id_document+" from server","alert");
         this.db.collection(s_collection).doc(s_document).set(data);
     }
 
     get_doc(s_collection,s_id_document,act_done){
         Swal.showLoading();
-        this.log("Get doc: collection:" + s_collection+" document:"+s_id_document);
+        this.log("Get " + s_collection+"."+s_id_document+" from server","alert");
         this.db.collection(s_collection).doc(s_id_document).get().then((doc) => {
             if (doc.exists) {
                 var data_obj = doc.data();
@@ -178,11 +176,12 @@ class Carrot_Site{
         }).catch((error) => {
             Swal.close();
             act_done(null,this);
-            console.log("Error getting document:", error);
+            this.log(error.message,"error");
         });
     }
 
     get_list_doc(s_collection,act_done){
+        this.log("Get List " + s_collection+" from server","alert");
         this.db.collection(s_collection).get().then((querySnapshot) => {
             var obj_data=Object();
             querySnapshot.forEach((doc) => {
@@ -193,12 +192,13 @@ class Carrot_Site{
             act_done(obj_data,this);
         })
         .catch((error) => {
-            this.log(error.message)
+            this.log(error.message,"error")
             act_done(null,this);
         });
     }
 
     get_all_data_lang() {
+        this.log("get_all_data_lang from server","alert");
         this.db.collection("lang").get().then((querySnapshot) => {
             if(querySnapshot.docs.length>0){
                 this.list_lang=Array();
@@ -211,7 +211,7 @@ class Carrot_Site{
                 this.update_new_ver_cur("lang");
             }
         }).catch((error) => {
-            this.log(error.message)
+            this.log(error.message,"error")
         });
     };
 
@@ -220,21 +220,19 @@ class Carrot_Site{
             if (doc.exists) {
                 var ver_data_new=doc.data();
                 this.obj_version_new=ver_data_new;
-
                 this.update_new_ver_cur("js");
                 this.update_new_ver_cur("page");
                 this.save_obj_version_new();
                 this.save_obj_version_cur();
-
-                this.check_show_by_id_page();
+                this.load_page();
             } else {
-                this.log("No new verstion data");
-                this.check_show_by_id_page();
+                this.log("No new verstion data","error");
+                this.load_page();
             }
         }).catch((error) => {
-            this.log(error.message);
+            this.log(error.message,"error");
             this.show_error_connect_sever();
-            this.check_show_by_id_page();
+            this.load_page();
         });
     }
 
@@ -587,7 +585,7 @@ class Carrot_Site{
             var db_document=$(this).attr("db_document");
             Swal.fire({
                 title: 'Are you sure?',
-                text: "You won't be able to revert this!",
+                text: "You won't be able to revert this "+db_collection+"."+db_document+" ?",
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -732,47 +730,6 @@ class Carrot_Site{
         if(this.mode_site=="dev") SnackBar({message: s_msg,timeout: 5000,status:s_status});
     }
 
-    show_list_lang(){
-        var carrot=this;
-        var obj_list_lang=Object();
-        var userLang = navigator.language || navigator.userLanguage; 
-        var n_lang=userLang.split("-")[0];
-
-        $(this.list_lang).each(function(index,lang){
-            var m_activer_color='';
-            if(lang.key==carrot.lang)
-                m_activer_color='btn-primary';
-            else{
-                if(carrot.obj_lang_web[lang.key]!=null)
-                    m_activer_color='btn-secondary';
-                else if(n_lang==lang.key) 
-                    m_activer_color='btn-info';
-                else
-                    m_activer_color='btn-dark';
-            }
-                
-            var m_lang="<div role='button' style='margin:3px;float:left' class='item_lang btn d-inline btn-sm text-left "+m_activer_color+"' key='"+lang.key+"'><img src='"+lang.icon+"' width='20px'/> "+lang.name+"</div>";
-            obj_list_lang["lang_"+index]={'type':'caption',message:m_lang,'customClass':'d-inline'};
-        });
-
-        $.MessageBox({
-            title :carrot.l("select_lang"),
-            input:obj_list_lang,
-            width:'360'
-        });
-
-        $(".item_lang").click(function(){
-            var key_lang = $(this).attr("key");
-            if (key_lang != carrot.lang) {
-                carrot.change_lang(key_lang);
-                carrot.get_all_data_lang_web();
-                carrot.load_data_lang_web();
-                carrot.check_show_by_id_page();
-                $(".messagebox_button_done").click();
-            };
-        });
-    }
-
     get_url(){
         var s_port='';
         if(location.port!="") s_port=":"+location.port;
@@ -806,12 +763,15 @@ class Carrot_Site{
         }
     }
 
-    check_show_by_id_page() {
-        var carrot=this;
-        this.id_page = this.get_param_url("p");
+    load_page(){
         this.load_all_object_main();
+        this.check_show_by_id_page();
+    }
+
+    check_show_by_id_page() {
+        this.id_page = this.get_param_url("p");
         if(this.id_page!=undefined){
-            this.log("check_show_by_id_page : "+this.id_page);
+            this.log("check_show_by_id_page : "+this.id_page,"info");
             var obj_page_show=this.obj_page[this.id_page];
             if(obj_page_show!=null){
                 var id_obj=this.get_param_url("id");
