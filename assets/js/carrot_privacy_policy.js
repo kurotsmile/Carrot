@@ -10,5 +10,6 @@ class Carrot_Privacy_Policy{
     show_page(){
         this.carrot.change_title_page("Privacy Policy", "?p=privacy_policy","privacy_policy");
         $(this.carrot.body).load(this.carrot.get_url()+"privacy_policy/" + this.carrot.lang+".html?ver="+this.carrot.get_ver_cur("page"));
+        this.carrot.check_event();
     }
 }

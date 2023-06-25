@@ -89,7 +89,6 @@ class Carrot_Icon{
     }
 
     add_or_edit(data){
-        console.log(data);
         var frm=new Carrot_Form("frm_icon",this.carrot);
         frm.set_db("icon","name");
         frm.set_icon_font(this.icon);

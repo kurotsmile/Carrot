@@ -10,5 +10,6 @@ class Carrot_About_Us{
     show_page(){
         this.carrot.change_title_page("About Us", "?p=about_us","about_us");
         $(this.carrot.body).load(this.carrot.get_url()+"about_us/" + this.carrot.lang+".html?ver="+this.carrot.get_ver_cur("page"));
+        this.carrot.check_event();
     }
 }

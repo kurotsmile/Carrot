@@ -240,6 +240,11 @@ class Carrot_Form{
         return this;
     }
 
+    set_icon(s_icon){
+        this.icon_font=s_icon;
+        return this;
+    }
+
     set_icon_font(s_icon){
         this.icon_font=s_icon;
         return this;

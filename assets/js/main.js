@@ -42,32 +42,65 @@ function customer_field_for_db(data,collection,key_name_doc,smg_success){
     data["db_doc"]={'defaultValue':key_name_doc,'customClass':'d-none'};
 }
 
-function show_box_add_or_edit_lang(data_lang,act_done){
-    var s_title_box='';
-    if(data_lang==null) s_title_box="<b>Add Lang</b>";
-    else s_title_box="<b>Update Lang</b>";
+var carrot=new Carrot_Site();
+$(document).ready(function () {
+    $("#logo_carrot").on("contextmenu", function () { carrot.act_mode_dev(); return false; });
+    $("#btn_download_json").click(function () {carrot.download_json();});
+    $("#btn_recognition").click(function(){carrot.start_recognition();});
+    $("#btn_import_json_url").click(function () {
+        var url_json = prompt("Enter url json", "Enter url");
+        if (url_json != null) {
+            $.ajax(url_json, {
+                success: function (data) {
+                    carrot.import_json_by_data(data);
+                }
+            });
+        };
+    });
+    $("#btn_acc_login_info").click(function(){carrot.user.show_user_info_login();})
+    $(".btn-menu").click(function () {
+        $(".btn-menu").removeClass("active");
+        $(".btn-menu i").removeClass("fa-bounce");
+        $(this).addClass("active");
+        $(this).find("i").addClass("fa-bounce");
+        var id_fun = $(this).attr("id");
 
-    var obj_lang=Object();
-    obj_lang["tip_lang"] = { type: "caption", message: "Thông tin cơ bản" };
+        if(id_fun=="btn_mode_host") carrot.change_host_connection();
+        if(id_fun=="btn_model_site") carrot.change_mode_site();
+        if(id_fun=='btn_version_data') carrot.show_edit_version_data_version();
+        if(id_fun=='btn_download_json_doc') carrot.download_json_doc();
+        if(id_fun=='btn_import_json_doc') carrot.show_import_json_box(null);
+        if(id_fun=='btn_import_json_file') carrot.show_import_json_file();
+    });
 
-    if(data_lang==null){
-        data_lang=Object();
-        data_lang["key"]=''
-        data_lang["name"]='';
-        data_lang["icon"]='';
-    }else{
-        if(data_lang["key"]=="") data_lang["key"]=data_lang["id"];
+    $("#btn_login").click(function () {
+        $.MessageBox({
+            message: "<b><i class='fa-solid fa-key'></i> "+carrot.l('login')+"</b>",
+            input: {
+                usernames: {type: "text",label: carrot.l("phone"),title: "Enter Your Phone"},
+                password: {type: "password",label:carrot.l("password"),title: "Type password here"},
+                dummy_caption: {type: "caption",message: carrot.l("login_tip")}
+            },
+            top: "auto",
+            buttonFail:carrot.l("cancel"),
+            buttonDone  : {login:{text:carrot.l('login'),keyCode: 12},register:{text:carrot.l("register"),keyCode: 13}},
+        }).done(function(data,button) {
+            var username=data.usernames;
+            var password=data.password;
+            if(button=='login') carrot.user.check_user_login(username,password);
+            if(button=='register') carrot.user.show_register();
+        });
+    });
+    $("#btn_logout").click(function(){carrot.user.user_logout();});
+
+    var lang_page=carrot.get_param_url("lang");
+    if(lang_page!=null){
+        if(lang_page!=carrot.lang){
+            carrot.lang_url=lang_page;
+            carrot.change_lang(lang_page);
+            carrot.get_all_data_lang_web();
+            carrot.check_show_by_id_page();
+        }
     }
-    obj_lang["key"]={'type':'input','defaultValue':data_lang["key"], 'label':'Key'};
-    obj_lang["name"]={'type':'input','defaultValue':data_lang["name"], 'label':'Name'};
-    obj_lang["icon"]={'type':'input','defaultValue':data_lang["icon"], 'label':'Icon (url)'};
-
-    customer_field_for_db(obj_lang,'lang','key','Add lang successfully');
-
-    $.MessageBox({
-        message: s_title_box,
-        input: obj_lang,
-        top: "auto",
-        buttonFail: "Cancel"
-    }).done(act_done);
-}
+    carrot.check_version_data();
+});

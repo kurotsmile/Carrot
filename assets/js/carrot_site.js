@@ -31,6 +31,7 @@ class Carrot_Site{
 
     /*Obj Main*/
     user;
+    link_store;
     music;
     ai_lover;ai;
     code;
@@ -75,14 +76,16 @@ class Carrot_Site{
         this.load_recognition();
         this.load_obj_version_new();
         this.load_obj_version_cur();
+    };
 
+    load_all_object_main(){
         $("#key_lang").html(this.lang);
         $("#btn_change_lang").click(function(){ carrot.show_list_lang();});
-
+        this.log("Load js ..."+this.get_ver_cur("js"));
         this.body=$("#main_contain");
-        
+
         $('head').append('<script type="text/javascript" src="assets/js/carrot_langs.js?ver='+this.get_ver_cur("js")+'"></script>');
-        $('head').append('<script type="text/javascript" src="assets/js/main.js?ver='+this.get_ver_cur("js")+'"></script>');
+        $('head').append('<script type="text/javascript" src="assets/js/carrot_link_store.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_app.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_form.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_user.js?ver='+this.get_ver_cur("js")+'"></script>');
@@ -102,6 +105,7 @@ class Carrot_Site{
 
         this.menu=new Carrot_Menu(this);
         this.langs=new Carrot_Langs(this);
+        this.link_store=new Carrot_Link_Store(this);
         this.app=new Carrot_App(this);
         this.user=new Carrot_user(this);
         this.music=new Carrot_Music(this);
@@ -114,7 +118,10 @@ class Carrot_Site{
         this.ai=this.ai_lover;
         this.privacy_policy=new Carrot_Privacy_Policy(this);
         this.about_us=new Carrot_About_Us(this);
-    };
+
+        this.user.show_info_user_login_in_header();
+        this.menu.show();
+    }
 
     setup_sever_db(){
         this.log("setup_sever_db");
@@ -804,6 +811,7 @@ class Carrot_Site{
     check_show_by_id_page() {
         var carrot=this;
         this.id_page = this.get_param_url("p");
+        this.load_all_object_main();
         this.log("check_show_by_id_page : "+this.id_page);
         var obj_page_show=this.obj_page[this.id_page];
         if(obj_page_show!=null){
