@@ -1,15 +1,16 @@
 class Carrot_Icon{
     carrot;
     obj_icon=null;
+    icon="fa-solid fa-face-smile";
     
     constructor(carrot){
         this.carrot=carrot;
         this.load_obj_icon();
 
         carrot.register_page("icon","carrot.icon.list()","carrot.icon.edit");
-        var btn_add=carrot.menu.create("add_icon").set_label("Add Icon").set_type("add");
+        var btn_add=carrot.menu.create("add_icon").set_label("Add Icon").set_type("add").set_icon(this.icon);
         $(btn_add).click(function(){carrot.icon.add();});
-        var btn_list=carrot.menu.create("list_icon").set_label("Add Icon").set_type("main").set_lang("icon").set_icon("fa-solid fa-face-smile");
+        var btn_list=carrot.menu.create("list_icon").set_label("Add Icon").set_type("main").set_lang("icon").set_icon(this.icon);
         $(btn_list).click(function(){carrot.icon.list();});
     }
 
@@ -56,11 +57,13 @@ class Carrot_Icon{
         var html="";
         html+='<div class="row m-0">';
         $(list_icon).each(function(index,data_icon) {
+            if(data_icon["name"]==null) data_icon["name"]=data_icon.id;
             var s_url_icon="";
             if(data_icon.icon!=null) s_url_icon=data_icon.icon;
             if(s_url_icon=="") s_url_icon="images/64.png";
             var item_icon=new Carrot_List_Item(carrot);
             item_icon.set_db("icon");
+            item_icon.set_id(data_icon.name);
             item_icon.set_class("col-md-2 mb-2 col-sm-3")
             item_icon.set_class_icon("col-md-12 mb-3 col-12 text-center");
             item_icon.set_icon(s_url_icon);
@@ -75,25 +78,24 @@ class Carrot_Icon{
 
     add(){
         var data_icon=new Object();
-        data_icon["id"]=this.carrot.create_id();
         data_icon["name"]="";
         data_icon["icon"]="";
         data_icon["color"]="";
-        this.add_or_edit(data_icon);
+        this.add_or_edit(data_icon).set_title("Add icon").set_msg_done("Add icon success!").show();
     }
 
     edit(data_icon,carrot){
-        carrot.icon.add_or_edit(data_icon);
+        carrot.icon.add_or_edit(data_icon).set_title("Update icon").set_msg_done("Update icon success!").show();
     }
 
     add_or_edit(data){
+        console.log(data);
         var frm=new Carrot_Form("frm_icon",this.carrot);
-        frm.set_title("Add icon or_update");
         frm.set_db("icon","name");
-        frm.create_field("id").set_label("ID").set_val(data["id"]).set_type("id");
+        frm.set_icon_font(this.icon);
         frm.create_field("name").set_label("Name").set_val(data["name"]);
         frm.create_field("icon").set_label("Icon (Url)").set_val(data["icon"]);
         frm.create_field("color").set_label("Color").set_val(data["color"]).set_type("color");
-        frm.show();
+        return frm;
     }
 }

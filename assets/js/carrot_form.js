@@ -7,6 +7,7 @@ class Carrot_Field{
     tip=null;
     list_class=Array();
     options=Array();
+    is_field_main=false;
 
     constructor(name,label,type='input',placeholder='Enter data here'){
         this.name=name;
@@ -49,6 +50,11 @@ class Carrot_Field{
         return this;
     }
 
+    set_main(){
+        this.is_field_main=true;
+        return this;
+    }
+
     add_option(key,val){
         var obj_option=new Object();
         obj_option["key"]=key;
@@ -62,7 +68,11 @@ class Carrot_Field{
         var s_class='';
         for(var i=0;i<this.list_class.length;i++) s_class+=' '+this.list_class[i]+' ';
         html+='<div class="form-group">';
-        html+='<label class="form-label fw-bolder fs-8" for="'+this.name+'">'+this.label+'</label>';
+        html+='<label class="form-label fw-bolder fs-8" for="'+this.name+'">';
+        if(this.is_field_main) html+='<span class="text-info"><i class="fa-solid fa-key"></i></span> ';
+        html+=this.label;
+        html+='</label>';
+        
         if(this.type=="code"){
             var s_lang_type='javascript';
             html+='<div class="form-group">';
@@ -150,7 +160,12 @@ class Carrot_Field{
             html+='<p id="'+this.name+'" type="id" class="cr_field" value="'+this.value+'">'+this.value+'</p>';
         }
         else{
+            html+='<div class="input-group mb-3">';
             html+='<input type="'+this.type+'" value="'+this.value+'" class="form-control '+s_class+' cr_field" id="'+this.name+'" placeholder="'+this.placeholder+'">';
+            html+='<div class="input-group-append">';
+            html+='<span class="input-group-text" role="button" onclick="paste_tag(\''+this.name+'\')"><i class="fa-solid fa-paste"></i> Paste</span>';
+            html+='</div>';
+            html+='</div>';
         }
 
         if(this.tip!=null) html+='<small id="'+this.name+'_tip" class="form-text text-muted">'+this.tip+'</small>';
@@ -242,6 +257,7 @@ class Carrot_Form{
         html+='<form id="'+this.name+'" class="modal-body">';
         for(var i=0;i<this.list_field.length;i++){
             if(this.list_field[i].type=="code") this.is_editor_code=true;
+            if(this.list_field[i].name==this.db_document) this.list_field[i].set_main();
             html+=this.list_field[i].html();
         }
         html+='</form>';
