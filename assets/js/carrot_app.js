@@ -143,15 +143,23 @@ class Carrot_App{
     }
 
     show_list_app(list_app){
-        var html_main_contain="";
+        var html="";
         var carrot=this.carrot;
-        html_main_contain+='<div id="all_app" class="row m-0">';
+        html+='<div id="all_app" class="row m-0">';
         $(list_app).each(function(index,data_app) {
-            html_main_contain+=carrot.app.box_app_item(data_app,'col-md-4 mb-3');
+            html+=carrot.app.box_app_item(data_app,'col-md-4 mb-3');
         });
-        html_main_contain+="</div>";
+        html+="</div>";
 
-        carrot.body.html(html_main_contain);
+        if(this.type_show=="all"){
+            if(carrot.link_store.list_link_store!=null){
+                html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-4"><i class="fa-solid fa-store fs-6 me-2"></i> Other Store</h4>';
+                html+='<div id="other_store" class="row m-0">';
+                html+=carrot.link_store.get_list_box_html();
+                html+="</div>";
+            }
+        }
+        carrot.body.html(html);
         this.check_btn_for_list_app();
     }
 

@@ -52,15 +52,6 @@ class Carrot_Site{
             measurementId: "G-KXDDJ42JFN"
         }
 
-        if (localStorage.getItem("is_localhost") == null) {
-            this.is_localhost = false;
-        } else {
-            if (localStorage.getItem("is_localhost") == "false")
-                this.is_localhost = false;
-            else
-                this.is_localhost = true;
-        }
-
         this.setup_sever_db();
 
         if(localStorage.getItem("mode_site") != null) this.mode_site = localStorage.getItem("mode_site");
@@ -119,22 +110,19 @@ class Carrot_Site{
         this.privacy_policy=new Carrot_Privacy_Policy(this);
         this.about_us=new Carrot_About_Us(this);
 
-        var icon_model_host='';
-        var name_model_host='';
-        if(this.is_localhost){
-            icon_model_host='fa-brands fa-dev';
-            name_model_host="Localhost";
-        }
-        else{
-            icon_model_host='fa-sharp fa-solid fa-database';
-            name_model_host="Google";
-        }
-            
-        var btn_mod_host=this.menu.create("btn_mode_host").set_label("Change Mode Host ("+name_model_host+")").set_type("setting").set_icon(icon_model_host);
+        var btn_mod_host=this.menu.create("btn_mode_host").set_label("Change Mode Host").set_type("setting").set_icon("fa-brands fa-dev");
         $(btn_mod_host).click(function(){carrot.change_host_connection();});
 
         var btn_setting_ver=this.menu.create("data_version").set_label("Data Version").set_type("setting").set_icon("fa-regular fa-code-compare");
         $(btn_setting_ver).click(function(){carrot.show_edit_version_data_version();});
+
+        var btn_export_file_json=this.menu.create("btn_export_file_json").set_label("Export Collection").set_type("setting").set_icon("fa-brands fa-dev");
+        $(btn_export_file_json).click(function(){carrot.download_json_doc();});
+
+        var btn_import_file_json=this.menu.create("btn_import_file_json").set_label("Import Collection (File)").set_type("setting").set_icon("fa-solid fa-file-import");
+        $(btn_import_file_json).click(function(){carrot.show_import_json_file();});
+
+        $("#btn_model_site").click(function(){carrot.change_mode_site();});
 
         if(!this.check_ver_cur("link_store")) this.link_store.get_all_data_link_store();
         if(!this.check_ver_cur("lang")) this.get_all_data_lang();
@@ -142,11 +130,27 @@ class Carrot_Site{
 
         this.user.show_info_user_login_in_header();
         this.menu.show();
+
+        $(".btn-menu").click(function () {
+            $(".btn-menu").removeClass("active");
+            $(".btn-menu i").removeClass("fa-bounce");
+            $(this).addClass("active");
+            $(this).find("i").addClass("fa-bounce");
+        });
     }
 
     setup_sever_db(){
         this.log("setup_sever_db");
-        this.firebase =firebase.initializeApp(this.firebaseConfig_mainhost);
+        if (localStorage.getItem("is_localhost") == null) {
+            this.is_localhost = false;
+        } else {
+            if (localStorage.getItem("is_localhost") == "false")
+                this.is_localhost = false;
+            else
+                this.is_localhost = true;
+        }
+
+        if(this.firebase==null) this.firebase =firebase.initializeApp(this.firebaseConfig_mainhost);
         this.db = this.firebase.firestore();
         if (this.is_localhost) this.db.useEmulator('localhost', 8080);
         if(this.db==null) this.show_error_connect_sever();
@@ -235,9 +239,11 @@ class Carrot_Site{
     }
 
     act_done_edit_version_data_version(data){
-        carrot.db.collection("setting_web").doc("version").set(data)
-        $.MessageBox("Change version data site success!");
-        carrot.check_version_data();
+        Swal.showLoading();
+        carrot.db.collection("setting_web").doc("version").set(data).then((doc) => {
+            Swal.close();
+            location.reload();
+        });
     }
 
     act_done_add_or_edit=(data)=>{
@@ -579,23 +585,21 @@ class Carrot_Site{
         $(".btn_app_del").click(function(){
             var db_collection=$(this).attr("db_collection");
             var db_document=$(this).attr("db_document");
-            $.MessageBox({
-                buttonDone  : "Yes",
-                buttonFail  : "No",
-                message     : "Bạn có chắc chắng là xóa  <b>"+db_collection+"</b>.<b class='text-info'>"+db_document+"</b> này không?"
-            }).done(function(){
-                carrot.act_del_obj(db_collection,db_document);
-            });
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) carrot.act_del_obj(db_collection,db_document);
+            })
         });
 
-        $("#btn_share").click(function(){
-            carrot.show_share();
-        });
-
-        $('#register_protocol_url').click(function(){
-            carrot.register_protocol_url(); 
-        });
-
+        $("#btn_share").click(function(){carrot.show_share();});
+        $('#register_protocol_url').click(function(){carrot.register_protocol_url();});
         this.check_mode_site();
     }
 
@@ -790,7 +794,6 @@ class Carrot_Site{
         this.icon.delete_obj_icon();
         this.music.delete_obj_song();
         this.setup_sever_db();
-        this.check_version_data();
         this.msg("Thay đổi chế độ kết nối cơ sở dữ liệu thành công! Load lại trang để làm mới các chức năng!");
     }
 
@@ -825,7 +828,6 @@ class Carrot_Site{
         }else{
             this.app.list();
         }
-
     }
 
     show(s_html){
@@ -835,7 +837,7 @@ class Carrot_Site{
 
     btn_dev(db_collection,db_document){
         var html='';
-        html+="<div class='row dev d-flex'>";
+        html+="<div class='row dev d-flex mt-2'>";
             html+="<div class='dev col-6 d-flex btn-group'>";
                 html+="<div role='button' class='dev btn btn_app_edit btn-warning btn-sm mr-2' db_collection='"+db_collection+"' db_document='"+db_document+"'><i class=\"fa-solid fa-pen-to-square\"></i></div> ";
                 html+="<div role='button' class='dev btn btn_app_del btn-danger btn-sm mr-2'  db_collection='"+db_collection+"' db_document='"+db_document+"'><i class=\"fa-solid fa-trash\"></i></div> ";

@@ -139,19 +139,23 @@ class Carrot_Field{
         else if(this.type=='icon'){
             html+='<div id="'+this.name+'" class="form-control cr_field" type="icon" value="'+this.value+'">';
             html+='<div id="'+this.name+'_show_val"  class="d-block text-info">'+this.value+'</div>';
-            var obj_icon=JSON.parse(localStorage.getItem("obj_icon"));
-            var list_obj=Array();
-            var id_icon_cur=this.value;
-            $.each(obj_icon,function(key,val){list_obj.push(JSON.parse(val));});
-            $(list_obj).each(function(index,icon_obj){
-                if(icon_obj.icon!=""){
-                    if(icon_obj.id==id_icon_cur)
-                        html+='<img class="rounded float-left m-2 frm_icon_field btn-info" style="width:48px;" role="button" icon-id="'+icon_obj.id+'" src="'+icon_obj.icon+'"/>';
-                    else
-                        html+='<img class="rounded float-left m-2 frm_icon_field" style="width:48px;" role="button" icon-id="'+icon_obj.id+'" src="'+icon_obj.icon+'"/>';
-                }
-            });
-            html+='</div>';
+            if(localStorage.getItem("obj_icon")){
+                var obj_icon=JSON.parse(localStorage.getItem("obj_icon"));
+                var list_obj=Array();
+                var id_icon_cur=this.value;
+                $.each(obj_icon,function(key,val){list_obj.push(JSON.parse(val));});
+                list_obj=list_obj.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
+                $(list_obj).each(function(index,icon_obj){
+                    if(index>=24) return false;
+                    if(icon_obj.icon!=""){
+                        if(icon_obj.id==id_icon_cur)
+                            html+='<img class="rounded float-left m-2 frm_icon_field btn-info" style="width:36px;" role="button" icon-id="'+icon_obj.id+'" src="'+icon_obj.icon+'"/>';
+                        else
+                            html+='<img class="rounded float-left m-2 frm_icon_field" style="width:36px;" role="button" icon-id="'+icon_obj.id+'" src="'+icon_obj.icon+'"/>';
+                    }
+                });
+                html+='</div>';
+            }
         }
         else if(this.type=='textarea'){
             html+='<textarea class="form-control cr_field" id="'+this.name+'" placeholder="'+this.placeholder+'" rows="3">'+this.value+'</textarea>';

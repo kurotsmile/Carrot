@@ -58,20 +58,6 @@ $(document).ready(function () {
         };
     });
     $("#btn_acc_login_info").click(function(){carrot.user.show_user_info_login();})
-    $(".btn-menu").click(function () {
-        $(".btn-menu").removeClass("active");
-        $(".btn-menu i").removeClass("fa-bounce");
-        $(this).addClass("active");
-        $(this).find("i").addClass("fa-bounce");
-        var id_fun = $(this).attr("id");
-
-        if(id_fun=="btn_mode_host") carrot.change_host_connection();
-        if(id_fun=="btn_model_site") carrot.change_mode_site();
-        if(id_fun=='btn_download_json_doc') carrot.download_json_doc();
-        if(id_fun=='btn_import_json_doc') carrot.show_import_json_box(null);
-        if(id_fun=='btn_import_json_file') carrot.show_import_json_file();
-    });
-
     $("#btn_login").click(function () {
         $.MessageBox({
             message: "<b><i class='fa-solid fa-key'></i> "+carrot.l('login')+"</b>",

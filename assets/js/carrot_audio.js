@@ -45,17 +45,19 @@ class Carrot_Audio{
         carrot.change_title_page("Audio","?p=audio","audio");
         var list_audio=carrot.convert_obj_to_list(audios);
         var htm='';
+        htm+='<div class="row">';
         $(list_audio).each(function(intdex,au){
             var item_au=new Carrot_List_Item(carrot);
             item_au.set_id(au.id)
             item_au.set_icon_font("fa-solid fa-guitar mt-3");
             item_au.set_db("audio");
             item_au.set_name(au.name);
-            item_au.set_tip(au.mp3);
+            item_au.set_tip(au.author);
             item_au.set_class_icon("pe-0 col-3 ");
             item_au.set_class_body("mt-2 col-9");
             htm+=item_au.html();
         });
+        htm+='<div>';
         carrot.show(htm);
         carrot.check_event();
     }

@@ -4,15 +4,16 @@ class Carrot_Music{
     audio_player=null;
 
     m_index=-1;
+    icon="fa-solid fa-square-plus";
 
     constructor(carrot){
         this.carrot=carrot;
         this.load_obj_song();
 
         carrot.register_page("music","carrot.music.show_list_music()","carrot.music.edit","carrot.music.show_info_music_by_id");
-        var btn_add=carrot.menu.create("add_music").set_label("Add Music").set_icon("fa-solid fa-square-plus").set_type("add");
+        var btn_add=carrot.menu.create("add_music").set_label("Add Music").set_icon(this.icon).set_type("add");
         $(btn_add).click(function(){carrot.music.add();});
-        var btn_list=carrot.menu.create("list_music").set_label("Music").set_lang("music").set_icon("fa-solid fa-music").set_type("main");
+        var btn_list=carrot.menu.create("list_music").set_label("Music").set_lang("music").set_icon(this.icon).set_type("main");
         $(btn_list).click(function(){carrot.music.show_list_music();});
     }
 
@@ -469,17 +470,17 @@ class Carrot_Music{
         data_music["album"]="";
         data_music["year"]="";
         data_music["lang"]=this.carrot.lang;
-        this.add_or_edit(data_music);
+        this.add_or_edit(data_music).set_title("Add Music").show();
     }
 
     edit(data,carrot){
-        carrot.music.add_or_edit(data);
+        carrot.music.add_or_edit(data).set_title("Edit Music").show();
     }
 
-    add_or_edit(data){
+    frm_add_or_edit(data){
         var frm=new Carrot_Form("frm_music",this.carrot);
+        frm.set_icon(this.icon);
         frm.set_db("song","id");
-        frm.set_title("Add or Edit Music");
         frm.create_field("id").set_label("ID").set_val(data["id"]).set_type("id");
         frm.create_field("name").set_label("Name").set_val(data["name"]);
         frm.create_field("avatar").set_label("Avatar (url)").set_val(data["avatar"]);
@@ -512,7 +513,7 @@ class Carrot_Music{
         $(this.carrot.list_lang).each(function(index,lang_data){
             lang_field.add_option(lang_data.key,lang_data.name);
         });
-        frm.show();
+        return frm;
     }
 }
 

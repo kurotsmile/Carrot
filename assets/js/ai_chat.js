@@ -66,6 +66,7 @@ class AI_Chat{
     }
 
     show_all_chat(lang_show){
+        Swal.showLoading();
         this.carrot.ai.setting_lang_change=lang_show;
         this.carrot.change_title_page("Ai Lover", "?p=chat","chat");
         this.carrot.db.collection("chat-"+this.carrot.ai.setting_lang_change).where("status","==","pending").limit(100).get().then((querySnapshot) => {
@@ -75,10 +76,12 @@ class AI_Chat{
                 item_data["id"]=doc.id;
                 obj_data[doc.id]=JSON.stringify(item_data);
             });
+            Swal.close();
             this.act_done_show_all_chat(obj_data,this.carrot);
         })
         .catch((error) => {
-            this.carrot.log(error.message)
+            this.carrot.log(error.message);
+            Swal.close();
         });
     }
 
@@ -96,13 +99,19 @@ class AI_Chat{
         var list_data=carrot.convert_obj_to_list(datas);
         $(list_data).each(function(index,data){
             var item_list=new Carrot_List_Item(carrot);
+            var s_body='';
             item_list.set_id(data.id);
             if(data.parent==null)
                 item_list.set_icon_font("fa-sharp fa-solid fa-comment mt-2");
             else
                 item_list.set_icon_font("fa-solid fa-comments mt-2");
             item_list.set_name(data.key);
-            item_list.set_tip(data.msg);
+            item_list.set_tip('<i class="fa-solid fa-circle" style="color:'+data.color+'"></i> '+data.msg);
+            if(data.sex_user=='0') s_body+='<i class="fa-solid fa-mars text-primary"></i>'; else s_body+='<i class="fa-solid fa-venus text-danger"></i>';
+            s_body+=' <i class="fa-sharp fa-solid fa-right-left"></i> ';
+            if(data.sex_character=='0') s_body+='<i class="fa-solid fa-mars text-primary"></i>'; else s_body+='<i class="fa-solid fa-venus text-danger"></i>';
+
+            item_list.set_body('<div class="col-12">'+s_body+'</div>');
             item_list.set_class_body("mt-2 col-9");
             item_list.set_db_collection("chat-"+carrot.ai.setting_lang_change);
             html+=item_list.html();
