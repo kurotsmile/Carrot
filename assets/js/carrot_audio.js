@@ -1,12 +1,14 @@
 class Carrot_Audio{
     carrot;
+    icon="fa-solid fa-guitar";
+
     constructor(carrot){
         this.carrot=carrot;
         var audio=this;
         carrot.register_page("audio","carrot.audio.list()","carrot.audio.edit");
-        var btn_add=this.carrot.menu.create("add_audio").set_label("Add audio").set_type("add");
+        var btn_add=this.carrot.menu.create("add_audio").set_label("Add audio").set_icon(this.icon).set_type("add");
         $(btn_add).click(function(){audio.add();});
-        var btn_list=this.carrot.menu.create("list_aduio").set_label("List Audio").set_type("main").set_lang("audio").set_icon("fa-solid fa-guitar");
+        var btn_list=this.carrot.menu.create("list_aduio").set_label("List Audio").set_type("main").set_lang("audio").set_icon(this.icon);
         $(btn_list).click(function(){audio.list();});
     }
 
@@ -16,22 +18,23 @@ class Carrot_Audio{
         data_audio["name"]="";
         data_audio["author"]="";
         data_audio["mp3"]="";
-        this.add_or_edit(data_audio);
+        this.frm_add_or_edit(data_audio).set_title("Add Audio").show();
     }
 
     edit(data,carrot){
-        carrot.audio.add_or_edit(data);
+        carrot.audio.frm_add_or_edit(data).set_title("Edit Audio").show();
     }
 
-    add_or_edit(data){
-        var frm_add=new Carrot_Form("frm_audio",this.carrot);
-        frm_add.set_db("audio","id");
-        frm_add.set_title("Add Or Edit Audio");
-        frm_add.create_field("id").set_label("ID").set_type("id").set_val(data["id"]);
-        frm_add.create_field("name").set_label("Name").set_val(data["name"]);
-        frm_add.create_field("author").set_label("Author").set_val(data["author"]);
-        frm_add.create_field("mp3").set_label("Mp3").set_val(data["mp3"]);
-        frm_add.show();
+    frm_add_or_edit(data){
+        var frm_au=new Carrot_Form("frm_audio",this.carrot);
+        frm_au.set_db("audio","id");
+        frm_au.set_icon(this.icon);
+        frm_au.set_title("Add Or Edit Audio");
+        frm_au.create_field("id").set_label("ID").set_type("id").set_val(data["id"]);
+        frm_au.create_field("name").set_label("Name").set_val(data["name"]);
+        frm_au.create_field("author").set_label("Author").set_val(data["author"]);
+        frm_au.create_field("mp3").set_label("Mp3").set_val(data["mp3"]);
+        return frm_au;
     }
 
     list(){

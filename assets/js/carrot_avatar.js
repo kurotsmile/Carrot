@@ -1,10 +1,11 @@
 class Carrot_Avatar{
     carrot;
+    icon="fa-regular fa-image-portrait";
     constructor(carrot){
         this.carrot=carrot;
         carrot.register_page("avatar","carrot.avatar.list()","carrot.avatar.edit");
-        $(this.carrot.menu.create("add_avatar").set_label("Add Avatar").set_icon("fa-regular fa-image-portrait").set_type("add")).click(function(){carrot.avatar.add()});
-        $(this.carrot.menu.create("list_avatar").set_label("List Avatar").set_icon("fa-regular fa-image-portrait").set_type("dev")).click(function(){carrot.avatar.list();});
+        $(this.carrot.menu.create("add_avatar").set_label("Add Avatar").set_icon(this.icon).set_type("add")).click(function(){carrot.avatar.add()});
+        $(this.carrot.menu.create("list_avatar").set_label("List Avatar").set_icon(this.icon).set_type("dev")).click(function(){carrot.avatar.list();});
     }
 
     add(){
@@ -13,21 +14,21 @@ class Carrot_Avatar{
         avatar_data["name"]="";
         avatar_data["icon"]="";
         avatar_data["type"]="boy";
-        this.add_or_edit(avatar_data);
+        this.frm_add_or_edit(avatar_data).set_title("Add Avatar").show();
     }
 
     edit(data,carrot){
-        carrot.avatar.add_or_edit(data);
+        carrot.avatar.frm_add_or_edit(data).set_title("Edit Avatar").show();
     }
 
-    add_or_edit(data){
+    frm_add_or_edit(data){
         var frm=new Carrot_Form("frm_avatar",this.carrot);
-        frm.set_title("Add or Edit Avatar");
+        frm.set_icon(this.icon);
         frm.set_db("user-avatar","id");
         frm.create_field("id").set_label("ID").set_type("id").set_val(data.id);
         frm.create_field("type").set_label("Type").add_option("boy","Boy").add_option("girl","Girl").set_val(data.type).set_type("select");
         frm.create_field("icon").set_label("Icon").set_val(data.icon);
-        frm.show();
+        return frm;
     }
 
     list(){

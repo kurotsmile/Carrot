@@ -67,7 +67,6 @@ $(document).ready(function () {
 
         if(id_fun=="btn_mode_host") carrot.change_host_connection();
         if(id_fun=="btn_model_site") carrot.change_mode_site();
-        if(id_fun=='btn_version_data') carrot.show_edit_version_data_version();
         if(id_fun=='btn_download_json_doc') carrot.download_json_doc();
         if(id_fun=='btn_import_json_doc') carrot.show_import_json_box(null);
         if(id_fun=='btn_import_json_file') carrot.show_import_json_file();

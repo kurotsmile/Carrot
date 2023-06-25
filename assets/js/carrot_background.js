@@ -1,13 +1,13 @@
 class Carrot_Background{
     carrot;
     obj_background=null;
-
+    icon="fa-image fa-solid";
     constructor(carrot){
         this.carrot=carrot;
         carrot.register_page("background","carrot.background.show_all_background()","carrot.background.edit")
-        var add_bk=this.carrot.menu.create("add_background").set_label("Add Background").set_type("add");
+        var add_bk=this.carrot.menu.create("add_background").set_label("Add Background").set_icon(this.icon).set_type("add");
         $(add_bk).click(function(){carrot.background.add();});
-        var list_bk=this.carrot.menu.create("list_background").set_label("List Background").set_type("main").set_icon("fa-image fa-solid").set_lang("wallpaper");
+        var list_bk=this.carrot.menu.create("list_background").set_label("List Background").set_type("main").set_icon(this.icon).set_lang("wallpaper");
         $(list_bk).click(function(){carrot.background.show_all_background()});
     }
 
@@ -79,21 +79,22 @@ class Carrot_Background{
         data_bk["id"]=this.carrot.create_id();
         data_bk["name"]="";
         data_bk["icon"]="";
-        this.add_or_edit(data_bk);
+        this.add_or_edit(data_bk).set_title("Add Background").show();
     }
 
     edit(data,carrot){
-        carrot.background.add_or_edit(data);
+        carrot.background.add_or_edit(data).set_title("Edit Background").show();
     }
     
     add_or_edit(data){
         var frm=new Carrot_Form("frm_background",this.carrot);
+        frm.set_icon(this.icon);
         frm.set_db("background","id");
         frm.set_title("Add or Edit Background");
         frm.create_field("id").set_label("ID").set_val(data.id).set_type("id");
         frm.create_field("name").set_label("Name").set_val(data.name);
         frm.create_field("icon").set_label("Icon (url)").set_val(data.icon);
-        frm.show();
+        return frm;
     }
 
 }

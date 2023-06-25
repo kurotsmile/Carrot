@@ -7,9 +7,11 @@ class Menu_Item extends HTMLLIElement{
     key_lang=null;
     constructor(name){
         super();
-        this.innerHTML=this.html();
         this.className="border-bottom btn-menu "+this.mode;
         this.name=name;
+        this.setAttribute("id",name);
+        this.id=name;
+        this.innerHTML=this.html();
     }
 
     set_label(label){

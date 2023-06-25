@@ -42,7 +42,7 @@ class Carrot_App{
                 this.carrot.get_list_doc("app",this.get_data_app_done);
             }
             else{
-                this.carrot.log("Show Home load data.. Cache");
+                this.carrot.log("Show list app:"+type);
                 this.show_list_app_from_data();
             }
         }else{
@@ -121,10 +121,10 @@ class Carrot_App{
                             else
                                 html_main_contain+='<li class="col-4"><span class="text-secondary float-end"><i class="fa-solid fa-gamepad"></i></span></li>';
                         html_main_contain+='</ul>';
-    
-                        if(this.carrot.list_link_store!=null){
+
+                        if(this.carrot.link_store.list_link_store!=null){
                             var html_store_link="";
-                            $(this.carrot.list_link_store).each(function(index,store){
+                            $(this.carrot.link_store.list_link_store).each(function(index,store){
                                 if(data_app[store.key]!=null){
                                     var link_store_app=data_app[store.key];
                                     if(link_store_app!='') html_store_link+="<a class='link_app' title=\""+store.name+"\" target=\"_blank\" href=\""+link_store_app+"\"><i class=\""+store.icon+"\"></i></a>";
@@ -182,10 +182,10 @@ class Carrot_App{
 
                         html+=carrot.btn_dev("app",data.id);
 
-                        if(carrot.list_link_store!=null){
+                        if(carrot.link_store.list_link_store!=null){
                             var html_store_link="";
                             var html_store_link_lager="";
-                            $(carrot.list_link_store).each(function(index,store){
+                            $(carrot.link_store.list_link_store).each(function(index,store){
                                 if(data[store.key]!=null){
                                     var link_store_app=data[store.key];
                                     if(link_store_app.trim()!=""){
@@ -389,7 +389,7 @@ class Carrot_App{
     
         obj_app["tip_link"] = { type: "caption", message: "Các Liên kết tới các store khác" };
     
-        $.each(this.carrot.list_link_store, function (index, data_store) {
+        $.each(this.carrot.link_store.list_link_store, function (index, data_store) {
             obj_app["tip_lang_"+data_store.key] = { type: "caption", message: "<i class='fa-solid "+data_store.icon+"'></i> <b>"+data_store.name+"</b> Thiết lập liên kết ("+data_store.key+")" };
 
             var obj_input_link_store = Object();

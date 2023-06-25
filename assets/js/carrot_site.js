@@ -11,7 +11,6 @@ class Carrot_Site{
     langs;
     lang_url="";
     lang_web=Object();
-    list_link_store=null;
     list_lang;
     recognition=null;
 
@@ -27,7 +26,7 @@ class Carrot_Site{
 
     /*Firebase*/
     db;
-    app;
+    firebase;
 
     /*Obj Main*/
     user;
@@ -67,7 +66,7 @@ class Carrot_Site{
         if(localStorage.getItem("mode_site") != null) this.mode_site = localStorage.getItem("mode_site");
         if(localStorage.getItem("is_dev") != null) this.is_dev = localStorage.getItem("is_dev");
         if(localStorage.getItem("lang_web")!=null) this.lang_web=JSON.parse(localStorage.getItem("lang_web"));
-        if(localStorage.getItem("link_store")!=null) this.list_link_store=JSON.parse(localStorage.getItem("link_store"));
+        
         if(localStorage.getItem("lang") == null) this.change_lang("en"); else this.lang = localStorage.getItem("lang");
        
         this.list_lang=Array();
@@ -79,6 +78,7 @@ class Carrot_Site{
     };
 
     load_all_object_main(){
+        var carrot=this;
         $("#key_lang").html(this.lang);
         $("#btn_change_lang").click(function(){ carrot.show_list_lang();});
         this.log("Load js ..."+this.get_ver_cur("js"));
@@ -119,14 +119,35 @@ class Carrot_Site{
         this.privacy_policy=new Carrot_Privacy_Policy(this);
         this.about_us=new Carrot_About_Us(this);
 
+        var icon_model_host='';
+        var name_model_host='';
+        if(this.is_localhost){
+            icon_model_host='fa-brands fa-dev';
+            name_model_host="Localhost";
+        }
+        else{
+            icon_model_host='fa-sharp fa-solid fa-database';
+            name_model_host="Google";
+        }
+            
+        var btn_mod_host=this.menu.create("btn_mode_host").set_label("Change Mode Host ("+name_model_host+")").set_type("setting").set_icon(icon_model_host);
+        $(btn_mod_host).click(function(){carrot.change_host_connection();});
+
+        var btn_setting_ver=this.menu.create("data_version").set_label("Data Version").set_type("setting").set_icon("fa-regular fa-code-compare");
+        $(btn_setting_ver).click(function(){carrot.show_edit_version_data_version();});
+
+        if(!this.check_ver_cur("link_store")) this.link_store.get_all_data_link_store();
+        if(!this.check_ver_cur("lang")) this.get_all_data_lang();
+        if(!this.check_ver_cur("lang_web")) this.get_all_data_lang_web();
+
         this.user.show_info_user_login_in_header();
         this.menu.show();
     }
 
     setup_sever_db(){
         this.log("setup_sever_db");
-        this.app =firebase.initializeApp(this.firebaseConfig_mainhost);
-        this.db = this.app.firestore();
+        this.firebase =firebase.initializeApp(this.firebaseConfig_mainhost);
+        this.db = this.firebase.firestore();
         if (this.is_localhost) this.db.useEmulator('localhost', 8080);
         if(this.db==null) this.show_error_connect_sever();
     }
@@ -173,24 +194,6 @@ class Carrot_Site{
         });
     }
 
-    get_all_data_link_store() {
-        this.log("get_all_data_link_store");
-        this.db.collection("link_store").get().then((querySnapshot) => {
-            if(querySnapshot.docs.length>0){
-                this.list_link_store=Array();
-                querySnapshot.forEach((doc) => {
-                    var data_link_store=doc.data();
-                    data_link_store["id"]=doc.id;
-                    this.list_link_store.push(data_link_store);
-                });
-                this.save_list_link_store();
-                this.update_new_ver_cur("link_store");
-            }
-        }).catch((error) => {
-            this.log(error.message)
-        });
-    };
-
     get_all_data_lang() {
         this.db.collection("lang").get().then((querySnapshot) => {
             if(querySnapshot.docs.length>0){
@@ -213,10 +216,6 @@ class Carrot_Site{
             if (doc.exists) {
                 var ver_data_new=doc.data();
                 this.obj_version_new=ver_data_new;
-
-                if(!this.check_ver_cur("link_store")) this.get_all_data_link_store();
-                if(!this.check_ver_cur("lang")) this.get_all_data_lang();
-                if(!this.check_ver_cur("lang_web")) this.get_all_data_lang_web();
 
                 this.update_new_ver_cur("js");
                 this.update_new_ver_cur("page");
@@ -517,10 +516,6 @@ class Carrot_Site{
         localStorage.setItem("list_lang", JSON.stringify(this.list_lang));
     }
 
-    save_list_link_store(){
-        localStorage.setItem("link_store", JSON.stringify(this.list_link_store));
-    }
-
     change_lang(s_key){
         this.lang=s_key;
         localStorage.setItem("lang", s_key);
@@ -812,20 +807,25 @@ class Carrot_Site{
         var carrot=this;
         this.id_page = this.get_param_url("p");
         this.load_all_object_main();
-        this.log("check_show_by_id_page : "+this.id_page);
-        var obj_page_show=this.obj_page[this.id_page];
-        if(obj_page_show!=null){
-            var id_obj=this.get_param_url("id");
-            if(id_obj!=undefined){
-                id_obj=decodeURI(id_obj);
-                eval(obj_page_show.info)(id_obj,carrot);
-            }
-            else{
-                eval(obj_page_show.show);
-            }
+        if(this.id_page!=undefined){
+            this.log("check_show_by_id_page : "+this.id_page);
+            var obj_page_show=this.obj_page[this.id_page];
+            if(obj_page_show!=null){
+                var id_obj=this.get_param_url("id");
+                if(id_obj!=undefined){
+                    id_obj=decodeURI(id_obj);
+                    eval(obj_page_show.info)(id_obj,carrot);
+                }
+                else{
+                    eval(obj_page_show.show);
+                }
+            }else{
+                this.app.list();
+            };
         }else{
             this.app.list();
-        };
+        }
+
     }
 
     show(s_html){

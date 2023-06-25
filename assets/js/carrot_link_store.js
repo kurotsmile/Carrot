@@ -1,14 +1,46 @@
 class Carrot_Link_Store{
     carrot;
     icon="fa-solid fa-store";
+    list_link_store=null;
+
     constructor(carrot){
         this.carrot=carrot;
+        this.load_obj_link_store();
+
         carrot.register_page("link_store","carrot.link_store.list()","carrot.link_store.edit");
         var btn_add=carrot.menu.create("add_link_store").set_label("Add Link Store").set_icon(this.icon).set_type("add");
         var btn_list=carrot.menu.create("list_link_store").set_label("List Store").set_icon(this.icon).set_type("dev");
         $(btn_list).click(function(){carrot.link_store.list();});
         $(btn_add).click(function(){carrot.link_store.add();});
     }
+
+    load_obj_link_store(){
+        if(localStorage.getItem("link_store")!=null) this.list_link_store=JSON.parse(localStorage.getItem("link_store"));
+    }
+
+    save_list_link_store(){
+        localStorage.setItem("link_store", JSON.stringify(this.list_link_store));
+    }
+
+    get_all_data_link_store() {
+        var carrot=this.carrot;
+        var link_store=this;
+        carrot.log("get_all_data_link_store From sever");
+        carrot.db.collection("link_store").get().then((querySnapshot) => {
+            if(querySnapshot.docs.length>0){
+                link_store.list_link_store=Array();
+                querySnapshot.forEach((doc) => {
+                    var data_link_store=doc.data();
+                    data_link_store["id"]=doc.id;
+                    link_store.list_link_store.push(data_link_store);
+                });
+                link_store.save_list_link_store();
+                carrot.update_new_ver_cur("link_store",true);
+            }
+        }).catch((error) => {
+            carrot.log(error.message)
+        });
+    };
 
     list(){
         this.carrot.get_list_doc("link_store",this.list_show);
@@ -34,6 +66,10 @@ class Carrot_Link_Store{
         html+='</div>';
         carrot.show(html);
         carrot.check_event();
+    }
+
+    get_list_box_html(){
+
     }
 
     add(){

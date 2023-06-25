@@ -49,7 +49,7 @@ class AI_Key_Block{
     show_list_block_chat(data){
         var html = '';
         var list_block_chat=data.chat;
-        html += this.carrot.ai_lover.list_btn_lang_select();
+        html += this.carrot.langs.list_btn_lang_select();
         html += '<table class="table table-striped table-hover mt-6" id="table_key_block">';
         html += '<thead class="thead-light">';
         html += '<tr>';
@@ -96,6 +96,7 @@ class AI_Key_Block{
             carrot.ai.key_block.show_list_by_key_lang(key_change);
         });
         document.getElementById("btn_add_field_key_block").onclick = event => {  this.add_field_for_table_key_block();}
+        carrot.check_event();
     }
 
     add_field_for_table_key_block(){
