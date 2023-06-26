@@ -10,9 +10,9 @@ class Carrot_Langs{
 
     constructor(carrot){
         this.carrot=carrot;
-        this.load_list_lang();
 
         if(localStorage.getItem("lang") == null) this.change_lang("en"); else this.carrot.lang = localStorage.getItem("lang");
+        if(localStorage.getItem("list_lang") != null) this.list_lang=JSON.parse(localStorage.getItem("list_lang"));
         if(localStorage.getItem("lang_web")!=null) this.lang_web=JSON.parse(localStorage.getItem("lang_web"));
         if(localStorage.getItem("obj_lang_web")!=null) this.obj_lang_web=JSON.parse(localStorage.getItem("obj_lang_web"))
 
@@ -32,12 +32,6 @@ class Carrot_Langs{
         $("#btn_change_lang").click(function(){ carrot.langs.show_list_change_lang();});
     }
 
-    load_list_lang(){
-        if (localStorage.getItem("list_lang") == null)
-            this.list_lang=new Array();
-        else 
-            this.list_lang=JSON.parse(localStorage.getItem("list_lang"));
-    }
 
     save_list_lang(){
         localStorage.setItem("list_lang", JSON.stringify(this.list_lang));
@@ -125,7 +119,7 @@ class Carrot_Langs{
         var html='';
         carrot.change_title_page("All Lang","?p=lang","lang");
         html+='<div class="row">';
-        $(this.carrot.list_lang).each(function(index,lang){
+        $(this.carrot.langs.list_lang).each(function(index,lang){
             lang["id"]=lang["key"];
             var item_lang=new Carrot_List_Item(carrot);
             item_lang.set_id(lang.id);

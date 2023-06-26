@@ -115,7 +115,7 @@ class Carrot_Field{
             html+='<div class="page-wrapper box-content">';
             html+='<link rel="stylesheet" href="assets/plugins/richtex/richtext.min.css">';
             html+='<script type="text/javascript" src="assets/plugins/richtex/jquery.richtext.js"></script>';
-            html+='<textarea class="content" name="'+this.name+'">'+this.value+'</textarea>';
+            html+='<textarea id="'+this.name+'" class="content cr_field" name="'+this.name+'" type="editor">'+this.value+'</textarea>';
             html+='<script>$(document).ready(function(){$(".content").richText();});</script>';
             html+='</div>';
         }
@@ -350,6 +350,7 @@ class Carrot_Form{
                 else if(type_emp=="color") val_emp=$("#"+id_emp).colorpicker("val");
                 else if(type_emp=="icon") val_emp=$(this).attr("value");
                 else if(type_emp=="id") val_emp=$(this).attr("value");
+                else if(type_emp=="editor") val_emp=$(this).val();
                 else val_emp=$(this).val();
 
                 obj_frm[id_emp]=val_emp;

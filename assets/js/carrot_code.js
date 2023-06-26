@@ -1,15 +1,15 @@
 class Carrot_Code{
     carrot;
     obj_codes=null;
-
+    icon="fa-solid fa-code";
     constructor(carrot){
         this.carrot=carrot;
         this.load_obj_code();
 
         carrot.register_page("code","carrot.code.show_list_code()","carrot.code.show_edit","carrot.code.show");
-        var btn_add=carrot.menu.create("add_code").set_label("Add Code").set_icon("fa-solid fa-code").set_type("add");
+        var btn_add=carrot.menu.create("add_code").set_label("Add Code").set_icon(this.icon).set_type("add");
         $(btn_add).click(function(){carrot.code.show_add_new();});
-        var btn_list=carrot.menu.create("list_code").set_label("Code").set_icon("fa-solid fa-code").set_type("main").set_lang("code");
+        var btn_list=carrot.menu.create("list_code").set_label("Code").set_icon(this.icon).set_type("main").set_lang("code");
         $(btn_list).click(function(){carrot.code.show_list_code();});
     }
 
@@ -30,33 +30,30 @@ class Carrot_Code{
         var new_data=new Object();
         new_data["id"]="code-"+this.carrot.uniq();
         new_data["title"]="";
+        new_data["describe"]="";
         new_data["code"]="";
-        this.show_add_or_edit_code(new_data);
+        this.show_add_or_edit_code(new_data).set_title("Add code").set_msg_done("Add code success!").show();
     }
 
     show_edit(data,carrot){
         if(data==null) carrot.msg("Mã code này không còn tồn tại!","error");
-        carrot.code.show_add_or_edit_code(data);
+        carrot.code.show_add_or_edit_code(data).set_title("Edit code").set_msg_done("Edit code success!").show();
     }
 
     show_add_or_edit_code(data_code){
-        console.log(data_code);
         var carrot=this.carrot;
         var frm=new Carrot_Form('add_code',carrot);
-        frm.set_title("Add code");
-
-        var id_code=frm.create_field("id","ID");
-        id_code.set_val(data_code.id);
-        id_code.set_type("id");
-
-        var title_code=frm.create_field("title","Title");
-        title_code.set_val(data_code.title);
+        frm.set_icon(this.icon);
         frm.set_db("code","id");
+        frm.create_field("id").set_label("ID").set_val(data_code.id).set_type("id").set_main();
+
+        frm.create_field("title").set_label("Title").set_val(data_code.title);
+        frm.create_field("describe").set_label("Describe").set_val(data_code.describe).set_type("textarea").set_type("editor");
         var code_code=frm.create_field("code","Code");
         code_code.set_type("code");
         code_code.set_val(data_code.code);
-        code_code.set_tip("Hãy đóng góp những mã nguồn thật hay để chia sẻ những kiến thức bổ ích đến với các lập trình viên khác!")
-        frm.show();
+        code_code.set_tip("Hãy đóng góp những mã nguồn thật hay để chia sẻ những kiến thức bổ ích đến với các lập trình viên khác!");
+        return frm;
     }
 
     show_list_code(){
@@ -153,6 +150,12 @@ class Carrot_Code{
             carrot.code.show_add_new();
         });
 
+        $("#btn_download").click(function(){
+            var txt_code=$("#code_txt").text();
+            var file_code=$("#filename_code").text();
+            carrot.code.download_code(file_code,txt_code);
+        });
+
         this.carrot.check_event();
     }
 
@@ -175,12 +178,12 @@ class Carrot_Code{
                         
                         html+='<div class="row pt-4">';
                             html+='<div class="col-md-4 col-6 text-center">';
-                                html+='<b>3.9 <i class="fa-sharp fa-solid fa-eye"></i></b>';
-                                html+='<p>11.6k <l class="lang"  key_lang="count_view">Reviews</l></p>';
+                                html+='<b><l class="lang" key_lang="file">File</l> <i class="fa-sharp fa-solid fa-file"></i></b>';
+                                html+='<p id="filename_code">'+data.title+"."+carrot.code.get_file_extension_by_type(data.code_type)+'</p>';
                             html+='</div>';
                             html+='<div class="col-md-4 col-6 text-center">';
-                                html+='<b>5M+ <i class="fa-solid fa-download"></i></b>';
-                                html+='<p class="lang" key_lang="count_download">Downloads</p>';
+                                html+='<b><l class="lang" key_lang="category">Category</l> <i class="fa-solid fa-boxes-packing"></i></b>';
+                                html+='<p>'+data.code_type+'</p>';
                             html+='</div>';
                             html+='<div class="col-md-4 col-6 text-center">';
                                 html+='<b><l class="lang" key_lang="interface">Interface</l> <i class="fa-solid fa-brush"></i></b>';
@@ -191,7 +194,8 @@ class Carrot_Code{
                         html+='<div class="row pt-4">';
                             html+='<div class="col-12 text-center">';
                             html+='<button id="btn_share" type="button" class="btn d-inline btn-success"><i class="fa-solid fa-share-nodes"></i> <l class="lang" key_lang="share">Share</l> </button> ';
-                            html+='<button id="register_protocol_url" type="button"  class="btn d-inline btn-success" ><i class="fa-solid fa-rocket"></i> <l class="lang" key_lang="open_with">Open with..</l> </button>';
+                            html+='<button id="register_protocol_url" type="button"  class="btn d-inline btn-success" ><i class="fa-solid fa-rocket"></i> <l class="lang" key_lang="open_with">Open with..</l> </button> ';
+                            html+='<button id="btn_download" type="button" class="btn d-inline btn-success"><i class="fa-solid fa-download"></i> <l class="lang" key_lang="download">Download</l> </button> ';
                             html+='</div>';
                         html+='</div>';
 
@@ -199,8 +203,13 @@ class Carrot_Code{
                 html+="</div>";
     
                 html+='<div class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
+                    if(data.describe!=''&&data.describe!='undefined'&&data.describe!=undefined){
+                        html+='<h4 class="fw-semi fs-5 lang" key_lang="describe">Describe</h4>';
+                        html+='<p class="fs-8 text-justify mb-2">'+data.describe+'</p><br/>';
+                    }
+
                     html+='<h4 class="fw-semi fs-5 lang" key_lang="code">Code</h4>';
-                    html+='<pre><code class="'+data.code_type+'">'+data.code+'</code></pre>';
+                    html+='<pre><code id="code_txt" class="'+data.code_type+'">'+data.code+'</code></pre>';
                 html+='</div>';
     
                 html+='<div class="about row p-2 py-3  bg-white mt-4 shadow-sm">';
@@ -280,5 +289,23 @@ class Carrot_Code{
         carrot.show(html);
         carrot.code.check_event();
         hljs.highlightAll();
+    }
+
+    download_code(filename, text) {
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+        element.setAttribute('download', filename);
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+        this.carrot.msg("Download Success!");
+    }
+
+    get_file_extension_by_type(code_type){
+        var file_extension="";
+        if(code_type=="javascript") file_extension="js";
+        else file_extension=code_type;
+        return file_extension;
     }
 }

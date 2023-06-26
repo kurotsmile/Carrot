@@ -72,7 +72,7 @@ class Carrot_Link_Store{
                 item_store.set_class("col-md-2 mb-2 col-sm-3");
                 item_store.set_class_icon("col-md-12 mb-3 col-12 text-center");
                 item_store.set_tip(store.key);
-                item_store.set_body("<div class='col-12 mb-2 mt-2'><a target='_blank' href='"+store.link+"' class='btn btn-sm btn-success'><i class='fa-brands fa-instalod'></i> Go to</a></div>");
+                item_store.set_body("<div class='col-12 mb-2 mt-2'><a target='_blank' href='"+store.link+"' class='btn btn-sm btn-success'><i class='fa-brands fa-instalod'></i> <l class='lang' key_lang='visit'>Go to</l></a></div>");
                 html+=item_store.html();
             });
             html+='</div>';

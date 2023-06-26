@@ -19,7 +19,7 @@ class Carrot_App{
         $(btn_home).click(function(){carrot.app.list();});
         $(btn_apps).click(function(){carrot.app.list_app();});
         $(btn_games).click(function(){carrot.app.list_game();});
-        $(btn_add_apps).click(function(){carrot.app.show_box_add_or_edit_app(null);});
+        $(btn_add_apps).click(function(){carrot.app.show_box_add_or_edit_app(null,carrot);});
     }
     
     load_obj_app(){
@@ -153,7 +153,7 @@ class Carrot_App{
 
         if(this.type_show=="all"){
             if(carrot.link_store.list_link_store!=null){
-                html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-4"><i class="fa-solid fa-store fs-6 me-2"></i> Other Store</h4>';
+                html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-4"><i class="fa-solid fa-store fs-6 me-2"></i> <l class="lang" key_lang="other_store">Other Store</l></h4>';
                 html+='<div id="other_store" class="row m-0">';
                 html+=carrot.link_store.get_list_box_html();
                 html+="</div>";
@@ -350,12 +350,12 @@ class Carrot_App{
 
     show_edit_app_done(data_app,carrot){
         if(data_app!=null)
-            carrot.app.show_box_add_or_edit_app(data_app);
+            carrot.app.show_box_add_or_edit_app(data_app,carrot);
         else
             $.MessageBox("Ứng dụng không còn tồn tại!");
     }
 
-    show_box_add_or_edit_app(data_app){
+    show_box_add_or_edit_app(data_app,carrot){
         var s_title_box='';
         if(data_app==null)s_title_box="<b>Add Application</b>";
         else s_title_box="<b>Update Application</b>";
@@ -379,8 +379,8 @@ class Carrot_App{
         obj_app["type"] = obj_input_type;
     
         obj_app["tip_name"] = { type: "caption", message: "Tên và mô tả" };
-    
-        $.each(this.carrot.list_lang, function (index, data_lang) {
+
+        $(carrot.langs.list_lang).each(function (index, data_lang){
             obj_app["tip_lang_"+data_lang.key] = { type: "caption", message: "<img style='width:20px;' src='"+data_lang.icon+"'/> <b>"+data_lang.name+"</b> Thiết lập giao diện ngôn ngữ ("+data_lang.key+")" };
 
             if(data_lang.key=="en") obj_app["lang_en_required"] = { type: "caption", message: "<b class='text-danger'>*Bắt buột</b>:không để trống quốc gia này để thêm mới và cập nhật<br/><i class='text-secondary'>Vì đây là trường id chính xác định ứng dụng</i>" };

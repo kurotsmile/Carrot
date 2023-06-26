@@ -105,7 +105,7 @@ class Carrot_Site{
         var btn_setting_ver=this.menu.create("data_version").set_label("Data Version").set_type("setting").set_icon("fa-regular fa-code-compare");
         $(btn_setting_ver).click(function(){carrot.show_edit_version_data_version();});
 
-        var btn_export_file_json=this.menu.create("btn_export_file_json").set_label("Export Collection").set_type("setting").set_icon("fa-brands fa-dev");
+        var btn_export_file_json=this.menu.create("btn_export_file_json").set_label("Export Collection").set_type("setting").set_icon("fa-solid fa-file-export");
         $(btn_export_file_json).click(function(){carrot.download_json();});
 
         var btn_import_file_json=this.menu.create("btn_import_file_json").set_label("Import Collection (File)").set_type("setting").set_icon("fa-solid fa-file-import");
