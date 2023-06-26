@@ -88,16 +88,16 @@ class Carrot_Music{
     
     show_list_music(){
         if(this.carrot.check_ver_cur("song")==false){
-            this.carrot.log("Get list song from sever and show");
+            this.carrot.log("Get list song from sever and show","alert");
             this.carrot.get_list_doc("song",this.act_done_list_music);
             this.carrot.update_new_ver_cur("song",true);
         }else{
             if(this.obj_songs==null){
-                this.carrot.log("Get list song from sever and show");
+                this.carrot.log("Get list song from sever and show","alert");
                 this.carrot.get_list_doc("song",this.act_done_list_music);
             }
             else{
-                this.carrot.log("Show list song from cache");
+                this.carrot.log("Show list song from cache","success");
                 this.show_list_music_by_obj_songs(this.carrot);
             }
         }
@@ -157,6 +157,10 @@ class Carrot_Music{
         $("#btn_mm_play").click(function(){
             carrot.music.change_status_pause_and_play();
         });
+
+        $("#btn_download").click(function(){
+            carrot.show_pay();
+        })
 
         carrot.check_event();
     }
@@ -257,38 +261,47 @@ class Carrot_Music{
                     html+='<div class="col-md-8 p-2">';
                         html+='<h4 class="fw-semi fs-4 mb-3">'+data.name+'</h4>';
                         html+=this.carrot.btn_dev("song",data.id);
-                        
                         html+='<div class="row pt-4">';
-                            html+='<div class="col-md-4 col-6 text-center">';
-                                html+='<b>3.9 <i class="fa-sharp fa-solid fa-eye"></i></b>';
-                                html+='<p>11.6k <l class="lang"  key_lang="count_view">Reviews</l></p>';
-                            html+='</div>';
-                            html+='<div class="col-md-4 col-6 text-center">';
-                                html+='<b>5M+ <i class="fa-solid fa-download"></i></b>';
-                                html+='<p class="lang" key_lang="count_download">Downloads</p>';
-                            html+='</div>';
-                            html+='<div class="col-md-4 col-6 text-center">';
-                                html+='<b><l class="lang" key_lang="genre">Genre</l> <i class="fa-solid fa-guitar"></i></b>';
-                                html+='<p>'+data.genre+'</p>';
-                            html+='</div>';
-                            html+='<div class="col-md-4 col-6 text-center">';
-                                html+='<b>Ads <i class="fa-solid fa-window-restore"></i></b>';
-                                html+='<p class="lang" key_lang="in_app">Contains Ads</p>';
-                            html+='</div>';
+                            if(data.genre!=''){
+                                html+='<div class="col-md-4 col-6 text-center">';
+                                    html+='<b><l class="lang" key_lang="genre">Genre</l> <i class="fa-solid fa-guitar"></i></b>';
+                                    html+='<p>'+data.genre+'</p>';
+                                html+='</div>';
+                            }
+
+                            if(data.album!=''){
+                                html+='<div class="col-md-4 col-6 text-center">';
+                                    html+='<b>Album <i class="fa-solid fa-album"></i></b>';
+                                    html+='<p class="lang" key_lang="album">'+data.album+'</p>';
+                                html+='</div>';
+                            }
+
                             html+='<div class="col-md-4 col-6 text-center">';
                                 html+='<b><l class="lang" key_lang="year">Year</l> <i class="fa-solid fa-calendar-days"></i></b>';
                                 html+='<p class="lang" key_lang="contains_inapp">'+data.year+'</p>';
                             html+='</div>';
-                            html+='<div class="col-md-4 col-6 text-center">';
-                                html+='<b><l class="lang" key_lang="artist">Artist</l> <i class="fa-solid fa-user"></i></b>';
-                                html+='<p>'+data.artist+'</p>';
-                            html+='</div>';
+
+                            if(data.artist!=''){
+                                html+='<div class="col-md-4 col-6 text-center">';
+                                    html+='<b><l class="lang" key_lang="artist">Artist</l> <i class="fa-solid fa-user"></i></b>';
+                                    html+='<p>'+data.artist+'</p>';
+                                html+='</div>';
+                            }
+
+                            if(data.lang!=''){
+                                html+='<div class="col-md-4 col-6 text-center">';
+                                    html+='<b><l class="lang" key_lang="country">Country</l> <i class="fa-solid fa-language"></i></b>';
+                                    html+='<p>'+data.lang+'</p>';
+                                html+='</div>';
+                            }
+
                         html+='</div>';
 
                         html+='<div class="row pt-4">';
                             html+='<div class="col-12 text-center">';
                             html+='<button id="btn_share" type="button" class="btn d-inline btn-success"><i class="fa-solid fa-share-nodes"></i> <l class="lang" key_lang="share">Share</l> </button> ';
-                            html+='<button id="register_protocol_url" type="button"  class="btn d-inline btn-success" ><i class="fa-solid fa-rocket"></i> <l class="lang" key_lang="open_with">Open with..</l> </button>';
+                            html+='<button id="register_protocol_url" type="button"  class="btn d-inline btn-success" ><i class="fa-solid fa-rocket"></i> <l class="lang" key_lang="open_with">Open with..</l> </button> ';
+                            html+='<button id="btn_download" type="button" class="btn d-inline btn-success"><i class="fa-solid fa-download"></i> <l class="lang" key_lang="download">Download</l> </button> ';
                             html+='</div>';
                         html+='</div>';
 
@@ -512,7 +525,7 @@ class Carrot_Music{
 
         frm.create_field("date").set_label("Date").set_val(data["date"]).set_type("date");
         var lang_field=frm.create_field("lang").set_label("Lang").set_val(data["lang"]).set_type("select");
-        $(this.carrot.list_lang).each(function(index,lang_data){
+        $(this.carrot.langs.list_lang).each(function(index,lang_data){
             lang_field.add_option(lang_data.key,lang_data.name);
         });
         return frm;

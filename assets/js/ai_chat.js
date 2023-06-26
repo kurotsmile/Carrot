@@ -28,7 +28,7 @@ class AI_Chat{
         data_new_chat["pater"]="0";
         data_new_chat["user"]=this.carrot.user.get_user_login_id();
         data_new_chat["limit"]="1";
-        data_new_chat["lang"]=this.carrot.ai.setting_lang_change;
+        data_new_chat["lang"]=this.carrot.lang;
         this.show_add_or_edit_chat(data_new_chat).set_title("Add chat").show();
     }
 

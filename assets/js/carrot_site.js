@@ -10,11 +10,8 @@ class Carrot_Site{
     lang;
     langs;
     lang_url="";
-    lang_web=Object();
-    list_lang;
     recognition=null;
 
-    obj_lang_web=Object();
     obj_version_new=null;
     obj_version_cur=null;
 
@@ -56,13 +53,7 @@ class Carrot_Site{
 
         if(localStorage.getItem("mode_site") != null) this.mode_site = localStorage.getItem("mode_site");
         if(localStorage.getItem("is_dev") != null) this.is_dev = localStorage.getItem("is_dev");
-        if(localStorage.getItem("lang_web")!=null) this.lang_web=JSON.parse(localStorage.getItem("lang_web"));
         
-        if(localStorage.getItem("lang") == null) this.change_lang("en"); else this.lang = localStorage.getItem("lang");
-       
-        this.list_lang=Array();
-        
-        this.load_list_lang();
         this.load_recognition();
         this.load_obj_version_new();
         this.load_obj_version_cur();
@@ -123,8 +114,8 @@ class Carrot_Site{
         $("#btn_model_site").click(function(){carrot.change_mode_site();});
 
         if(!this.check_ver_cur("link_store")) this.link_store.get_all_data_link_store();
-        if(!this.check_ver_cur("lang")) this.get_all_data_lang();
-        if(!this.check_ver_cur("lang_web")) this.get_all_data_lang_web();
+        if(!this.check_ver_cur("lang")) this.langs.get_all_data_lang();
+        if(!this.check_ver_cur("lang_web")) this.langs.get_data_lang_web();
 
         this.user.show_info_user_login_in_header();
         this.menu.show();
@@ -150,7 +141,7 @@ class Carrot_Site{
 
         if(this.firebase==null) this.firebase =firebase.initializeApp(this.firebaseConfig_mainhost);
         this.db = this.firebase.firestore();
-        if (this.is_localhost) this.db.useEmulator('localhost', 8082);
+        if(this.is_localhost) this.db.useEmulator('localhost', 8082);
         if(this.db==null) this.show_error_connect_sever();
     }
 
@@ -175,8 +166,8 @@ class Carrot_Site{
             }
         }).catch((error) => {
             Swal.close();
+            this.log_error(error);
             act_done(null,this);
-            this.log(error.message,"error");
         });
     }
 
@@ -192,28 +183,10 @@ class Carrot_Site{
             act_done(obj_data,this);
         })
         .catch((error) => {
-            this.log(error.message,"error")
+            this.log_error(error);
             act_done(null,this);
         });
     }
-
-    get_all_data_lang() {
-        this.log("get_all_data_lang from server","alert");
-        this.db.collection("lang").get().then((querySnapshot) => {
-            if(querySnapshot.docs.length>0){
-                this.list_lang=Array();
-                querySnapshot.forEach((doc) => {
-                    var lang_data = doc.data();
-                    lang_data["id"]=doc.id;
-                    this.list_lang.push(lang_data);
-                });
-                this.save_list_lang();
-                this.update_new_ver_cur("lang");
-            }
-        }).catch((error) => {
-            this.log(error.message,"error")
-        });
-    };
 
     check_version_data(){
         this.db.collection("setting_web").doc("version").get().then((doc) => {
@@ -352,7 +325,7 @@ class Carrot_Site{
         } else {
             $("#btn_mode_host").html('<i class="fa-sharp fa-solid fa-database fs-6 me-2"></i> Googlehost');
         }
-        this.load_data_lang_web();
+        this.langs.load_data_lang_web();
     }
 
     show_error_connect_sever(){
@@ -365,19 +338,6 @@ class Carrot_Site{
         htm_msg+="</div>";
         htm_msg+="</div>";
         $.MessageBox({message:htm_msg});
-    }
-
-    get_all_data_lang_web(){
-        this.log("get_all_data_lang_web");
-        this.get_doc("lang_web",this.lang,this.get_data_lang_web_done);
-    }
-
-    get_data_lang_web_done(data,carrot){
-        carrot.lang_web=data;
-        carrot.obj_lang_web[carrot.lang]=JSON.stringify(carrot.lang_web);
-        localStorage.setItem("lang_web",JSON.stringify(carrot.lang_web));
-        localStorage.setItem("obj_lang_web",JSON.stringify(carrot.obj_lang_web));
-        carrot.load_data_lang_web();
     }
 
     convert_obj_to_list(obj_carrot){
@@ -409,13 +369,6 @@ class Carrot_Site{
             frm.create_field(key).set_label(key).set_val(value).set_type("number");
         });
         frm.show();
-    }
-
-    load_list_lang(){
-        if (localStorage.getItem("list_lang") == null)
-            this.list_lang=new Array();
-        else 
-            this.list_lang=JSON.parse(localStorage.getItem("list_lang"));
     }
 
     load_obj_version_new(){
@@ -514,16 +467,6 @@ class Carrot_Site{
         }
     }
 
-    save_list_lang(){
-        localStorage.setItem("list_lang", JSON.stringify(this.list_lang));
-    }
-
-    change_lang(s_key){
-        this.lang=s_key;
-        localStorage.setItem("lang", s_key);
-        $("#key_lang").html(s_key);
-    }
-
     change_title_page(s_title,s_url,id){
         document.title =s_title;
         this.id_page=id;
@@ -532,16 +475,6 @@ class Carrot_Site{
             window.history.pushState(s_title, 'Title', s_url);
         else
             window.history.pushState(s_title,"",null);
-    }
-
-    load_data_lang_web() {
-        var carrot=this;
-        $(".lang").each(function(index,emp){
-            var key_lang=$(emp).attr("key_lang");
-            if(carrot.lang_web[key_lang]!=null){
-                $(emp).html(carrot.lang_web[key_lang].trim());
-            }
-        });
     }
 
     check_event(){
@@ -621,14 +554,7 @@ class Carrot_Site{
     }
 
     l(key,lang_en_default=""){
-        if (this.lang_web[key] != null) 
-            return this.lang_web[key].trim();
-        else{
-            if(lang_en_default=="")
-                return key;
-            else
-                return lang_en_default;
-        }  
+        return this.langs.get_val_lang(key,lang_en_default);
     }
 
     download_json_doc() {
@@ -726,6 +652,19 @@ class Carrot_Site{
     log(s_msg,s_status="info") {
         console.log(s_msg);
         if(this.mode_site=="dev") SnackBar({message: s_msg,timeout: 5000,status:s_status});
+    }
+
+    log_error(error) {
+        if(this.mode_site=="dev"){
+            console.log(error);
+            Swal.fire({
+                title: 'Error',
+                icon: 'error',
+                html: error.message+"<br/>File:"+error.fileName+ "<br/>Line:"+error.lineNumber,
+                showCloseButton: true,
+                focusConfirm: false
+            });
+        }
     }
 
     get_url(){
@@ -842,5 +781,34 @@ class Carrot_Site{
 
     msg(msg,s_icon='success'){
         Swal.fire({icon:s_icon,title: msg,showConfirmButton: false,timer: 1500})
+    }
+
+    show_pay(){
+        var carrot=this;
+        Swal.fire({
+            title: 'Pay',
+            html: '<div id="paypal-button-container"></div>',
+            showCloseButton: true,
+            focusConfirm: false
+        });
+        paypal.Buttons({
+            createOrder: function(data, actions) {
+            return actions.order.create({
+                purchase_units: [{
+                amount: {
+                    currency_code:'USD',
+                    value: '1.99',
+                    breakdown: {item_total: {value: '1.99', currency_code: 'USD'}}
+                }
+                }]
+            });
+            },
+            onApprove: function(data, actions) {
+            return actions.order.capture().then(function(details) {
+                carrot.set_doc("order","pay_"+carrot.create_id(),details);
+                this.msg("Pay success!");
+            });
+            }
+        }).render('#paypal-button-container');
     }
 }

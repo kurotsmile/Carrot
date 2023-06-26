@@ -165,6 +165,10 @@ class Carrot_App{
 
     show_app_by_id(id_box_app,carrot){
         carrot.log("Show app by id:"+id_box_app,"info");
+        if(carrot.app.obj_app==null){
+            carrot.log("Load info app "+id_box_app+" from sever","alert");
+            carrot.get_doc("app",id_box_app,carrot.app.show_app_info);
+        }else{
             if(carrot.app.obj_app[id_box_app]==null){
                 carrot.log("Load info app "+id_box_app+" from sever","alert");
                 carrot.get_doc("app",id_box_app,carrot.app.show_app_info);
@@ -173,6 +177,7 @@ class Carrot_App{
                 var data_app=JSON.parse(carrot.app.obj_app[id_box_app]);
                 carrot.app.show_app_info(data_app,carrot);
             }
+        }
     }
 
     show_app_info(data,carrot){
