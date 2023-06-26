@@ -150,7 +150,7 @@ class Carrot_Site{
 
         if(this.firebase==null) this.firebase =firebase.initializeApp(this.firebaseConfig_mainhost);
         this.db = this.firebase.firestore();
-        if (this.is_localhost) this.db.useEmulator('localhost', 8080);
+        if (this.is_localhost) this.db.useEmulator('localhost', 8082);
         if(this.db==null) this.show_error_connect_sever();
     }
 
@@ -402,6 +402,7 @@ class Carrot_Site{
 
     show_edit_version_data_version(){
         var obj_data_ver = Object();
+        /*
         $.each(this.obj_version_new,function(key,value){        
             obj_data_ver[key]={'type':'input','defaultValue':value,'label':key};
         });
@@ -411,6 +412,16 @@ class Carrot_Site{
             top: "auto",
             buttonFail: "Cancel"
         }).done(this.act_done_edit_version_data_version);
+        */
+       
+        var frm=new Carrot_Form("frm_ver",this);
+        frm.set_title("Change Version Data");
+        frm.set_db("setting_web","version");
+        frm.on_db_doc();
+        $.each(this.obj_version_new,function(key,value){   
+            frm.create_field(key).set_label(key).set_val(value).set_type("number");
+        });
+        frm.show();
     }
 
     load_list_lang(){

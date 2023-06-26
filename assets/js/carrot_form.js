@@ -187,6 +187,7 @@ class Carrot_Form{
     db_document;
     type;
     is_editor_code=false;
+    is_field_db_doc=false;
     msg_done="Add or Edit success!";
     icon_font="fa-solid fa-window-restore";
 
@@ -251,6 +252,11 @@ class Carrot_Form{
 
     set_icon_font(s_icon){
         this.icon_font=s_icon;
+        return this;
+    }
+
+    on_db_doc(){
+        this.is_field_db_doc=true;
         return this;
     }
     
@@ -330,6 +336,7 @@ class Carrot_Form{
                     $(this).addClass("btn-info");
                 });
             }
+            if(type_emp=="date") $("#"+id_emp).datepicker();
         });
 
         $("#btn_"+this.name+"_done").click(function(){
@@ -348,7 +355,11 @@ class Carrot_Form{
                 obj_frm[id_emp]=val_emp;
             });
 
-            carrot.set_doc(frm.db_collection,obj_frm[frm.db_document],obj_frm);
+            if(frm.is_field_db_doc)
+                carrot.set_doc(frm.db_collection,frm.db_document,obj_frm);
+            else
+                carrot.set_doc(frm.db_collection,obj_frm[frm.db_document],obj_frm);
+
             carrot.msg(frm.msg_done);
             $('#box').modal('toggle'); 
         });

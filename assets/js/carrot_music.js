@@ -4,7 +4,7 @@ class Carrot_Music{
     audio_player=null;
 
     m_index=-1;
-    icon="fa-solid fa-square-plus";
+    icon="fa-solid fa-music";
 
     constructor(carrot){
         this.carrot=carrot;
@@ -469,12 +469,13 @@ class Carrot_Music{
         data_music["link_ytb"]="";
         data_music["album"]="";
         data_music["year"]="";
+        data_music["date"]=new Date().toLocaleDateString();
         data_music["lang"]=this.carrot.lang;
-        this.add_or_edit(data_music).set_title("Add Music").show();
+        this.frm_add_or_edit(data_music).set_title("Add Music").set_msg_done("Add song success!").show();
     }
 
     edit(data,carrot){
-        carrot.music.add_or_edit(data).set_title("Edit Music").show();
+        carrot.music.frm_add_or_edit(data).set_title("Edit Music").set_msg_done("Update song success!").show();
     }
 
     frm_add_or_edit(data){
@@ -509,6 +510,7 @@ class Carrot_Music{
 
         for(var i=new Date().getFullYear();i>1980;i--) year_field.add_option(i,"Year "+i);
 
+        frm.create_field("date").set_label("Date").set_val(data["date"]).set_type("date");
         var lang_field=frm.create_field("lang").set_label("Lang").set_val(data["lang"]).set_type("select");
         $(this.carrot.list_lang).each(function(index,lang_data){
             lang_field.add_option(lang_data.key,lang_data.name);
