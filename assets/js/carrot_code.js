@@ -114,7 +114,7 @@ class Carrot_Code{
         var html="<div class='box_app "+s_class+"' id=\""+data_code.id+"\" key_search=\""+data_code.title+"\">";
             html+='<div class="app-cover p-2 shadow-md bg-white">';
                 html+='<div class="row">';
-                    html+='<div role="button" class="code_icon img-cover pe-0 col-2 text-center d-fex db_info" db_collection="code" db_document="'+data_code.id+'"><i class="fa-brands fa-square-js fa-3x mt-2"></i></div>';
+                    html+='<div role="button" class="code_icon img-cover pe-0 col-2 text-center d-fex db_info" db_collection="code" db_document="'+data_code.id+'"><i class="'+this.get_icon_by_type(data_code.code_type)+' fa-3x mt-2"></i></div>';
                     html+='<div class="det mt-2 col-10">';
                         html+="<h5 class='mb-0 fs-6'>"+data_code.title+"</h5>";
                         
@@ -170,7 +170,7 @@ class Carrot_Code{
             html+='<div class="col-md-8 ps-4 ps-lg-3">';
                 html+='<div class="row bg-white shadow-sm">';
                     html+='<div class="col-md-4 p-3 text-center">';
-                        html+='<br/><i class="fa-sharp fa-solid fa-code fa-5x"></i>';
+                        html+='<br/><i class="'+carrot.code.get_icon_by_type(data.code_type)+' fa-5x"></i>';
                     html+='</div>';
                     html+='<div class="col-md-8 p-2">';
                         html+='<h4 class="fw-semi fs-4 mb-3">'+data.title+'</h4>';
@@ -178,7 +178,7 @@ class Carrot_Code{
                         
                         html+='<div class="row pt-4">';
                             html+='<div class="col-md-4 col-6 text-center">';
-                                html+='<b><l class="lang" key_lang="file">File</l> <i class="fa-sharp fa-solid fa-file"></i></b>';
+                                html+='<b><l class="lang" key_lang="file">File</l> <i class="fa-solid fa-file-code"></i></b>';
                                 html+='<p id="filename_code">'+data.title+"."+carrot.code.get_file_extension_by_type(data.code_type)+'</p>';
                             html+='</div>';
                             html+='<div class="col-md-4 col-6 text-center">';
@@ -305,7 +305,15 @@ class Carrot_Code{
     get_file_extension_by_type(code_type){
         var file_extension="";
         if(code_type=="javascript") file_extension="js";
+        else if(code_type=="powershell") file_extension="ps1";
         else file_extension=code_type;
         return file_extension;
+    }
+
+    get_icon_by_type(code_type){
+        if(code_type=="powershell") return "fa-solid fa-terminal";
+        else if(code_type=="json") return "fa-solid fa-database";
+        else if(code_type=="javascript") return "fa-brands fa-square-js";
+        else return "fa-solid fa-code";
     }
 }
