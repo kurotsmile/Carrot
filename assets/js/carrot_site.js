@@ -115,7 +115,7 @@ class Carrot_Site{
         $(btn_setting_ver).click(function(){carrot.show_edit_version_data_version();});
 
         var btn_export_file_json=this.menu.create("btn_export_file_json").set_label("Export Collection").set_type("setting").set_icon("fa-brands fa-dev");
-        $(btn_export_file_json).click(function(){carrot.download_json_doc();});
+        $(btn_export_file_json).click(function(){carrot.download_json();});
 
         var btn_import_file_json=this.menu.create("btn_import_file_json").set_label("Import Collection (File)").set_type("setting").set_icon("fa-solid fa-file-import");
         $(btn_import_file_json).click(function(){carrot.show_import_json_file();});
@@ -401,19 +401,6 @@ class Carrot_Site{
     }
 
     show_edit_version_data_version(){
-        var obj_data_ver = Object();
-        /*
-        $.each(this.obj_version_new,function(key,value){        
-            obj_data_ver[key]={'type':'input','defaultValue':value,'label':key};
-        });
-        $.MessageBox({
-            message: "Edit version",
-            input: obj_data_ver,
-            top: "auto",
-            buttonFail: "Cancel"
-        }).done(this.act_done_edit_version_data_version);
-        */
-       
         var frm=new Carrot_Form("frm_ver",this);
         frm.set_title("Change Version Data");
         frm.set_db("setting_web","version");
