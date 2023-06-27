@@ -2,11 +2,12 @@ class Carrot_Code{
     carrot;
     obj_codes=null;
     icon="fa-solid fa-code";
+    id_page="code";
     constructor(carrot){
         this.carrot=carrot;
         this.load_obj_code();
 
-        carrot.register_page("code","carrot.code.show_list_code()","carrot.code.show_edit","carrot.code.show");
+        carrot.register_page(this.id_page,"carrot.code.show_list_code()","carrot.code.show_edit","carrot.code.show","carrot.code.reload");
         var btn_add=carrot.menu.create("add_code").set_label("Add Code").set_icon(this.icon).set_type("add");
         $(btn_add).click(function(){carrot.code.show_add_new();});
         var btn_list=carrot.menu.create("list_code").set_label("Code").set_icon(this.icon).set_type("main").set_lang("code");
@@ -24,6 +25,7 @@ class Carrot_Code{
     delete_obj_code(){
         localStorage.removeItem("obj_codes");
         this.obj_codes=null;
+        this.carrot.delete_ver_cur(this.id_page);
     }
 
     show_add_new(){
@@ -32,12 +34,16 @@ class Carrot_Code{
         new_data["title"]="";
         new_data["describe"]="";
         new_data["code"]="";
+        new_data["code_type"]="javascript";
+        new_data["code_theme"]="default.min.css";
+        new_data["date"]=$.datepicker.formatDate('yy-mm-dd', new Date());
         this.show_add_or_edit_code(new_data).set_title("Add code").set_msg_done("Add code success!").show();
+        this.reload_code_editor_field();
     }
 
     show_edit(data,carrot){
-        if(data==null) carrot.msg("Mã code này không còn tồn tại!","error");
         carrot.code.show_add_or_edit_code(data).set_title("Edit code").set_msg_done("Edit code success!").show();
+        carrot.code.reload_code_editor_field();
     }
 
     show_add_or_edit_code(data_code){
@@ -49,15 +55,54 @@ class Carrot_Code{
 
         frm.create_field("title").set_label("Title").set_val(data_code.title);
         frm.create_field("describe").set_label("Describe").set_val(data_code.describe).set_type("textarea").set_type("editor");
+        var code_type=frm.create_field("code_type").set_label("Code Type").set_value(data_code["code_type"]).set_type("select");
+        var lis_lang_code=hljs.listLanguages();
+        for(var i=0;i<lis_lang_code.length;i++) code_type.add_option(lis_lang_code[i],lis_lang_code[i]);
         var code_code=frm.create_field("code","Code");
         code_code.set_type("code");
         code_code.set_val(data_code.code);
         code_code.set_tip("Hãy đóng góp những mã nguồn thật hay để chia sẻ những kiến thức bổ ích đến với các lập trình viên khác!");
+        var code_theme=frm.create_field("code_theme").set_label("Code Theme").set_value(data_code["code_theme"]).set_type("select");
+        code_theme.add_option("default.min.css","Default");
+        code_theme.add_option("agate.min.css","Agate");
+        code_theme.add_option("androidstudio.min.css","Androidstudio");
+        code_theme.add_option("arta.min.css","Arta");
+        code_theme.add_option("dark.min.css","Dark");
+        code_theme.add_option("devibeans.min.css","Devibeans");
+        code_theme.add_option("docco.min.css","Docco");
+        code_theme.add_option("far.min.css","Far");
+        code_theme.add_option("felipec.min.css","Felipec");
+        code_theme.add_option("foundation.min.css","Foundation");
+        frm.create_field("date").set_label("Date Create").set_value(data_code["date"]).set_type("date");
         return frm;
     }
 
+    reload_code_editor_field(){
+        var code=this;
+
+        code.sel_code_type($("#code_type"));
+
+        $("#code_type").change(function(){
+            code.sel_code_type(this);
+        });
+
+        $("#code_theme").change(function(){
+            var val_theme=$(this).val();
+            $("#editor_code_theme").attr("href","assets/plugins/highlight/styles/"+val_theme);
+        });
+    }
+
+    sel_code_type(emp){
+        var type_code=$(emp).val();
+        var lis_lang_code=hljs.listLanguages();
+        carrot.log("Select Code type:"+type_code,"null");
+        $(".editor").removeClass("language-undefined");
+        for(var i=0;i<lis_lang_code.length;i++) $(".editor").removeClass("language-"+lis_lang_code[i]);
+        $(".editor").addClass("language-"+type_code);
+    }
+
     show_list_code(){
-        this.carrot.change_title_page("Code","?p=code","code");
+        this.carrot.change_title_page("Code","?p="+this.id_page,this.id_page);
         if(this.carrot.check_ver_cur("code")){
             if(this.obj_codes==null){
                 this.carrot.log("Get data code from sever");
@@ -164,7 +209,7 @@ class Carrot_Code{
     }
 
     show_info_code(data,carrot){
-        carrot.change_title_page(data.title,"?p=code&id="+data.id);
+        carrot.change_title_page(data.title,"?p="+carrot.code.id_page+"&id="+data.id,carrot.code.id_page);
         var html='<div class="section-container p-2 p-xl-4">';
         html+='<div class="row">';
             html+='<div class="col-md-8 ps-4 ps-lg-3">';
@@ -285,7 +330,7 @@ class Carrot_Code{
     
         html+="</div>";
         html+="</div>";
-        $("#code_theme").attr("href","assets/plugins/highlight/styles/"+data.code_theme);
+        $("#editor_code_theme").attr("href","assets/plugins/highlight/styles/"+data.code_theme);
         carrot.show(html);
         carrot.code.check_event();
         hljs.highlightAll();
@@ -315,5 +360,10 @@ class Carrot_Code{
         else if(code_type=="json") return "fa-solid fa-database";
         else if(code_type=="javascript") return "fa-brands fa-square-js";
         else return "fa-solid fa-code";
+    }
+
+    reload(carrot){
+        carrot.code.delete_obj_code();
+        carrot.code.show_list_code();
     }
 }

@@ -5,12 +5,14 @@ class Carrot_Music{
 
     m_index=-1;
     icon="fa-solid fa-music";
+    id_page="song";
+    is_video_player=false;
 
     constructor(carrot){
         this.carrot=carrot;
         this.load_obj_song();
 
-        carrot.register_page("music","carrot.music.show_list_music()","carrot.music.edit","carrot.music.show_info_music_by_id");
+        carrot.register_page(this.id_page,"carrot.music.show_list_music()","carrot.music.edit","carrot.music.show_info_music_by_id","carrot.music.reload");
         var btn_add=carrot.menu.create("add_music").set_label("Add Music").set_icon(this.icon).set_type("add");
         $(btn_add).click(function(){carrot.music.add();});
         var btn_list=carrot.menu.create("list_music").set_label("Music").set_lang("music").set_icon(this.icon).set_type("main");
@@ -24,6 +26,7 @@ class Carrot_Music{
     delete_obj_song(){
         localStorage.removeItem("obj_songs");
         this.obj_songs=null;
+        this.carrot.delete_ver_cur(this.id_page);
     }
 
     create_audio(){
@@ -45,6 +48,7 @@ class Carrot_Music{
     }
 
     create_session(s_title,s_artist,s_album,s_url_avatar){
+        var music=this;
         if ("mediaSession" in navigator) {
             navigator.mediaSession.metadata = new MediaMetadata({
               title: s_title,
@@ -60,13 +64,15 @@ class Carrot_Music{
             });
           
             navigator.mediaSession.setActionHandler("play", () => {
-              /* Code excerpted. */
+                music.play_music();
+                music.check_status_mm_player();
             });
             navigator.mediaSession.setActionHandler("pause", () => {
-              /* Code excerpted. */
+                music.pause_music();
+                music.check_status_mm_player();
             });
             navigator.mediaSession.setActionHandler("stop", () => {
-              /* Code excerpted. */
+                music.stop_music();
             });
             navigator.mediaSession.setActionHandler("seekbackward", () => {
               /* Code excerpted. */
@@ -110,7 +116,7 @@ class Carrot_Music{
     }
 
     show_list_music_by_obj_songs(carrot){
-        carrot.change_title_page("Music", "?p=music","music");
+        carrot.change_title_page("Music", "?p="+this.id_page,this.id_page);
         var list_song=carrot.convert_obj_to_list(this.obj_songs);
         var html='<div class="row m-0">';
         $(list_song).each(function(index,song){
@@ -134,11 +140,14 @@ class Carrot_Music{
             carrot.music.play_music_by_name(aud_name);
         });
 
+        $(".btn-play-video").click(function(){
+            var aud_name=$(this).attr("aud-name");
+            carrot.music.play_video_by_name(aud_name);
+        });
+
         $('#m_btn_stop').click(function(){
             $(".status_music").html('<i class="fa-sharp fa-solid fa-circle-play fa-2x"></i>');
-            carrot.music.audio_player.pause();
-            carrot.music.audio_player.currentTime=0;
-            $("#music_player_mini").hide(100);
+            carrot.music.stop_music();
         });
 
         $("#m_btn_back").click(function(){
@@ -163,6 +172,13 @@ class Carrot_Music{
         })
 
         carrot.check_event();
+    }
+
+    stop_music(){
+        this.audio_player.pause();
+        this.audio_player.currentTime=0;
+        $('#carrot_player_video').html("");
+        $("#music_player_mini").hide(100);
     }
 
     back_music(){
@@ -210,7 +226,10 @@ class Carrot_Music{
         this.m_index=index_play;
         var song=list_music[this.m_index];
         song["index"]=index_play;
-        this.act_play_song(song);
+        if(this.is_video_player==false)
+            this.act_play_song(song);
+        else
+            this.act_play_video(song);
     }
 
     play_music_by_name(s_name_audio){
@@ -218,7 +237,13 @@ class Carrot_Music{
         this.act_play_song(song);
     }
 
+    play_video_by_name(s_name_audio){
+        var song=JSON.parse(this.obj_songs[s_name_audio]);
+        this.act_play_video(song);
+    }
+
     act_play_song(song){
+        this.is_video_player=false;
         if(this.carrot.id_page=="music"){
             $(".status_music").html('<i class="fa-sharp fa-solid fa-circle-play fa-2x"></i>');
             if(song.index!="") $("#status_music_"+song.index).html('<i class="fa-solid fa-spinner fa-spin-pulse fa-2x"></i>');
@@ -226,13 +251,31 @@ class Carrot_Music{
         
         this.audio_player.src=song.mp3;
         this.audio_player.play();
+        $('#carrot_player_video').html("").hide();
         $("#music_player_mini").removeClass("d-none").hide().show(100);
         $("#m_name").html(song.name);
         $("#m_artist").html(song.artist);
         $("#m_avatar").css("background","url('"+song.avatar+"')");
-
+        $("#m_avatar").show();
+        $("#m_progress").show();
+        $("#btn_mm_play").show();
         this.create_session(song.name,song.artist,"carrotstore.com",song.avatar);
+        return this.audio_player;
     }
+
+    act_play_video(song){
+        this.is_video_player=true;
+        this.audio_player.pause();
+        var url_ytb=this.youtube_id(song.link_ytb);
+        $("#music_player_mini").removeClass("d-none").hide().show(100);
+        $('#carrot_player_video').html('<iframe  width="300" height="169" src="https://www.youtube-nocookie.com/embed/'+url_ytb+'?autoplay=1&controls=0" title="Carrot video player" frameborder="0" allow="autoplay;accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen=""></iframe>').show();
+        $("#m_name").html(song.name);
+        $("#m_artist").html(song.artist);
+        $("#m_avatar").hide();
+        $("#btn_mm_play").hide();
+        $("#m_progress").hide();
+        this.create_session(song.name,song.artist,"carrotstore.com",song.avatar);
+    } 
 
     show_info_music_by_id(s_name_id,carrot){
         carrot.log("show_info_music_by_id:"+s_name_id);
@@ -249,14 +292,15 @@ class Carrot_Music{
     }
 
     show_info_music(data){
-        this.carrot.change_title_page(data.name,"?p=music&id="+data.id,"music");
+        this.carrot.change_title_page(data.name,"?p="+this.id_page+"&id="+data.id,this.id_page);
         var html='<div class="section-container p-2 p-xl-4">';
         html+='<div class="row">';
             html+='<div class="col-md-8 ps-4 ps-lg-3">';
                 html+='<div class="row bg-white shadow-sm">';
                     html+='<div class="col-md-4 p-3 text-center">';
                         html+='<img class="w-100" src="'+data.avatar+'" alt="'+data.name+'">';
-                        html+='<i role="button" class="fa-sharp fa-solid fa-circle-play fa-5x text-success mt-2 btn-play-music" aud-index="'+data.index+'" aud-name="'+data.name+'"></i>';
+                        if(data.mp3!="") html+='<i role="button" class="fa-sharp fa-solid fa-circle-play fa-5x text-success mt-2 mr-2 btn-play-music" aud-index="'+data.index+'" aud-name="'+data.name+'"></i> ';
+                        if(data.link_ytb!="") html+='<i role="button" class="fa-sharp fa-solid fa-film fa-5x text-success mt-2 btn-play-video" aud-index="'+data.index+'" aud-name="'+data.name+'"></i>';
                     html+='</div>';
                     html+='<div class="col-md-8 p-2">';
                         html+='<h4 class="fw-semi fs-4 mb-3">'+data.name+'</h4>';
@@ -301,7 +345,7 @@ class Carrot_Music{
                             html+='<div class="col-12 text-center">';
                                 html+='<button id="btn_share" type="button" class="btn d-inline btn-success"><i class="fa-solid fa-share-nodes"></i> <l class="lang" key_lang="share">Share</l> </button> ';
                                 html+='<button id="register_protocol_url" type="button"  class="btn d-inline btn-success" ><i class="fa-solid fa-rocket"></i> <l class="lang" key_lang="open_with">Open with..</l> </button> ';
-                                html+='<button id="btn_download" type="button" class="btn d-inline btn-success"><i class="fa-solid fa-download"></i> <l class="lang" key_lang="download">Download</l> </button> ';
+                                if(data.mp3!="")html+='<button id="btn_download" type="button" class="btn d-inline btn-success"><i class="fa-solid fa-download"></i> <l class="lang" key_lang="download">Download</l> </button> ';
                             html+='</div>';
                         html+='</div>';
 
@@ -408,7 +452,7 @@ class Carrot_Music{
                         html_main_contain+="<h5 class='mb-0 fs-6'>"+data_music.name+"</h5>";
                         
                         html_main_contain+='<ul class="row">';
-                            html_main_contain+='<li class="col-8 ratfac">';
+                            html_main_contain+='<li class="col-6 ratfac">';
                             html_main_contain+="<span class='fs-8'>"+data_music.artist+"</span><br/>";
                                 html_main_contain+='<i class="bi text-warning fa-solid fa-music"></i>';
                                 html_main_contain+='<i class="bi text-warning fa-solid fa-music"></i>';
@@ -417,9 +461,10 @@ class Carrot_Music{
                                 html_main_contain+='<i class="bi fa-solid fa-music"></i>';
                             html_main_contain+='</li>';
                   
-                            html_main_contain+='<li class="col-4 d-flex">';
-                                html_main_contain+='<span role="button" class="btn_info_music text-secondary" aud-name="'+data_music.name+'" style="margin-right: 6px;"><i class="fa-sharp fa-solid fa-circle-info fa-2x"></i></span> ';
-                                html_main_contain+='<span role="button" class="status_music float-end text-success btn-play-music"  aud-name="'+data_music.name+'"><i class="fa-sharp fa-solid fa-circle-play fa-2x"></i></span> ';
+                            html_main_contain+='<li class="col-6 d-flex">'; 
+                                html_main_contain+='<span role="button" class="btn_info_music text-info" aud-name="'+data_music.name+'" style="margin-right: 6px;"><i class="fa-sharp fa-solid fa-circle-info fa-2x"></i></span> ';
+                                if(data_music.link_ytb!="") html_main_contain+='<span role="button" class="status_video float-end text-success btn-play-video"  aud-name="'+data_music.name+'" style="margin-right: 6px;"><i class="fa-sharp fa-solid fa-film fa-2x"></i></span> ';
+                                if(data_music.mp3!="") html_main_contain+='<span role="button" class="status_music float-end text-success btn-play-music"  aud-name="'+data_music.name+'"><i class="fa-sharp fa-solid fa-circle-play fa-2x"></i></span> ';
                             html_main_contain+='</li>';
 
                         html_main_contain+='</ul>';
@@ -436,14 +481,15 @@ class Carrot_Music{
     box_music_mini(){
         var html='';
         html += '<section id="music_player_mini" class="music-player d-none">';
+            html += '<div id="carrot_player_video"><iframe  width="300" height="169" src="https://www.youtube-nocookie.com/embed/QIqhz6LxE7A" title="Carrot video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen=""></iframe></div>';
             html += '<header id="m_avatar" class="music-player--banner"></header>';
             html += '<main class="music-player--main">';
-                html += '<div class="music-player--progress">';
+                html += '<div id="m_progress" class="music-player--progress">';
                 html += '<progress id="m_timeStamp" class="progress--progress-bar" value="0" max="100"></progress>';
                 html += '<div class="progress--time" id="m_time_play">1:37</div>';
                 html += '<div class="progress--time progress--time__end" id="m_time_end">3:52</div>';
                 html += '</div>';
-                html += '<div class="music-player--controls">';
+                html += '<div id="m_controls" class="music-player--controls">';
                 html += '<i id="btn_mm_play" class="fa fa-pause controls--play-button"></i>';
 
                 html += '<div class="song-info">';
@@ -472,7 +518,6 @@ class Carrot_Music{
 
     add(){
         var data_music=new Object();
-        data_music["id"]=this.carrot.create_id();
         data_music["name"]="";
         data_music["avatar"]="";
         data_music["artist"]="";
@@ -482,7 +527,7 @@ class Carrot_Music{
         data_music["link_ytb"]="";
         data_music["album"]="";
         data_music["year"]="";
-        data_music["date"]=new Date().toLocaleDateString();
+        data_music["date"]=$.datepicker.formatDate('yy-mm-dd', new Date());
         data_music["lang"]=this.carrot.lang;
         this.frm_add_or_edit(data_music).set_title("Add Music").set_msg_done("Add song success!").show();
     }
@@ -494,13 +539,12 @@ class Carrot_Music{
     frm_add_or_edit(data){
         var frm=new Carrot_Form("frm_music",this.carrot);
         frm.set_icon(this.icon);
-        frm.set_db("song","id");
-        frm.create_field("id").set_label("ID").set_val(data["id"]).set_type("id");
-        frm.create_field("name").set_label("Name").set_val(data["name"]);
+        frm.set_db("song","name");
+        frm.create_field("name").set_label("Name").set_val(data["name"]).add_btn_search_google().add_btn_search_ytb().add_btn_toLower();
         frm.create_field("avatar").set_label("Avatar (url)").set_val(data["avatar"]);
         frm.create_field("artist").set_label("Artist").set_val(data["artist"]);
         frm.create_field("mp3").set_label("Mp3 (Url)").set_val(data["mp3"]);
-        frm.create_field("lyrics").set_label("lyrics").set_val(data["lyrics"]).set_type("textarea");
+        frm.create_field("lyrics").set_label("lyrics").set_val(data["lyrics"]).set_type("editor");
 
         var genre_field=frm.create_field("genre").set_label("Genre").set_val(data["genre"]).set_type("select");
         genre_field.add_option("pop","Pop music");
@@ -517,18 +561,29 @@ class Carrot_Music{
         genre_field.add_option("EDM","EDM");
         genre_field.add_option("k-pop","K-POP");
 
-        frm.create_field("link_ytb").set_label("link ytb").set_val(data["link_ytb"]);
+        frm.create_field("link_ytb").set_label("link ytb").add_btn_download_ytb().set_val(data["link_ytb"]);
         frm.create_field("album").set_label("Album").set_val(data["album"]);
         var year_field=frm.create_field("year").set_label("Year").set_val(data["year"]).set_type("select");
 
         for(var i=new Date().getFullYear();i>1980;i--) year_field.add_option(i,"Year "+i);
 
-        frm.create_field("date").set_label("Date").set_val(data["date"]).set_type("date");
+        frm.create_field("date").set_label("Date Create").set_type("date").set_val(data["date"]);
         var lang_field=frm.create_field("lang").set_label("Lang").set_val(data["lang"]).set_type("select");
         $(this.carrot.langs.list_lang).each(function(index,lang_data){
             lang_field.add_option(lang_data.key,lang_data.name);
         });
         return frm;
+    }
+
+    youtube_id(url){
+        var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+        var match = url.match(regExp);
+        return (match&&match[7].length==11)? match[7] : false;
+    }
+
+    reload(carrot){
+        carrot.music.delete_obj_song();
+        carrot.music.show_list_music();
     }
 }
 

@@ -165,6 +165,7 @@ class Carrot_Site{
                 act_done(null,this);
             }
         }).catch((error) => {
+            console.log(error);
             Swal.close();
             this.log_error(error);
             act_done(null,this);
@@ -227,7 +228,7 @@ class Carrot_Site{
         delete(data.db_collection);
         delete(data.db_doc);
         this.db.collection(db_collection).doc(data[db_doc]).set(data);
-        this.delete_cache_obj_by_collection(db_collection);
+        this.call_func_by_id_page(db_collection,"reload");
         $.MessageBox(act_msg_success);
     }
 
@@ -352,11 +353,12 @@ class Carrot_Site{
         return this.convert_obj_to_list(objs);
     }
 
-    register_page(id_page,event_show_page,event_edit,event_info=''){
+    register_page(id_page,event_show_page,event_edit,event_info='',event_reload=''){
         var obj_data=new Object();
         obj_data["edit"]=event_edit;
         obj_data["show"]= event_show_page;
         obj_data["info"]= event_info;
+        obj_data["reload"]= event_reload;
         this.obj_page[id_page]=obj_data;
     }
 
@@ -394,8 +396,9 @@ class Carrot_Site{
             $.MessageBox("Document "+db_doc_id+"successfully deleted!");
             this.delete_cache_obj_by_collection(db_collection);
             console.log("Document "+db_doc_id+"successfully deleted!");
+            this.call_func_by_id_page(db_collection,"reload");
         }).catch((error) => {
-            console.error("Error removing document: ", error);
+            this.log_error(error);
         });
     }
 
@@ -455,6 +458,10 @@ class Carrot_Site{
         }
     }
 
+    delete_ver_cur(s_item){
+        this.obj_version_cur[s_item]="0.0";
+    }
+
     get_ver_cur(s_item){
         if(this.obj_version_cur==null){ 
             return "0.0";
@@ -504,7 +511,7 @@ class Carrot_Site{
             var db_collection=$(this).attr("db_collection");
             var db_document=$(this).attr("db_document");
             carrot.log("Edit "+db_collection+" : "+db_document);
-            if(carrot.obj_page[carrot.id_page]!=null){
+            if(carrot.obj_page[db_collection]!=null){
                 carrot.get_doc(db_collection,db_document,carrot.act_edit_by_page_register);
             }else{
                 carrot.msg("chưa thiết lập đối tượng page edit","error");
@@ -534,6 +541,10 @@ class Carrot_Site{
 
     act_edit_by_page_register(data,carrot){
         eval(carrot.obj_page[carrot.id_page].edit)(data,carrot);
+    }
+
+    call_func_by_id_page(id_page,func){
+        if(carrot.obj_page[id_page]!=null) eval(carrot.obj_page[id_page][func])(carrot);
     }
 
     act_search(s_key_search){
@@ -651,16 +662,16 @@ class Carrot_Site{
 
     log(s_msg,s_status="info") {
         console.log(s_msg);
-        if(this.mode_site=="dev") SnackBar({message: s_msg,timeout: 5000,status:s_status});
+        if(this.mode_site=="dev") SnackBar({message: s_msg,timeout: 5000,status:s_status,position:'tr'});
     }
 
     log_error(error) {
         if(this.mode_site=="dev"){
             console.log(error);
             Swal.fire({
-                title: 'Error',
+                title: error.name,
                 icon: 'error',
-                html: error.message+"<br/>File:"+error.fileName+ "<br/>Line:"+error.lineNumber,
+                html: error.toString(),
                 showCloseButton: true,
                 focusConfirm: false
             });

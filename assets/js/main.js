@@ -36,6 +36,25 @@ function paste_tag(name_tag) {
     navigator.clipboard.readText().then(text => {$("#"+name_tag).val(text.trim());});
 }
 
+function goto_ytb_download_mp3(url){
+    if(url==""){ carrot.msg("Url not null!","error");return false;}
+    var url_ytb=url.replace("youtube.com","youtubepp.com");
+    window.open(url_ytb, "_blank");
+}
+
+function search_web(s_search,site='youtube'){
+    var url_web='';
+    if(site=='youtube') url_web="https://www.youtube.com/results?search_query="+s_search;
+    if(site=='google') url_web="https://www.google.com/search?q="+s_search;
+    window.open(url_web, "_blank");
+}
+
+function toLowerCase_tag(name_tag){
+    var s_txt=$("#" + name_tag).val();
+    s_txt=s_txt.toLowerCase();
+    $("#" + name_tag).val(s_txt);
+}
+
 function customer_field_for_db(data,collection,key_name_doc,smg_success){
     data["act_msg_success"]={'defaultValue':smg_success,'customClass':'d-none'};
     data["db_collection"]={'defaultValue':collection,'customClass':'d-none'};

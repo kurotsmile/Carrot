@@ -1,3 +1,29 @@
+class Carrot_Btn{
+    icon;
+    onclick=null;
+    constructor(){
+        this.icon="fa-solid fa-box";
+    }
+
+    set_icon(s_icon_font){
+        this.icon=s_icon_font;
+    }
+
+    set_onclick(s_func){
+        this.onclick=s_func;
+    }
+
+    html(){
+        var html='';
+        html+='<div class="input-group-append">';
+        html+='<span class="input-group-text btn-ms" role="button" onclick="'+this.onclick+'">';
+        html+='<i class="'+this.icon+'"></i>';
+        html+='</span>';
+        html+='</div>';
+        return html;
+    }
+}
+
 class Carrot_Field{
     name;
     label;
@@ -6,6 +32,7 @@ class Carrot_Field{
     value;
     tip=null;
     list_class=Array();
+    list_btn=Array();
     options=Array();
     is_field_main=false;
 
@@ -63,6 +90,51 @@ class Carrot_Field{
         return this;
     }
 
+    add_btn(btn){
+        this.list_btn.push(btn);
+        return this;
+    }
+
+    add_btn_download_ytb(){
+        var btn_download_ytb=new Carrot_Btn();
+        btn_download_ytb.set_icon("fa-brands fa-youtube");
+        btn_download_ytb.set_onclick("goto_ytb_download_mp3($('#"+this.name+"').val())");
+        this.add_btn(btn_download_ytb);
+        return this;
+    }
+
+    add_btn_search_ytb(){
+        var btn_search_ytb=new Carrot_Btn();
+        btn_search_ytb.set_icon("fa-brands fa-youtube");
+        btn_search_ytb.set_onclick("search_web($('#"+this.name+"').val(),'youtube')");
+        this.add_btn(btn_search_ytb);
+        return this;
+    }
+
+    add_btn_search_google(){
+        var btn_search_gg=new Carrot_Btn();
+        btn_search_gg.set_icon("fa-brands fa-google");
+        btn_search_gg.set_onclick("search_web($('#"+this.name+"').val(),'google')");
+        this.add_btn(btn_search_gg);
+        return this;
+    }
+
+    add_btn_toLower(){
+        var btn_toLower=new Carrot_Btn();
+        btn_toLower.set_icon("fa-solid fa-text-height");
+        btn_toLower.set_onclick("toLowerCase_tag('"+this.name+"')");
+        this.add_btn(btn_toLower);
+        return this;
+    }
+
+    htm_btn_extension(){
+        var html='';
+        for(var i=0;i<this.list_btn.length;i++){
+            html+=this.list_btn[i].html();
+        }
+        return html;
+    }
+
     html(){
         var html='';
         var s_class='';
@@ -74,41 +146,10 @@ class Carrot_Field{
         html+='</label>';
         
         if(this.type=="code"){
-            var s_lang_type='javascript';
-            html+='<div class="form-group">';
-                html+='<label for="'+this.name+'_type">'+this.label+' Type Language</label>';
-                html+='<select id="'+this.name+'_type" type="select" class="form-control '+s_class+' cr_field cr_field_code_type">';
-                var lis_lang_code=hljs.listLanguages();
-                for(var i=0;i<lis_lang_code.length;i++){
-                    if(s_lang_type==lis_lang_code[i])
-                        html+='<option value="'+lis_lang_code[i]+'" selected="selected">'+lis_lang_code[i]+'</option>';
-                    else
-                        html+='<option value="'+lis_lang_code[i]+'">'+lis_lang_code[i]+'</option>';
-                } 
-                html+='</select>';
-            html+='</div>';
-
             html+='<div class="form-group">';
                 html+='<label for="'+this.name+'">'+this.label+' Editor</label>';
                 html+='<style>.editor {overflow-wrap: break-word;word-wrap: break-word;border-radius: 6px;box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);font-family:  monospace;font-size: 14px;font-weight: 400;height: 340px;letter-spacing: normal;line-height: 20px;padding: 10px;tab-size: 4;}</style>';
                 html+='<pre><code id="'+this.name+'" type="'+this.type+'" contenteditable="true" class="editor '+s_class+' hljs cr_field">'+this.value+'</code></pre>';
-            html+='</div>';
-
-            html+='<div class="form-group">';
-                html+='<label for="'+this.name+'_theme">'+this.label+' Theme</label>';
-                html+='<select id="'+this.name+'_theme" type="select" class="form-control '+s_class+' cr_field cr_field_code_theme">';
-                    html+='<option value="default.min.css">Default</option>';
-                    html+='<option value="agate.min.css">Agate</option>';
-                    html+='<option value="androidstudio.min.css">Androidstudio</option>';
-                    html+='<option value="arta.min.css">Arta</option>';
-                    html+='<option value="ascetic.min.css">Ascetic</option>';
-                    html+='<option value="dark.min.css">Dark</option>';
-                    html+='<option value="devibeans.min.css">Devibeans</option>';
-                    html+='<option value="docco.min.css">Docco</option>';
-                    html+='<option value="far.min.css">Far</option>';
-                    html+='<option value="felipec.min.css">Felipec</option>';
-                    html+='<option value="foundation.min.css">Foundation</option>';
-                html+='</select>';
             html+='</div>';
         }
         else if(this.type=="editor"){
@@ -120,7 +161,7 @@ class Carrot_Field{
             html+='</div>';
         }
         else if(this.type=='select'){
-            html+='<select id="'+this.name+'" type="select" class="cr_field form-select">';
+            html+='<select id="'+this.name+'" type="select" class="cr_field form-select form-select-sm">';
             for(var i=0;i<this.options.length;i++){
                 var item_option=this.options[i];
                 if(item_option.key==this.value)
@@ -165,10 +206,11 @@ class Carrot_Field{
         }
         else{
             html+='<div class="input-group mb-3">';
-            html+='<input type="'+this.type+'" value="'+this.value+'" class="form-control '+s_class+' cr_field" id="'+this.name+'" placeholder="'+this.placeholder+'">';
+            html+='<input type="'+this.type+'" value="'+this.value+'" class="form-control '+s_class+' cr_field form-control-sm" id="'+this.name+'" placeholder="'+this.placeholder+'">';
             html+='<div class="input-group-append">';
-            html+='<span class="input-group-text" role="button" onclick="paste_tag(\''+this.name+'\')"><i class="fa-solid fa-paste"></i> Paste</span>';
+            html+='<span class="input-group-text btn-ms" role="button" onclick="paste_tag(\''+this.name+'\')"><i class="fa-solid fa-paste"></i></span>';
             html+='</div>';
+            html+=this.htm_btn_extension();
             html+='</div>';
         }
 
@@ -186,7 +228,6 @@ class Carrot_Form{
     db_collection;
     db_document;
     type;
-    is_editor_code=false;
     is_field_db_doc=false;
     msg_done="Add or Edit success!";
     icon_font="fa-solid fa-window-restore";
@@ -271,7 +312,6 @@ class Carrot_Form{
 
         html+='<form id="'+this.name+'" class="modal-body">';
         for(var i=0;i<this.list_field.length;i++){
-            if(this.list_field[i].type=="code") this.is_editor_code=true;
             if(this.list_field[i].name==this.db_document) this.list_field[i].set_main();
             html+=this.list_field[i].html();
         }
@@ -290,36 +330,6 @@ class Carrot_Form{
         var frm=this;
         var carrot=this.carrot;
 
-        if(this.is_editor_code){
-
-            function sel_code_type(emp){
-                var type_code=$(emp).val();
-                var lis_lang_code=hljs.listLanguages();
-                carrot.log("Select Code type:"+type_code);
-                $(".editor").removeClass("language-undefined");
-                for(var i=0;i<lis_lang_code.length;i++) $(".editor").removeClass("language-"+lis_lang_code[i]);
-                $(".editor").addClass("language-"+type_code);
-                /*
-                var txt=$(".editor").html();
-                $(".editor").html(txt.replaceAll("<br>", "\n"));
-                hljs.highlightAll();
-                */
-            }
-    
-            $(".cr_field_code_type").change(function(){
-                sel_code_type(this);
-            });
-    
-            $(document).ready(function() {
-                sel_code_type($(".cr_field_code_type"));
-            });
-        
-            $(".cr_field_code_theme").change(function(){
-                var val_theme=$(this).val();
-                $("#code_theme").attr("href","assets/plugins/highlight/styles/"+val_theme);
-            });
-        }
-
         $(".cr_field").each(function(){
             var id_emp=$(this).attr("id");
             var type_emp=$(this).attr("type");
@@ -336,7 +346,6 @@ class Carrot_Form{
                     $(this).addClass("btn-info");
                 });
             }
-            if(type_emp=="date") $("#"+id_emp).datepicker();
         });
 
         $("#btn_"+this.name+"_done").click(function(){
@@ -362,6 +371,7 @@ class Carrot_Form{
                 carrot.set_doc(frm.db_collection,obj_frm[frm.db_document],obj_frm);
 
             carrot.msg(frm.msg_done);
+            carrot.call_func_by_id_page(frm.db_collection,"reload")
             $('#box').modal('toggle'); 
         });
 

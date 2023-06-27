@@ -3,6 +3,8 @@ class Carrot_user{
     obj_login=null;
     obj_phone_book=null;
 
+    phone_book_info_cur=null;
+
     constructor(carrot){
         this.carrot=carrot;
         if(localStorage.getItem("obj_login")!=null) this.obj_login=JSON.parse(localStorage.getItem("obj_login"));
@@ -147,6 +149,10 @@ class Carrot_user{
             var user_lang=$(this).attr("user-lang");
             carrot.get_doc("user-"+user_lang,user_id,carrot.user.show_user_info);
         })
+
+        $("#btn_download").click(function(){
+            carrot.user.download_vcard();
+        });
         carrot.check_event();
     }
 
@@ -216,6 +222,7 @@ class Carrot_user{
     show_user_info(data_user,carrot){
         if(data_user==null){$.MessageBox("This user no longer exists");return false;}
         var url_avatar='';
+        carrot.user.phone_book_info_cur=data_user;
         if(data_user.avatar!=null) url_avatar=data_user.avatar;
         if(url_avatar=="") url_avatar="images/avatar_default.png";
         carrot.change_title_page(data_user.name,"?p=phone_book&id="+data_user.id);
@@ -224,7 +231,7 @@ class Carrot_user{
             html+='<div class="col-md-8 ps-4 ps-lg-3">';
                 html+='<div class="row bg-white shadow-sm">';
                     html+='<div class="col-md-4 p-3 text-center">';
-                        html+='<img class="w-100" src="'+url_avatar+'" alt="'+data_user.name+'">';
+                        html+='<img id="imageid" class="w-100" src="'+url_avatar+'" alt="'+data_user.name+'">';
                     html+='</div>';
                     html+='<div class="col-md-8 p-2">';
                         html+='<h4 class="fw-semi fs-4 mb-3">'+data_user.name+'</h4>';
@@ -266,7 +273,8 @@ class Carrot_user{
                         html+='<div class="row pt-4">';
                             html+='<div class="col-12 text-center">';
                             html+='<button id="btn_share" type="button" class="btn d-inline btn-success"><i class="fa-solid fa-share-nodes"></i> <l class="lang" key_lang="share">Share</l> </button> ';
-                            html+='<button id="register_protocol_url" type="button"  class="btn d-inline btn-success" ><i class="fa-solid fa-rocket"></i> <l class="lang" key_lang="open_with">Open with..</l> </button>';
+                            html+='<button id="register_protocol_url" type="button"  class="btn d-inline btn-success" ><i class="fa-solid fa-rocket"></i> <l class="lang" key_lang="open_with">Open with..</l> </button> ';
+                            html+='<button id="btn_download" type="button" class="btn d-inline btn-success"><i class="fa-solid fa-download"></i> <l class="lang" key_lang="download">Download Vcard</l> </button> ';
                             html+='</div>';
                         html+='</div>';
 
@@ -398,5 +406,65 @@ class Carrot_user{
             return "";
         }
     }
-    
+
+    download_vcard() {
+        var carrot=this.carrot;
+        var filename=carrot.user.phone_book_info_cur.name+".vcf";
+        var element = document.createElement('a');
+        var text='';
+        var arr_name=this.phone_book_info_cur.name.split(' ');
+        var Prefix="";
+        if(this.phone_book_info_cur.sex=="0") Prefix="Mr"; else Prefix="Ms";
+        console.log(arr_name);
+        text+="BEGIN:VCARD\n";
+        text+="VERSION:3.0";
+        text+="FN;CHARSET=UTF-8:"+carrot.user.phone_book_info_cur.name+"\n";
+
+        if(arr_name.length>1){
+            var lastname = arr_name[0];
+            var firstname = arr_name[1];
+            text+="N;CHARSET=UTF-8:"+firstname+"; "+lastname+"; ;"+Prefix+";"+firstname+"\n";
+            text+="NICKNAME;CHARSET=UTF-8:"+firstname+" "+lastname+"\n";
+        }else{
+            text+="N;CHARSET=UTF-8:"+firstname+";;;"+Prefix+";\n";
+            text+="NICKNAME;CHARSET=UTF-8:"+carrot.user.phone_book_info_cur.name+"\n";  
+        }
+
+        if(this.phone_book_info_cur.email!=""){
+            text+="EMAIL;CHARSET=UTF-8;type=HOME,INTERNET:"+this.phone_book_info_cur.email+"\n";
+            text+="EMAIL;CHARSET=UTF-8;type=WORK,INTERNET:"+this.phone_book_info_cur.email+"\n";
+        }
+
+        if(this.phone_book_info_cur.phone!=""){
+            text+="TEL;TYPE=HOME,VOICE:"+this.phone_book_info_cur.phone+"\n";
+        }
+
+        if(this.phone_book_info_cur.address!=""){
+            var address=this.phone_book_info_cur.address;
+            if(address.name!=""){
+                text+="LABEL;CHARSET=UTF-8;TYPE=HOME:Home\n";
+                text+="ADR;CHARSET=UTF-8;TYPE=HOME:;;"+address.name+";530000;Vietnam\n";
+                text+="LABEL;CHARSET=UTF-8;TYPE=WORK:Company Address\n";
+                text+="ADR;CHARSET=UTF-8;TYPE=WORK:;;"+address.name+";530000;Vietnam\n";
+            }
+        }
+
+        text+="TITLE;CHARSET=UTF-8:Carrot Store\n";
+        text+="ROLE;CHARSET=UTF-8:user\n";
+        text+="ORG;CHARSET=UTF-8:Carrot\n";
+        text+="URL;type=WORK;CHARSET=UTF-8:"+window.location+"\n";
+        text+="X-SOCIALPROFILE;TYPE=facebook:https://www.facebook.com/kurotsmile\n";
+        text+="X-SOCIALPROFILE;TYPE=web:https://carrotstore.web.app\n";
+        text+="REV:"+new Date().toJSON()+"\n";
+        text+="END:VCARD\n";
+        
+
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+        element.setAttribute('download', filename);
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+        carrot.msg("Download Success!");
+    }  
 }

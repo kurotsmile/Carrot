@@ -1,6 +1,8 @@
 # Carrot
 Carrot Store ứng dụng web giới thiệu các sản phẩm của Trần Thiện Thanh sử dụng cơ sở dữ liệu mới tích hợp nền tảng Firebase
 
+[![Build Status](https://github.com/ajaxorg/ace/workflows/CI/badge.svg)](https://github.com/kurotsmile/Carrot/actions) 
+
 `URL:`https://carrotstore.web.app
 `URL:`https://kurotsmile.github.io/Carrot
 
