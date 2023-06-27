@@ -48,6 +48,7 @@ class Carrot_Music{
             });
     
             this.carrot.body.parent().parent().append(carrot.music.box_music_mini());
+            $("#music_player_mini" ).draggable({scroll: true,axis: "x"});
         }
     }
 
