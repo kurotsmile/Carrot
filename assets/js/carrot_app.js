@@ -8,7 +8,7 @@ class Carrot_App{
         this.carrot=carrot;
         this.load_obj_app();
 
-        carrot.register_page("home","carrot.app.list()","carrot.app.show_edit_app_done","carrot.app.show_app_by_id");
+        carrot.register_page("home","carrot.home()","carrot.app.show_edit_app_done","carrot.app.show_app_by_id");
         carrot.register_page("app","carrot.app.list_app()","carrot.app.show_edit_app_done","carrot.app.show_app_by_id");
         carrot.register_page("game","carrot.app.list_game()","carrot.app.show_edit_app_done","carrot.app.show_app_by_id");
 
@@ -152,12 +152,7 @@ class Carrot_App{
         html+="</div>";
 
         if(this.type_show=="all"){
-            if(carrot.link_store.list_link_store!=null){
-                html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-4"><i class="fa-solid fa-store fs-6 me-2"></i> <l class="lang" key_lang="other_store">Other Store</l></h4>';
-                html+='<div id="other_store" class="row m-0">';
-                html+=carrot.link_store.get_list_box_html();
-                html+="</div>";
-            }
+            html+=carrot.link_store.list_for_home();
         }
         carrot.body.html(html);
         this.check_btn_for_list_app();
@@ -420,5 +415,19 @@ class Carrot_App{
             top: "auto",
             buttonFail: "Cancel"
         }).done(this.carrot.act_done_add_or_edit);
+    }
+
+    list_for_home(){
+        var list_app=this.carrot.obj_to_array(this.obj_app);
+        var html='';
+        list_app=list_app.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
+        html+='<div class="row">';
+        for(var i=0;i<12;i++){
+            var app=list_app[i];
+            html+=this.box_app_item(app);
+        }
+        html+='</div>';
+        html+=carrot.link_store.list_for_home();
+        return html;
     }
 }

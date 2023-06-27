@@ -581,7 +581,7 @@ html {
   right: 10px;
 }
 .music-player--banner {
-  background: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQyFIE3Rh2-j--UDmNe0swZPf327WlYxZRSYg&usqp=CAU');
+  background: url('../../images/logo.jpg');
   background-size: cover;
   height: 150px;
   box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
@@ -701,5 +701,11 @@ html {
 
 #btn_mm_play:hover{
   color: black;
+}
+
+.ui-effects-transfer {
+  border: 3px solid yellowgreen;
+  border-radius: 15px;
+  background-color: #89c52927;
 }
 

@@ -507,6 +507,7 @@ class Carrot_Site{
             carrot.show_import_json_box(obj_data);
         });
 
+        $(".btn_app_edit").unbind('click');
         $(".btn_app_edit").click(function(){
             var db_collection=$(this).attr("db_collection");
             var db_document=$(this).attr("db_document");
@@ -518,6 +519,7 @@ class Carrot_Site{
             }
         });
 
+        $(".btn_app_del").unbind('click');
         $(".btn_app_del").click(function(){
             var db_collection=$(this).attr("db_collection");
             var db_document=$(this).attr("db_document");
@@ -731,16 +733,16 @@ class Carrot_Site{
                     eval(obj_page_show.show);
                 }
             }else{
-                this.app.list();
+                this.home();
             };
         }else{
-            this.app.list();
+            this.home();
         }
     }
 
     show(s_html){
         this.body.html(s_html);
-        $('body').animate({scrollTop:0}, 1000);
+        window.scrollTo(0,0); 
     }
 
     btn_dev(db_collection,db_document){
@@ -821,5 +823,18 @@ class Carrot_Site{
             });
             }
         }).render('#paypal-button-container');
+    }
+
+    home(){
+        var html="";
+        if(this.app.obj_app!=null){
+            html+=this.app.list_for_home();
+            html+=this.music.list_for_home();
+            this.show(html);
+            this.app.check_btn_for_list_app();
+            this.music.check_event();
+        }else{
+            this.app.list();
+        }
     }
 }

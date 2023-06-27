@@ -30,21 +30,25 @@ class Carrot_Music{
     }
 
     create_audio(){
-        this.carrot.log("Create Audio Media Player");
-        this.audio_player=new Audio();
-        this.audio_player.addEventListener("loadeddata", () => {
-            let duration = this.audio_player.duration;
-            $("#m_timeStamp").attr('max',duration.toFixed(2));
-            $("#m_time_end").html(this.formatTime(duration));
-            if (this.audio_player.readyState >= 2){
-                this.audio_player.play();
-            }
-        });
-
-        this.audio_player.addEventListener("timeupdate", (event) => {
-            $("#m_timeStamp").attr('value',this.audio_player.currentTime.toFixed(2));
-            $("#m_time_play").html(this.formatTime(this.audio_player.currentTime));
-        });
+        if(this.audio_player==null){
+            this.carrot.log("Create Audio Media Player");
+            this.audio_player=new Audio();
+            this.audio_player.addEventListener("loadeddata", () => {
+                let duration = this.audio_player.duration;
+                $("#m_timeStamp").attr('max',duration.toFixed(2));
+                $("#m_time_end").html(this.formatTime(duration));
+                if (this.audio_player.readyState >= 2){
+                    this.audio_player.play();
+                }
+            });
+    
+            this.audio_player.addEventListener("timeupdate", (event) => {
+                $("#m_timeStamp").attr('value',this.audio_player.currentTime.toFixed(2));
+                $("#m_time_play").html(this.formatTime(this.audio_player.currentTime));
+            });
+    
+            this.carrot.body.parent().parent().append(carrot.music.box_music_mini());
+        }
     }
 
     create_session(s_title,s_artist,s_album,s_url_avatar){
@@ -124,11 +128,8 @@ class Carrot_Music{
             html+=carrot.music.box_music_item(song);
         });
         html+="</div>";
-        carrot.body.html(html);
-        if(carrot.music.audio_player==null){
-            carrot.body.parent().parent().append(carrot.music.box_music_mini());
-            carrot.music.create_audio();
-        }
+        carrot.show(html);
+        carrot.music.create_audio();
         carrot.music.check_event();
     }
 
@@ -137,12 +138,23 @@ class Carrot_Music{
 
         $(".btn-play-music").click(function(){
             var aud_name=$(this).attr("aud-name");
-            carrot.music.play_music_by_name(aud_name);
+            $(this).effect( "bounce","fast");
+            if($('#music_player_mini').is(":visible")){
+                $(this).effect("transfer", { to: $("#music_player_mini") }, 600,function(){carrot.music.play_music_by_name(aud_name);});
+            }else{
+                $("#music_player_mini").show("slide", { direction: "right" }, 1000,function(){carrot.music.play_music_by_name(aud_name);});
+                
+            }
         });
 
         $(".btn-play-video").click(function(){
             var aud_name=$(this).attr("aud-name");
-            carrot.music.play_video_by_name(aud_name);
+            $(this).effect( "bounce","fast");
+            if($('#music_player_mini').is(":visible")){
+                $(this).effect("transfer", { to: $("#music_player_mini") }, 600,function(){carrot.music.play_video_by_name(aud_name);});
+            }else{
+                $("#music_player_mini").show("slide", { direction: "right" }, 1000,function(){carrot.music.play_video_by_name(aud_name);});
+            }
         });
 
         $('#m_btn_stop').click(function(){
@@ -252,7 +264,7 @@ class Carrot_Music{
         this.audio_player.src=song.mp3;
         this.audio_player.play();
         $('#carrot_player_video').html("").hide();
-        $("#music_player_mini").removeClass("d-none").hide().show(100);
+        $("#music_player_mini").hide().show(100);
         $("#m_name").html(song.name);
         $("#m_artist").html(song.artist);
         $("#m_avatar").css("background","url('"+song.avatar+"')");
@@ -267,7 +279,7 @@ class Carrot_Music{
         this.is_video_player=true;
         this.audio_player.pause();
         var url_ytb=this.youtube_id(song.link_ytb);
-        $("#music_player_mini").removeClass("d-none").hide().show(100);
+        $("#music_player_mini").hide().show(100);
         $('#carrot_player_video').html('<iframe  width="300" height="169" src="https://www.youtube-nocookie.com/embed/'+url_ytb+'?autoplay=1&controls=0" title="Carrot video player" frameborder="0" allow="autoplay;accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen=""></iframe>').show();
         $("#m_name").html(song.name);
         $("#m_artist").html(song.artist);
@@ -431,12 +443,10 @@ class Carrot_Music{
     
         html+="</div>";
         html+="</div>";
-        this.carrot.body.html(html);
+        this.carrot.show(html);
 
-        if(this.carrot.music.audio_player==null){
-            this.carrot.body.parent().parent().append(this.carrot.music.box_music_mini());
-            this.carrot.music.create_audio();
-        }
+
+        this.carrot.music.create_audio();
         this.check_event();
     }
 
@@ -480,8 +490,8 @@ class Carrot_Music{
 
     box_music_mini(){
         var html='';
-        html += '<section id="music_player_mini" class="music-player d-none">';
-            html += '<div id="carrot_player_video"><iframe  width="300" height="169" src="https://www.youtube-nocookie.com/embed/QIqhz6LxE7A" title="Carrot video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen=""></iframe></div>';
+        html += '<section id="music_player_mini" style="display:none" class="music-player">';
+            html += '<div id="carrot_player_video"></div>';
             html += '<header id="m_avatar" class="music-player--banner"></header>';
             html += '<main class="music-player--main">';
                 html += '<div id="m_progress" class="music-player--progress">';
@@ -584,6 +594,24 @@ class Carrot_Music{
     reload(carrot){
         carrot.music.delete_obj_song();
         carrot.music.show_list_music();
+    }
+
+    list_for_home(){
+        this.create_audio();
+        var html="";
+        if(this.obj_songs!=null){
+            var list_song=this.carrot.obj_to_array(this.obj_songs);
+            list_song= list_song.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
+            html+='<div class="row">';
+            html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-4"><i class="fa-solid fa-music fs-6 me-2"></i> <l class="lang" key_lang="other_music">Other Music</l></h4>';
+            html+='<div id="other_music" class="row m-0">';
+            for(var i=0;i<12;i++){
+                var song=list_song[i];
+                html+=this.box_music_item(song);
+            }
+            html+='</div>';
+        }
+        return html;
     }
 }
 

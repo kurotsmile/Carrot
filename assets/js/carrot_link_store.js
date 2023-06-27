@@ -55,31 +55,27 @@ class Carrot_Link_Store{
 
     list_show(carrot){
         carrot.change_title_page("All Store","?p=link_store","link_store");
-        carrot.show(carrot.link_store.get_list_box_html());
+        carrot.show(carrot.link_store.get_list_box_html(this.list_link_store));
         carrot.check_event();
     }
 
-    get_list_box_html(){
-        if(this.list_link_store!=null){
-            var html='';
-            html='<div class="row">';
-            $(this.list_link_store).each(function(index,store){
-                var item_store=new Carrot_List_Item(carrot);
-                item_store.set_db("link_store");
-                item_store.set_id(store.key);
-                item_store.set_icon(store.img);
-                item_store.set_name("<i class='"+store.icon+"'></i> "+store.name);
-                item_store.set_class("col-md-2 mb-2 col-sm-3");
-                item_store.set_class_icon("col-md-12 mb-3 col-12 text-center");
-                item_store.set_tip(store.key);
-                item_store.set_body("<div class='col-12 mb-2 mt-2'><a target='_blank' href='"+store.link+"' class='btn btn-sm btn-success'><i class='fa-brands fa-instalod'></i> <l class='lang' key_lang='visit'>Go to</l></a></div>");
-                html+=item_store.html();
-            });
-            html+='</div>';
-            return html;
-        }else{
-            return "";
-        }
+    get_list_box_html(list_link_store){
+        var html = '';
+        html = '<div class="row">';
+        $(list_link_store).each(function (index, store) {
+            var item_store = new Carrot_List_Item(carrot);
+            item_store.set_db("link_store");
+            item_store.set_id(store.key);
+            item_store.set_icon(store.img);
+            item_store.set_name("<i class='" + store.icon + "'></i> " + store.name);
+            item_store.set_class("col-md-2 mb-2 col-sm-3");
+            item_store.set_class_icon("col-md-12 mb-3 col-12 text-center");
+            item_store.set_tip(store.key);
+            item_store.set_body("<div class='col-12 mb-2 mt-2'><a target='_blank' href='" + store.link + "' class='btn btn-sm btn-success'><i class='fa-brands fa-instalod'></i> <l class='lang' key_lang='visit'>Go to</l></a></div>");
+            html += item_store.html();
+        });
+        html += '</div>';
+        return html;
     }
 
     add(){
@@ -106,5 +102,18 @@ class Carrot_Link_Store{
         frm.create_field("img").set_label("Image (Url)").set_val(data["img"]);
         frm.create_field("link").set_label("Link All App").set_val(data["link"]);
         return frm;
+    }
+
+    list_for_home(){
+        var html='';
+        if(this.list_link_store!=null){
+            var list_store=this.list_link_store;
+            list_store=list_store.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
+            html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-4"><i class="fa-solid fa-store fs-6 me-2"></i> <l class="lang" key_lang="other_store">Other Store</l></h4>';
+            html+='<div id="other_store" class="row m-0">';
+            html+=this.get_list_box_html(list_store);
+            html+="</div>";
+        }
+        return html;
     }
 }
