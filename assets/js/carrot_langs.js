@@ -38,6 +38,7 @@ class Carrot_Langs{
     }
 
     get_all_data_lang() {
+        this.carrot.load_bar();
         this.carrot.log("get_all_data_lang from server","alert");
         this.carrot.db.collection("lang").get().then((querySnapshot) => {
             if(querySnapshot.docs.length>0){
@@ -72,6 +73,7 @@ class Carrot_Langs{
     }
 
     get_all_data_lang_web(){
+        this.carrot.load_bar();
         this.carrot.log("Get lang "+this.carrot.lang+" from server","alert");
         this.carrot.get_doc("lang_web",this.carrot.lang,this.get_data_lang_web_done);
         this.carrot.update_new_ver_cur("lang_web",true);

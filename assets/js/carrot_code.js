@@ -1,8 +1,12 @@
 class Carrot_Code{
     carrot;
+
     obj_codes=null;
+    info_code_cur=null;
+
     icon="fa-solid fa-code";
     id_page="code";
+    
     constructor(carrot){
         this.carrot=carrot;
         this.load_obj_code();
@@ -196,9 +200,10 @@ class Carrot_Code{
         });
 
         $("#btn_download").click(function(){
-            var txt_code=$("#code_txt").text();
-            var file_code=$("#filename_code").text();
-            carrot.code.download_code(file_code,txt_code);
+            if(carrot.code.check_pay(carrot.code.info_code_cur.title))
+                carrot.code.act_download(carrot);
+            else
+                carrot.show_pay("code","Download Code ("+carrot.code.info_code_cur.title+")","Download the source code file to use","2.00",carrot.code.pay_success);
         });
 
         this.carrot.check_event();
@@ -210,6 +215,7 @@ class Carrot_Code{
 
     show_info_code(data,carrot){
         carrot.change_title_page(data.title,"?p="+carrot.code.id_page+"&id="+data.id,carrot.code.id_page);
+        carrot.code.info_code_cur=data;
         var html='<div class="section-container p-2 p-xl-4">';
         html+='<div class="row">';
             html+='<div class="col-md-8 ps-4 ps-lg-3">';
@@ -240,7 +246,10 @@ class Carrot_Code{
                             html+='<div class="col-12 text-center">';
                             html+='<button id="btn_share" type="button" class="btn d-inline btn-success"><i class="fa-solid fa-share-nodes"></i> <l class="lang" key_lang="share">Share</l> </button> ';
                             html+='<button id="register_protocol_url" type="button"  class="btn d-inline btn-success" ><i class="fa-solid fa-rocket"></i> <l class="lang" key_lang="open_with">Open with..</l> </button> ';
-                            html+='<button id="btn_download" type="button" class="btn d-inline btn-success"><i class="fa-solid fa-download"></i> <l class="lang" key_lang="download">Download</l> </button> ';
+                            if(carrot.code.check_pay(data.title))
+                                html+='<button id="btn_download" type="button" class="btn d-inline btn-success"><i class="fa-solid fa-download"></i> <l class="lang" key_lang="download">Download</l> </button> ';
+                            else
+                                html+='<button id="btn_download" type="button" class="btn d-inline btn-info"><i class="fa-brands fa-paypal"></i> <l class="lang" key_lang="download">Download</l> </button> ';
                             html+='</div>';
                         html+='</div>';
 
@@ -324,12 +333,14 @@ class Carrot_Code{
             var list_code_other= carrot.convert_obj_to_list(carrot.code.obj_codes).map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
             for(var i=0;i<list_code_other.length;i++){
                 var codes=list_code_other[i];
+                if(codes.code_type==data.code_type)
                 if(data.id!=codes.id) html+=carrot.code.box_item_code(codes,'col-md-12 mb-3');
             };
             html+='</div>';
     
         html+="</div>";
         html+="</div>";
+        html+=carrot.code.list_for_home();
         $("#editor_code_theme").attr("href","assets/plugins/highlight/styles/"+data.code_theme);
         carrot.show(html);
         carrot.code.check_event();
@@ -351,6 +362,7 @@ class Carrot_Code{
         var file_extension="";
         if(code_type=="javascript") file_extension="js";
         else if(code_type=="powershell") file_extension="ps1";
+        else if(code_type=="vbscript") file_extension="vbs";
         else file_extension=code_type;
         return file_extension;
     }
@@ -359,11 +371,49 @@ class Carrot_Code{
         if(code_type=="powershell") return "fa-solid fa-terminal";
         else if(code_type=="json") return "fa-solid fa-database";
         else if(code_type=="javascript") return "fa-brands fa-square-js";
+        else if(code_type=="vbscript") return "fa-solid fa-cubes";
         else return "fa-solid fa-code";
+    }
+
+    act_download(carrot){
+        var txt_code=$("#code_txt").text();
+        var file_code=$("#filename_code").text();
+        carrot.code.download_code(file_code,txt_code);
     }
 
     reload(carrot){
         carrot.code.delete_obj_code();
         carrot.code.show_list_code();
+    }
+
+    list_for_home(){
+        var html="";
+        if(this.obj_codes!=null){
+            var list_code=this.carrot.obj_to_array(this.obj_codes);
+            list_code= list_code.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
+            html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-4">';
+            html+='<i class="'+this.icon+' fs-6 me-2"></i> <l class="lang" key_lang="other_code">Other Code</l>';
+            html+='<span role="button" onclick="carrot.code.show_list_code()" class="btn float-end btn-sm btn-secondary"><i class="fa-solid fa-square-caret-right"></i> <l class="lang" key_lang="view_all">View All</l></span></h4>';
+            html+='<div id="other_code" class="row m-0">';
+            for(var i=0;i<12;i++){
+                var code=list_code[i];
+                html+=this.box_item_code(code);
+            }
+            html+='</div>';
+        }
+        return html;
+    }
+
+    pay_success(carrot){
+        $("#btn_download").removeClass("btn-info").addClass("btn-success").html('<i class="fa-solid fa-download"></i> <l class="lang" key_lang="download">Download</l>');
+        localStorage.setItem("buy_"+carrot.code.id_page+"_"+carrot.code.info_code_cur.title,"1");
+        carrot.code.act_download(carrot);
+    }
+
+    check_pay(id_code){
+        if(localStorage.getItem("buy_"+carrot.code.id_page+"_"+id_code)!=null)
+            return true;
+        else
+            return false;
     }
 }

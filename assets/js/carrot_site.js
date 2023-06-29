@@ -5,6 +5,9 @@ class Carrot_Site{
     mode_site = "nomal";
     is_dev=false;
     is_localhost=false;
+    paypal_pub_CLIENT_ID="AYgLieFpLUDxi_LBdzDqT2ucT4MIa-O0vwX7w3CKGfQgMGROOHu-xz2y5Jes77owCYQ1eLmOII_ch2VZ";
+    paypal_dev_CLIENT_ID="AcW86yX1h7Mae8ofqkhDol9d9kq5zI4fVY5jKuRT45uTwQw52aYYDNI5AwjrKw7tAExqW5N128z1qLF1";
+    paypal_CLIENT_ID="";
 
     /*Obj page*/
     lang;
@@ -20,6 +23,7 @@ class Carrot_Site{
     id_page;
     body;
     obj_page=new Object();
+    load_bar_count_data=0;
 
     /*Firebase*/
     db;
@@ -34,8 +38,10 @@ class Carrot_Site{
     icon;
     audio;
     background;
+    bible;
     menu;
     avatar;
+    player_media;
     
     constructor(){
         var carrot=this;
@@ -64,6 +70,11 @@ class Carrot_Site{
         this.log("Load js ..."+this.get_ver_cur("js"),"null");
         this.body=$("#main_contain");
 
+        if(this.is_dev)
+            this.paypal_CLIENT_ID=this.paypal_dev_CLIENT_ID;
+        else
+            this.paypal_CLIENT_ID=this.paypal_pub_CLIENT_ID;
+
         $('head').append('<script type="text/javascript" src="assets/js/carrot_langs.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_link_store.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_app.js?ver='+this.get_ver_cur("js")+'"></script>');
@@ -77,11 +88,17 @@ class Carrot_Site{
         $('head').append('<script type="text/javascript" src="assets/js/ai_chat.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_menu.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_list_item.js?ver='+this.get_ver_cur("js")+'"></script>');
+        $('head').append('<script type="text/javascript" src="assets/js/carrot_player_media.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_audio.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_avatar.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/ai_key_block.js?ver='+this.get_ver_cur("js")+'"></script>');
+        $('head').append('<script type="text/javascript" src="assets/js/carrot_bible.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_about_us.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_privacy_policy.js?ver='+this.get_ver_cur("js")+'"></script>');
+        $('head').append('<script type="text/javascript" src="https://www.paypal.com/sdk/js?client-id='+this.paypal_CLIENT_ID+'"></script>');
+
+        this.update_new_ver_cur("js",true);
+        this.update_new_ver_cur("page",true);
 
         this.menu=new Carrot_Menu(this);
         this.langs=new Carrot_Langs(this);
@@ -93,11 +110,13 @@ class Carrot_Site{
         this.icon=new Carrot_Icon(this);
         this.audio=new Carrot_Audio(this);
         this.background=new Carrot_Background(this);
+        this.bible=new Carrot_Bible(this);
         this.avatar=new Carrot_Avatar(this);
         this.ai_lover=new Ai_Lover(this);
         this.ai=this.ai_lover;
         this.privacy_policy=new Carrot_Privacy_Policy(this);
         this.about_us=new Carrot_About_Us(this);
+        this.player_media=new Carrot_Player_Media(this);
 
         var btn_mod_host=this.menu.create("btn_mode_host").set_label("Change Mode Host").set_type("setting").set_icon("fa-brands fa-dev");
         $(btn_mod_host).click(function(){carrot.change_host_connection();});
@@ -113,7 +132,7 @@ class Carrot_Site{
 
         $("#btn_model_site").click(function(){carrot.change_mode_site();});
 
-        if(!this.check_ver_cur("link_store")) this.link_store.get_all_data_link_store();
+        if(!this.check_ver_cur("link_store"))this.link_store.get_all_data_link_store();
         if(!this.check_ver_cur("lang")) this.langs.get_all_data_lang();
         if(!this.check_ver_cur("lang_web")) this.langs.get_data_lang_web();
 
@@ -146,7 +165,7 @@ class Carrot_Site{
     }
 
     set_doc(s_collection,s_document,data){
-        this.log("Get " + s_collection+"."+s_document+" from server","alert");
+        this.log("Set " + s_collection+"."+s_document+" from server","alert");
         this.db.collection(s_collection).doc(s_document).set(data);
     }
 
@@ -190,15 +209,15 @@ class Carrot_Site{
     }
 
     check_version_data(){
+        this.load_bar();
         this.db.collection("setting_web").doc("version").get().then((doc) => {
             if (doc.exists) {
                 var ver_data_new=doc.data();
                 this.obj_version_new=ver_data_new;
-                this.update_new_ver_cur("js");
-                this.update_new_ver_cur("page");
                 this.save_obj_version_new();
                 this.save_obj_version_cur();
                 this.load_page();
+                this.load_bar();
             } else {
                 this.log("No new verstion data","error");
                 this.load_page();
@@ -719,6 +738,7 @@ class Carrot_Site{
     }
 
     check_show_by_id_page() {
+        this.load_bar();
         this.id_page = this.get_param_url("p");
         if(this.id_page!=undefined){
             this.log("check_show_by_id_page : "+this.id_page,"info");
@@ -732,10 +752,15 @@ class Carrot_Site{
                 else{
                     eval(obj_page_show.show);
                 }
+                $("#load_bar").css("width","100%");
             }else{
+                this.load_bar();
+                $("#load_bar").css("width","100%");
                 this.home();
             };
         }else{
+            this.load_bar();
+            $("#load_bar").css("width","100%");
             this.home();
         }
     }
@@ -796,10 +821,10 @@ class Carrot_Site{
         Swal.fire({icon:s_icon,title: msg,showConfirmButton: false,timer: 1500})
     }
 
-    show_pay(){
+    show_pay(id_product,name_product,tip_product,price,act_done){
         var carrot=this;
         Swal.fire({
-            title: 'Pay',
+            title: name_product,
             html: '<div id="paypal-button-container"></div>',
             showCloseButton: true,
             focusConfirm: false
@@ -808,18 +833,32 @@ class Carrot_Site{
             createOrder: function(data, actions) {
             return actions.order.create({
                 purchase_units: [{
-                amount: {
-                    currency_code:'USD',
-                    value: '1.99',
-                    breakdown: {item_total: {value: '1.99', currency_code: 'USD'}}
-                }
+                    amount: {
+                        currency_code:'USD',
+                        value: price,
+                        breakdown: {item_total: {value: price, currency_code: 'USD'}}
+                    },
+                    items: [
+                        {
+                            name: name_product,
+                            quantity: "1",
+                            description: tip_product,
+                            sku: id_product,
+                            category: "DIGITAL_GOODS",
+                            unit_amount:{
+                                currency_code: "USD",
+                                value:price
+                            }
+                        }
+                    ],
                 }]
             });
             },
             onApprove: function(data, actions) {
             return actions.order.capture().then(function(details) {
-                carrot.set_doc("order","pay_"+carrot.create_id(),details);
-                this.msg("Pay success!");
+                carrot.set_doc("order",id_product+"_"+carrot.create_id(),details);
+                act_done(carrot);
+                carrot.msg("Pay success!");
             });
             }
         }).render('#paypal-button-container');
@@ -828,13 +867,27 @@ class Carrot_Site{
     home(){
         var html="";
         if(this.app.obj_app!=null){
+            this.change_title_page("Carrot store", "?p=home","home");
             html+=this.app.list_for_home();
             html+=this.music.list_for_home();
+            html+=this.code.list_for_home();
+            html+=this.icon.list_for_home();
+            html+=this.user.list_for_home();
             this.show(html);
             this.app.check_btn_for_list_app();
             this.music.check_event();
+            this.code.check_event();
+            this.user.check_event();
         }else{
             this.app.list();
+        }
+    }
+
+    load_bar(){
+        if ($("#load_bar").length > 0){
+            this.load_bar_count_data+=2;
+            var val_show=(this.load_bar_count_data*10);
+            $("#load_bar").css("width",val_show+"%");
         }
     }
 }

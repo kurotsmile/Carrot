@@ -4,6 +4,7 @@ class Carrot_user{
     obj_phone_book=null;
 
     phone_book_info_cur=null;
+    icon="fa-solid fa-address-book";
 
     constructor(carrot){
         this.carrot=carrot;
@@ -11,7 +12,7 @@ class Carrot_user{
         if (localStorage.getItem("obj_phone_book") != null) this.obj_phone_book=JSON.parse(localStorage.getItem("obj_phone_book"));
 
         carrot.register_page("phone_book","carrot.user.list()","carrot.user.show_box_add_or_edit_phone_book","carrot.user.show_user_info");
-        var btn_list=carrot.menu.create("phone_book").set_label("Phone book").set_lang("phone_book").set_icon("fa-solid fa-address-book").set_type("main");
+        var btn_list=carrot.menu.create("phone_book").set_label("Phone book").set_lang("phone_book").set_icon(this.icon).set_type("main");
         $(btn_list).click(function(){carrot.user.list();});
     }
 
@@ -138,7 +139,7 @@ class Carrot_user{
             html+=carrot.user.box_user_item(data_u);
         });
         html+="</div>";
-        $("#main_contain").html(html);
+        this.carrot.show(html);
         this.carrot.user.check_event();
     }
 
@@ -193,7 +194,7 @@ class Carrot_user{
         obj_user["status_share"]={type:'select','title':'Information sharing status','label':'Information sharing status',options:obj_type_share,defaultValue:data_user["status_share"]};
 
         var arr_lang=Array();
-        $(carrot.list_lang).each(function(index,lang){arr_lang.push(lang.key);});
+        $(carrot.langs.list_lang).each(function(index,lang){arr_lang.push(lang.key);});
 
         obj_user["lang"]={'type':'select','label':'Lang','options':arr_lang,defaultValue:data_user["lang"]};
         customer_field_for_db(obj_user,'user-'+data_user["lang"],'id','Add User successfully');
@@ -467,4 +468,25 @@ class Carrot_user{
         document.body.removeChild(element);
         carrot.msg("Download Success!");
     }  
+
+    list_for_home(){
+        var html='';
+        if(this.obj_phone_book!=null){
+            var list_user=this.carrot.obj_to_array(this.obj_phone_book);
+            list_user=list_user.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
+
+            html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-4">';
+            html+='<i class="'+this.icon+' fs-6 me-2"></i> <l class="lang" key_lang="other_user">Other User</l>';
+            html+='<span role="button" onclick="carrot.user.list()" class="btn float-end btn-sm btn-secondary"><i class="fa-solid fa-square-caret-right"></i> <l class="lang" key_lang="view_all">View All</l></span>';
+            html+='</h4>';
+
+            html+='<div id="other_user" class="row m-0">';
+            for(var i=0;i<12;i++){
+                var user=list_user[i];
+                html+=this.box_user_item(user);
+            }
+            html+='</div>';
+        }
+        return html;
+    }
 }

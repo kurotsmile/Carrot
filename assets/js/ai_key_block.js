@@ -14,7 +14,7 @@ class AI_Key_Block{
     }
 
     show_list_by_key_lang(s_key_lang){
-        this.carrot.ai.setting_lang_change=s_key_lang;
+        this.carrot.langs.lang_setting=s_key_lang;
         Swal.showLoading();
         this.carrot.db.collection("block").doc(s_key_lang).get().then((doc) => {
             if (doc.exists) {

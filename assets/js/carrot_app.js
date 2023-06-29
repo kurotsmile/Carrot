@@ -84,7 +84,10 @@ class Carrot_App{
     }
 
     list(){
-        this.show_list_app_and_game("all");
+        if(this.obj_app!=null)
+            this.carrot.home();
+        else
+            this.show_list_app_and_game("all");
     }
 
     list_app(){
@@ -152,6 +155,7 @@ class Carrot_App{
         html+="</div>";
 
         if(this.type_show=="all"){
+            carrot.load_bar();
             html+=carrot.link_store.list_for_home();
         }
         carrot.body.html(html);
@@ -235,7 +239,9 @@ class Carrot_App{
                             html+='</div>';
                             html+='<div class="col-md-4 col-6 text-center">';
                                 html+='<b><l class="lang" key_lang="author">Author</l> <i class="fa-solid fa-user-group-simple"></i></b>';
-                                html+='<p>Thanh <i class="fa-solid fa-heart"></i> Nhung</p>';
+                                var effect_font=["fa-fade", "fa-beat-fade", "fa-bounce", "fa-shake", "fa-flip"];
+                                var effect_random = Math.floor(Math.random() * effect_font.length);
+                                html+='<p>Thanh <i class="fa-solid fa-heart '+effect_font[effect_random]+'" style="color: #ff0000;"></i> Nhung</p>';
                             html+='</div>';
                         html+='</div>';
 

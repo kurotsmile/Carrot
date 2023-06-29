@@ -25,6 +25,7 @@ class Carrot_Link_Store{
     get_all_data_link_store(act_done=null) {
         var carrot=this.carrot;
         var link_store=this;
+        carrot.load_bar();
         carrot.log("get_all_data_link_store From sever");
         carrot.db.collection("link_store").get().then((querySnapshot) => {
             if(querySnapshot.docs.length>0){

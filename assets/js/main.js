@@ -63,6 +63,7 @@ function customer_field_for_db(data,collection,key_name_doc,smg_success){
 
 var carrot=new Carrot_Site();
 $(document).ready(function () {
+    $("#load_bar").css("width","0%");
     $("#logo_carrot").on("contextmenu", function () { carrot.act_mode_dev(); return false; });
     $("#btn_download_json").click(function () {carrot.download_json();});
     $("#btn_recognition").click(function(){carrot.start_recognition();});

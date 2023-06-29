@@ -1,12 +1,13 @@
 class Carrot_Music{
     carrot;
     obj_songs=null;
-    audio_player=null;
 
-    m_index=-1;
+    index_song_cur=-1;
     icon="fa-solid fa-music";
     id_page="song";
     is_video_player=false;
+
+    info_song_cur=null;
 
     constructor(carrot){
         this.carrot=carrot;
@@ -29,79 +30,10 @@ class Carrot_Music{
         this.carrot.delete_ver_cur(this.id_page);
     }
 
-    create_audio(){
-        if(this.audio_player==null){
-            this.carrot.log("Create Audio Media Player");
-            this.audio_player=new Audio();
-            this.audio_player.addEventListener("loadeddata", () => {
-                let duration = this.audio_player.duration;
-                $("#m_timeStamp").attr('max',duration.toFixed(2));
-                $("#m_time_end").html(this.formatTime(duration));
-                if (this.audio_player.readyState >= 2){
-                    this.audio_player.play();
-                }
-            });
-    
-            this.audio_player.addEventListener("timeupdate", (event) => {
-                $("#m_timeStamp").attr('value',this.audio_player.currentTime.toFixed(2));
-                $("#m_time_play").html(this.formatTime(this.audio_player.currentTime));
-            });
-    
-            this.carrot.body.parent().parent().append(carrot.music.box_music_mini());
-            $("#music_player_mini" ).draggable({scroll: true,axis: "x"});
-        }
-    }
-
-    create_session(s_title,s_artist,s_album,s_url_avatar){
-        var music=this;
-        if ("mediaSession" in navigator) {
-            navigator.mediaSession.metadata = new MediaMetadata({
-              title: s_title,
-              artist: s_artist,
-              album: s_album,
-              artwork: [
-                {
-                  src: s_url_avatar,
-                  sizes: "384x384",
-                  type: "image/jpg",
-                }
-              ],
-            });
-          
-            navigator.mediaSession.setActionHandler("play", () => {
-                music.play_music();
-                music.check_status_mm_player();
-            });
-            navigator.mediaSession.setActionHandler("pause", () => {
-                music.pause_music();
-                music.check_status_mm_player();
-            });
-            navigator.mediaSession.setActionHandler("stop", () => {
-                music.stop_music();
-            });
-            navigator.mediaSession.setActionHandler("seekbackward", () => {
-              /* Code excerpted. */
-            });
-            navigator.mediaSession.setActionHandler("seekforward", () => {
-              /* Code excerpted. */
-            });
-            navigator.mediaSession.setActionHandler("seekto", () => {
-              /* Code excerpted. */
-            });
-            navigator.mediaSession.setActionHandler("previoustrack", () => {
-                this.back_music();
-            });
-            navigator.mediaSession.setActionHandler("nexttrack", () => {
-                this.forward_music();
-            });
-        }
-    }
-    
     show_list_music(){
         if(this.carrot.check_ver_cur("song")==false){
             this.carrot.log("Get list song from sever and show","alert");
             this.carrot.get_list_doc("song",this.act_done_list_music);
-            this.carrot.update_new_ver_cur("song",true);
         }else{
             if(this.obj_songs==null){
                 this.carrot.log("Get list song from sever and show","alert");
@@ -115,6 +47,7 @@ class Carrot_Music{
     }
 
     act_done_list_music(obj_data,carrot){
+        carrot.update_new_ver_cur("song",true);
         carrot.music.obj_songs=obj_data;
         localStorage.setItem("obj_songs",JSON.stringify(carrot.music.obj_songs));
         carrot.music.show_list_music_by_obj_songs(carrot);
@@ -122,6 +55,9 @@ class Carrot_Music{
 
     show_list_music_by_obj_songs(carrot){
         carrot.change_title_page("Music", "?p="+this.id_page,this.id_page);
+        carrot.player_media.create();
+        carrot.player_media.set_act_next(carrot.music.next_music);
+        carrot.player_media.set_act_prev(carrot.music.prev_music);
         var list_song=carrot.convert_obj_to_list(this.obj_songs);
         var html='<div class="row m-0">';
         $(list_song).each(function(index,song){
@@ -130,165 +66,73 @@ class Carrot_Music{
         });
         html+="</div>";
         carrot.show(html);
-        carrot.music.create_audio();
         carrot.music.check_event();
     }
 
     check_event(){
         var carrot=this.carrot;
 
+        $(".btn-play-music").unbind('click');
         $(".btn-play-music").click(function(){
             var aud_name=$(this).attr("aud-name");
+            var aud_index=$(this).attr("aud-index");
             $(this).effect( "bounce","fast");
-            if($('#music_player_mini').is(":visible")){
-                $(this).effect("transfer", { to: $("#music_player_mini") }, 600,function(){carrot.music.play_music_by_name(aud_name);});
-            }else{
-                $("#music_player_mini").show("slide", { direction: "right" }, 1000,function(){carrot.music.play_music_by_name(aud_name);});
-                
-            }
+            carrot.player_media.index_song_cur=aud_index;
+            carrot.player_media.open(this,carrot.music.play_music_by_name(aud_name));
         });
 
+        $(".btn-play-video").unbind('click');
         $(".btn-play-video").click(function(){
             var aud_name=$(this).attr("aud-name");
+            var aud_index=$(this).attr("aud-index");
             $(this).effect( "bounce","fast");
-            if($('#music_player_mini').is(":visible")){
-                $(this).effect("transfer", { to: $("#music_player_mini") }, 600,function(){carrot.music.play_video_by_name(aud_name);});
-            }else{
-                $("#music_player_mini").show("slide", { direction: "right" }, 1000,function(){carrot.music.play_video_by_name(aud_name);});
-            }
+            carrot.player_media.index_song_cur=aud_index;
+            carrot.player_media.open(this,carrot.music.play_video_by_name(aud_name));
         });
 
-        $('#m_btn_stop').click(function(){
-            $(".status_music").html('<i class="fa-sharp fa-solid fa-circle-play fa-2x"></i>');
-            carrot.music.stop_music();
-        });
-
-        $("#m_btn_back").click(function(){
-            carrot.music.back_music();
-        });
-
-        $("#m_btn_forward").click(function(){
-            carrot.music.forward_music();
-        });
-
+        $(".btn_info_music").unbind('click');
         $(".btn_info_music").click(function(){
-            var aud_id=$(this).attr("aud-name");
+            var aud_id=$(this).attr("obj_id");
+            var aud_index=$(this).attr("obj_index");
+            $(this).effect( "bounce","fast");
+            carrot.player_media.index_song_cur=aud_index;
             carrot.music.show_info_music_by_id(aud_id,carrot);
         });
 
-        $("#btn_mm_play").click(function(){
-            carrot.music.change_status_pause_and_play();
-        });
-
+        $("#btn_download").unbind('click');
         $("#btn_download").click(function(){
-            carrot.show_pay();
+            if(carrot.music.check_pay(carrot.music.info_song_cur.name))
+                window.open(carrot.music.info_song_cur.mp3, "_blank");
+            else
+                carrot.show_pay("song","Download Music ("+carrot.music.info_song_cur.name+")","Get file mp3 thi song from Carrot Music","1.99",carrot.music.pay_success);
         })
 
         carrot.check_event();
     }
 
-    stop_music(){
-        this.audio_player.pause();
-        this.audio_player.currentTime=0;
-        $('#carrot_player_video').html("");
-        $("#music_player_mini").hide(100);
-    }
-
-    back_music(){
-        this.m_index--;
-        this.play_music_by_index(this.m_index);
-    }
-
-    forward_music(){
-        this.m_index++;
-        this.play_music_by_index(this.m_index);
-    }
-
-    pause_music(){
-        this.audio_player.pause();
-    }
-
-    play_music(){
-        this.audio_player.play();
-    }
-
-    change_status_pause_and_play(){
-        if(this.audio_player.paused)
-            this.play_music();
-        else
-            this.pause_music();
-
-        this.check_status_mm_player();
-    }
-
-    check_status_mm_player(){
-        $("#btn_mm_play").removeClass("fa-pause");
-        $("#btn_mm_play").removeClass("fa-circle-play");
-        if(this.audio_player.paused){
-            $("#btn_mm_play").addClass("fa-circle-play");
-        }else{
-            $("#btn_mm_play").addClass("fa-pause");
-        }
-    }
-
-    play_music_by_index(index_play){
-        var list_music=this.carrot.convert_obj_to_list(this.obj_songs);
+    play_by_index(index_play){
+        var list_music=this.carrot.obj_to_array(this.obj_songs);
         if(index_play<0) index_play=list_music.length-1;
         if(index_play>list_music.length-1) index_play=0;
 
-        this.m_index=index_play;
-        var song=list_music[this.m_index];
-        song["index"]=index_play;
+        var song=list_music[index_play];
         if(this.is_video_player==false)
-            this.act_play_song(song);
+            this.play_music_by_name(song.name);
         else
-            this.act_play_video(song);
+            this.play_video_by_name(song.name);
     }
 
     play_music_by_name(s_name_audio){
         var song=JSON.parse(this.obj_songs[s_name_audio]);
-        this.act_play_song(song);
+        this.is_video_player=false;
+        this.carrot.player_media.play_music(song.name,song.artist,song.album,song.mp3,song.avatar);
     }
 
     play_video_by_name(s_name_audio){
         var song=JSON.parse(this.obj_songs[s_name_audio]);
-        this.act_play_video(song);
-    }
-
-    act_play_song(song){
-        this.is_video_player=false;
-        if(this.carrot.id_page=="music"){
-            $(".status_music").html('<i class="fa-sharp fa-solid fa-circle-play fa-2x"></i>');
-            if(song.index!="") $("#status_music_"+song.index).html('<i class="fa-solid fa-spinner fa-spin-pulse fa-2x"></i>');
-        }
-        
-        this.audio_player.src=song.mp3;
-        this.audio_player.play();
-        $('#carrot_player_video').html("").hide();
-        $("#music_player_mini").hide().show(100);
-        $("#m_name").html(song.name);
-        $("#m_artist").html(song.artist);
-        $("#m_avatar").css("background","url('"+song.avatar+"')");
-        $("#m_avatar").show();
-        $("#m_progress").show();
-        $("#btn_mm_play").show();
-        this.create_session(song.name,song.artist,"carrotstore.com",song.avatar);
-        return this.audio_player;
-    }
-
-    act_play_video(song){
         this.is_video_player=true;
-        this.audio_player.pause();
-        var url_ytb=this.youtube_id(song.link_ytb);
-        $("#music_player_mini").hide().show(100);
-        $('#carrot_player_video').html('<iframe  width="300" height="169" src="https://www.youtube-nocookie.com/embed/'+url_ytb+'?autoplay=1&controls=0" title="Carrot video player" frameborder="0" allow="autoplay;accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen=""></iframe>').show();
-        $("#m_name").html(song.name);
-        $("#m_artist").html(song.artist);
-        $("#m_avatar").hide();
-        $("#btn_mm_play").hide();
-        $("#m_progress").hide();
-        this.create_session(song.name,song.artist,"carrotstore.com",song.avatar);
-    } 
+        this.carrot.player_media.play_youtube(song.name,song.artist,song.album,song.mp3,song.avatar,song.link_ytb);
+    }
 
     show_info_music_by_id(s_name_id,carrot){
         carrot.log("show_info_music_by_id:"+s_name_id);
@@ -296,16 +140,13 @@ class Carrot_Music{
         carrot.music.show_info_music(data);
     }
 
-    show_info_music_by_index(index_music){
-        this.carrot.log("show_info_music_by_index:"+index_music);
-        var list_music=this.carrot.convert_obj_to_list(this.obj_songs);
-        var data=JSON.parse(list_music[index_music]);
-        data["index"]=index_music;
-        this.show_info_music(data);
-    }
-
     show_info_music(data){
         this.carrot.change_title_page(data.name,"?p="+this.id_page+"&id="+data.id,this.id_page);
+        this.carrot.player_media.create();
+        this.carrot.player_media.set_act_next(this.carrot.music.next_music);
+        this.carrot.player_media.set_act_prev(this.carrot.music.prev_music);
+        data["index"]=this.index_song_cur;
+        this.info_song_cur=data;
         var html='<div class="section-container p-2 p-xl-4">';
         html+='<div class="row">';
             html+='<div class="col-md-8 ps-4 ps-lg-3">';
@@ -358,7 +199,13 @@ class Carrot_Music{
                             html+='<div class="col-12 text-center">';
                                 html+='<button id="btn_share" type="button" class="btn d-inline btn-success"><i class="fa-solid fa-share-nodes"></i> <l class="lang" key_lang="share">Share</l> </button> ';
                                 html+='<button id="register_protocol_url" type="button"  class="btn d-inline btn-success" ><i class="fa-solid fa-rocket"></i> <l class="lang" key_lang="open_with">Open with..</l> </button> ';
-                                if(data.mp3!="")html+='<button id="btn_download" type="button" class="btn d-inline btn-success"><i class="fa-solid fa-download"></i> <l class="lang" key_lang="download">Download</l> </button> ';
+                                if(data.mp3!=""){
+                                    if(this.check_pay(data.name))
+                                        html+='<button id="btn_download" type="button" class="btn d-inline btn-success"><i class="fa-solid fa-download"></i> <l class="lang" key_lang="download">Download</l> </button> ';
+                                    else
+                                        html+='<button id="btn_download" type="button" class="btn d-inline btn-info"><i class="fa-brands fa-paypal"></i> <l class="lang" key_lang="download">Download</l> </button> ';
+                                }
+                                    
                             html+='</div>';
                         html+='</div>';
 
@@ -372,25 +219,6 @@ class Carrot_Music{
     
                 html+='<div class="about row p-2 py-3  bg-white mt-4 shadow-sm">';
                     html+='<h4 class="fw-semi fs-5 lang" key_lang="review">Review</h4>';
-    
-                    html+='<div class="row m-0 reviewrow p-3 px-0 border-bottom">';
-                        html+='<div class="col-md-12 align-items-center col-9 rcolm">';
-                            html+='<div class="review">';
-                                html+='<li class="col-8 ratfac">';
-                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
-                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
-                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
-                                    html+='<i class="bi fa-solid fa-star"></i>';
-                                    html+='<i class="bi fa-solid fa-star"></i>';
-                                html+='</li>';
-                            html+='</div>';
-    
-                            html+='<h3 class="fs-6 fw-semi mt-2">Vinoth kumar<small class="float-end fw-normal"> 20 Aug 2022 </small></h3>';
-                            html+='<div class="review-text">Great work, keep it up</div>';
-    
-                        html+='</div>';
-                        html+='<div class="col-md-2"></div>';
-                    html+='</div>';
     
                     html+='<div class="row m-0 reviewrow p-3 px-0 border-bottom">';
                         html+='<div class="col-md-12 align-items-center col-9 rcolm">';
@@ -445,86 +273,40 @@ class Carrot_Music{
         html+="</div>";
         html+="</div>";
         this.carrot.show(html);
-
-
-        this.carrot.music.create_audio();
         this.check_event();
     }
 
     box_music_item(data_music,s_class='col-md-4 mb-3'){
-        var s_url_icon="";
-        if(data_music.avatar!=null) s_url_icon=data_music.avatar;
-        if(s_url_icon=="") s_url_icon="images/150.png";
-        var html_main_contain="<div class='box_app "+s_class+"' id=\""+data_music.id+"\"  key_search=\""+data_music.name+"\">";
-            html_main_contain+='<div class="app-cover p-2 shadow-md bg-white">';
-                html_main_contain+='<div class="row">';
-                    html_main_contain+='<div role="button" class="img-cover pe-0 col-3 btn_info_music" id="m_'+data_music.index+'" aud-name="'+data_music.name+'"><img class="rounded" src="'+s_url_icon+'" alt="'+data_music.name+'"></div>';
-                    html_main_contain+='<div class="det mt-2 col-9">';
-                        html_main_contain+="<h5 class='mb-0 fs-6'>"+data_music.name+"</h5>";
-                        
-                        html_main_contain+='<ul class="row">';
-                            html_main_contain+='<li class="col-6 ratfac">';
-                            html_main_contain+="<span class='fs-8'>"+data_music.artist+"</span><br/>";
-                                html_main_contain+='<i class="bi text-warning fa-solid fa-music"></i>';
-                                html_main_contain+='<i class="bi text-warning fa-solid fa-music"></i>';
-                                html_main_contain+='<i class="bi text-warning fa-solid fa-music"></i>';
-                                html_main_contain+='<i class="bi text-warning fa-solid fa-music"></i>';
-                                html_main_contain+='<i class="bi fa-solid fa-music"></i>';
-                            html_main_contain+='</li>';
-                  
-                            html_main_contain+='<li class="col-6 d-flex">'; 
-                                html_main_contain+='<span role="button" class="btn_info_music text-info" aud-name="'+data_music.name+'" style="margin-right: 6px;"><i class="fa-sharp fa-solid fa-circle-info fa-2x"></i></span> ';
-                                if(data_music.link_ytb!="") html_main_contain+='<span role="button" class="status_video float-end text-success btn-play-video"  aud-name="'+data_music.name+'" style="margin-right: 6px;"><i class="fa-sharp fa-solid fa-film fa-2x"></i></span> ';
-                                if(data_music.mp3!="") html_main_contain+='<span role="button" class="status_music float-end text-success btn-play-music"  aud-name="'+data_music.name+'"><i class="fa-sharp fa-solid fa-circle-play fa-2x"></i></span> ';
-                            html_main_contain+='</li>';
+        var s_url_avatar="";
+        if(data_music.avatar!=null) s_url_avatar=data_music.avatar;
+        if(s_url_avatar=="") s_url_avatar="images/150.png";
+        var item_music=new Carrot_List_Item(this.carrot);
+        item_music.set_db("song");
+        item_music.set_id(data_music.id);
+        item_music.set_class(s_class);
+        item_music.set_name(data_music.name);
+        item_music.set_index(data_music.index);
+        item_music.set_icon(s_url_avatar);
+        item_music.set_class_icon("pe-0 col-3 btn_info_music");
+        item_music.set_class_body("mt-2 col-9");
+        var html_body='';
+        html_body+='<li class="col-6 ratfac">';
+            if(data_music.artist!='') html_body+='<span class="d-block fs-8 mb-2">'+data_music.artist+'</span>';
+            html_body+='<i class="bi text-warning fa-solid fa-music fa-2xs"></i>';
+            html_body+='<i class="bi text-warning fa-solid fa-music fa-2xs"></i>';
+            html_body+='<i class="bi text-warning fa-solid fa-music fa-2xs"></i>';
+            html_body+='<i class="bi text-warning fa-solid fa-music fa-2xs"></i>';
+            html_body+='<i class="bi fa-solid fa-music fa-2xs"></i>';
+        html_body+='</li>';
 
-                        html_main_contain+='</ul>';
-        
-                        html_main_contain+=this.carrot.btn_dev("song",data_music.id);
-    
-                    html_main_contain+="</div>";
-                html_main_contain+="</div>";
-            html_main_contain+="</div>";
-        html_main_contain+="</div>";
-        return html_main_contain;
-    }
+        html_body+='<div class="col-6 d-flex">'; 
+        html_body+='<span role="button" class="btn_info_music text-info" aud-name="'+data_music.name+'" obj_id="'+data_music.id+'" obj_index="'+data_music.index+'" style="margin-right: 6px;"><i class="fa-sharp fa-solid fa-circle-info fa-2x"></i></span> ';
+        if(data_music.link_ytb!="") html_body+='<span role="button" class="status_video float-end text-success btn-play-video"  aud-name="'+data_music.name+'" aud-index="'+data_music.index+'" style="margin-right: 6px;"><i class="fa-sharp fa-solid fa-film fa-2x"></i></span> ';
+        if(data_music.mp3!="") html_body+='<span role="button" class="status_music float-end text-success btn-play-music"  aud-name="'+data_music.name+'" aud-index="'+data_music.index+'"><i class="fa-sharp fa-solid fa-circle-play fa-2x"></i></span> ';
+        html_body+='</div>';
 
-    box_music_mini(){
-        var html='';
-        html += '<section id="music_player_mini" style="display:none" class="music-player">';
-            html += '<div id="carrot_player_video"></div>';
-            html += '<header id="m_avatar" class="music-player--banner"></header>';
-            html += '<main class="music-player--main">';
-                html += '<div id="m_progress" class="music-player--progress">';
-                html += '<progress id="m_timeStamp" class="progress--progress-bar" value="0" max="100"></progress>';
-                html += '<div class="progress--time" id="m_time_play">1:37</div>';
-                html += '<div class="progress--time progress--time__end" id="m_time_end">3:52</div>';
-                html += '</div>';
-                html += '<div id="m_controls" class="music-player--controls">';
-                html += '<i id="btn_mm_play" class="fa fa-pause controls--play-button"></i>';
-
-                html += '<div class="song-info">';
-                    html += '<div class="song-info--title" id="m_name">Name song</div>';
-                    html += '<div class="song-info--artist" id="m_artist">Artist</div>';
-                    html += '</div>';
-                    html += '<div class="controls--actions">';
-                    html += '<i class="fa fa-retweet actions--repeat"></i>';
-                    html += '<i role="button" class="fa fa-backward actions--back" id="m_btn_back"></i>';
-                    html += '<i role="button" class="fa fa-forward actions--forward" id="m_btn_forward"></i>';
-                    html += '<i role="button" class="fa-solid fa-circle-stop actions--stop" id="m_btn_stop"></i>';
-                    html += '</div>';
-                html += '</div>';
-            html += '</main>';
-        html += '</section>';
-        return html;
-    }
-
-    formatTime(seconds) {
-        var minutes = Math.floor(seconds / 60);
-        minutes = (minutes >= 10) ? minutes : "0" + minutes;
-        var seconds = Math.floor(seconds % 60);
-        seconds = (seconds >= 10) ? seconds : "0" + seconds;
-        return minutes + ":" + seconds;
+        item_music.set_body(html_body);
+        return item_music.html();
     }
 
     add(){
@@ -586,26 +368,26 @@ class Carrot_Music{
         return frm;
     }
 
-    youtube_id(url){
-        var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
-        var match = url.match(regExp);
-        return (match&&match[7].length==11)? match[7] : false;
-    }
-
     reload(carrot){
         carrot.music.delete_obj_song();
         carrot.music.show_list_music();
     }
 
     list_for_home(){
-        this.create_audio();
         var html="";
         if(this.obj_songs!=null){
+            this.carrot.player_media.create();
+            this.carrot.player_media.set_act_next(this.carrot.music.next_music);
+            this.carrot.player_media.set_act_prev(this.carrot.music.prev_music);
             var list_song=this.carrot.obj_to_array(this.obj_songs);
             list_song= list_song.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
-            html+='<div class="row">';
-            html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-4"><i class="fa-solid fa-music fs-6 me-2"></i> <l class="lang" key_lang="other_music">Other Music</l></h4>';
-            html+='<div id="other_music" class="row m-0">';
+            
+            html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-4">';
+            html+='<i class="'+this.icon+' fs-6 me-2"></i> <l class="lang" key_lang="other_music">Other Music</l>';
+            html+='<span role="button" onclick="carrot.music.show_list_music()" class="btn float-end btn-sm btn-secondary"><i class="fa-solid fa-square-caret-right"></i> <l class="lang" key_lang="view_all">View All</l></span>';
+            html+='</h4>';
+
+            html+='<div id="other_code" class="row m-0">';
             for(var i=0;i<12;i++){
                 var song=list_song[i];
                 html+=this.box_music_item(song);
@@ -614,5 +396,29 @@ class Carrot_Music{
         }
         return html;
     }
+
+    pay_success(carrot){
+        $("#btn_download").removeClass("btn-info").addClass("btn-success").html('<i class="fa-solid fa-download"></i> <l class="lang" key_lang="download">Download</l>');
+        localStorage.setItem("buy_song_"+carrot.music.info_song_cur.name,"1");
+        window.open(carrot.music.info_song_cur.mp3, "_blank");
+    }
+
+    check_pay(id_name_song){
+        if(localStorage.getItem("buy_song_"+id_name_song)!=null)
+            return true;
+        else
+            return false;
+    }
+
+    next_music(carrot){
+        carrot.music.index_song_cur+=1;
+        carrot.music.play_by_index(carrot.music.index_song_cur);
+    }
+
+    prev_music(carrot){
+        carrot.music.index_song_cur-=1;
+        carrot.music.play_by_index(carrot.music.index_song_cur);
+    }
+
 }
 
