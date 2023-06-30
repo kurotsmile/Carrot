@@ -55,6 +55,10 @@ function toLowerCase_tag(name_tag){
     $("#" + name_tag).val(s_txt);
 }
 
+function delete_file(path){
+    carrot.del_file(path);
+}
+
 function customer_field_for_db(data,collection,key_name_doc,smg_success){
     data["act_msg_success"]={'defaultValue':smg_success,'customClass':'d-none'};
     data["db_collection"]={'defaultValue':collection,'customClass':'d-none'};

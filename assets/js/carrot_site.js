@@ -43,6 +43,7 @@ class Carrot_Site{
     menu;
     avatar;
     player_media;
+    file;
     
     constructor(){
         var carrot=this;
@@ -90,6 +91,7 @@ class Carrot_Site{
         $('head').append('<script type="text/javascript" src="assets/js/carrot_menu.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_list_item.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_player_media.js?ver='+this.get_ver_cur("js")+'"></script>');
+        $('head').append('<script type="text/javascript" src="assets/js/carrot_file.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_audio.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_avatar.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/ai_key_block.js?ver='+this.get_ver_cur("js")+'"></script>');
@@ -118,6 +120,7 @@ class Carrot_Site{
         this.privacy_policy=new Carrot_Privacy_Policy(this);
         this.about_us=new Carrot_About_Us(this);
         this.player_media=new Carrot_Player_Media(this);
+        this.file=new Carrot_File(this);
 
         var btn_mod_host=this.menu.create("btn_mode_host").set_label("Change Mode Host").set_type("setting").set_icon("fa-brands fa-dev");
         $(btn_mod_host).click(function(){carrot.change_host_connection();});
@@ -164,7 +167,7 @@ class Carrot_Site{
         this.db = this.firebase.firestore();
         if(this.is_localhost){
             this.db.useEmulator('localhost', 8082);
-            this.storage.useEmulator('localhost', 9199);
+            //this.storage.useEmulator('localhost', 9199);
         }
         if(this.db==null) this.show_error_connect_sever();
     }
@@ -878,11 +881,13 @@ class Carrot_Site{
             html+=this.code.list_for_home();
             html+=this.icon.list_for_home();
             html+=this.user.list_for_home();
+            html+=this.audio.list_for_home();
             this.show(html);
             this.app.check_btn_for_list_app();
             this.music.check_event();
             this.code.check_event();
             this.user.check_event();
+            this.audio.check_event();
         }else{
             this.app.list();
         }
@@ -894,5 +899,18 @@ class Carrot_Site{
             var val_show=(this.load_bar_count_data*10);
             $("#load_bar").css("width",val_show+"%");
         }
+    }
+
+    del_file(emp){
+        var path_file=$(emp).attr("fullPath");
+        var carrot=this;
+        var storageRef = carrot.storage.ref();
+        var desertRef =storageRef.child(path_file);
+        desertRef.delete().then(() => {
+            $(emp).parent().remove();
+            carrot.log("Delete file "+path_file+" Success!","success");
+        }).catch((error) => {
+            carrot.log(error);
+        });
     }
 }

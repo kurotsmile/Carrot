@@ -350,10 +350,14 @@ class Carrot_Music{
         var frm=new Carrot_Form("frm_music",this.carrot);
         frm.set_icon(this.icon);
         frm.set_db("song","name");
+        var btn_ytb_avatar=new Carrot_Btn();
+        btn_ytb_avatar.set_onclick("carrot.music.get_link_avatar_ytb()");
+        btn_ytb_avatar.set_icon("fa-solid fa-wand-magic-sparkles");
+        frm.create_field("link_ytb").set_label("link ytb").add_btn_download_ytb().set_val(data["link_ytb"]).add_btn(btn_ytb_avatar).set_tip("Dán liên kết Youtube vào đây để nhập tự động thông tin bài hát");
         frm.create_field("name").set_label("Name").set_val(data["name"]).set_tip("Create id url by name").add_btn_search_google().add_btn_search_ytb().add_btn_toLower();
-        frm.create_field("avatar").set_label("Avatar (url)").set_val(data["avatar"]).set_type("file");
+        frm.create_field("avatar").set_label("Avatar (url)").set_val(data["avatar"]).set_type("file").set_type_file("image/*");
         frm.create_field("artist").set_label("Artist").set_val(data["artist"]);
-        frm.create_field("mp3").set_label("Mp3 (Url)").set_val(data["mp3"]).set_type("file");
+        frm.create_field("mp3").set_label("Mp3 (Url)").set_val(data["mp3"]).set_type("file").set_type_file("audio/*");
         frm.create_field("lyrics").set_label("lyrics").set_val(data["lyrics"]).set_type("editor");
 
         var genre_field=frm.create_field("genre").set_label("Genre").set_val(data["genre"]).set_type("select");
@@ -371,11 +375,10 @@ class Carrot_Music{
         genre_field.add_option("EDM","EDM");
         genre_field.add_option("k-pop","K-POP");
 
-        frm.create_field("link_ytb").set_label("link ytb").add_btn_download_ytb().set_val(data["link_ytb"]);
         frm.create_field("album").set_label("Album").set_val(data["album"]);
         var year_field=frm.create_field("year").set_label("Year").set_val(data["year"]).set_type("select");
 
-        for(var i=new Date().getFullYear();i>1980;i--) year_field.add_option(i,"Year "+i);
+        for(var i=new Date().getFullYear()+10;i>1960;i--) year_field.add_option(i,"Year "+i);
 
         frm.create_field("date").set_label("Date Create").set_type("date").set_val(data["date"]);
         var lang_field=frm.create_field("lang").set_label("Lang").set_val(data["lang"]).set_type("select");
@@ -383,6 +386,33 @@ class Carrot_Music{
             lang_field.add_option(lang_data.key,lang_data.name);
         });
         return frm;
+    }
+
+    get_link_avatar_ytb(){
+        var link_ytb=$("#link_ytb").val();
+        var id_ytb=this.carrot.player_media.get_youtube_id(link_ytb);
+        $("#link_ytb").val("https://www.youtube.com/watch?v="+id_ytb);
+        $.get("https://www.googleapis.com/youtube/v3/videos?part=snippet&id=" + id_ytb + "&key=AIzaSyDtrxOBgBfiRLaxKP0p_UzfE2-hsjHNKBw", function(data) {
+            console.log(data);
+            $("#name").val(data.items[0].snippet.title);
+            if(data.items[0].snippet.defaultLanguage!=null){
+                var lang_song=data.items[0].snippet.defaultLanguage;
+                var l_sog=lang_song.split("-");
+                $("#lang").val(l_sog[0]);
+            }
+            $("#album").val(data.items[0].snippet.channelTitle);
+            var tags=data.items[0].snippet.tags;
+            $("#artist").val(tags[0]);
+            var day_ytb = new Date(data.items[0].snippet.publishedAt);
+            $("#year").val(day_ytb.getFullYear());
+            $('.richText-editor').html(data.items[0].snippet.description.replace(/\n/g,'<br/>'));
+            var thumbnails_ytb=data.items[0].snippet.thumbnails;
+            var html_thumb='';
+            html_thumb+='<div class="form-group">';
+            html_thumb+='<a href="'+thumbnails_ytb.medium.url+'" target="_blank"><img src="'+thumbnails_ytb.medium.url+'"></a>';
+            html_thumb+='</div>';
+            $("#link_ytb_tip").html(html_thumb);
+        });
     }
 
     reload(carrot){
@@ -436,6 +466,5 @@ class Carrot_Music{
         carrot.music.index_song_cur-=1;
         carrot.music.play_by_index(carrot.music.index_song_cur);
     }
-
 }
 

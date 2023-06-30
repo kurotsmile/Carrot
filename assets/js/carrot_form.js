@@ -35,7 +35,7 @@ class Carrot_Field{
     list_btn=Array();
     options=Array();
     is_field_main=false;
-
+    type_file='';
     constructor(name,label,type='input',placeholder='Enter data here'){
         this.name=name;
         this.label=label;
@@ -79,6 +79,11 @@ class Carrot_Field{
 
     set_main(){
         this.is_field_main=true;
+        return this;
+    }
+
+    set_type_file(s_type){
+        this.type_file=s_type;
         return this;
     }
 
@@ -207,8 +212,8 @@ class Carrot_Field{
         }
         else if(this.type=='file'){
             html+='<div class="input-group mb-3">';
-            html+='<input type="file" class="form-control '+s_class+' form-control-sm" id="'+this.name+'_file" for-emp="'+this.name+'" placeholder="'+this.placeholder+'">';
-            html+='<span type="'+this.type+'" id="'+this.name+'" type="hidden" class="cr_field text-break">'+this.value+'</span>';
+            html+='<input type="file" accept="'+this.type_file+'" class="form-control '+s_class+' form-control-sm" id="'+this.name+'_file" for-emp="'+this.name+'" placeholder="'+this.placeholder+'">';
+            html+='<span type="'+this.type+'" id="'+this.name+'" value="'+this.value+'" type="hidden" class="cr_field text-break fs-8 text-info">'+this.value+'</span>';
             html+='</div>';
         }
         else{
@@ -366,16 +371,19 @@ class Carrot_Form{
                         console.log('File metadata:', snapshot.metadata);
                         var file_storage=snapshot.metadata;
                         var data_file=new Object();
+                        var path_file=file_storage.fullPath;
                         data_file["fullPath"]=file_storage.fullPath;
                         data_file["generation"]=file_storage.generation;
                         data_file["name"]=file_storage.name;
                         data_file["size"]=file_storage.size;
                         data_file["timeCreated"]=file_storage.timeCreated;
+                        data_file["type"]=type_file;
                         carrot.set_doc("file",file_storage.generation,data_file);
+                        $("#"+id_emp).html('<i class="fa-solid fa-spinner fa-spin"></i>');
                         snapshot.ref.getDownloadURL().then(function (url) {
                             carrot.log('File available at :'+url);
                             var html_file='';
-                            html_file+='<div class="d-block"><i class="fa-solid fa-file"></i> '+url+'<button role="button" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash-can"></i></button></div>';
+                            html_file+='<div class="d-block"><i class="fa-solid fa-file"></i> <a href="'+url+'" target="_blank">'+url+'</a><span fullPath="'+path_file+'" onclick="delete_file(this);return false;" role="button" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash-can"></i></span></div>';
                             $("#"+id_emp).attr("value",url).html(html_file);
                         });
                     }).catch(function (error) {

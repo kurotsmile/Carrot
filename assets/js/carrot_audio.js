@@ -15,6 +15,10 @@ class Carrot_Audio{
         if(localStorage.getItem("obj_audios")!=null) this.obj_audios=JSON.parse(localStorage.getItem("obj_audios"));
     }
 
+    save_obj_audios(){
+        localStorage.setItem("obj_audios",JSON.stringify(this.obj_audios));
+    }
+
     add(){
         var data_audio=new Object();
         data_audio["id"]=this.carrot.create_id();
@@ -41,33 +45,50 @@ class Carrot_Audio{
     }
 
     list(){
-        this.carrot.get_list_doc("audio",this.done_list);
+        if(this.obj_audios!=null){
+            this.carrot.log("Show list from cache data","success");
+            this.show_list_from_data(this.obj_audios,this.carrot);
+        } 
+        else{
+            this.carrot.get_list_doc("audio",this.get_data_audio_from_server);
+        }
+            
     }
 
-    done_list(audios,carrot){
+    get_data_audio_from_server(audios,carrot){
+        carrot.audio.obj_audios=audios;
+        carrot.audio.save_obj_audios();
+        carrot.audio.show_list_from_data(audios,carrot);
+    }
+
+    show_list_from_data(audios,carrot){
         carrot.audio.obj_audios=audios;
         carrot.player_media.create();
         carrot.player_media.set_act_next(carrot.audio.next_audio);
         carrot.player_media.set_act_prev(carrot.audio.prev_audio);
         carrot.change_title_page("Audio","?p=audio","audio");
         var list_audio=carrot.convert_obj_to_list(audios);
-        var htm='';
-        htm+='<div class="row">';
-        $(list_audio).each(function(intdex,au){
-            var item_au=new Carrot_List_Item(carrot);
-            item_au.set_index(intdex);
-            item_au.set_id(au.id)
-            item_au.set_icon_font("audio_icon fa-solid fa-guitar mt-3");
-            item_au.set_db("audio");
-            item_au.set_name(au.name);
-            item_au.set_tip(au.author);
-            item_au.set_class_icon("pe-0 col-3 ");
-            item_au.set_class_body("mt-2 col-9");
-            htm+=item_au.html();
+        var html='';
+        html+='<div class="row">';
+        $(list_audio).each(function(index,au){
+            html+=carrot.audio.box_audio_item(index,au,carrot);
         });
-        htm+='<div>';
-        carrot.show(htm);
+        html+='<div>';
+        carrot.show(html);
         carrot.audio.check_event();
+    }
+
+    box_audio_item(index,au,carrot){
+        var item_au=new Carrot_List_Item(carrot);
+        item_au.set_index(index);
+        item_au.set_id(au.id)
+        item_au.set_icon_font("audio_icon fa-solid fa-guitar mt-3");
+        item_au.set_db("audio");
+        item_au.set_name(au.name);
+        item_au.set_tip(au.author);
+        item_au.set_class_icon("pe-0 col-3 ");
+        item_au.set_class_body("mt-2 col-9");
+        return item_au.html();
     }
 
     check_event(){
@@ -97,5 +118,26 @@ class Carrot_Audio{
         var list_audio=this.carrot.obj_to_array(this.obj_audios);
         var au=list_audio[index];
         this.carrot.player_media.play_audio(au.name,au.author,au.mp3);
+    }
+
+    list_for_home(){
+        var html='';
+        if(this.obj_audios!=null){
+            var list_audio=this.carrot.obj_to_array(this.obj_audios);
+            list_audio= list_audio.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
+            
+            html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-4">';
+            html+='<i class="'+this.icon+' fs-6 me-2"></i> <l class="lang" key_lang="other_audio">Other Audio</l>';
+            html+='<span role="button" onclick="carrot.audio.list()" class="btn float-end btn-sm btn-secondary"><i class="fa-solid fa-square-caret-right"></i> <l class="lang" key_lang="view_all">View All</l></span>';
+            html+='</h4>';
+
+            html+='<div class="row">';
+            for(var i=0;i<12;i++){
+                var audio=list_audio[i];
+                html+=this.box_audio_item(i,audio,this.carrot);
+            }
+            html+='</div>';
+        }
+        return html;
     }
 }
