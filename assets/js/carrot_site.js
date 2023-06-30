@@ -28,6 +28,7 @@ class Carrot_Site{
     /*Firebase*/
     db;
     firebase;
+    storage;
 
     /*Obj Main*/
     user;
@@ -52,7 +53,7 @@ class Carrot_Site{
             storageBucket: "carrotstore.appspot.com",
             messagingSenderId: "745653792874",
             appId: "1:745653792874:web:55d78113cd3dea7c28da13",
-            measurementId: "G-KXDDJ42JFN"
+            measurementId: "G-KXDDJ42JFN",
         }
 
         this.setup_sever_db();
@@ -159,8 +160,12 @@ class Carrot_Site{
         }
 
         if(this.firebase==null) this.firebase =firebase.initializeApp(this.firebaseConfig_mainhost);
+        this.storage = this.firebase.storage();
         this.db = this.firebase.firestore();
-        if(this.is_localhost) this.db.useEmulator('localhost', 8082);
+        if(this.is_localhost){
+            this.db.useEmulator('localhost', 8082);
+            this.storage.useEmulator('localhost', 9199);
+        }
         if(this.db==null) this.show_error_connect_sever();
     }
 

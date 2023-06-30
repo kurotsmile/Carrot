@@ -12,7 +12,6 @@ class Carrot_Audio{
         $(btn_add).click(function(){audio.add();});
         var btn_list=this.carrot.menu.create("list_aduio").set_label("List Audio").set_type("main").set_lang("audio").set_icon(this.icon);
         $(btn_list).click(function(){audio.list();});
-
         if(localStorage.getItem("obj_audios")!=null) this.obj_audios=JSON.parse(localStorage.getItem("obj_audios"));
     }
 
@@ -77,6 +76,7 @@ class Carrot_Audio{
             var audio_id=$(this).attr("obj_id");
             var audio_index=$(this).attr("obj_index");
             var au=JSON.parse(audio.obj_audios[audio_id]);
+            $(this).effect( "bounce","fast");
             audio.index_audio_cur=parseInt(audio_index);
             audio.carrot.player_media.open(this,audio.carrot.player_media.play_audio(au.name,au.author,au.mp3))
         });

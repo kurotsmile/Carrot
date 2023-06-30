@@ -32,7 +32,6 @@ class Carrot_Langs{
         $("#btn_change_lang").click(function(){ carrot.langs.show_list_change_lang();});
     }
 
-
     save_list_lang(){
         localStorage.setItem("list_lang", JSON.stringify(this.list_lang));
     }
@@ -63,12 +62,16 @@ class Carrot_Langs{
     }
 
     get_data_lang_web(){
-        if(this.obj_lang_web[this.carrot.lang]!=null){
-            this.carrot.log("Load lang "+this.carrot.lang+" from cache","success");
-            this.lang_web=JSON.parse(this.obj_lang_web[this.carrot.lang]);
-            this.load_data_lang_web();
-        }else{
+        if(this.carrot.check_ver_cur("lang_web")==false){
             this.get_all_data_lang_web();
+        }else{
+            if(this.obj_lang_web[this.carrot.lang]!=null){
+                this.carrot.log("Load lang "+this.carrot.lang+" from cache","success");
+                this.lang_web=JSON.parse(this.obj_lang_web[this.carrot.lang]);
+                this.load_data_lang_web();
+            }else{
+                this.get_all_data_lang_web();
+            }
         }
     }
 

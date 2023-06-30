@@ -323,20 +323,37 @@ class Carrot_Music{
         data_music["date"]=$.datepicker.formatDate('yy-mm-dd', new Date());
         data_music["lang"]=this.carrot.lang;
         this.frm_add_or_edit(data_music).set_title("Add Music").set_msg_done("Add song success!").show();
+        this.extenion_fnc_form();
     }
 
     edit(data,carrot){
         carrot.music.frm_add_or_edit(data).set_title("Edit Music").set_msg_done("Update song success!").show();
+        carrot.music.extenion_fnc_form();
+    }
+
+    extenion_fnc_form(){
+        var carrot=this.carrot;
+        $("#name").on("change",function(){
+            var val_name=$(this).val();
+            var url_song='https://carrotstore.web.app/?p=song&id='+encodeURIComponent(val_name);
+            $("#name_tip").attr("role","button");
+            $("#name_tip").html(url_song);
+            $("#name_tip").click(async function(){
+                await navigator.clipboard.writeText(url_song);
+                carrot.msg("Copy Success!");
+                $("#name_tip").removeClass("text-muted").addClass("text-success");
+            });
+        })
     }
 
     frm_add_or_edit(data){
         var frm=new Carrot_Form("frm_music",this.carrot);
         frm.set_icon(this.icon);
         frm.set_db("song","name");
-        frm.create_field("name").set_label("Name").set_val(data["name"]).add_btn_search_google().add_btn_search_ytb().add_btn_toLower();
-        frm.create_field("avatar").set_label("Avatar (url)").set_val(data["avatar"]);
+        frm.create_field("name").set_label("Name").set_val(data["name"]).set_tip("Create id url by name").add_btn_search_google().add_btn_search_ytb().add_btn_toLower();
+        frm.create_field("avatar").set_label("Avatar (url)").set_val(data["avatar"]).set_type("file");
         frm.create_field("artist").set_label("Artist").set_val(data["artist"]);
-        frm.create_field("mp3").set_label("Mp3 (Url)").set_val(data["mp3"]);
+        frm.create_field("mp3").set_label("Mp3 (Url)").set_val(data["mp3"]).set_type("file");
         frm.create_field("lyrics").set_label("lyrics").set_val(data["lyrics"]).set_type("editor");
 
         var genre_field=frm.create_field("genre").set_label("Genre").set_val(data["genre"]).set_type("select");

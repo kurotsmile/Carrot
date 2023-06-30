@@ -144,6 +144,7 @@ class Carrot_Field{
         if(this.is_field_main) html+='<span class="text-info"><i class="fa-solid fa-key"></i></span> ';
         html+=this.label;
         html+='</label>';
+        if(this.tip!=null) html+='<small id="'+this.name+'_tip" class="form-text text-muted d-block text-break">'+this.tip+'</small>';
         
         if(this.type=="code"){
             html+='<div class="form-group">';
@@ -204,17 +205,21 @@ class Carrot_Field{
         else if(this.type=='id'){
             html+='<p id="'+this.name+'" type="id" class="cr_field" value="'+this.value+'">'+this.value+'</p>';
         }
+        else if(this.type=='file'){
+            html+='<div class="input-group mb-3">';
+            html+='<input type="file" class="form-control '+s_class+' form-control-sm" id="'+this.name+'_file" for-emp="'+this.name+'" placeholder="'+this.placeholder+'">';
+            html+='<span type="'+this.type+'" id="'+this.name+'" type="hidden" class="cr_field text-break">'+this.value+'</span>';
+            html+='</div>';
+        }
         else{
             html+='<div class="input-group mb-3">';
             html+='<input type="'+this.type+'" value="'+this.value+'" class="form-control '+s_class+' cr_field form-control-sm" id="'+this.name+'" placeholder="'+this.placeholder+'">';
-            html+='<div class="input-group-append">';
-            html+='<span class="input-group-text btn-ms" role="button" onclick="paste_tag(\''+this.name+'\')"><i class="fa-solid fa-paste"></i></span>';
-            html+='</div>';
+            html += '<div class="input-group-append">';
+            html += '<span class="input-group-text btn-ms" role="button" onclick="paste_tag(\'' + this.name + '\')"><i class="fa-solid fa-paste"></i></span>';
+            html += '</div>';
             html+=this.htm_btn_extension();
             html+='</div>';
         }
-
-        if(this.tip!=null) html+='<small id="'+this.name+'_tip" class="form-text text-muted">'+this.tip+'</small>';
         html+='</div>';
         return html;
     }
@@ -346,6 +351,38 @@ class Carrot_Form{
                     $(this).addClass("btn-info");
                 });
             }
+
+            if(type_emp=="file"){
+                $("#"+id_emp+"_file").on("change",function(evt){
+                    evt.stopPropagation();
+                    evt.preventDefault();
+                    var file = evt.target.files[0];
+                    var r=carrot.storage.ref();
+                    var metadata = {'contentType': file.type};
+                    var type_file=file.type
+                    var file_name=carrot.create_id()+"_"+file.name;
+                    r.child(frm.db_collection+'/'+type_file+'/'+file_name).put(file, metadata).then(function (snapshot) {
+                        console.log('Uploaded', snapshot.totalBytes, 'bytes.');
+                        console.log('File metadata:', snapshot.metadata);
+                        var file_storage=snapshot.metadata;
+                        var data_file=new Object();
+                        data_file["fullPath"]=file_storage.fullPath;
+                        data_file["generation"]=file_storage.generation;
+                        data_file["name"]=file_storage.name;
+                        data_file["size"]=file_storage.size;
+                        data_file["timeCreated"]=file_storage.timeCreated;
+                        carrot.set_doc("file",file_storage.generation,data_file);
+                        snapshot.ref.getDownloadURL().then(function (url) {
+                            carrot.log('File available at :'+url);
+                            var html_file='';
+                            html_file+='<div class="d-block"><i class="fa-solid fa-file"></i> '+url+'<button role="button" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash-can"></i></button></div>';
+                            $("#"+id_emp).attr("value",url).html(html_file);
+                        });
+                    }).catch(function (error) {
+                        carrot.log(error);
+                    });
+                });
+            }
         });
 
         $("#btn_"+this.name+"_done").click(function(){
@@ -360,6 +397,7 @@ class Carrot_Form{
                 else if(type_emp=="icon") val_emp=$(this).attr("value");
                 else if(type_emp=="id") val_emp=$(this).attr("value");
                 else if(type_emp=="editor") val_emp=$(this).val();
+                else if(type_emp=="file") val_emp=$(this).attr("value");
                 else val_emp=$(this).val();
 
                 obj_frm[id_emp]=val_emp;
@@ -379,4 +417,6 @@ class Carrot_Form{
             $('#box').modal('toggle'); 
         });
     }
+
+
 }

@@ -87,8 +87,8 @@ class AI_Key_Block{
                 array_key_chat.push($(this).val());
             });
             data_add["chat"]=array_key_chat;
-            carrot.set_doc("block",carrot.ai.setting_lang_change,data_add);
-            carrot.msg("Cập nhật các từ khóa cấm thành công!")
+            carrot.set_doc("block",carrot.langs.lang_setting,data_add);
+            carrot.msg("Cập nhật các từ khóa cấm ở quốc gia "+carrot.langs.lang_setting+" thành công!")
         });
 
         $(".btn-setting-lang-change").click(function(){
