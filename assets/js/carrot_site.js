@@ -69,6 +69,8 @@ class Carrot_Site{
 
     load_all_object_main(){
         var carrot=this;
+        this.update_new_ver_cur("js",true);
+        this.update_new_ver_cur("page",true);
         this.log("Load js ..."+this.get_ver_cur("js"),"null");
         this.body=$("#main_contain");
 
@@ -99,9 +101,6 @@ class Carrot_Site{
         $('head').append('<script type="text/javascript" src="assets/js/carrot_about_us.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_privacy_policy.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="https://www.paypal.com/sdk/js?client-id='+this.paypal_CLIENT_ID+'"></script>');
-
-        this.update_new_ver_cur("js",true);
-        this.update_new_ver_cur("page",true);
 
         this.menu=new Carrot_Menu(this);
         this.langs=new Carrot_Langs(this);
@@ -234,14 +233,6 @@ class Carrot_Site{
             this.log(error.message,"error");
             this.show_error_connect_sever();
             this.load_page();
-        });
-    }
-
-    act_done_edit_version_data_version(data){
-        Swal.showLoading();
-        carrot.db.collection("setting_web").doc("version").set(data).then((doc) => {
-            Swal.close();
-            location.reload();
         });
     }
 
@@ -405,8 +396,9 @@ class Carrot_Site{
     done_update_data_version(){
         this.obj_version_new=null;
         this.obj_version_cur=null;
+        this.save_obj_version_new();;
         this.save_obj_version_cur();
-        this.save_obj_version_new();
+        //location.reload();
     }
 
     load_obj_version_new(){

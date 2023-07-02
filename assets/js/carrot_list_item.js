@@ -90,7 +90,7 @@ class Carrot_List_Item{
         var html="<div class='box_app "+this.class+"' id=\""+this.id+"\" key_search=\""+this.name+"\">";
             html+='<div class="app-cover p-2 shadow-md bg-white">';
             html+='<div class="row">';
-                if(this.icon_img!=null) html+='<div role="button" class="img-cover '+this.class_icon+' '+this.db_collection+'_icon" app_id="'+this.id+'" obj_id="'+this.id+'" obj_index="'+this.index+'"><img class="rounded" src="'+this.icon_img+'" alt="'+this.name+'"></div>';
+                if(this.icon_img!=null) html+='<div role="button" class="img-cover '+this.class_icon+' '+this.db_collection+'_icon" db_collection="'+this.db_collection+'" app_id="'+this.id+'"  obj_id="'+this.id+'" obj_index="'+this.index+'"><img class="rounded" src="'+this.icon_img+'" alt="'+this.name+'"></div>';
                 else html+='<div class="pe-0 col-1 text-center"><i role="button" class="'+this.icon_font+' fa-2x" obj_id="'+this.id+'" obj_index="'+this.index+'"></i></div>';
                     html+='<div class="det '+ this.class_body+'">';
                     html+="<h5 class='mb-0 fs-6 mt-0'>"+this.name+"</h5>";

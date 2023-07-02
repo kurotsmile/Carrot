@@ -96,7 +96,7 @@ class Carrot_user{
         item_user.set_id(data_user.id);
         item_user.set_name(data_user.name);
         item_user.set_class(s_class);
-        item_user.set_class_icon("col-4");
+        item_user.set_class_icon("col-4 user-avatar");
         item_user.set_class_body("col-8");
         item_user.set_icon(url_avatar);
         item_user.set_obj_js("user");
@@ -150,16 +150,15 @@ class Carrot_user{
         var carrot=this.carrot;
         if(this.obj_phone_book!=null){
             $(".user-avatar").click(function(){
-                var user_id=$(this).attr("user-id");
-                var user_lang=$(this).attr("user-lang");
-                carrot.get_doc("user-"+user_lang,user_id,carrot.user.show_user_info);
+                var user_id=$(this).attr("obj_id");
+                var db_collection=$(this).attr("db_collection");
+                carrot.get_doc(db_collection,user_id,carrot.user.show_user_info);
             })
     
             $("#btn_download").click(function(){
                 carrot.user.download_vcard();
             });
         }
-
         carrot.check_event();
     }
 

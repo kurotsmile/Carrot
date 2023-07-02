@@ -36,6 +36,14 @@ class Carrot_Langs{
         localStorage.setItem("list_lang", JSON.stringify(this.list_lang));
     }
 
+    save_lang_web(){
+        localStorage.setItem("lang_web",JSON.stringify(this.lang_web));
+    }
+
+    save_obj_lang_web(){
+        localStorage.setItem("obj_lang_web",JSON.stringify(this.obj_lang_web));
+    }
+
     delete_list_lang(){
         localStorage.removeItem("list_lang");
         this.list_lang=Array();
@@ -74,6 +82,7 @@ class Carrot_Langs{
             if(this.obj_lang_web[this.carrot.lang]!=null){
                 this.carrot.log("Load lang "+this.carrot.lang+" from cache","success");
                 this.lang_web=JSON.parse(this.obj_lang_web[this.carrot.lang]);
+                this.save_lang_web();
                 this.load_data_lang_web();
             }else{
                 this.get_all_data_lang_web();
@@ -91,8 +100,8 @@ class Carrot_Langs{
     get_data_lang_web_done(data,carrot){
         carrot.langs.lang_web=data;
         carrot.langs.obj_lang_web[carrot.lang]=JSON.stringify(carrot.langs.lang_web);
-        localStorage.setItem("lang_web",JSON.stringify(carrot.langs.lang_web));
-        localStorage.setItem("obj_lang_web",JSON.stringify(carrot.langs.obj_lang_web));
+        carrot.langs.save_lang_web();
+        carrot.langs.save_obj_lang_web();
         carrot.langs.load_data_lang_web();
     }
 
@@ -100,8 +109,10 @@ class Carrot_Langs{
         var langs=this;
         $(".lang").each(function(index,emp){
             var key_lang=$(emp).attr("key_lang");
-            if(langs.lang_web[key_lang]!=null){
-                $(emp).html(langs.lang_web[key_lang].trim());
+            if(langs.lang_web!=null){
+                if(langs.lang_web[key_lang]!=null){
+                    $(emp).html(langs.lang_web[key_lang].trim());
+                }
             }
         });
     }

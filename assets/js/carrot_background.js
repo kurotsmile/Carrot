@@ -93,7 +93,7 @@ class Carrot_Background{
         frm.set_title("Add or Edit Background");
         frm.create_field("id").set_label("ID").set_val(data.id).set_type("id");
         frm.create_field("name").set_label("Name").set_val(data.name);
-        frm.create_field("icon").set_label("Icon (url)").set_val(data.icon);
+        frm.create_field("icon").set_label("Icon (url)").set_val(data.icon).set_type("file").set_type_file("image/*");
         return frm;
     }
 
