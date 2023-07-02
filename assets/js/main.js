@@ -55,8 +55,18 @@ function toLowerCase_tag(name_tag){
     $("#" + name_tag).val(s_txt);
 }
 
-function delete_file(path){
-    carrot.del_file(path);
+function delete_file(emp){
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "Are you sure you want to delete the file '"+$(emp).attr("fullPath")+"' ?",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) carrot.del_file(emp);
+    });
 }
 
 function customer_field_for_db(data,collection,key_name_doc,smg_success){
@@ -68,6 +78,8 @@ function customer_field_for_db(data,collection,key_name_doc,smg_success){
 var carrot=new Carrot_Site();
 $(document).ready(function () {
     $("#load_bar").css("width","0%");
+    $("#head").hide();
+    $("#head_nav").hide();
     $("#logo_carrot").on("contextmenu", function () { carrot.act_mode_dev(); return false; });
     $("#btn_download_json").click(function () {carrot.download_json();});
     $("#btn_recognition").click(function(){carrot.start_recognition();});

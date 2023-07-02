@@ -17,8 +17,24 @@ class Carrot_File{
         localStorage.setItem("obj_files",JSON.stringify(this.obj_files));
     }
 
+    delete_obj_files(){
+        localStorage.removeItem("obj_files");
+        this.obj_files=null;
+        this.carrot.delete_ver_cur(this.id_page);
+    }
+
     get_list_file_from_server(){
-        this.carrot.get_list_doc(this.id_page,this.act_get_done_list_server);
+        this.carrot.db.collection(this.id_page).orderBy("timeCreated", "desc").limit(100).get().then((querySnapshot) => {
+            var obj_data=Object();
+            querySnapshot.forEach((doc) => {
+                var item_data=doc.data();
+                item_data["id"]=doc.id;
+                obj_data[doc.id]=JSON.stringify(item_data);
+            });
+            this.act_get_done_list_server(obj_data,this.carrot);
+        }).catch((error) => {
+            this.carrot.log_error(error);
+        });
     }
 
     act_get_done_list_server(files,carrot){
@@ -41,19 +57,54 @@ class Carrot_File{
         var list_file=carrot.obj_to_array(files);
         html+='<div class="row">';
         $(list_file).each(function(index,f){
-            var item_file=new Carrot_List_Item(this.carrot);
+            var item_file=new Carrot_List_Item(carrot);
             item_file.set_icon_font("fa-solid fa-file");
+            item_file.set_id(f.id);
+            item_file.set_db("file");
             item_file.set_index(index);
             item_file.set_name(f.name);
             item_file.set_class_body("mt-2 col-11");
-            var html_body=''
-            html_body+='<div class="d-block"><i class="fa-solid fa-bezier-curve"></i> <small class="fs-9">'+f.fullPath+'</small></div>';
-            html_body+='<div class="d-block"><i class="fa-solid fa-server"></i> <small>'+f.size+'</small></div>';
-            html_body+='<div class="d-block"><i class="fa-solid fa-calendar-days"></i> <small>'+f.timeCreated+'</small></div>';
+            var html_body='';
+            html_body+='<div class="col-10">';
+                html_body+='<div class="d-block text-info"><i class="fa-solid fa-bezier-curve"></i> <small class="fs-9">'+f.fullPath+'</small></div>';
+                html_body+='<div class="d-block"><i class="fa-solid fa-server"></i> <small>'+carrot.file.formatSizeUnits(f.size)+'</small></div>';
+                html_body+='<div class="d-block"><i class="fa-solid fa-calendar-days"></i> <small>'+f.timeCreated+'</small></div>';
+            html_body+='</div>';
+
+            html_body+='<div class="col-2">';
+            html_body+='<button role="button" class="btn btn-sm btn-danger" fullPath="'+f.fullPath+'" onclick="delete_file(this)"><i class="fa-solid fa-trash"></i></button>';
+            html_body+='</div>';
             item_file.set_body(html_body);
             html+=item_file.html();
         });
         html+='</div>';
-        this.carrot.show(html);
+        carrot.show(html);
+        carrot.check_event();
+    }
+
+    edit(data,carrot){
+        carrot.file.frm_add_or_edit(data,carrot).set_title("Edit File Data Meta").show();
+    }
+
+    frm_add_or_edit(data,carrot){
+        var frm=new Carrot_Form("frm_file",carrot);
+        frm.set_db(carrot.file.id_page,"id");
+        frm.set_icon(carrot.file.icon);
+        return frm;
+    }
+
+    reload(carrot){
+        carrot.file.delete_obj_files();
+        carrot.file.list();
+    }
+
+    formatSizeUnits(bytes){
+        if      (bytes >= 1073741824) { bytes = (bytes / 1073741824).toFixed(2) + " GB"; }
+        else if (bytes >= 1048576)    { bytes = (bytes / 1048576).toFixed(2) + " MB"; }
+        else if (bytes >= 1024)       { bytes = (bytes / 1024).toFixed(2) + " KB"; }
+        else if (bytes > 1)           { bytes = bytes + " bytes"; }
+        else if (bytes == 1)          { bytes = bytes + " byte"; }
+        else                          { bytes = "0 bytes"; }
+        return bytes;
     }
 }

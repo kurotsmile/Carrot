@@ -94,7 +94,7 @@ class Carrot_Site{
         $('head').append('<script type="text/javascript" src="assets/js/carrot_file.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_audio.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_avatar.js?ver='+this.get_ver_cur("js")+'"></script>');
-        $('head').append('<script type="text/javascript" src="assets/js/ai_key_block.js?ver='+this.get_ver_cur("js")+'"></script>');
+        $('head').append('<script type="text/javascript" src="assets/js/ai_key_block.js?ver='+this.get_ver_cur("js")+'sd"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_bible.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_about_us.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_privacy_policy.js?ver='+this.get_ver_cur("js")+'"></script>');
@@ -167,7 +167,7 @@ class Carrot_Site{
         this.db = this.firebase.firestore();
         if(this.is_localhost){
             this.db.useEmulator('localhost', 8082);
-            //this.storage.useEmulator('localhost', 9199);
+            this.storage.useEmulator('localhost', 9199);
         }
         if(this.db==null) this.show_error_connect_sever();
     }
@@ -538,12 +538,9 @@ class Carrot_Site{
         $(".btn_app_edit").click(function(){
             var db_collection=$(this).attr("db_collection");
             var db_document=$(this).attr("db_document");
+            var db_obj=$(this).attr("db_obj");
             carrot.log("Edit "+db_collection+" : "+db_document);
-            if(carrot.obj_page[db_collection]!=null){
-                carrot.get_doc(db_collection,db_document,carrot.act_edit_by_page_register);
-            }else{
-                carrot.msg("chưa thiết lập đối tượng page edit","error");
-            }
+            carrot.get_doc(db_collection,db_document,eval("carrot."+db_obj+".edit"));
         });
 
         $(".btn_app_del").unbind('click');
@@ -776,16 +773,19 @@ class Carrot_Site{
     show(s_html){
         this.body.html(s_html);
         window.scrollTo(0,0); 
+        $("#head").show();
+        $("#head_nav").show();
     }
 
-    btn_dev(db_collection,db_document){
+    btn_dev(db_collection,db_document,obj_js=null){
         var html='';
+        if(obj_js==null) obj_js=db_collection;
         html+="<div class='row dev d-flex mt-2'>";
             html+="<div class='dev col-6 d-flex btn-group'>";
-                html+="<div role='button' class='dev btn btn_app_edit btn-warning btn-sm mr-2' db_collection='"+db_collection+"' db_document='"+db_document+"'><i class=\"fa-solid fa-pen-to-square\"></i></div> ";
-                html+="<div role='button' class='dev btn btn_app_del btn-danger btn-sm mr-2'  db_collection='"+db_collection+"' db_document='"+db_document+"'><i class=\"fa-solid fa-trash\"></i></div> ";
-                html+="<div role='button' class='dev btn btn_app_export btn-dark btn-sm mr-2'  db_collection='"+db_collection+"' db_document='"+db_document+"'><i class=\"fa-solid fa-download\"></i></div> ";
-                html+="<div role='button' class='dev btn btn_app_import btn-info btn-sm mr-2'  db_collection='"+db_collection+"' db_document='"+db_document+"'><i class=\"fa-solid fa-upload\"></i></div>";
+                html+="<div role='button' class='dev btn btn_app_edit btn-warning btn-sm mr-2' db_collection='"+db_collection+"' db_document='"+db_document+"' db_obj='"+obj_js+"'><i class=\"fa-solid fa-pen-to-square\"></i></div> ";
+                html+="<div role='button' class='dev btn btn_app_del btn-danger btn-sm mr-2'  db_collection='"+db_collection+"' db_document='"+db_document+"' db_obj='"+obj_js+"'><i class=\"fa-solid fa-trash\"></i></div> ";
+                html+="<div role='button' class='dev btn btn_app_export btn-dark btn-sm mr-2'  db_collection='"+db_collection+"' db_document='"+db_document+"' db_obj='"+obj_js+"'><i class=\"fa-solid fa-download\"></i></div> ";
+                html+="<div role='button' class='dev btn btn_app_import btn-info btn-sm mr-2'  db_collection='"+db_collection+"' db_document='"+db_document+"' db_obj='"+obj_js+"'><i class=\"fa-solid fa-upload\"></i></div>";
             html+="</div>";
         html+="</div>";
         return html;
@@ -912,5 +912,25 @@ class Carrot_Site{
         }).catch((error) => {
             carrot.log(error);
         });
+    }
+
+    show_404(){
+        var html='';
+        html+='<div class="d-flex align-items-center justify-content-center vh-100">';
+        html+='<div class="text-center row">';
+        html+='<div class=" col-md-6">';
+        html+='<img src="images/404.png" alt="404" class="img-fluid">';
+        html+='</div>';
+        html+='<div class=" col-md-6 mt-5">';
+        html+='<p class="fs-3"> <span class="text-danger">Opps!</span> Page not found.</p>';
+        html+='<p class="lead">';
+        html+='The page you’re looking for doesn’t exist.';
+        html+='</p>';
+        html+='<a role="button" class="btn btn-primary" onClick="carrot.home();return false;">Go Home</a>';
+        html+='</div>';
+        html+='</div>';
+        html+='</div>';
+        this.show(html);
+        this.check_event();
     }
 }

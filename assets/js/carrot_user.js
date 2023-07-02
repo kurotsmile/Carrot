@@ -11,7 +11,7 @@ class Carrot_user{
         if(localStorage.getItem("obj_login")!=null) this.obj_login=JSON.parse(localStorage.getItem("obj_login"));
         if (localStorage.getItem("obj_phone_book") != null) this.obj_phone_book=JSON.parse(localStorage.getItem("obj_phone_book"));
 
-        carrot.register_page("phone_book","carrot.user.list()","carrot.user.show_box_add_or_edit_phone_book","carrot.user.show_user_info");
+        carrot.register_page("phone_book","carrot.user.list()","carrot.user.edit","carrot.user.show_user_info","carrot.user.reload");
         var btn_list=carrot.menu.create("phone_book").set_label("Phone book").set_lang("phone_book").set_icon(this.icon).set_type("main");
         $(btn_list).click(function(){carrot.user.list();});
     }
@@ -44,6 +44,7 @@ class Carrot_user{
     delete_obj_phone_book(){
         localStorage.removeItem("obj_phone_book");
         this.obj_phone_book=null;
+        this.carrot.delete_ver_cur("user");
     }
 
     set_user_login(data_user){
@@ -86,46 +87,49 @@ class Carrot_user{
     }
 
     box_user_item(data_user,s_class="col-md-4 mb-3"){
-        var html="";
-        html+="<div class='box_app "+s_class+"' id=\""+data_user.id+"\" key_search=\""+data_user.name+"\">";
-            html+='<div class="app-cover p-2 shadow-md bg-white">';
-                html+='<div class="row">';
-                var url_avatar='';
-                if(data_user.avatar!=null) url_avatar=data_user.avatar;
-                if(url_avatar=="") url_avatar="images/avatar_default.png";
-                html+='<div class="img-cover pe-0 col-3"><img role="button" class="rounded user-avatar" src="'+url_avatar+'" user-id="'+data_user.id+'"  user-lang="'+data_user.lang+'" alt="'+data_user.name+'"></div>';
-                    html+='<div class="det mt-2 col-9">';
-                        html+="<h5 class='mb-0 fs-6'>"+data_user.name+"</h5>";
-                        html+='<ul class="row">';
-                        html+='<li class="col-8 ratfac">';
-                            html+='<i class="bi text-warning fa-solid fa-heart"></i>';
-                            html+='<i class="bi text-warning fa-solid fa-heart"></i>';
-                            html+='<i class="bi text-warning fa-solid fa-heart"></i>';
-                            html+='<i class="bi text-danger fa-solid fa-heart"></i>';
-                            html+='<i class="bi fa-solid fa-heart"></i>';
-                        html+='</li>';
-                        if(data_user.sex=="0")
-                            html+='<li class="col-4"><span class="text-success float-end"><i class="fa-solid fa-mars"></i></span></li>';
-                        else
-                            html+='<li class="col-4"><span class="text-success float-end"><i class="fa-solid fa-venus"></i></span></li>';
-                        html+='</ul>';
+        var url_avatar='';
+        if(data_user.avatar!=null) url_avatar=data_user.avatar;
+        if(url_avatar=="") url_avatar="images/avatar_default.png";
 
-                        html+='<ul class="row">';
-                        if(data_user.phone!="") html+='<li class="col-12 fs-8"><i class="fa-solid fa-phone"></i> '+data_user.phone+'</li>';
-                        if(data_user.email!="") html+='<li class="col-12 fs-8"><i class="fa-solid fa-envelope"></i> '+data_user.email+'</li>';
-                        if(data_user.address!=""){
-                            var user_address=data_user.address;
-                            if(user_address.name!="") html+='<li class="col-12 fs-8"><i class="fa-solid fa-location-dot"></i> '+user_address.name+'</li>';
-                        }
-                        html+='</ul>';
+        var item_user=new Carrot_List_Item(this.carrot);
+        item_user.set_id(data_user.id);
+        item_user.set_name(data_user.name);
+        item_user.set_class(s_class);
+        item_user.set_class_icon("col-4");
+        item_user.set_class_body("col-8");
+        item_user.set_icon(url_avatar);
+        item_user.set_db("user-"+data_user.lang);
+        item_user.set_obj_js("user");
+        var html='';
+        html+='<div class="col-10">';
+            html+='<div class="row">';
+                if(data_user.phone!=""&&data_user.phone!=undefined) html+='<div class="col-12 fs-8 text-break"><i class="fa-solid fa-phone"></i> '+data_user.phone+'</div>';
+                if(data_user.email!=""&&data_user.email!=undefined) html+='<div class="col-12 fs-8 text-break"><i class="fa-solid fa-envelope"></i> '+data_user.email+'</div>';
+                if(data_user.address!=""&&data_user.address!=undefined){
+                    var user_address=data_user.address;
+                    if(user_address.name!="") html+='<li class="col-12 fs-8 text-break"><i class="fa-solid fa-location-dot"></i> '+user_address.name+'</li>';
+                }
+            html+='</div>';
+            html+='<div class="row">';
+                html+='<div class="col-12 ratfac">';
+                html+='<i class="bi text-warning fa-solid fa-heart"></i>';
+                html+='<i class="bi text-warning fa-solid fa-heart"></i>';
+                html+='<i class="bi text-warning fa-solid fa-heart"></i>';
+                html+='<i class="bi text-danger fa-solid fa-heart"></i>';
+                html+='<i class="bi fa-solid fa-heart"></i>';
+                html+='</div>';
+            html+='</div>';
+        html+='</div>';
 
-                        html+=this.carrot.btn_dev("user-"+data_user.lang,data_user.id);
+        html+='<div class="col-2">';
+            if(data_user.sex=="0")
+                html+='<span class="text-success float-end"><i class="fa-solid fa-mars"></i></span>';
+            else
+                html+='<span class="text-success float-end"><i class="fa-solid fa-venus"></i></span>';
+        html+='</div>';
 
-                    html+="</div>";
-                html+="</div>";
-            html+="</div>";
-        html+="</div>";
-        return html;
+        item_user.set_body(html);
+        return item_user.html();
     }
 
     show_all_phone_book_from_list(){
@@ -145,15 +149,18 @@ class Carrot_user{
 
     check_event(){
         var carrot=this.carrot;
-        $(".user-avatar").click(function(){
-            var user_id=$(this).attr("user-id");
-            var user_lang=$(this).attr("user-lang");
-            carrot.get_doc("user-"+user_lang,user_id,carrot.user.show_user_info);
-        })
+        if(this.obj_phone_book!=null){
+            $(".user-avatar").click(function(){
+                var user_id=$(this).attr("user-id");
+                var user_lang=$(this).attr("user-lang");
+                carrot.get_doc("user-"+user_lang,user_id,carrot.user.show_user_info);
+            })
+    
+            $("#btn_download").click(function(){
+                carrot.user.download_vcard();
+            });
+        }
 
-        $("#btn_download").click(function(){
-            carrot.user.download_vcard();
-        });
         carrot.check_event();
     }
 
@@ -205,6 +212,33 @@ class Carrot_user{
             top: "auto",
             buttonFail: "Cancel"
         }).done(carrot.act_done_add_or_edit);
+    }
+
+    add(){
+        var data_user_new=new Object();
+        data_user_new["name"]="";
+        data_user_new["avatar"]="";
+        data_user_new["password"]="";
+        data_user_new["phone"]="";
+        data_user_new["sex"]="";
+        data_user_new["status_share"]="";
+        data_user_new["email"]="";
+        data_user_new["address"]="";
+        data_user_new["lang"]=this.carrot.lang;
+        this.frm_add_or_edit(data_user_new).set_msg_done("Register User Success!").show();
+    }
+
+    edit(data,carrot){
+        carrot.user.frm_add_or_edit(data).set_msg_done("Update user success!").show();
+    }
+
+    frm_add_or_edit(data){
+        var frm=new Carrot_Form("frm_user",this.carrot);
+        frm.set_icon(this.icon);
+        frm.create_field("name").set_label("Full Name").set_value(data.name);
+        frm.create_field("avatar").set_label("Avatar").set_value(data.avatar).set_type("file").set_type_file("image/*");
+        frm.create_field("phone").set_label("Phone").set_value(data.phone);
+        return frm;
     }
     
     getLocation_for_address_user() {
@@ -369,19 +403,6 @@ class Carrot_user{
         this.show_user_info(this.obj_login,this.carrot);
     }
 
-    async picker_contact_from_pc(){
-        var supported = ('contacts' in navigator && 'ContactsManager' in window);
-        if(supported){
-            const props = ['name', 'email', 'tel', 'address', 'icon'];
-            const opts = {multiple: true};
-            
-            try {
-              const contacts = await navigator.contacts.select(props, opts);
-              console.log(contacts);
-            } catch (ex) {}
-        }
-    }
-
     check_user_login(username,password){
         this.carrot.db.collection("user-"+this.carrot.lang).where("phone", "==", username).where("password", "==", password).get().then((querySnapshot) => {
             if(querySnapshot.docs.length>0){
@@ -488,5 +509,10 @@ class Carrot_user{
             html+='</div>';
         }
         return html;
+    }
+
+    reload(carrot){
+        carrot.user.delete_obj_phone_book();
+        carrot.user.list();
     }
 }

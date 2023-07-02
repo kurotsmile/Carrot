@@ -2,15 +2,16 @@ class Carrot_App{
     carrot;
     obj_app=null;
     type_show;
+    icon="fa-solid fa-gamepad";
 
     constructor(carrot){
         this.type_show="all";
         this.carrot=carrot;
         this.load_obj_app();
 
-        carrot.register_page("home","carrot.home()","carrot.app.show_edit_app_done","carrot.app.show_app_by_id");
-        carrot.register_page("app","carrot.app.list_app()","carrot.app.show_edit_app_done","carrot.app.show_app_by_id");
-        carrot.register_page("game","carrot.app.list_game()","carrot.app.show_edit_app_done","carrot.app.show_app_by_id");
+        carrot.register_page("home","carrot.home()","carrot.app.edit","carrot.app.show_app_by_id","carrot.app.reload");
+        carrot.register_page("app","carrot.app.list_app()","carrot.app.edit","carrot.app.show_app_by_id","carrot.app.reload");
+        carrot.register_page("game","carrot.app.list_game()","carrot.app.edit","carrot.app.show_app_by_id","carrot.app.reload");
 
         var btn_home=carrot.menu.create("home").set_label("Home").set_lang("home").set_icon("fa-solid fa-home").set_type("main");
         var btn_apps=carrot.menu.create("app").set_label("Applications").set_lang("app").set_icon("fa-solid fa-mobile").set_type("main");
@@ -19,7 +20,7 @@ class Carrot_App{
         $(btn_home).click(function(){carrot.app.list();});
         $(btn_apps).click(function(){carrot.app.list_app();});
         $(btn_games).click(function(){carrot.app.list_game();});
-        $(btn_add_apps).click(function(){carrot.app.show_box_add_or_edit_app(null,carrot);});
+        $(btn_add_apps).click(function(){carrot.app.add();});
     }
     
     load_obj_app(){
@@ -103,27 +104,27 @@ class Carrot_App{
         var s_url_icon="";
         if(data_app.icon!=null) s_url_icon=data_app.icon;
         if(s_url_icon=="") s_url_icon="images/150.png";
-        var html_main_contain="<div class='box_app "+s_class+"' id=\""+data_app.id+"\" key_search=\""+data_app[key_name]+"\">";
-            html_main_contain+='<div class="app-cover p-2 shadow-md bg-white">';
-                html_main_contain+='<div class="row">';
-                    html_main_contain+='<div role="button" class="img-cover pe-0 col-3 app_icon" app_id="'+data_app.id+'"><img class="rounded" src="'+s_url_icon+'" alt="'+data_app[key_name]+'"></div>';
-                    html_main_contain+='<div class="det mt-2 col-9">';
-                        html_main_contain+="<h5 class='mb-0 fs-6'>"+data_app[key_name]+"</h5>";
-                        html_main_contain+="<span class='fs-8'>"+data_app.name_en+"</span>";
+        var html="<div class='box_app "+s_class+"' id=\""+data_app.id+"\" key_search=\""+data_app[key_name]+"\">";
+            html+='<div class="app-cover p-2 shadow-md bg-white">';
+                html+='<div class="row">';
+                    html+='<div role="button" class="img-cover pe-0 col-3 app_icon" app_id="'+data_app.id+'"><img class="rounded" src="'+s_url_icon+'" alt="'+data_app[key_name]+'"></div>';
+                    html+='<div class="det mt-2 col-9">';
+                        html+="<h5 class='mb-0 fs-6'>"+data_app[key_name]+"</h5>";
+                        html+="<span class='fs-8'>"+data_app.name_en+"</span>";
     
-                        html_main_contain+='<ul class="row">';
-                            html_main_contain+='<li class="col-8 ratfac">';
-                                html_main_contain+='<i class="bi text-warning fa-solid fa-star"></i>';
-                                html_main_contain+='<i class="bi text-warning fa-solid fa-star"></i>';
-                                html_main_contain+='<i class="bi text-warning fa-solid fa-star"></i>';
-                                html_main_contain+='<i class="bi text-warning fa-solid fa-star"></i>';
-                                html_main_contain+='<i class="bi fa-solid fa-star"></i>';
-                            html_main_contain+='</li>';
+                        html+='<ul class="row">';
+                            html+='<li class="col-8 ratfac">';
+                                html+='<i class="bi text-warning fa-solid fa-star"></i>';
+                                html+='<i class="bi text-warning fa-solid fa-star"></i>';
+                                html+='<i class="bi text-warning fa-solid fa-star"></i>';
+                                html+='<i class="bi text-warning fa-solid fa-star"></i>';
+                                html+='<i class="bi fa-solid fa-star"></i>';
+                            html+='</li>';
                             if(data_app.type=="app")
-                                html_main_contain+='<li class="col-4"><span class="text-secondary float-end"><i class="fa-solid fa-mobile"></i></span></li>';
+                                html+='<li class="col-4"><span class="text-secondary float-end"><i class="fa-solid fa-mobile"></i></span></li>';
                             else
-                                html_main_contain+='<li class="col-4"><span class="text-secondary float-end"><i class="fa-solid fa-gamepad"></i></span></li>';
-                        html_main_contain+='</ul>';
+                                html+='<li class="col-4"><span class="text-secondary float-end"><i class="fa-solid fa-gamepad"></i></span></li>';
+                        html+='</ul>';
 
                         if(this.carrot.link_store.list_link_store!=null){
                             var html_store_link="";
@@ -133,16 +134,16 @@ class Carrot_App{
                                     if(link_store_app!='') html_store_link+="<a class='link_app' title=\""+store.name+"\" target=\"_blank\" href=\""+link_store_app+"\"><i class=\""+store.icon+"\"></i></a>";
                                 }
                             });
-                            if(html_store_link!="") html_main_contain+="<div class='row'><div class='col-12'>"+html_store_link+"</div></div>";
+                            if(html_store_link!="") html+="<div class='row'><div class='col-12'>"+html_store_link+"</div></div>";
                         }
     
-                        html_main_contain+=this.carrot.btn_dev("app",data_app.id);
+                        html+=this.carrot.btn_dev("app",data_app.id);
     
-                    html_main_contain+="</div>";
-                html_main_contain+="</div>";
-            html_main_contain+="</div>";
-        html_main_contain+="</div>";
-        return html_main_contain;
+                    html+="</div>";
+                html+="</div>";
+            html+="</div>";
+        html+="</div>";
+        return html;
     }
 
     show_list_app(list_app){
@@ -158,7 +159,7 @@ class Carrot_App{
             carrot.load_bar();
             html+=carrot.link_store.list_for_home();
         }
-        carrot.body.html(html);
+        carrot.show(html);
         this.check_btn_for_list_app();
     }
 
@@ -254,6 +255,18 @@ class Carrot_App{
 
                     html+='</div>';
                 html+="</div>";
+
+                if(data["img1"]!=""&&data["img1"]!=undefined){
+                    html+='<div class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
+                    html+='<h4 class="fw-semi fs-5 lang" key_lang="imag_describe">Screenshots</h4>';
+                        html+='<div class="owl-carousel owl-theme">';
+                        for(var i=1;i<=8;i++){
+                            var key_img_data="img"+i;
+                            if(data[key_img_data]!=""&&data[key_img_data]!=undefined) html+='<img src="'+data[key_img_data]+'"/>';
+                        }
+                        html+='</div>';
+                    html+='</div>';
+                }
     
                 html+='<div class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
                     html+='<h4 class="fw-semi fs-5 lang" key_lang="describe">About this Game</h4>';
@@ -335,6 +348,7 @@ class Carrot_App{
     
         html+="</div>";
         html+="</div>";
+
         carrot.app.type_show="all";
         carrot.show(html);
         carrot.app.check_btn_for_list_app();
@@ -346,81 +360,72 @@ class Carrot_App{
             var id_box_app = $(this).attr("app_id");
             carrot.app.show_app_by_id(id_box_app,carrot);
         });
+        $(".owl-carousel").owlCarousel();
         carrot.check_event();
     }
 
-    show_edit_app_done(data_app,carrot){
-        if(data_app!=null)
-            carrot.app.show_box_add_or_edit_app(data_app,carrot);
-        else
-            $.MessageBox("Ứng dụng không còn tồn tại!");
+    add(){
+        var new_data_app=new Object();
+        new_data_app["icon"]="";
+        new_data_app["type"]="";
+        $(this.carrot.langs.list_lang).each(function(index,lang){
+            new_data_app["name_"+lang.key]="";
+            new_data_app["describe_"+lang.key]="";
+        });
+        new_data_app["google_play"]="";
+        new_data_app["amazon_app_store"]="";
+        new_data_app["microsoft_store"]="";
+        new_data_app["uptodown"]="";
+        new_data_app["itch"]="";
+        $(this.carrot.link_store.list_link_store).each(function(index,store){
+            var key_val=store.key;
+            new_data_app[key_val]="";
+        });
+        new_data_app["img1"]="";
+        new_data_app["img2"]="";
+        new_data_app["img3"]="";
+        new_data_app["img4"]="";
+        new_data_app["img5"]="";
+        this.frm_add_or_edit(new_data_app).set_title("Add App").set_msg_done("Add app success!").show();
     }
 
-    show_box_add_or_edit_app(data_app,carrot){
-        var s_title_box='';
-        if(data_app==null)s_title_box="<b>Add Application</b>";
-        else s_title_box="<b>Update Application</b>";
-        var obj_app = Object();
-        obj_app["tip_app"] = { type: "caption", message: "Thông tin cơ bản" };
-    
-        var obj_input_icon = Object();
-        obj_input_icon["type"] = "input";
-        obj_input_icon["label"] = "Icon App";
-        if(data_app!=null&&data_app["icon"]!="") obj_input_icon["defaultValue"]=data_app["icon"];
-        obj_app["icon"] = obj_input_icon;
-    
-        var obj_input_type = Object();
-        obj_input_type["type"] = "select";
-        obj_input_type["label"] = "Type App";
-        obj_input_type["options"] = { "app": "app", "game": "game" };
-        if(data_app!=null&&data_app["icon"]!="") 
-            obj_input_type["defaultValue"]=data_app["type"];
-        else
-            obj_input_type["defaultValue"] = "app";
-        obj_app["type"] = obj_input_type;
-    
-        obj_app["tip_name"] = { type: "caption", message: "Tên và mô tả" };
+    edit(data,carrot){
+        carrot.app.frm_add_or_edit(data).set_title("Edit App").set_msg_done("Edit app success!").show();
+    }
 
-        $(carrot.langs.list_lang).each(function (index, data_lang){
-            obj_app["tip_lang_"+data_lang.key] = { type: "caption", message: "<img style='width:20px;' src='"+data_lang.icon+"'/> <b>"+data_lang.name+"</b> Thiết lập giao diện ngôn ngữ ("+data_lang.key+")" };
-
-            if(data_lang.key=="en") obj_app["lang_en_required"] = { type: "caption", message: "<b class='text-danger'>*Bắt buột</b>:không để trống quốc gia này để thêm mới và cập nhật<br/><i class='text-secondary'>Vì đây là trường id chính xác định ứng dụng</i>" };
-
-            var obj_input_name = Object();
-            obj_input_name["type"] = "input";
-            obj_input_name["label"] = "Name - " + data_lang.name;
-            if(data_app!=null&&data_app["name_" + data_lang.key]!="") obj_input_name["defaultValue"]=data_app["name_" + data_lang.key];
-            obj_app["name_" + data_lang.key] = obj_input_name;
-    
-            var obj_input_describe = Object();
-            obj_input_describe["type"] = "textarea";
-            obj_input_describe["label"] = "Describe - " + data_lang.name;
-            obj_input_describe["rows"]="10";
-            if(data_app!=null&&data_app["describe_" + data_lang.key]!="") obj_input_describe["defaultValue"]=data_app["describe_" + data_lang.key];
-            obj_app["describe_" + data_lang.key] = obj_input_describe;
-    
+    frm_add_or_edit(data){
+        var frm=new Carrot_Form("frm_app",this.carrot);
+        frm.set_icon(this.icon);
+        frm.set_db("app","name_en");
+        var list_lang=this.carrot.langs.list_lang;
+        frm.create_field("icon").set_label("Icon").set_value(data.icon).set_type("file").set_type_file("image/*");
+        frm.create_field("type").set_label("Type").add_option("app","App").add_option("game","Game").set_value(data.type).set_type("select");
+        $(list_lang).each(function(index,lang){
+            var key_name_lang="name_"+lang.key;
+            var key_describe_lang="describe_"+lang.key;
+            var img_tag='<img src="'+lang.icon+'" style="width:20px;"/>';
+            var field_name=frm.create_field("name_"+lang.key).set_label(img_tag+" Name ("+lang.key+")").set_value(data[key_name_lang]);
+            if(lang.key=="en") field_name.set_main();
+            frm.create_field("describe_"+lang.key).set_label("Describe ("+lang.key+")").set_value(data[key_describe_lang]).set_type("textarea");
+            frm.create_field("hr").set_type("line");
         });
-    
-        obj_app["tip_link"] = { type: "caption", message: "Các Liên kết tới các store khác" };
-    
-        $.each(this.carrot.link_store.list_link_store, function (index, data_store) {
-            obj_app["tip_lang_"+data_store.key] = { type: "caption", message: "<i class='fa-solid "+data_store.icon+"'></i> <b>"+data_store.name+"</b> Thiết lập liên kết ("+data_store.key+")" };
 
-            var obj_input_link_store = Object();
-            obj_input_link_store["type"] = "input";
-            obj_input_link_store["label"] = "Link Store - (" + data_store.name + ") - " + data_store.key;
-            if(data_app!=null&&data_app[data_store.key]!="") obj_input_link_store["defaultValue"]=data_app[data_store.key];
-            obj_app[data_store.key] = obj_input_link_store;
+        $(this.carrot.link_store.list_link_store).each(function(index,store){
+            var key_val=store.key;
+            frm.create_field(store.key).set_label("<i class='"+store.icon+"'></i> "+store.name).set_value(data[key_val]);
         });
-    
-        customer_field_for_db(obj_app,'app','name_en','Add App successfully');
-    
-        $.MessageBox({
-            message: s_title_box,
-            input: obj_app,
-            top: "auto",
-            buttonFail: "Cancel"
-        }).done(this.carrot.act_done_add_or_edit);
+
+        frm.create_field("img1").set_label("Image Describe 1").set_type("file").set_value(data.img1).set_type_file("image/*");
+        frm.create_field("img2").set_label("Image Describe 2").set_type("file").set_value(data.img2).set_type_file("image/*");
+        frm.create_field("img3").set_label("Image Describe 3").set_type("file").set_value(data.img3).set_type_file("image/*");
+        frm.create_field("img4").set_label("Image Describe 4").set_type("file").set_value(data.img4).set_type_file("image/*");
+        frm.create_field("img5").set_label("Image Describe 5").set_type("file").set_value(data.img5).set_type_file("image/*");
+        return frm;
+    }
+
+    reload(carrot){
+        carrot.app.delete_obj_app();
+        carrot.app.show_list_app_and_game("all");
     }
 
     list_for_home(){

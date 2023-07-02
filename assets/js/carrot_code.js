@@ -11,9 +11,9 @@ class Carrot_Code{
         this.carrot=carrot;
         this.load_obj_code();
 
-        carrot.register_page(this.id_page,"carrot.code.show_list_code()","carrot.code.show_edit","carrot.code.show","carrot.code.reload");
+        carrot.register_page(this.id_page,"carrot.code.show_list_code()","carrot.code.edit","carrot.code.show","carrot.code.reload");
         var btn_add=carrot.menu.create("add_code").set_label("Add Code").set_icon(this.icon).set_type("add");
-        $(btn_add).click(function(){carrot.code.show_add_new();});
+        $(btn_add).click(function(){carrot.code.add();});
         var btn_list=carrot.menu.create("list_code").set_label("Code").set_icon(this.icon).set_type("main").set_lang("code");
         $(btn_list).click(function(){carrot.code.show_list_code();});
     }
@@ -32,7 +32,7 @@ class Carrot_Code{
         this.carrot.delete_ver_cur(this.id_page);
     }
 
-    show_add_new(){
+    add(){
         var new_data=new Object();
         new_data["id"]="code-"+this.carrot.uniq();
         new_data["title"]="";
@@ -45,7 +45,7 @@ class Carrot_Code{
         this.reload_code_editor_field();
     }
 
-    show_edit(data,carrot){
+    edit(data,carrot){
         carrot.code.show_add_or_edit_code(data).set_title("Edit code").set_msg_done("Edit code success!").show();
         carrot.code.reload_code_editor_field();
     }

@@ -97,7 +97,7 @@ class Carrot_Icon{
         frm.set_db("icon","name");
         frm.set_icon_font(this.icon);
         frm.create_field("name").set_label("Name").set_val(data["name"]);
-        frm.create_field("icon").set_label("Icon (Url)").set_val(data["icon"]);
+        frm.create_field("icon").set_label("Icon").set_val(data["icon"]).set_type("file").set_type_file("image/*");
         frm.create_field("color").set_label("Color").set_val(data["color"]).set_type("color");
         return frm;
     }

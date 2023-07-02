@@ -136,8 +136,14 @@ class Carrot_Music{
 
     show_info_music_by_id(s_name_id,carrot){
         carrot.log("show_info_music_by_id:"+s_name_id);
-        var data=JSON.parse(carrot.music.obj_songs[s_name_id]);
-        carrot.music.show_info_music(data);
+        if(carrot.music.obj_songs[s_name_id]!=null){
+            var data=JSON.parse(carrot.music.obj_songs[s_name_id]);
+            carrot.music.show_info_music(data);
+        }else{
+            carrot.msg("Bài hát không tồn tại","error");
+            carrot.show_404();
+        }
+
     }
 
     show_info_music(data){
@@ -282,6 +288,7 @@ class Carrot_Music{
         if(s_url_avatar=="") s_url_avatar="images/150.png";
         var item_music=new Carrot_List_Item(this.carrot);
         item_music.set_db("song");
+        item_music.set_obj_js("music");
         item_music.set_id(data_music.id);
         item_music.set_class(s_class);
         item_music.set_name(data_music.name);
@@ -409,7 +416,7 @@ class Carrot_Music{
             var thumbnails_ytb=data.items[0].snippet.thumbnails;
             var html_thumb='';
             html_thumb+='<div class="form-group">';
-            html_thumb+='<a href="'+thumbnails_ytb.medium.url+'" target="_blank"><img src="'+thumbnails_ytb.medium.url+'"></a>';
+            html_thumb+='<a href="'+thumbnails_ytb.medium.url+'" target="_blank"><img class="rounded" src="'+thumbnails_ytb.medium.url+'"></a>';
             html_thumb+='</div>';
             $("#link_ytb_tip").html(html_thumb);
         });

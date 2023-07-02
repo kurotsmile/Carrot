@@ -42,7 +42,9 @@ class Carrot_Avatar{
         $(list_avatar).each(function(index,avt){
             var item_avatar=new Carrot_List_Item(carrot);
             item_avatar.set_id(avt.id);
+            item_avatar.set_index(index);
             item_avatar.set_db("user-avatar");
+            item_avatar.set_obj_js("avatar");
             item_avatar.set_icon(avt.icon);
             item_avatar.set_tip(avt.type);
             item_avatar.set_title(avt.id);

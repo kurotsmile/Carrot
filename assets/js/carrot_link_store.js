@@ -100,7 +100,7 @@ class Carrot_Link_Store{
         frm.create_field("key").set_label("Key").set_val(data["key"]);
         frm.create_field("name").set_label("Name").set_val(data["name"]);
         frm.create_field("icon").set_label("Icon (Font)").set_val(data["icon"]);
-        frm.create_field("img").set_label("Image (Url)").set_val(data["img"]);
+        frm.create_field("img").set_label("Image (Url)").set_val(data["img"]).set_type("file").set_type_file("image/*");
         frm.create_field("link").set_label("Link All App").set_val(data["link"]);
         return frm;
     }

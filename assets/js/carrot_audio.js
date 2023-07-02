@@ -40,7 +40,7 @@ class Carrot_Audio{
         frm_au.create_field("id").set_label("ID").set_type("id").set_val(data["id"]);
         frm_au.create_field("name").set_label("Name").set_val(data["name"]);
         frm_au.create_field("author").set_label("Author").set_val(data["author"]);
-        frm_au.create_field("mp3").set_label("Mp3").set_val(data["mp3"]);
+        frm_au.create_field("mp3").set_label("Mp3").set_val(data["mp3"]).set_type("file").set_type_file("audio/*");
         return frm_au;
     }
 

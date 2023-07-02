@@ -11,6 +11,7 @@ class Carrot_List_Item{
     class_icon="pe-0 col-3";
     class_body="mt-2 col-12";
     db_collection=null;
+    obj_js=null;
     constructor(carrot){
         this.carrot=carrot;
     }
@@ -45,10 +46,15 @@ class Carrot_List_Item{
 
     set_db_collection(db_collection){
         this.db_collection=db_collection;
+        if(this.obj_js==null) this.obj_js=db_collection;
     }
 
     set_db(db_collection){
         this.set_db_collection(db_collection);
+    }
+
+    set_obj_js(s_obj_call){
+        this.obj_js=s_obj_call;
     }
 
     set_class(s_class){
@@ -82,7 +88,7 @@ class Carrot_List_Item{
                             html+=this.body;
                             html+="</div>";
                         }
-                        if(this.db_collection!=null)html+=this.carrot.btn_dev(this.db_collection,this.id);
+                        if(this.db_collection!=null)html+=this.carrot.btn_dev(this.db_collection,this.id,this.obj_js);
                         html+="</div>";
                     html+="</div>";
                 html+="</div>";

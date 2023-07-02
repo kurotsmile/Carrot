@@ -53,6 +53,10 @@ class Carrot_Field{
         return this;
     }
 
+    set_title(label){
+        return this.set_label(label);
+    }
+
     add_class(s_class){
         this.list_class.push(s_class);
         return this;
@@ -102,7 +106,7 @@ class Carrot_Field{
 
     add_btn_download_ytb(){
         var btn_download_ytb=new Carrot_Btn();
-        btn_download_ytb.set_icon("fa-brands fa-youtube");
+        btn_download_ytb.set_icon("fa-solid fa-file-arrow-down");
         btn_download_ytb.set_onclick("goto_ytb_download_mp3($('#"+this.name+"').val())");
         this.add_btn(btn_download_ytb);
         return this;
@@ -144,11 +148,16 @@ class Carrot_Field{
         var html='';
         var s_class='';
         for(var i=0;i<this.list_class.length;i++) s_class+=' '+this.list_class[i]+' ';
+
         html+='<div class="form-group">';
-        html+='<label class="form-label fw-bolder fs-8" for="'+this.name+'">';
-        if(this.is_field_main) html+='<span class="text-info"><i class="fa-solid fa-key"></i></span> ';
-        html+=this.label;
-        html+='</label>';
+
+        if(this.type!='line'){
+            html+='<label class="form-label fw-bolder fs-8" for="'+this.name+'">';
+            if(this.is_field_main) html+='<span class="text-info"><i class="fa-solid fa-key"></i></span> ';
+            html+=this.label;
+            html+='</label>';
+        }
+
         if(this.tip!=null) html+='<small id="'+this.name+'_tip" class="form-text text-muted d-block text-break">'+this.tip+'</small>';
         
         if(this.type=="code"){
@@ -213,8 +222,29 @@ class Carrot_Field{
         else if(this.type=='file'){
             html+='<div class="input-group mb-3">';
             html+='<input type="file" accept="'+this.type_file+'" class="form-control '+s_class+' form-control-sm" id="'+this.name+'_file" for-emp="'+this.name+'" placeholder="'+this.placeholder+'">';
-            html+='<span type="'+this.type+'" id="'+this.name+'" value="'+this.value+'" type="hidden" class="cr_field text-break fs-8 text-info">'+this.value+'</span>';
             html+='</div>';
+
+            html+='<div class="card flex-md-row mb-4 box-shadow h-md-250">';
+            html+='<div class="card-body d-flex flex-column align-items-start">';
+            html+='<span type="'+this.type+'" id="'+this.name+'" value="'+this.value+'" type="hidden" class="cr_field text-break fs-8 text-info">';
+            if(this.value!=''&&this.value!=undefined){
+                if(this.type_file=="image/*") html+='<img class="rounded card-img-left flex-auto d-none d-md-block" src="'+this.value+'"/>';
+                else if(this.type_file=="audio/*") html+='<audio controls muted><source src="'+this.value+'" type="audio/mpeg">Your browser does not support the audio element.</audio>';
+                else html+=this.value;
+            }
+            html+='<h3 class="mb-0">';
+            html+='<a class="text-dark">'+this.type_file+'</a>';
+            html+='</h3>';
+            if(this.value!=''){
+                html+='<div class="mb-1 text-muted">Link</div>';
+                html+='<p class="card-text mb-auto text-break"><a href="'+this.value+'" target="_blank">'+this.value+'</a></p>';
+            }
+            html+='</div>';
+            html+='</div>';
+
+            html+='</div>';
+        }else if(this.type=='line'){
+            html+='<hr/>';
         }
         else{
             html+='<div class="input-group mb-3">';
@@ -367,8 +397,6 @@ class Carrot_Form{
                     var type_file=file.type
                     var file_name=carrot.create_id()+"_"+file.name;
                     r.child(frm.db_collection+'/'+type_file+'/'+file_name).put(file, metadata).then(function (snapshot) {
-                        console.log('Uploaded', snapshot.totalBytes, 'bytes.');
-                        console.log('File metadata:', snapshot.metadata);
                         var file_storage=snapshot.metadata;
                         var data_file=new Object();
                         var path_file=file_storage.fullPath;
@@ -418,7 +446,7 @@ class Carrot_Form{
 
             carrot.msg(frm.msg_done);
             carrot.call_func_by_id_page(frm.db_collection,"reload")
-            $('#box').modal('toggle'); 
+            $('#box').modal('toggle');
         });
 
         $("#btn_"+this.name+"_close,.box_close").click(function(){

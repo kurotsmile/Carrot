@@ -25,6 +25,8 @@
     <link href="assets/plugins/jquery-ui/jquery-ui.css" rel="stylesheet"/>
     <link href="assets/plugins/evol-colorpicker/evol-colorpicker.min.css" rel="stylesheet"/>
     <link href="assets/plugins/sweetalert2/sweetalert2.min.css" rel="stylesheet"/>
+    <link href="assets/plugins/testimonial/css/owl.carousel.min.css" rel="stylesheet"/>
+    <link href="assets/plugins/testimonial/css/owl.theme.min.css" rel="stylesheet"/>
     <link href="manifest.json?ver=1.9" rel="manifest" />
 
     <script src="assets/plugins/firebase/firebase-app-compat.js"></script>
@@ -43,8 +45,9 @@
     <script src="assets/plugins/messagebox/messagebox.min.js"></script>
     <script src="assets/plugins/dataTables/jquery.dataTables.js"></script>
     <script src="assets/plugins/highlight/highlight.min.js" ></script>
-    <script src="assets/js/carrot_site.js?ver=10.1"></script>
-    <script src="assets/js/main.js?ver=10.1"></script>
+    <script src="assets/js/carrot_site.js?ver=22.1"></script>
+    <script src="assets/js/main.js?ver=22.1"></script>
+
     <script>
         var PAYPAL_CLIENT = 'AYgLieFpLUDxi_LBdzDqT2ucT4MIa-O0vwX7w3CKGfQgMGROOHu-xz2y5Jes77owCYQ1eLmOII_ch2VZ';
         var PAYPAL_SECRET = 'ELkToqss_tBZdsHFOHfMFiyu23mNr9HDu1X--jqaZWCbS3xr_xg4hlCBHvV8GcyD15HIPgcwFi9BgqMp';
@@ -65,7 +68,7 @@
         </div>
     </header>
     <div class="main-content">
-        <div class="nav-bar sticky-top-xl bg-white shadow-sm w-100 p-3">
+        <div id="head_nav" class="nav-bar sticky-top-xl bg-white shadow-sm w-100 p-3">
             <div class="row">
                 <div class="col-md-5">
                     <div class="input-group mb-0">
@@ -112,8 +115,9 @@
         </div>
         <div id="main_contain" class="section-container p-2 p-xl-4">
             <div class="row m-0">
-                <div class="col-12">
-                        <h4>Have a nice day!</h4>
+                <div class="col-10">
+                        <img class="rounded mb-2 w-25" src="images/logo.png"/>
+                        <h6>Have a nice day!</h6>
                         <p class="mb-2"><i class="fa-solid fa-spinner fa-spin fa-lg"></i> All the very best for the day. May luck be with your sides always and forever. I wish you have a great day ahead.</p>
                         <div class="progress" style="height: 8px;">
                             <div id="load_bar" class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 0%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
@@ -123,8 +127,8 @@
         </div>
     </div>
 
-    <div class="modal" tabindex="-1" role="dialog" id="box"  data-target=".bd-example-modal-lg">
-        <div class="modal-dialog" role="document">
+    <div class="modal " tabindex="-1" role="dialog" id="box"  data-target=".bd-example-modal-lg">
+        <div id="modal_body" class="modal-dialog" role="document">
           <div class="modal-content" id="box_body"></div>
         </div>
     </div>

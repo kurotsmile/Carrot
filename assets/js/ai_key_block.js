@@ -50,7 +50,7 @@ class AI_Key_Block{
         var html = '';
         var list_block_chat=data.chat;
         html += this.carrot.langs.list_btn_lang_select();
-        html += '<table class="table table-striped table-hover mt-6" id="table_key_block">';
+        html += '<table class="table table-striped table-hover mt-6 table-responsive-sm" id="table_key_block">';
         html += '<thead class="thead-light">';
         html += '<tr>';
         html += '<th scope="col">Key Block</th>';
@@ -63,11 +63,11 @@ class AI_Key_Block{
         for(var i = 0; i < list_block_chat.length; i++){
             html += '<tr>';
             html += '<td><b id="txt_'+i+'">'+list_block_chat[i]+'</b></td>';
-            html += '<td><input class="form-control inp-key-block input-sm" id="inp_'+i+'" value="'+list_block_chat[i]+'"/></td>';
+            html += '<td><input class="form-control inp-key-block form-control-sm pt-0 pb-0 m-0" id="inp_'+i+'" value="'+list_block_chat[i]+'"/></td>';
             html += '<td>';
-                html+='<button class="btn btn-secondary mr-3" type="button" onclick="paste_tag(\'inp_'+i+'\')"><i class="fa-solid fa-paste"></i></button> ';
-                html+='<button class="btn btn-secondary mr-3" type="button" onclick="tr(\'txt_'+i+'\',\''+this.setting_lang_change+'\')"><i class="fa-solid fa-language"></i></button> ';
-                html+='<button class="btn btn-danger" type="button" onclick=" $(this).parent().parent().remove();"><i class="fa-solid fa-trash"></i></button>';
+                html+='<button class="btn btn-sm btn-secondary mr-3" type="button" onclick="paste_tag(\'inp_'+i+'\')"><i class="fa-solid fa-paste"></i></button> ';
+                html+='<button class="btn btn-sm btn-secondary mr-3" type="button" onclick="tr(\'txt_'+i+'\',\''+this.setting_lang_change+'\')"><i class="fa-solid fa-language"></i></button> ';
+                html+='<button class="btn btn-sm btn-danger" type="button" onclick=" $(this).parent().parent().remove();"><i class="fa-solid fa-trash"></i></button>';
             html += '</td>';
             html += '</tr>';
         }
@@ -77,7 +77,7 @@ class AI_Key_Block{
         html+='<button id="btn_add_field_key_block" type="button" class="btn btn-secondary mr-1 mt-1 btn-sm" ><i class="fa-solid fa-add"></i> Add Field</button>';
         this.carrot.show(html);
 
-        new DataTable('#table_key_block', {responsive: true,pageLength:1000});
+        new DataTable('#table_key_block', {responsive: true,pageLength:500});
         var carrot=this.carrot;
 
         $("#btn_done_change_key_block").click(function(){
@@ -111,11 +111,11 @@ class AI_Key_Block{
         }).done(function(data){
             var html_new_field='<tr>';
             html_new_field+='<td>New key <b class="text-danger">('+data.value+')</b></td>';
-            html_new_field+= '<td><input class="form-control inp-key-block input-sm"  id="'+id_r+'" value="'+data.value+'"/></td>';
+            html_new_field+= '<td><input class="form-control inp-key-block form-control-sm"  id="'+id_r+'" value="'+data.value+'"/></td>';
             html_new_field+='<td>';
-                html_new_field+='<button class="btn btn-secondary mr-3" type="button" onclick="paste_tag(\''+id_r+'\')"><i class="fa-solid fa-paste"></i></button> ';
-                html_new_field+='<button class="btn btn-secondary mr-3" type="button" onclick="tr_inp(\''+id_r+'\',\''+ai_lover.setting_lang_change+'\',\'vi\')"><i class="fa-solid fa-language"></i></button> ';
-                html_new_field+='<button class="btn btn-danger" type="button" onclick=" $(this).parent().parent().remove();"><i class="fa-solid fa-trash"></i></button>'
+                html_new_field+='<button class="btn btn-sm btn-secondary mr-3" type="button" onclick="paste_tag(\''+id_r+'\')"><i class="fa-solid fa-paste"></i></button> ';
+                html_new_field+='<button class="btn btn-sm btn-secondary mr-3" type="button" onclick="tr_inp(\''+id_r+'\',\''+ai_lover.setting_lang_change+'\',\'vi\')"><i class="fa-solid fa-language"></i></button> ';
+                html_new_field+='<button class="btn btn-sm btn-danger" type="button" onclick=" $(this).parent().parent().remove();"><i class="fa-solid fa-trash"></i></button>'
             html_new_field+='</td>';
             html_new_field+='</tr>';
             $("#body_table_key_block").append(html_new_field);
