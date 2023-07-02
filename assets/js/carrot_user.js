@@ -18,7 +18,7 @@ class Carrot_user{
 
     get_all_data_phone_book(){
         this.carrot.log("get_all_data_phone_book from sever");
-        this.carrot.db.collection("user-"+this.carrot.lang).where("status_share", "==", "0").limit(200).get().then((querySnapshot) => {
+        this.carrot.db.collection("user-"+this.carrot.lang).where("status_share", "==", "0").where("phone", "!=", "").limit(200).get().then((querySnapshot) => {
             if(querySnapshot.docs.length>0){
                 this.obj_phone_book=Object();
                 querySnapshot.forEach((doc) => {
@@ -92,13 +92,13 @@ class Carrot_user{
         if(url_avatar=="") url_avatar="images/avatar_default.png";
 
         var item_user=new Carrot_List_Item(this.carrot);
+        item_user.set_db("user-"+data_user.lang);
         item_user.set_id(data_user.id);
         item_user.set_name(data_user.name);
         item_user.set_class(s_class);
         item_user.set_class_icon("col-4");
         item_user.set_class_body("col-8");
         item_user.set_icon(url_avatar);
-        item_user.set_db("user-"+data_user.lang);
         item_user.set_obj_js("user");
         var html='';
         html+='<div class="col-10">';
@@ -136,7 +136,6 @@ class Carrot_user{
         var carrot=this.carrot;
         var list_phone_book=this.carrot.convert_obj_to_list(this.obj_phone_book);
         this.carrot.change_title_page("Phone Book", "?p=phone_book","phone_book");
-        $("#main_contain").html("");
         var html="";
         html+='<div class="row m-0">';
         $(list_phone_book).each(function(index,data_u) {
@@ -165,57 +164,12 @@ class Carrot_user{
     }
 
     show_register(){
-        this.show_box_add_or_edit_phone_book(null,this.carrot);
-    }
-
-    show_box_add_or_edit_phone_book(data_user,carrot){
-        var s_title_box='';
-        carrot.user.getLocation_for_address_user();
-        if(data_user==null){
-            s_title_box=carrot.l("register","Add User");
-            data_user=new Object();
-            data_user["id"]=carrot.uniq();
-            data_user["lang"]=carrot.lang;
-        }
-        else{
-            s_title_box="Update User";
-            if(data_user["id"]=="") data_user["id"]=carrot.uniq();
-        }
-
-        var obj_user = Object();
-        obj_user["tip_app"] = { type: "caption", message: "Register an account to use services and manage your information in the system",customClass:'text-info'};
-  
-        obj_user["id"]={type:'text',defaultValue:data_user["id"],customClass:'d-none'};
-        obj_user["name"]={type:'text','title':'Full Name','label':'Full Name',defaultValue:data_user["name"]};
-        obj_user["sex"]={type:'select','title':'Your Sex','label':'Your Sex','options':{ "0": "Boy", "1": "Girl" },defaultValue:data_user["sex"]};
-        obj_user["email"]={type:'email','title':'Email','label':'Email',defaultValue:data_user["email"]};
-        obj_user["phone"]={type:'number','title':'Address','label':'Phone',defaultValue:data_user["phone"]};
-
-        obj_user["address_name"]={type:'text','title':'Address','label':'Address'};
-        obj_user["address_log"]={type:'text','title':'Address longitude','label':'Address'};
-        obj_user["address_lat"]={type:'text','title':'Address latitude','label':'Address'};
-
-        var obj_type_share=Object();
-        obj_type_share["0"]="Share";
-        obj_type_share["1"]="No share";
-        obj_user["status_share"]={type:'select','title':'Information sharing status','label':'Information sharing status',options:obj_type_share,defaultValue:data_user["status_share"]};
-
-        var arr_lang=Array();
-        $(carrot.langs.list_lang).each(function(index,lang){arr_lang.push(lang.key);});
-
-        obj_user["lang"]={'type':'select','label':'Lang','options':arr_lang,defaultValue:data_user["lang"]};
-        customer_field_for_db(obj_user,'user-'+data_user["lang"],'id','Add User successfully');
-    
-        $.MessageBox({
-            title: s_title_box,
-            input: obj_user,
-            top: "auto",
-            buttonFail: "Cancel"
-        }).done(carrot.act_done_add_or_edit);
+        this.add();
     }
 
     add(){
         var data_user_new=new Object();
+        data_user_new["id"]=this.carrot.create_id();
         data_user_new["name"]="";
         data_user_new["avatar"]="";
         data_user_new["password"]="";
@@ -225,42 +179,46 @@ class Carrot_user{
         data_user_new["email"]="";
         data_user_new["address"]="";
         data_user_new["lang"]=this.carrot.lang;
-        this.frm_add_or_edit(data_user_new).set_msg_done("Register User Success!").show();
+        this.frm_add_or_edit(data_user_new).set_title("Register User").set_msg_done("Register User Success!").show();
+        this.carrot.check_event();
     }
 
     edit(data,carrot){
-        carrot.user.frm_add_or_edit(data).set_msg_done("Update user success!").show();
+        carrot.user.frm_add_or_edit(data).set_title("Edit User").set_msg_done("Update user success!").show();
+        carrot.check_event();
     }
 
     frm_add_or_edit(data){
         var frm=new Carrot_Form("frm_user",this.carrot);
+        frm.set_db("user-"+this.carrot.lang,"id")
         frm.set_icon(this.icon);
+        frm.create_field("id").set_label("ID").set_value(data.id).set_main().set_type("id");
         frm.create_field("name").set_label("Full Name").set_value(data.name);
         frm.create_field("avatar").set_label("Avatar").set_value(data.avatar).set_type("file").set_type_file("image/*");
+        frm.create_field("password").set_label("password").set_value(data.password);
         frm.create_field("phone").set_label("Phone").set_value(data.phone);
+        frm.create_field("email").set_label("Email").set_value(data.email);
+        var field_sex=frm.create_field("sex").set_label("Sex").set_value(data.sex).set_type("select");
+        field_sex.add_option("0",this.carrot.l("boy","Boy"));
+        field_sex.add_option("1",this.carrot.l("girl","Girl"));
+        frm.create_field("address").set_label("Address").set_value(data.address).set_type("address");
+        var field_share=frm.create_field("status_share").set_label("Share Status").set_value(data.status_share).set_type("select");
+        field_share.add_option("0","Share");
+        field_share.add_option("1","No share");
+        var field_lang=frm.create_field("lang").set_label("Lang").set_value(data.lang).set_type("select");
+        $(this.carrot.langs.list_lang).each(function(index,lang){
+            field_lang.add_option(lang.key,lang.name);
+        });
         return frm;
     }
     
-    getLocation_for_address_user() {
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(this.showPosition);
-        } else {
-          this.carrot.log("Geolocation is not supported by this browser.");
-        }
-    }
-      
-    showPosition(position) {
-        $("input[name*='address_lat']").val(position.coords.latitude);
-        $("input[name*='address_log']").val(position.coords.longitude);
-    }
-
     show_user_info(data_user,carrot){
         if(data_user==null){$.MessageBox("This user no longer exists");return false;}
         var url_avatar='';
         carrot.user.phone_book_info_cur=data_user;
         if(data_user.avatar!=null) url_avatar=data_user.avatar;
         if(url_avatar=="") url_avatar="images/avatar_default.png";
-        carrot.change_title_page(data_user.name,"?p=phone_book&id="+data_user.id);
+        carrot.change_title_page(data_user.name,"?p=phone_book&id="+data_user.id+"&user_lang="+data_user.lang);
         var html='<div class="section-container p-2 p-xl-4">';
         html+='<div class="row">';
             html+='<div class="col-md-8 ps-4 ps-lg-3">';
@@ -270,7 +228,7 @@ class Carrot_user{
                     html+='</div>';
                     html+='<div class="col-md-8 p-2">';
                         html+='<h4 class="fw-semi fs-4 mb-3">'+data_user.name+'</h4>';
-                        html+=carrot.btn_dev("user-"+data_user.lang,data_user.id);
+                        html+=carrot.btn_dev("user-"+data_user.lang,data_user.id,"user");
 
                         html+='<div class="row pt-4">';
                             html+='<div class="col-md-4 col-6 text-center">';

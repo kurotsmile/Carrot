@@ -357,15 +357,15 @@ class Carrot_Site{
     }
 
     show_error_connect_sever(){
-        var htm_msg="<div class='row text-center'>";
-        htm_msg="<div class='col-12 text-center'>";
-        htm_msg+="<img src='images/upgrade.png' class='mx-auto d-block' width='200px;' alt='Upgrade'/>";
-        htm_msg+="<h5>"+this.l("error_connect_sever","Data server connection failed!")+"</h5>";
-        htm_msg+="<p class='text-justify'>"+this.l("error_connect_sever_msg","We are doing system maintenance and upgrading in a few hours. But you can use the functions with offline mode when you have previously visited,The site will be back to normal when the upgrade is done!")+"</p>";
-        htm_msg+="<p><i class='text-secondary'>"+this.l("error_connect_sever_thanks","Sorry for this inconvenience!")+"</i><p>";
-        htm_msg+="</div>";
-        htm_msg+="</div>";
-        $.MessageBox({message:htm_msg});
+        Swal.fire({
+            icon:'error',
+            title: this.l("error_connect_sever","Data server connection failed!"),
+            html: this.l("error_connect_sever_msg","We are doing system maintenance and upgrading in a few hours. But you can use the functions with offline mode when you have previously visited,The site will be back to normal when the upgrade is done!")+"<p><i class='text-secondary'>"+this.l("error_connect_sever_thanks","Sorry for this inconvenience!")+"</i><p>",
+            imageUrl: 'images/upgrade.png',
+            imageWidth: 400,
+            imageHeight: 200,
+            imageAlt: 'Upgrade'
+        });
     }
 
     convert_obj_to_list(obj_carrot){
@@ -394,10 +394,19 @@ class Carrot_Site{
         frm.set_title("Change Version Data");
         frm.set_db("setting_web","version");
         frm.on_db_doc();
+        frm.set_act_done("carrot.done_update_data_version()");
+        frm.set_msg_done("Update verion data success");
         $.each(this.obj_version_new,function(key,value){   
             frm.create_field(key).set_label(key).set_val(value).set_type("number");
         });
         frm.show();
+    }
+    
+    done_update_data_version(){
+        this.obj_version_new=null;
+        this.obj_version_cur=null;
+        this.save_obj_version_cur();
+        this.save_obj_version_new();
     }
 
     load_obj_version_new(){
@@ -420,9 +429,9 @@ class Carrot_Site{
 
     act_del_obj(db_collection,db_doc_id){
         this.db.collection(db_collection).doc(db_doc_id).delete().then(() => {
-            $.MessageBox("Document "+db_doc_id+"successfully deleted!");
+            $.MessageBox("Document "+db_doc_id+" successfully deleted!");
             this.delete_cache_obj_by_collection(db_collection);
-            console.log("Document "+db_doc_id+"successfully deleted!");
+            console.log("Document "+db_doc_id+" successfully deleted!");
             this.call_func_by_id_page(db_collection,"reload");
         }).catch((error) => {
             this.log_error(error);
@@ -472,6 +481,7 @@ class Carrot_Site{
 
     update_new_ver_cur(s_item,is_save=false){
         if(this.obj_version_new[s_item]!=null){
+            if(this.obj_version_cur==null) this.obj_version_cur=new Object();
             this.obj_version_cur[s_item]=this.obj_version_new[s_item];
             if(is_save) this.save_obj_version_cur();
         } 
@@ -514,6 +524,7 @@ class Carrot_Site{
     check_event(){
         var carrot=this;
         
+        $("#box_input_search").unbind('change');
         $("#box_input_search").change(function(){
             var inp_text=$("#box_input_search").val();
             carrot.act_search(inp_text);
@@ -591,7 +602,10 @@ class Carrot_Site{
     }
 
     l(key,lang_en_default=""){
-        return this.langs.get_val_lang(key,lang_en_default);
+        if(this.langs!=null)
+            return this.langs.get_val_lang(key,lang_en_default);
+        else
+            return lang_en_default;
     }
 
     download_json_doc() {
@@ -744,6 +758,8 @@ class Carrot_Site{
 
     check_show_by_id_page() {
         this.load_bar();
+        $("#head").show();
+        $("#head_nav").show();
         this.id_page = this.get_param_url("p");
         if(this.id_page!=undefined){
             this.log("check_show_by_id_page : "+this.id_page,"info");
@@ -777,13 +793,21 @@ class Carrot_Site{
         $("#head_nav").show();
     }
 
-    btn_dev(db_collection,db_document,obj_js=null){
+    btn_dev(db_collection,db_document,obj_js=null,func_edit=null,func_del=null){
         var html='';
         if(obj_js==null) obj_js=db_collection;
         html+="<div class='row dev d-flex mt-2'>";
             html+="<div class='dev col-6 d-flex btn-group'>";
-                html+="<div role='button' class='dev btn btn_app_edit btn-warning btn-sm mr-2' db_collection='"+db_collection+"' db_document='"+db_document+"' db_obj='"+obj_js+"'><i class=\"fa-solid fa-pen-to-square\"></i></div> ";
-                html+="<div role='button' class='dev btn btn_app_del btn-danger btn-sm mr-2'  db_collection='"+db_collection+"' db_document='"+db_document+"' db_obj='"+obj_js+"'><i class=\"fa-solid fa-trash\"></i></div> ";
+                if(func_edit!=null)
+                    html+="<div role='button' class='dev btn btn_app_edit btn-warning btn-sm mr-2' onclick='"+func_edit+"'><i class=\"fa-solid fa-pen-to-square\"></i></div> ";
+                else
+                    html+="<div role='button' class='dev btn btn_app_edit btn-warning btn-sm mr-2' db_collection='"+db_collection+"' db_document='"+db_document+"' db_obj='"+obj_js+"'><i class=\"fa-solid fa-pen-to-square\"></i></div> ";
+
+                if(func_del!=null)
+                    html+="<div role='button' class='dev btn btn_app_del btn-danger btn-sm mr-2' onclick='"+func_del+"'><i class=\"fa-solid fa-trash\"></i></div> ";
+                else
+                    html+="<div role='button' class='dev btn btn_app_del btn-danger btn-sm mr-2'  db_collection='"+db_collection+"' db_document='"+db_document+"' db_obj='"+obj_js+"'><i class=\"fa-solid fa-trash\"></i></div> ";
+
                 html+="<div role='button' class='dev btn btn_app_export btn-dark btn-sm mr-2'  db_collection='"+db_collection+"' db_document='"+db_document+"' db_obj='"+obj_js+"'><i class=\"fa-solid fa-download\"></i></div> ";
                 html+="<div role='button' class='dev btn btn_app_import btn-info btn-sm mr-2'  db_collection='"+db_collection+"' db_document='"+db_document+"' db_obj='"+obj_js+"'><i class=\"fa-solid fa-upload\"></i></div>";
             html+="</div>";

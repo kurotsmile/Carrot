@@ -1,13 +1,14 @@
 class Carrot_Audio{
     carrot;
     icon="fa-solid fa-guitar";
+    id_page="audio";
     obj_audios=null;
     index_audio_cur=-1;
 
     constructor(carrot){
         this.carrot=carrot;
         var audio=this;
-        carrot.register_page("audio","carrot.audio.list()","carrot.audio.edit");
+        carrot.register_page("audio","carrot.audio.list()","carrot.audio.edit","carrot.audio.reload");
         var btn_add=this.carrot.menu.create("add_audio").set_label("Add audio").set_icon(this.icon).set_type("add");
         $(btn_add).click(function(){audio.add();});
         var btn_list=this.carrot.menu.create("list_aduio").set_label("List Audio").set_type("main").set_lang("audio").set_icon(this.icon);
@@ -17,6 +18,12 @@ class Carrot_Audio{
 
     save_obj_audios(){
         localStorage.setItem("obj_audios",JSON.stringify(this.obj_audios));
+    }
+
+    delete_obj_audios(){
+        localStorage.removeItem("obj_audios");
+        this.obj_audios=null;
+        this.carrot.delete_ver_cur(this.id_page);
     }
 
     add(){
@@ -52,7 +59,6 @@ class Carrot_Audio{
         else{
             this.carrot.get_list_doc("audio",this.get_data_audio_from_server);
         }
-            
     }
 
     get_data_audio_from_server(audios,carrot){
@@ -139,5 +145,10 @@ class Carrot_Audio{
             html+='</div>';
         }
         return html;
+    }
+
+    reload(carrot){
+        carrot.audio.delete_obj_audios();
+        carrot.audio.list();
     }
 }

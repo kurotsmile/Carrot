@@ -36,6 +36,9 @@ class Carrot_Field{
     options=Array();
     is_field_main=false;
     type_file='';
+
+    emp_address=null;
+    
     constructor(name,label,type='input',placeholder='Enter data here'){
         this.name=name;
         this.label=label;
@@ -187,13 +190,13 @@ class Carrot_Field{
             html+='</select>';
         }
         else if(this.type=='color'){
-            html+='<div id="'+this.name+'" class="form-control cr_field" value_color="'+this.value+'" type="color"></div>';
+            html+='<div id="'+this.name+'" class="form-control m-0 cr_field" value_color="'+this.value+'" type="color"></div>';
         }
         else if(this.type=='slider'||this.type=='range'){
             html+='<input type="range" min="1" max="4" value="'+this.value+'" class="form-range cr_field" id="'+this.name+'"></input>'
         }
         else if(this.type=='icon'){
-            html+='<div id="'+this.name+'" class="form-control cr_field" type="icon" value="'+this.value+'">';
+            html+='<div id="'+this.name+'" class="form-control m-0 cr_field" type="icon" value="'+this.value+'">';
             html+='<div id="'+this.name+'_show_val"  class="d-block text-info">'+this.value+'</div>';
             if(localStorage.getItem("obj_icon")){
                 var obj_icon=JSON.parse(localStorage.getItem("obj_icon"));
@@ -214,14 +217,14 @@ class Carrot_Field{
             }
         }
         else if(this.type=='textarea'){
-            html+='<textarea class="form-control cr_field" id="'+this.name+'" placeholder="'+this.placeholder+'" rows="3">'+this.value+'</textarea>';
+            html+='<textarea class="form-control m-0 cr_field" id="'+this.name+'" placeholder="'+this.placeholder+'" rows="3">'+this.value+'</textarea>';
         }
         else if(this.type=='id'){
             html+='<p id="'+this.name+'" type="id" class="cr_field" value="'+this.value+'">'+this.value+'</p>';
         }
         else if(this.type=='file'){
             html+='<div class="input-group mb-3">';
-            html+='<input type="file" accept="'+this.type_file+'" class="form-control '+s_class+' form-control-sm" id="'+this.name+'_file" for-emp="'+this.name+'" placeholder="'+this.placeholder+'">';
+            html+='<input type="file" accept="'+this.type_file+'" class="form-control m-0 '+s_class+' form-control-sm" id="'+this.name+'_file" for-emp="'+this.name+'" placeholder="'+this.placeholder+'">';
             html+='</div>';
 
             html+='<div class="card flex-md-row mb-4 box-shadow h-md-250">';
@@ -245,13 +248,27 @@ class Carrot_Field{
             html+='</div>';
         }else if(this.type=='line'){
             html+='<hr/>';
+        }else if(this.type=="address"){
+            var data_address=null;
+            if(this.value==''){
+                data_address={"lat":null,"lot":null,"name":""};
+            }else{
+                data_address=this.value;
+            }
+            html+='<div class="input-group mb-3">';
+            html+='<input id="'+this.name+'" type="'+this.type+'" address-lat="'+data_address.lat+'" address-lon="'+data_address.lot+'" value="'+data_address.name+'" class="form-control m-0 '+s_class+' cr_field form-control-sm"  placeholder="'+this.placeholder+'">';
+            html+='<div class="input-group-append">';
+            html+='<span for="'+this.name+'" class="input-group-text btn-ms btn_check_in" role="button"><i class="fa-solid fa-location-crosshairs"></i></span>';
+            html+='</div>';
+            html+='<small id="'+this.name+'_show" class="form-text text-muted dev w-100"><i class="fa-solid fa-map-pin"></i> lat:'+data_address.lat+' <i class="fa-solid fa-map-pin"></i> lon:'+data_address.lon+'</small>';
+            html+='</div>';
         }
         else{
             html+='<div class="input-group mb-3">';
-            html+='<input type="'+this.type+'" value="'+this.value+'" class="form-control '+s_class+' cr_field form-control-sm" id="'+this.name+'" placeholder="'+this.placeholder+'">';
-            html += '<div class="input-group-append">';
-            html += '<span class="input-group-text btn-ms" role="button" onclick="paste_tag(\'' + this.name + '\')"><i class="fa-solid fa-paste"></i></span>';
-            html += '</div>';
+            html+='<input type="'+this.type+'" value="'+this.value+'" class="form-control m-0 '+s_class+' cr_field form-control-sm" id="'+this.name+'" placeholder="'+this.placeholder+'">';
+            html+='<div class="input-group-append">';
+            html+='<span class="input-group-text btn-ms" role="button" onclick="paste_tag(\'' + this.name + '\')"><i class="fa-solid fa-paste"></i></span>';
+            html+='</div>';
             html+=this.htm_btn_extension();
             html+='</div>';
         }
@@ -271,6 +288,7 @@ class Carrot_Form{
     is_field_db_doc=false;
     msg_done="Add or Edit success!";
     icon_font="fa-solid fa-window-restore";
+    s_act_func_done=null;
 
     constructor(name,carrot){
         this.name=name;
@@ -326,6 +344,11 @@ class Carrot_Form{
         return this;
     }
 
+    set_act_done(s_func_done){
+        this.s_act_func_done=s_func_done;
+        return this;
+    }
+
     set_icon(s_icon){
         this.icon_font=s_icon;
         return this;
@@ -358,8 +381,8 @@ class Carrot_Form{
         html+='</form>';
 
         html+='<div class="modal-footer">';
-        html+='<button id="btn_'+this.name+'_done" type="button" class="btn btn-primary"><i class="fa-sharp fa-solid fa-circle-check"></i> Done</button>';
-        html+='<button id="btn_'+this.name+'_close" type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa-solid fa-circle-xmark"></i> Close</button>';
+            html+='<button id="btn_'+this.name+'_done" type="button" class="btn btn-primary"><i class="fa-sharp fa-solid fa-circle-check"></i> Done</button>';
+            html+='<button id="btn_'+this.name+'_close" type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa-solid fa-circle-xmark"></i> Close</button>';
         html+='</div>';
         return html;
     }
@@ -419,6 +442,15 @@ class Carrot_Form{
                     });
                 });
             }
+
+            if(type_emp=="address"){
+                $(".btn_check_in").click(function(){
+                    carrot["emp_address"]=$(this);
+                    carrot.display_name_Location=frm.display_name_Location;
+                    frm.getLocation_for_address();
+                    Swal.showLoading();
+                });
+            }
         });
 
         $("#btn_"+this.name+"_done").click(function(){
@@ -434,6 +466,17 @@ class Carrot_Form{
                 else if(type_emp=="id") val_emp=$(this).attr("value");
                 else if(type_emp=="editor") val_emp=$(this).val();
                 else if(type_emp=="file") val_emp=$(this).attr("value");
+                else if(type_emp=="address"){
+                    var lot_address=$("#"+id_emp).attr("address-lon");
+                    var lat_address=$("#"+id_emp).attr("address-lat");
+                    var name_address=$(this).val();
+                    var data_address=new Object();
+                    data_address["name"]=name_address;
+                    data_address["lot"]=lot_address;
+                    data_address["lat"]=lat_address;
+                    val_emp=data_address;
+                    alert("Lot:"+lot_address+" , Lat:"+lat_address);
+                }
                 else val_emp=$(this).val();
 
                 obj_frm[id_emp]=val_emp;
@@ -445,7 +488,10 @@ class Carrot_Form{
                 carrot.set_doc(frm.db_collection,obj_frm[frm.db_document],obj_frm);
 
             carrot.msg(frm.msg_done);
-            carrot.call_func_by_id_page(frm.db_collection,"reload")
+            if(frm.s_act_func_done!=null)
+                eval(frm.s_act_func_done);
+            else
+                carrot.call_func_by_id_page(frm.db_collection,"reload")
             $('#box').modal('toggle');
         });
 
@@ -454,5 +500,43 @@ class Carrot_Form{
         });
     }
 
+    getLocation_for_address(){
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(this.showPosition);
+        } else {
+          carrot.msg("Geolocation is not supported by this browser.","error");
+        }
+    }
+      
+    showPosition(position) {
+        var emp_address=$(carrot.emp_address).attr("for");
+        var emp_inp=$("#"+emp_address);
+        $("#"+emp_address+"_show").html('<i class="fa-solid fa-map-pin"></i> '+position.coords.latitude+' , <i class="fa-solid fa-map-pin"></i> '+position.coords.longitude);
+        emp_inp.attr("address-lat",position.coords.latitude);
+        emp_inp.attr("address-lon",position.coords.longitude);
+        carrot.msg("Geolocation success!"); 
+        carrot.display_name_Location(position.coords.latitude,position.coords.longitude);
+    }
 
+    display_name_Location(latitude,longitude){
+        var request = new XMLHttpRequest();
+        var method = 'GET';
+        var url = 'https://maps.googleapis.com/maps/api/geocode/json?latlng='+latitude+','+longitude+'&sensor=true&key=AIzaSyDtrxOBgBfiRLaxKP0p_UzfE2-hsjHNKBw';
+        var async = true;
+
+        request.open(method, url, async);
+        request.onreadystatechange = function(){
+            if (request.readyState == 4 && request.status == 200) {
+                var data = JSON.parse(request.responseText);
+                var address = data.results[0];
+                if(address!=null){
+                    var emp_address = $(carrot.emp_address).attr("for");
+                    $("#"+emp_address).val(address.formatted_address);
+                }else{
+                    carrot.msg("Unable to locate!","error");
+                }
+            }
+        };
+        request.send();
+    };
 }

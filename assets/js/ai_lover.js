@@ -15,7 +15,7 @@ class Ai_Lover{
 
         var btn_test_pay=carrot.menu.create("test_pay").set_label("Test Play").set_icon("fa-brands fa-paypal").set_type("dev");
         $(btn_test_pay).click(function(){
-            carrot.ai.html();
+            carrot.show_error_connect_sever();
         });
     }
 
@@ -57,10 +57,8 @@ class Ai_Lover{
             item_fashion.set_class_body("mt-2 col-9");
             var html_body='';
             html_body+='<div class="col-12">';
-            if(item_fashion.buy=='0')
-                html_body+='<i class="fa-solid fa-box-check"></i> Free';
-            else
-                html_body+='<i class="fa-solid fa-cart-shopping"></i> Buy';
+            if(fashion.buy=='0') html_body+='<i class="fa-solid fa-boxes-stacked text-success"></i> Free';
+            else html_body+='<i class="fa-solid fa-cart-shopping text-info"></i> Buy';
             html_body+='</div>';
             item_fashion.set_body(html_body);
             html+=item_fashion.html();

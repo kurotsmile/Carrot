@@ -12,6 +12,10 @@ class Carrot_List_Item{
     class_body="mt-2 col-12";
     db_collection=null;
     obj_js=null;
+
+    s_act_edit;
+    s_act_del;
+
     constructor(carrot){
         this.carrot=carrot;
     }
@@ -71,6 +75,14 @@ class Carrot_List_Item{
 
     set_index(index){
         this.index=index;
+    }
+
+    set_act_edit(s_fnc_edit){
+        this.s_act_edit=s_fnc_edit;
+    }
+
+    set_act_delete(s_fnc_del){
+        this.s_act_del=s_fnc_del;
     }
 
     html(){

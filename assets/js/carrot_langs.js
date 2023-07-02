@@ -16,7 +16,7 @@ class Carrot_Langs{
         if(localStorage.getItem("lang_web")!=null) this.lang_web=JSON.parse(localStorage.getItem("lang_web"));
         if(localStorage.getItem("obj_lang_web")!=null) this.obj_lang_web=JSON.parse(localStorage.getItem("obj_lang_web"))
 
-        carrot.register_page("lang","carrot.langs.list()","carrot.langs.edit_lang");
+        carrot.register_page("lang","carrot.langs.list()","carrot.langs.edit_lang","carrot.langs.reload");
         carrot.register_page("lang_app_setting","carrot.langs.show_setting_lang_app()","carrot.langs.edit_lang");
         carrot.register_page("lang_web_setting","carrot.langs.show_setting_lang_web()","carrot.langs.edit_lang");
         carrot.register_page("lang_app_ai_lover","carrot.langs.show_setting_lang_ai()","carrot.langs.edit_lang");
@@ -34,6 +34,12 @@ class Carrot_Langs{
 
     save_list_lang(){
         localStorage.setItem("list_lang", JSON.stringify(this.list_lang));
+    }
+
+    delete_list_lang(){
+        localStorage.removeItem("list_lang");
+        this.list_lang=Array();
+        this.carrot.delete_ver_cur("lang");
     }
 
     get_all_data_lang() {
@@ -385,5 +391,10 @@ class Carrot_Langs{
         }else{
             return lang_en_default;
         }
+    }
+
+    reload(carrot){
+        carrot.langs.delete_list_lang();
+        carrot.langs.get_data_lang_web();
     }
 }
