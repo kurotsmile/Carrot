@@ -260,7 +260,7 @@ class Carrot_Field{
             html+='<div class="input-group-append">';
             html+='<span for="'+this.name+'" class="input-group-text btn-ms btn_check_in" role="button"><i class="fa-solid fa-location-crosshairs"></i></span>';
             html+='</div>';
-            html+='<small id="'+this.name+'_show" class="form-text text-muted dev w-100"><i class="fa-solid fa-map-pin"></i> lat:'+data_address.lat+' <i class="fa-solid fa-map-pin"></i> lon:'+data_address.lon+'</small>';
+            html+='<small id="'+this.name+'_show" class="form-text text-muted dev w-100"><i class="fa-solid fa-map-pin"></i> lat:'+data_address.lat+' <i class="fa-solid fa-map-pin"></i> lon:'+data_address.lot+'</small>';
             html+='</div>';
         }
         else{
@@ -475,7 +475,6 @@ class Carrot_Form{
                     data_address["lot"]=lot_address;
                     data_address["lat"]=lat_address;
                     val_emp=data_address;
-                    alert("Lot:"+lot_address+" , Lat:"+lat_address);
                 }
                 else val_emp=$(this).val();
 

@@ -11,7 +11,7 @@ class Carrot_user{
         if(localStorage.getItem("obj_login")!=null) this.obj_login=JSON.parse(localStorage.getItem("obj_login"));
         if (localStorage.getItem("obj_phone_book") != null) this.obj_phone_book=JSON.parse(localStorage.getItem("obj_phone_book"));
 
-        carrot.register_page("phone_book","carrot.user.list()","carrot.user.edit","carrot.user.show_user_info","carrot.user.reload");
+        carrot.register_page("phone_book","carrot.user.list()","carrot.user.edit","carrot.user.show_user_by_id","carrot.user.reload");
         var btn_list=carrot.menu.create("phone_book").set_label("Phone book").set_lang("phone_book").set_icon(this.icon).set_type("main");
         $(btn_list).click(function(){carrot.user.list();});
     }
@@ -178,7 +178,7 @@ class Carrot_user{
         data_user_new["email"]="";
         data_user_new["address"]="";
         data_user_new["lang"]=this.carrot.lang;
-        this.frm_add_or_edit(data_user_new).set_title("Register User").set_msg_done("Register User Success!").show();
+        this.frm_add_or_edit(data_user_new).set_title(this.carrot.l("register","Register User")).set_msg_done("Register User Success!").show();
         this.carrot.check_event();
     }
 
@@ -195,20 +195,25 @@ class Carrot_user{
         frm.create_field("name").set_label("Full Name").set_value(data.name);
         frm.create_field("avatar").set_label("Avatar").set_value(data.avatar).set_type("file").set_type_file("image/*");
         frm.create_field("password").set_label("password").set_value(data.password);
-        frm.create_field("phone").set_label("Phone").set_value(data.phone);
+        frm.create_field("phone").set_label(this.carrot.l("phone","Phone")).set_value(data.phone);
         frm.create_field("email").set_label("Email").set_value(data.email);
-        var field_sex=frm.create_field("sex").set_label("Sex").set_value(data.sex).set_type("select");
+        var field_sex=frm.create_field("sex").set_label(this.carrot.l("gender","Gender")).set_value(data.sex).set_type("select");
         field_sex.add_option("0",this.carrot.l("boy","Boy"));
         field_sex.add_option("1",this.carrot.l("girl","Girl"));
         frm.create_field("address").set_label("Address").set_value(data.address).set_type("address");
         var field_share=frm.create_field("status_share").set_label("Share Status").set_value(data.status_share).set_type("select");
         field_share.add_option("0","Share");
         field_share.add_option("1","No share");
-        var field_lang=frm.create_field("lang").set_label("Lang").set_value(data.lang).set_type("select");
+        var field_lang=frm.create_field("lang").set_label(this.carrot.l("country","Country")).set_value(data.lang).set_type("select");
         $(this.carrot.langs.list_lang).each(function(index,lang){
             field_lang.add_option(lang.key,lang.name);
         });
         return frm;
+    }
+
+    show_user_by_id(user_id,carrot){
+        var user_lang=carrot.get_param_url("user_lang");
+        carrot.get_doc("user-"+user_lang,user_id,carrot.user.show_user_info);
     }
     
     show_user_info(data_user,carrot){
@@ -231,10 +236,6 @@ class Carrot_user{
 
                         html+='<div class="row pt-4">';
                             html+='<div class="col-md-4 col-6 text-center">';
-                                html+='<b>3.9 <i class="fa-sharp fa-solid fa-eye"></i></b>';
-                                html+='<p>11.6k <l class="lang"  key_lang="count_view">Reviews</l></p>';
-                            html+='</div>';
-                            html+='<div class="col-md-4 col-6 text-center">';
                                 html+='<b>Email <i class="fa-solid fa-envelopes-bulk"></i></b>';
                                 html+='<p class="lang" key_lang="email">'+data_user.email+'</p>';
                             html+='</div>';
@@ -244,16 +245,12 @@ class Carrot_user{
                                     html+='<p class="lang" key_lang="boy">'+data_user.sex+'</p>';
                                 }
                                 else{
-                                    html+='<b><l class="lang" key_lang="sex">Sex</l> <i class="fa-solid fa-venus"></i></b>';
+                                    html+='<b><l class="lang" key_lang="gender">Sex</l> <i class="fa-solid fa-venus"></i></b>';
                                     html+='<p class="lang" key_lang="girl">'+data_user.sex+'</p>';
                                 }
                             html+='</div>';
                             html+='<div class="col-md-4 col-6 text-center">';
-                                html+='<b>Ads <i class="fa-solid fa-window-restore"></i></b>';
-                                html+='<p class="lang" key_lang="contains_ads">Contains Ads</p>';
-                            html+='</div>';
-                            html+='<div class="col-md-4 col-6 text-center">';
-                                html+='<b>Country <i class="fa-solid fa-language"></i></b>';
+                                html+='<b><l class="lang" key_lang="country">Country</l> <i class="fa-solid fa-language"></i></b>';
                                 html+='<p>'+data_user.lang+'</p>';
                             html+='</div>';
                             html+='<div class="col-md-4 col-6 text-center">';
@@ -277,7 +274,17 @@ class Carrot_user{
                     html+='<h4 class="fw-semi fs-5 lang" key_lang="describe">Describe yourself</h4>';
                     html+='<p class="fs-8 text-justify">'+data_user.email+'</p>';
                 html+='</div>';
-    
+
+
+                if(data_user.address!=null){
+                    var user_address=data_user.address;
+                    html+='<div class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
+                    html+='<h4 class="fw-semi fs-5 lang" key_lang="address">Address</h4>';
+                    if(user_address.name!="")html+='<small class="fw-semi fs-8">'+user_address.name+'</small>';
+                    if(user_address.lat!=null) html+='<iframe src="https://maps.google.com/maps?q='+user_address.lat+','+user_address.lot+'&hl='+carrot.lang+'&z=14&amp;output=embed" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>';
+                    html+='</div>';
+                }
+
                 html+='<div class="about row p-2 py-3  bg-white mt-4 shadow-sm">';
                     html+='<h4 class="fw-semi fs-5 lang" key_lang="review">Review</h4>';
     
@@ -346,7 +353,15 @@ class Carrot_user{
             var list_user_other= carrot.convert_obj_to_list(carrot.user.obj_phone_book).map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
             for(var i=0;i<list_user_other.length;i++){
                 var u_data=list_user_other[i];
-                if(data_user.id!=u_data.id) html+=carrot.user.box_user_item(u_data,'col-md-12 mb-3');
+                var count_show=0;
+                if(u_data.sex==data_user.sex){
+                    if(data_user.id!=u_data.id){
+                        html+=carrot.user.box_user_item(u_data,'col-md-12 mb-3');
+                        count_show++;
+                        if(count_show>12) break;
+                    }
+                }
+                
             };
             html+='</div>';
     
