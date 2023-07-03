@@ -100,7 +100,7 @@ class Carrot_List_Item{
                             html+=this.body;
                             html+="</div>";
                         }
-                        if(this.db_collection!=null)html+=this.carrot.btn_dev(this.db_collection,this.id,this.obj_js);
+                        if(this.db_collection!=null)html+=this.carrot.btn_dev(this.db_collection,this.id,this.obj_js,this.s_act_edit,this.s_act_del);
                         html+="</div>";
                     html+="</div>";
                 html+="</div>";

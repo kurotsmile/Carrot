@@ -175,8 +175,8 @@ class Carrot_Music{
 
                             if(data.album!=''){
                                 html+='<div class="col-md-4 col-6 text-center">';
-                                    html+='<b>Album <i class="fa-solid fa-album"></i></b>';
-                                    html+='<p class="lang" key_lang="album">'+data.album+'</p>';
+                                    html+='<b><l class="lang" key_lang="album">Album</l> <i class="fa-solid fa-album"></i></b>';
+                                    html+='<p>'+data.album+'</p>';
                                 html+='</div>';
                             }
 
@@ -270,14 +270,20 @@ class Carrot_Music{
             html+='<div class="col-md-4">';
             html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-3 lang"  key_lang="related_songs">Related Song</h4>';
             var list_music_other= this.carrot.convert_obj_to_list(this.obj_songs).map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
+            var count_song=0;
             for(var i=0;i<list_music_other.length;i++){
                 var song=list_music_other[i];
-                if(data.id!=song.id) html+=this.carrot.music.box_music_item(song,'col-md-12 mb-3');
+                if(data.id!=song.id){
+                    html+=this.carrot.music.box_music_item(song,'col-md-12 mb-3');
+                    count_song++;
+                    if(count_song>12)break;
+                }
             };
             html+='</div>';
     
         html+="</div>";
         html+="</div>";
+        html+=carrot.music.list_for_home();
         this.carrot.show(html);
         this.check_event();
     }
@@ -397,10 +403,13 @@ class Carrot_Music{
 
     get_link_avatar_ytb(){
         var link_ytb=$("#link_ytb").val();
+        if(link_ytb.trim()==""){
+            this.carrot.msg("Link Youtube Not Null!","error");
+            return false;
+        }
         var id_ytb=this.carrot.player_media.get_youtube_id(link_ytb);
         $("#link_ytb").val("https://www.youtube.com/watch?v="+id_ytb);
         $.get("https://www.googleapis.com/youtube/v3/videos?part=snippet&id=" + id_ytb + "&key=AIzaSyDtrxOBgBfiRLaxKP0p_UzfE2-hsjHNKBw", function(data) {
-            console.log(data);
             $("#name").val(data.items[0].snippet.title);
             if(data.items[0].snippet.defaultLanguage!=null){
                 var lang_song=data.items[0].snippet.defaultLanguage;

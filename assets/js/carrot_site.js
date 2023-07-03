@@ -44,6 +44,7 @@ class Carrot_Site{
     avatar;
     player_media;
     file;
+    pay;
     
     constructor(){
         var carrot=this;
@@ -92,6 +93,7 @@ class Carrot_Site{
         $('head').append('<script type="text/javascript" src="assets/js/ai_chat.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_menu.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_list_item.js?ver='+this.get_ver_cur("js")+'"></script>');
+        $('head').append('<script type="text/javascript" src="assets/js/carrot_pay.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_player_media.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_file.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_audio.js?ver='+this.get_ver_cur("js")+'"></script>');
@@ -120,6 +122,7 @@ class Carrot_Site{
         this.about_us=new Carrot_About_Us(this);
         this.player_media=new Carrot_Player_Media(this);
         this.file=new Carrot_File(this);
+        this.pay=new Carrot_Pay(this);
 
         var btn_mod_host=this.menu.create("btn_mode_host").set_label("Change Mode Host").set_type("setting").set_icon("fa-brands fa-dev");
         $(btn_mod_host).click(function(){carrot.change_host_connection();});
@@ -472,6 +475,8 @@ class Carrot_Site{
     }
 
     update_new_ver_cur(s_item,is_save=false){
+        if(this.obj_version_new==null) this.obj_version_new=new Object();
+
         if(this.obj_version_new[s_item]!=null){
             if(this.obj_version_cur==null) this.obj_version_cur=new Object();
             this.obj_version_cur[s_item]=this.obj_version_new[s_item];
@@ -542,8 +547,12 @@ class Carrot_Site{
             var db_collection=$(this).attr("db_collection");
             var db_document=$(this).attr("db_document");
             var db_obj=$(this).attr("db_obj");
+            var event_fun=$(this).attr("onclick");
             carrot.log("Edit "+db_collection+" : "+db_document);
-            carrot.get_doc(db_collection,db_document,eval("carrot."+db_obj+".edit"));
+            if(event_fun!=undefined)
+                carrot.get_doc(db_collection,db_document,eval(event_fun));
+            else
+                carrot.get_doc(db_collection,db_document,eval("carrot."+db_obj+".edit"));
         });
 
         $(".btn_app_del").unbind('click');
@@ -791,7 +800,7 @@ class Carrot_Site{
         html+="<div class='row dev d-flex mt-2'>";
             html+="<div class='dev col-6 d-flex btn-group'>";
                 if(func_edit!=null)
-                    html+="<div role='button' class='dev btn btn_app_edit btn-warning btn-sm mr-2' onclick='"+func_edit+"'><i class=\"fa-solid fa-pen-to-square\"></i></div> ";
+                    html+="<div role='button' class='dev btn btn_app_edit btn-warning btn-sm mr-2' onclick='"+func_edit+"'  db_collection='"+db_collection+"' db_document='"+db_document+"' db_obj='"+obj_js+"'><i class=\"fa-solid fa-pen-to-square\"></i></div> ";
                 else
                     html+="<div role='button' class='dev btn btn_app_edit btn-warning btn-sm mr-2' db_collection='"+db_collection+"' db_document='"+db_document+"' db_obj='"+obj_js+"'><i class=\"fa-solid fa-pen-to-square\"></i></div> ";
 

@@ -30,10 +30,8 @@ class Carrot_user{
                 this.show_all_phone_book_from_list();
                 this.carrot.update_new_ver_cur("user",true);
             }
-        })
-        .catch((error) => {
-            this.log(error.message)
-            act_done(null,this);
+        }).catch((error) => {
+            this.carrot.msg(error.message,"error");
         });
     }
 
@@ -270,19 +268,15 @@ class Carrot_user{
                     html+='</div>';
                 html+="</div>";
     
-                html+='<div class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
-                    html+='<h4 class="fw-semi fs-5 lang" key_lang="describe">Describe yourself</h4>';
-                    html+='<p class="fs-8 text-justify">'+data_user.email+'</p>';
-                html+='</div>';
-
-
                 if(data_user.address!=null){
                     var user_address=data_user.address;
-                    html+='<div class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
-                    html+='<h4 class="fw-semi fs-5 lang" key_lang="address">Address</h4>';
-                    if(user_address.name!="")html+='<small class="fw-semi fs-8">'+user_address.name+'</small>';
-                    if(user_address.lat!=null) html+='<iframe src="https://maps.google.com/maps?q='+user_address.lat+','+user_address.lot+'&hl='+carrot.lang+'&z=14&amp;output=embed" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>';
-                    html+='</div>';
+                    if(user_address.lat!=null){
+                        html+='<div class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
+                        html+='<h4 class="fw-semi fs-5 lang" key_lang="address">Address</h4>';
+                        if(user_address.name!="")html+='<small class="fw-semi fs-8">'+user_address.name+'</small>';
+                        if(user_address.lot!=null) html+='<iframe src="https://maps.google.com/maps?q='+user_address.lat+','+user_address.lot+'&hl='+carrot.lang+'&z=14&amp;output=embed" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>';
+                        html+='</div>';
+                    }
                 }
 
                 html+='<div class="about row p-2 py-3  bg-white mt-4 shadow-sm">';

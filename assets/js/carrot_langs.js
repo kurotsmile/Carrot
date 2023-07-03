@@ -120,7 +120,7 @@ class Carrot_Langs{
     list_btn_lang_select(){
         var html='';
         var langs=this;
-        html+='<div class="btn-group" role="group"">';
+        html+='<div class="btn-group" role="group">';
         html+='<button class="btn btn-secondary dropdown-toggle btn-sm" type="button" id="btn_list_lang_ai" data-bs-toggle="dropdown" aria-expanded="true" >';
         html+='<i class="fa-solid fa-rectangle-list"></i> <l class="lang" key_lang="select_lang">Change country</l> ('+langs.lang_setting+')';
         html+='</button>';
@@ -149,6 +149,7 @@ class Carrot_Langs{
             item_lang.set_icon(lang.icon);
             item_lang.set_name(lang.name);
             item_lang.set_tip(lang.key);
+            item_lang.set_act_edit("carrot.langs.edit_lang");
             item_lang.set_class("col-md-2 mb-2");
             item_lang.set_class_icon("pe-0 col-3 ");
             item_lang.set_class_body("mt-2 col-9");
@@ -176,7 +177,7 @@ class Carrot_Langs{
         frm.set_db("lang","key");
         frm.create_field("key").set_label("Key").set_value(data_lang.key);
         frm.create_field("name").set_label("Name").set_value(data_lang.name);
-        frm.create_field("icon").set_label("icon").set_value(data_lang.icon);
+        frm.create_field("icon").set_label("icon").set_value(data_lang.icon).set_type("file").set_type_file("image/*");
         return frm;
     }
 

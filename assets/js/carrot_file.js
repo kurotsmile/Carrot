@@ -90,6 +90,11 @@ class Carrot_File{
         var frm=new Carrot_Form("frm_file",carrot);
         frm.set_db(carrot.file.id_page,"id");
         frm.set_icon(carrot.file.icon);
+        frm.create_field("name").set_label("Name").set_value(data["name"]);
+        frm.create_field("fullPath").set_label("Full Path").set_value(data["fullPath"]);
+        frm.create_field("size").set_label("Size").set_value(data["size"]);
+        frm.create_field("generation").set_label("Generation").set_value(data["generation"]);
+        frm.create_field("timeCreated").set_label("Time Created").set_value(data["timeCreated"]);
         return frm;
     }
 

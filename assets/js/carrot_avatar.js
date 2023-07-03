@@ -27,7 +27,7 @@ class Carrot_Avatar{
         frm.set_db("user-avatar","id");
         frm.create_field("id").set_label("ID").set_type("id").set_val(data.id);
         frm.create_field("type").set_label("Type").add_option("boy","Boy").add_option("girl","Girl").set_val(data.type).set_type("select");
-        frm.create_field("icon").set_label("Icon").set_val(data.icon);
+        frm.create_field("icon").set_label("Icon").set_type("file").set_type_file("image/*").set_val(data.icon);
         return frm;
     }
 
@@ -55,12 +55,5 @@ class Carrot_Avatar{
         html+="</div>";
         carrot.show(html);
         carrot.check_event();
-    }
-
-    show_edit_avatar_done(data_avatar,carrot){
-        if(data_avatar!=null)
-            carrot.ai_lover.show_box_add_or_edit_avatar(data_avatar,carrot.act_done_add_or_edit);
-         else
-            carrot.msg("<b>Avatar</b> không còn tồn tại!","error");
     }
 }
