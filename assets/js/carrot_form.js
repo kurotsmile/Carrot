@@ -229,15 +229,13 @@ class Carrot_Field{
 
             html+='<div class="card flex-md-row mb-4 box-shadow h-md-250">';
             html+='<div class="card-body d-flex flex-column align-items-start">';
-            html+='<span type="'+this.type+'" id="'+this.name+'" value="'+this.value+'" type="hidden" class="cr_field text-break fs-8 text-info">';
+            html+='<span type="'+this.type+'" id="'+this.name+'" value="'+this.value+'" type="hidden" class="cr_field text-break fs-8 text-info"></span>';
             if(this.value!=''&&this.value!=undefined){
                 if(this.type_file=="image/*") html+='<img class="rounded card-img-left flex-auto d-none d-md-block" src="'+this.value+'"/>';
                 else if(this.type_file=="audio/*") html+='<audio controls muted><source src="'+this.value+'" type="audio/mpeg">Your browser does not support the audio element.</audio>';
                 else html+=this.value;
             }
-            html+='<h3 class="mb-0">';
-            html+='<a class="text-dark">'+this.type_file+'</a>';
-            html+='</h3>';
+            html+='<h3 class="mb-0"><a class="text-dark">'+this.type_file+'</a></h3>';
             if(this.value!=''){
                 html+='<div class="mb-1 text-muted">Link</div>';
                 html+='<p class="card-text mb-auto text-break"><a href="'+this.value+'" target="_blank">'+this.value+'</a></p>';
@@ -245,6 +243,18 @@ class Carrot_Field{
             html+='</div>';
             html+='</div>';
 
+            html+='</div>';
+        }else if(this.type=="avatar"){
+            var url_img_avatar="";
+            if(this.value==null||this.value==undefined) url_img_avatar="images/avatar_default.png";
+            else url_img_avatar=this.value;
+            html+='<div class="input-group mb-3 text-center">';
+                html+='<div class="card flex-md-row mb-4 box-shadow h-md-250">';
+                html+='<div class="card-body d-flex flex-column align-items-start">';
+                html+='<img id="'+this.name+'_img" class="rounded card-img-left flex-auto d-none d-md-block" src="'+url_img_avatar+'"/>';
+                html+='<button class="btn btn-sm mt-2 cr_field" id="'+this.name+'" type="'+this.type+'" value="'+this.value+'" emp_img="'+this.name+'_img" onclick="carrot.avatar.msg_list_select(this);return false;"><i class="fa-solid fa-user-ninja"></i> Change Avatar</button>';
+                html+='</div>';
+                html+='</div>';
             html+='</div>';
         }else if(this.type=='line'){
             html+='<hr/>';
@@ -476,6 +486,7 @@ class Carrot_Form{
                     data_address["lat"]=lat_address;
                     val_emp=data_address;
                 }
+                else if(type_emp=="avatar") val_emp=$(this).attr("value");
                 else val_emp=$(this).val();
 
                 obj_frm[id_emp]=val_emp;

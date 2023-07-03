@@ -31,6 +31,7 @@ class Carrot_user{
                 this.carrot.update_new_ver_cur("user",true);
             }
         }).catch((error) => {
+            console.log(error);
             this.carrot.msg(error.message,"error");
         });
     }
@@ -191,7 +192,7 @@ class Carrot_user{
         frm.set_icon(this.icon);
         frm.create_field("id").set_label("ID").set_value(data.id).set_main().set_type("id");
         frm.create_field("name").set_label("Full Name").set_value(data.name);
-        frm.create_field("avatar").set_label("Avatar").set_value(data.avatar).set_type("file").set_type_file("image/*");
+        frm.create_field("avatar").set_label("Avatar").set_value(data.avatar).set_type("avatar").set_type_file("image/*");
         frm.create_field("password").set_label("password").set_value(data.password);
         frm.create_field("phone").set_label(this.carrot.l("phone","Phone")).set_value(data.phone);
         frm.create_field("email").set_label("Email").set_value(data.email);

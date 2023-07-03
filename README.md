@@ -12,3 +12,6 @@ Carrot Store ứng dụng web giới thiệu các sản phẩm của Trần Thi�
 - Danh sách ảnh nền
 - Danh sách biểu tượng
 - Danh sách âm nhạc
+- Kinh Thánh online
+- Danh sách Radio
+- Danh sách Nhạc không lời
