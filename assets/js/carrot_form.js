@@ -1,6 +1,9 @@
 class Carrot_Btn{
     icon;
     onclick=null;
+    label=null;
+    s_lang="";
+    s_class="input-group-text btn-ms";
     constructor(){
         this.icon="fa-solid fa-box";
     }
@@ -13,12 +16,25 @@ class Carrot_Btn{
         this.onclick=s_func;
     }
 
+    set_label(s_label){
+        this.label=s_label;
+    }
+
+    set_lang(lang_key){
+        this.s_lang=' class="lang" lang_key="'+lang_key+'" ';
+    }
+
+    set_class(css){
+        this.s_class=css;
+    }
+
     html(){
         var html='';
         html+='<div class="input-group-append">';
-        html+='<span class="input-group-text btn-ms" role="button" onclick="'+this.onclick+'">';
-        html+='<i class="'+this.icon+'"></i>';
-        html+='</span>';
+            html+='<span class="'+this.s_class+'" role="button" onclick="'+this.onclick+'">';
+            html+='<i class="'+this.icon+'"></i>';
+            if(this.label!=null) html+=" <l "+this.s_lang+"> "+this.label+"</l>";
+            html+='</span>';
         html+='</div>';
         return html;
     }
@@ -154,7 +170,7 @@ class Carrot_Field{
 
         html+='<div class="form-group">';
 
-        if(this.type!='line'){
+        if(this.type!='line'&&this.type!='msg'){
             html+='<label class="form-label fw-bolder fs-8" for="'+this.name+'">';
             if(this.is_field_main) html+='<span class="text-info"><i class="fa-solid fa-key"></i></span> ';
             html+=this.label;
@@ -272,6 +288,8 @@ class Carrot_Field{
             html+='</div>';
             html+='<small id="'+this.name+'_show" class="form-text text-muted dev w-100"><i class="fa-solid fa-map-pin"></i> lat:'+data_address.lat+' <i class="fa-solid fa-map-pin"></i> lon:'+data_address.lot+'</small>';
             html+='</div>';
+        }else if(this.type=="msg"){
+            html+='<div id="'+this.name+'" class="'+s_class+'">'+this.value+'</div>';
         }
         else{
             html+='<div class="input-group mb-3">';
@@ -291,11 +309,15 @@ class Carrot_Form{
     title;
     name;
     list_field=Array();
+    list_btn=Array();
     carrot;
     db_collection;
     db_document;
     type;
+
     is_field_db_doc=false;
+    is_btn_done=true;
+
     msg_done="Add or Edit success!";
     icon_font="fa-solid fa-window-restore";
     s_act_func_done=null;
@@ -339,8 +361,20 @@ class Carrot_Form{
         return field;
     }
 
+    create_btn(){
+        var btn=new Carrot_Btn();
+        btn.set_class("btn btn-primary");
+        this.add_btn(btn);
+        return btn;
+    }
+
     add_field(field){
         this.list_field.push(field);
+        return this;
+    }
+
+    add_btn(btn){
+        this.list_btn.push(btn);
         return this;
     }
 
@@ -373,6 +407,10 @@ class Carrot_Form{
         this.is_field_db_doc=true;
         return this;
     }
+
+    off_btn_done(){
+        this.is_btn_done=false;
+    }
     
     html(){
         var html='';
@@ -391,7 +429,8 @@ class Carrot_Form{
         html+='</form>';
 
         html+='<div class="modal-footer">';
-            html+='<button id="btn_'+this.name+'_done" type="button" class="btn btn-primary"><i class="fa-sharp fa-solid fa-circle-check"></i> Done</button>';
+            for(var i=0;i<this.list_btn.length;i++) html+=this.list_btn[i].html();
+            if(this.is_btn_done) html+='<button id="btn_'+this.name+'_done" type="button" class="btn btn-primary"><i class="fa-sharp fa-solid fa-circle-check"></i> Done</button>';
             html+='<button id="btn_'+this.name+'_close" type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa-solid fa-circle-xmark"></i> Close</button>';
         html+='</div>';
         return html;

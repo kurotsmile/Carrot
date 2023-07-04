@@ -1,5 +1,6 @@
 class AI_Key_Block{
     carrot;
+    type_show="dev";
     constructor(carrot){
         this.carrot=carrot;
         var key_block=this;
@@ -10,7 +11,17 @@ class AI_Key_Block{
 
     list(){
         this.carrot.change_title_page("Block kye","?p=block","block");
-        this.show_list_by_key_lang(this.carrot.lang);
+        this.show_list_by_key_lang(this.carrot.langs.lang_setting);
+    }
+
+    list_dev(){
+        this.type_show="dev";
+        this.list();
+    }
+
+    list_pub(){
+        this.type_show="pub";
+        this.list();
     }
 
     show_list_by_key_lang(s_key_lang){
@@ -49,53 +60,67 @@ class AI_Key_Block{
     show_list_block_chat(data){
         var html = '';
         var list_block_chat=data.chat;
-        html += this.carrot.langs.list_btn_lang_select();
-        html += '<table class="table table-striped table-hover mt-6 table-responsive-sm" id="table_key_block">';
-        html += '<thead class="thead-light">';
-        html += '<tr>';
-        html += '<th scope="col">Key Block</th>';
-        html += '<th scope="col">Change</th>';
-        html += '<th scope="col">Action</th>';
-        html += '</tr>';
-        html += '</thead>';
-
-        html += '<tbody id="body_table_key_block">';
-        for(var i = 0; i < list_block_chat.length; i++){
-            html += '<tr>';
-            html += '<td><b id="txt_'+i+'">'+list_block_chat[i]+'</b></td>';
-            html += '<td><input class="form-control inp-key-block form-control-sm pt-0 pb-0 m-0" id="inp_'+i+'" value="'+list_block_chat[i]+'"/></td>';
-            html += '<td>';
-                html+='<button class="btn btn-sm btn-secondary mr-3" type="button" onclick="paste_tag(\'inp_'+i+'\')"><i class="fa-solid fa-paste"></i></button> ';
-                html+='<button class="btn btn-sm btn-secondary mr-3" type="button" onclick="tr(\'txt_'+i+'\',\''+this.setting_lang_change+'\')"><i class="fa-solid fa-language"></i></button> ';
-                html+='<button class="btn btn-sm btn-danger" type="button" onclick=" $(this).parent().parent().remove();"><i class="fa-solid fa-trash"></i></button>';
-            html += '</td>';
-            html += '</tr>';
-        }
-        html += '</tbody>';
-        html += '</table>';
-        html+='<button id="btn_done_change_key_block" type="button" class="btn btn-primary mr-1 mt-1"><i class="fa-solid fa-square-check"></i> Done</button> ';
-        html+='<button id="btn_add_field_key_block" type="button" class="btn btn-secondary mr-1 mt-1 btn-sm" ><i class="fa-solid fa-add"></i> Add Field</button>';
-        this.carrot.show(html);
-
-        new DataTable('#table_key_block', {responsive: true,pageLength:500});
         var carrot=this.carrot;
-
-        $("#btn_done_change_key_block").click(function(){
-            var array_key_chat=Array();
-            var data_add=Object();
-            $(".inp-key-block").each(function(){
-                array_key_chat.push($(this).val());
+        html+=carrot.ai.menu();
+        
+        if(this.type_show=="dev"){
+            html+='<table class="table table-striped table-hover mt-6 table-responsive-sm" id="table_key_block">';
+            html+='<thead class="thead-light">';
+            html+='<tr>';
+            html+='<th scope="col">Key Block</th>';
+            html+='<th scope="col">Change</th>';
+            html+='<th scope="col">Action</th>';
+            html+='</tr>';
+            html+='</thead>';
+    
+            html+='<tbody id="body_table_key_block">';
+            for(var i = 0; i < list_block_chat.length; i++){
+                html+='<tr>';
+                html+='<td><b id="txt_'+i+'">'+list_block_chat[i]+'</b></td>';
+                html+='<td><input class="form-control inp-key-block form-control-sm pt-0 pb-0 m-0" id="inp_'+i+'" value="'+list_block_chat[i]+'"/></td>';
+                html+='<td>';
+                    html+='<button class="btn btn-sm btn-secondary mr-3" type="button" onclick="paste_tag(\'inp_'+i+'\')"><i class="fa-solid fa-paste"></i></button> ';
+                    html+='<button class="btn btn-sm btn-secondary mr-3" type="button" onclick="tr(\'txt_'+i+'\',\''+this.setting_lang_change+'\')"><i class="fa-solid fa-language"></i></button> ';
+                    html+='<button class="btn btn-sm btn-danger" type="button" onclick=" $(this).parent().parent().remove();"><i class="fa-solid fa-trash"></i></button>';
+                html+='</td>';
+                html+='</tr>';
+            }
+            html+='</tbody>';
+            html+='</table>';
+            html+='<button id="btn_done_change_key_block" type="button" class="btn btn-primary mr-1 mt-1"><i class="fa-solid fa-square-check"></i> Done</button> ';
+            html+='<button id="btn_add_field_key_block" type="button" class="btn btn-secondary mr-1 mt-1 btn-sm" ><i class="fa-solid fa-add"></i> Add Field</button>';
+            this.carrot.show(html);
+            new DataTable('#table_key_block', {responsive: true,pageLength:500});
+            $("#btn_done_change_key_block").click(function(){
+                var array_key_chat=Array();
+                var data_add=Object();
+                $(".inp-key-block").each(function(){
+                    array_key_chat.push($(this).val());
+                });
+                data_add["chat"]=array_key_chat;
+                carrot.set_doc("block",carrot.langs.lang_setting,data_add);
+                carrot.msg("Cập nhật các từ khóa cấm ở quốc gia "+carrot.langs.lang_setting+" thành công!")
             });
-            data_add["chat"]=array_key_chat;
-            carrot.set_doc("block",carrot.langs.lang_setting,data_add);
-            carrot.msg("Cập nhật các từ khóa cấm ở quốc gia "+carrot.langs.lang_setting+" thành công!")
-        });
+            document.getElementById("btn_add_field_key_block").onclick = event => {  this.add_field_for_table_key_block();}
+
+        }else{
+            html+='<div class="row">';
+            $(list_block_chat).each(function(index,data_key){
+                var item_key=new Carrot_List_Item(carrot);
+                item_key.set_index(index);
+                item_key.set_icon_font("fa-solid fa-shield");
+                item_key.set_name(data_key);
+                item_key.set_class_body("mt-2 col-9");
+                html+=item_key.html();
+            });
+            html+='</div>';
+            this.carrot.show(html);
+        }
 
         $(".btn-setting-lang-change").click(function(){
             var key_change=$(this).attr("key_change");
             carrot.ai.key_block.show_list_by_key_lang(key_change);
         });
-        document.getElementById("btn_add_field_key_block").onclick = event => {  this.add_field_for_table_key_block();}
         carrot.check_event();
     }
 

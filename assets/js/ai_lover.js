@@ -165,4 +165,27 @@ class Ai_Lover{
         return frm;
     }
     
+    menu(){
+        var html='';
+        html+='<div class="row mb-3">';
+            html+='<div class="col-6 m-0 btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">';
+                html+='<div role="group" aria-label="First group"  class="btn-group mr-2">';
+                    if(this.carrot.id_page=="chat") html+='<button id="btn_add_chat" type="button" class="btn btn-secondary btn-sm"><i class="fa-solid fa-circle-plus"></i> Add Chat</button>';
+                    html+=carrot.langs.list_btn_lang_select();
+                html+='</div> ';
+            html+='</div>';
+
+            html+='<div class="col-6 text-end">';
+                html+='<div role="group" aria-label="Last group" class="btn-group">';
+                    var css_active_chat="";
+                    var css_active_key_block="";
+                    if(this.carrot.id_page=="chat") css_active_chat="active";
+                    if(this.carrot.id_page=="block") css_active_key_block="active";
+                    html+='<button id="btn_list_key_block" onclick="carrot.ai.chat.list();return false;" type="button" class="btn btn-secondary btn-sm '+css_active_chat+'"><i class="fa-brands fa-rocketchat"></i> All Chat</button>';
+                    html+='<button id="btn_list_key_block" onclick="carrot.ai.key_block.list_pub();return false;" type="button" class="btn btn-secondary btn-sm '+css_active_key_block+'"><i class="fa-solid fa-shield-halved"></i> Key Block</button>';
+                html+='</div>';
+            html+='</div>';
+        html+='</div>';
+        return html;
+    }
 }

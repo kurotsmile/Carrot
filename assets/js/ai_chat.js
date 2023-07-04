@@ -87,27 +87,13 @@ class AI_Chat{
 
     act_done_show_all_chat(datas,carrot){
         var html='';
-        html+='<div class="row mb-3">';
-            html+='<div class="col-9 m-0 btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">';
-                html+='<div role="group" aria-label="First group"  class="btn-group mr-2">';
-                    html+='<button id="btn_add_chat" type="button" class="btn btn-secondary btn-sm"><i class="fa-solid fa-circle-plus"></i> Add Chat</button>';
-                    html+=carrot.langs.list_btn_lang_select();
-                html+='</div> ';
-            html+='</div>';
-
-            html+='<div class="col-3 text-end">';
-                html+='<div role="group" aria-label="Last group" class="btn-group">';
-                    html+='<button id="btn_list_key_block" type="button" class="btn btn-secondary btn-sm active"><i class="fa-brands fa-rocketchat"></i> All Chat</button>';
-                    html+='<button id="btn_list_key_block" type="button" class="btn btn-secondary btn-sm"><i class="fa-solid fa-shield-halved"></i> Key Block</button>';
-                html+='</div>';
-            html+='</div>';
-        html+='</div>';
-
+        html+=carrot.ai.menu();
         html+='<div class="row m-0">';
         var list_data=carrot.convert_obj_to_list(datas);
         $(list_data).each(function(index,data){
             var item_list=new Carrot_List_Item(carrot);
             var s_body='';
+            item_list.set_index(index);
             item_list.set_id(data.id);
             if(data.parent==null)
                 item_list.set_icon_font("fa-sharp fa-solid fa-comment mt-2");
@@ -122,6 +108,7 @@ class AI_Chat{
             item_list.set_body('<div class="col-12">'+s_body+'</div>');
             item_list.set_class_body("mt-2 col-9");
             item_list.set_db_collection("chat-"+carrot.langs.lang_setting);
+            item_list.set_act_edit("carrot.ai.chat.edit");
             html+=item_list.html();
         });
         html+='</div>';
