@@ -206,7 +206,8 @@ class Carrot_Field{
             html+='</select>';
         }
         else if(this.type=='color'){
-            html+='<div id="'+this.name+'" class="form-control m-0 cr_field" value_color="'+this.value+'" type="color"></div>';
+            //html+='<div id="'+this.name+'" class="form-control m-0 cr_field" value_color="'+this.value+'" type="color"></div>';
+            html+='<input type="color" class="form-control form-control-color cr_field m-0"  id="'+this.name+'" value="'+this.value+'" title="Choose your color"></input>';
         }
         else if(this.type=='slider'||this.type=='range'){
             html+='<input type="range" min="1" max="4" value="'+this.value+'" class="form-range cr_field" id="'+this.name+'"></input>'
@@ -445,10 +446,7 @@ class Carrot_Form{
         $(".cr_field").each(function(){
             var id_emp=$(this).attr("id");
             var type_emp=$(this).attr("type");
-            if(type_emp=="color"){
-                var value_emp=$("#"+id_emp).attr("value_color");
-                $("#"+id_emp).colorpicker({color: value_emp,defaultPalette: "web",});
-            }
+
             if(type_emp=="icon"){
                 $(".frm_icon_field").click(function(){
                     var id_name_icon=$(this).attr("icon-id");
@@ -510,7 +508,7 @@ class Carrot_Form{
                 var val_emp='';
 
                 if(type_emp=="code") val_emp=$(this).html();
-                else if(type_emp=="color") val_emp=$("#"+id_emp).colorpicker("val");
+                else if(type_emp=="color") val_emp=$(this).val();
                 else if(type_emp=="icon") val_emp=$(this).attr("value");
                 else if(type_emp=="id") val_emp=$(this).attr("value");
                 else if(type_emp=="editor") val_emp=$(this).val();

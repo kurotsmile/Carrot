@@ -1,30 +1,48 @@
-class Carrot_Bible_Chapter{
-    name;
-    tip;
-    contains=Array();
-}
-
 class Carrot_Bible{
     carrot;
     icon="fa-solid fa-book-bible";
     id_page="bible";
+    emp_book_cur_edit=null;
+    obj_bibles=null;
 
     constructor(carrot){
         this.carrot=carrot;
         this.carrot.register_page(this.id_page,"carrot.bible.list()","carrot.bible.edit","carrot.bible.show","carrot.bible.reload");
         var btn_list=this.carrot.menu.create("bible").set_label("Bible").set_lang("bible").set_icon(this.icon).set_type("dev");
-        $(btn_list).click(function(){
-            carrot.bible.list();
-        });
+        $(btn_list).click(function(){carrot.bible.list();});
+
+        if(localStorage.getItem("obj_bibles")!=null) this.obj_bibles=JSON.parse(localStorage.getItem("obj_bibles"));
     }
 
-    get_list_book(){
-        this.carrot.get_list_doc(this.id_page,this.act_get_list_book_done);
+    list(){
+        this.get_list_by_key_lang(this.carrot.lang);
+    }
+
+    get_list_by_key_lang(s_key){
+        console.log("load bible:"+s_key);
+        this.carrot.langs.lang_setting=s_key;
+        this.carrot.db.collection(this.id_page).where("lang", "==", s_key).get().then((querySnapshot) => {
+            if(querySnapshot.docs.length>0){
+                this.obj_bibles=new Object();
+                querySnapshot.forEach((doc) => {
+                    var data_book=doc.data();
+                    data_book["id"]=doc.id;
+                    this.obj_bibles[doc.id]=JSON.stringify(data_book);
+                });
+                this.act_get_list_book_done(this.obj_bibles,this.carrot);
+            }else{
+                this.act_get_list_book_done(null,this.carrot);
+            }
+        }).catch((error) => {
+            console.log(error);
+            this.carrot.msg(error.message,"error");
+        });
     }
 
     act_get_list_book_done(books,carrot){
         carrot.change_title_page("Bible","?p="+carrot.bible.id_page,carrot.bible.id_page);
-        var list_book=carrot.obj_to_array(books);
+        var list_book=Array();
+        if(books!=null) list_book=carrot.obj_to_array(books);
         var html='';
         var html_old_testament='';
         var html_new_testament='';
@@ -40,8 +58,9 @@ class Carrot_Bible{
             var html_body='';
             html_body+='<div class="col-6">'+book.name+'</div>';
             html_body+='<div class="col-6 dev text-end">';
-                html_body+='<i role="button" onclick="carrot.bible.add_chapter_to_book()" class="fa-solid fa-pen-to-square fa-2x m-1"></i>';
-                html_body+='<i role="button" onclick="carrot.bible.add_chapter_to_book()" class="fa-solid fa-folder-plus fa-2x m-1"></i>';
+                html_body+='<i role="button" book_name="'+book.name+'" onclick="carrot.bible.list_chapter(this)" class="fa-solid fa-rectangle-list m-1"></i>';
+                html_body+='<i role="button" book_name="'+book.name+'" onclick="carrot.bible.add_chapter_to_book(this)" class="fa-solid fa-pen-to-square m-1"></i>';
+                html_body+='<i role="button" book_name="'+book.name+'" onclick="carrot.bible.add_chapter_to_book(this)" class="fa-solid fa-folder-plus m-1"></i>';
             html_body+='</div>';
             item_book.set_body(html_body);
             if(book.type=="old_testament")
@@ -65,11 +84,11 @@ class Carrot_Bible{
             html+='</div>';
         html+='</div>';
         carrot.show(html);
+        $(".btn-setting-lang-change").click(function(){
+            var key_change=$(this).attr("key_change");
+            carrot.bible.get_list_by_key_lang(key_change);
+        });
         carrot.check_event();
-    }
-
-    list(){
-        this.get_list_book();
     }
 
     data_bible_new(){
@@ -89,11 +108,21 @@ class Carrot_Bible{
         this.frm_add_or_edit(data).set_title("Add Book").set_msg_done("Add book success!").show();
     }
 
-    add_chapter_to_book(){
+    add_chapter_to_book(emp){
+        this.emp_book_cur_edit=emp;
         var new_data_chapter=new Object();
         new_data_chapter["name"]="";
         new_data_chapter["tip"]="";
         this.frm_add_or_edit_chapter(new_data_chapter).set_title("Add Chapter To Book").show();
+    }
+
+    edit_chapter(emp){
+        var index_chapter=$(emp).attr("index");
+        var name_book=$(this.emp_book_cur_edit).attr("book_name");
+        var data_book=JSON.parse(this.obj_bibles[name_book]);
+        var contents=data_book["contents"];
+        this.frm_add_or_edit_chapter(contents[index_chapter]).set_title("Edit Chapter Book").show();
+        Swal.close();
     }
 
     add_book_old_testament(){
@@ -125,14 +154,49 @@ class Carrot_Bible{
         return frm;
     }
 
+    list_chapter(emp){
+        this.emp_book_cur_edit=emp;
+        var name_book=$(emp).attr("book_name");
+        this.carrot.get_doc("bible",name_book,this.done_list_chapter);
+    }
+
+    done_list_chapter(data,carrot){
+        var html='';
+        $(data.contents).each(function(index,chapter){
+            html+='<div role="button" class="d-block m-1 text-justify bg-light"><i class="fa-solid fa-note-sticky"></i> '+chapter.name+' ('+chapter.paragraphs.length+') <button index="'+index+'" onclick="carrot.bible.edit_chapter(this);return false;" class="btn btn-sm btn-secondary float-end"><i class="fa-solid fa-file-pen"></i></button></div>';
+        });
+        Swal.fire({
+            title: data.name,
+            html: html,
+            showCloseButton: true,
+            focusConfirm: false
+        });
+    }
+
     frm_add_or_edit_chapter(data){
         var frm=new Carrot_Form("frm_chapter",this.carrot);
         var html_msg='';
-        html_msg+='<i class="fa-solid fa-book fa-2x"></i> Thêm vào sách';
+        html_msg+='<i class="fa-solid fa-book fa-2x"></i> '+$(this.emp_book_cur_edit).attr("book_name");
         frm.create_field("msg").set_value(html_msg).set_type("msg");
         frm.set_icon("fa-solid fa-book-tanakh");
         frm.create_field("name").set_label("chapter Name").set_value(data["name"]);
         frm.create_field("tip").set_label("chapter Tip").set_value(data["tip"]);
+        var html_contain='';
+        html_contain+="<div id='paragraphs'>";
+        $(data.paragraphs).each(function(index,data){
+            html_contain+='<div class="input-group">';
+            html_contain+='<div class="input-group-prepend">';
+                html_contain+='<div class="input-group-text">'+(index+1)+'</div>';
+            html_contain+='</div>';
+            html_contain+='<input type="text" class="form-control paragraph" value="'+data+'"   placeholder="Enter Paragraph"/>';
+            html_contain+='<div class="input-group-prepend">';
+                html_contain+='<div role="button" onclick="carrot.bible.delete_paragraph(this);return false;" class="input-group-text btn-danger"><i class="fa-solid fa-delete-left"></i> &nbsp</div>';
+            html_contain+='</div>';
+            html_contain+='</div>';
+        });
+        html_contain+="</div>";
+        html_contain+='<button onclick="carrot.bible.add_paragraph();return false;" class="btn btn-sm btn-light"><i class="fa-solid fa-plus"></i> Add paragraph</button>';
+        frm.create_field("contain").set_type("msg").set_value(html_contain);
         var btn_add=frm.create_btn();
         btn_add.set_label("Add Chapter");
         btn_add.set_icon("fa-solid fa-square-check");
@@ -144,44 +208,33 @@ class Carrot_Bible{
     act_done_chapter_to_book(){
         var inp_name=$("#name").val();
         var inp_tip=$("#name").val();
-        var washingtonRef = this.carrot.db.collection("bible").doc("sáng thế 1");
+        var book_name=$(this.emp_book_cur_edit).attr("book_name");
+        var washingtonRef = this.carrot.db.collection("bible").doc(book_name);
 
         var chap_data=new Object();
         chap_data["name"]=inp_name;
         chap_data["tip"]=inp_tip;
-
-/*
-        washingtonRef.update({
-            contents : firebase.firestore.FieldValue.arrayUnion(chap_data)
+        var paragraphs=Array();
+        $(".paragraph").each(function(indext,emp){
+            paragraphs.push($(emp).val());
         });
-*/
-
+        chap_data["paragraphs"]=paragraphs;
         washingtonRef.update({
-            contents: firebase.firestore.FieldValue.arrayRemove(chap_data)
+            contents: firebase.firestore.FieldValue.arrayUnion(chap_data)
         });
+        carrot.msg("Update bible successfully");
+    }
 
+    add_paragraph(){
+        var html='';
+        html+='<div class="form-group">';
+        html+='<input type="text" class="form-control paragraph"  placeholder="Enter Paragraph">';
+        html+='</div>';
+        $("#paragraphs").append(html);
+    }
 
-        carrot.msg("Document successfully updated!");
-
-        /*
-        return washingtonRef.update({
-            contents:{
-                chap1:{
-                    "name":inp_name,
-                    "tip":inp_tip
-                },
-                chap2:{
-                    "name":inp_name,
-                    "tip":inp_tip
-                }
-            }
-        })  
-        .then(() => {
-            carrot.msg("Document successfully updated!");
-        })
-        .catch((error) => {
-            carrot.msg(error,"error");
-        });*/
+    delete_paragraph(emp){
+        $(emp).parent().parent().remove();
     }
 
     reload(carrot){
