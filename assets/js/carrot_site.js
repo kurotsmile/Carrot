@@ -961,8 +961,4 @@ class Carrot_Site{
         this.show(html);
         this.check_event();
     }
-
-    show_loading(){
-        Swal.fire({title:"Loading",html:'<i class="fa-solid fa-spinner fa-spin"></i>',showConfirmButton: false})
-    }
 }

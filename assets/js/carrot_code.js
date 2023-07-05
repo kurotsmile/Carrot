@@ -138,7 +138,7 @@ class Carrot_Code{
         html+='<div class="row mb-2">';
             html+='<div class="col-12 btn-group btn-sm" role="group" aria-label="Menu Lang Code">';
                 html+='<div class="btn-group mr-2 btn-sm" role="group" aria-label="First group">';
-                    html+='<button id="btn-add-code" class="btn btn-secondary btn-sm"><i class="fa-solid fa-square-plus"></i> Add Code</button>';
+                    html+='<button id="btn-add-code" class="btn btn-secondary btn-sm" onclick="carrot.code.add();return false;"><i class="fa-solid fa-square-plus"></i> Add Code</button>';
 
                     html+='<div class="btn-group" role="group">';
                         html+='<button class="btn btn-secondary dropdown-toggle btn-sm" type="button" id="btn_list_type_code" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-rectangle-list"></i> Select source code type</button>';
@@ -193,10 +193,6 @@ class Carrot_Code{
             var db_collection=$(this).attr("db_collection");
             var db_document=$(this).attr("db_document");
             carrot.get_doc(db_collection,db_document,carrot.code.show_info_code);
-        });
-
-        $("#btn-add-code").click(function(){
-            carrot.code.show_add_new();
         });
 
         $("#btn_download").click(function(){
