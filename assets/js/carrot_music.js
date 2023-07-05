@@ -362,8 +362,9 @@ class Carrot_Music{
         var frm=new Carrot_Form("frm_music",this.carrot);
         frm.set_icon(this.icon);
         frm.set_db("song","name");
+        frm.create_field("song_check").set_type("msg").set_value("");
         var btn_ytb_avatar=new Carrot_Btn();
-        btn_ytb_avatar.set_onclick("carrot.music.get_link_avatar_ytb()");
+        btn_ytb_avatar.set_onclick("carrot.music.check_music()");
         btn_ytb_avatar.set_icon("fa-solid fa-wand-magic-sparkles");
         frm.create_field("link_ytb").set_label("link ytb").add_btn_download_ytb().set_val(data["link_ytb"]).add_btn(btn_ytb_avatar).set_tip("Dán liên kết Youtube vào đây để nhập tự động thông tin bài hát");
         frm.create_field("name").set_label("Name").set_val(data["name"]).set_tip("Create id url by name").add_btn_search_google().add_btn_search_ytb().add_btn_toLower();
@@ -400,7 +401,7 @@ class Carrot_Music{
         return frm;
     }
 
-    get_link_avatar_ytb(){
+    check_music(){
         var link_ytb=$("#link_ytb").val();
         if(link_ytb.trim()==""){
             this.carrot.msg("Link Youtube Not Null!","error");
@@ -427,6 +428,17 @@ class Carrot_Music{
             html_thumb+='<a href="'+thumbnails_ytb.medium.url+'" target="_blank"><img class="rounded" src="'+thumbnails_ytb.medium.url+'"></a>';
             html_thumb+='</div>';
             $("#link_ytb_tip").html(html_thumb);
+        });
+
+        this.carrot.db.collection("song").where("link_ytb","==",link_ytb).get().then((querySnapshot) => {
+            $("#song_check").html("");
+            querySnapshot.forEach((doc) => {
+                $("#song_check").html('<i class="fa-solid fa-triangle-exclamation text-danger"></i> Có rồi mà đừng thêm vào!');
+            });
+        })
+        .catch((error) => {
+            this.carrot.log_error(error);
+            $("#song_check").html(error);
         });
     }
 
