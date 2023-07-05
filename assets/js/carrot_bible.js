@@ -5,9 +5,10 @@ class Carrot_Bible{
     emp_book_cur_edit=null;
     obj_bibles=null;
 
+    model_chapter_to_book="add";
     constructor(carrot){
         this.carrot=carrot;
-        this.carrot.register_page(this.id_page,"carrot.bible.list()","carrot.bible.edit","carrot.bible.show","carrot.bible.reload");
+        this.carrot.register_page(this.id_page,"carrot.bible.list()","carrot.bible.edit_book","carrot.bible.show","carrot.bible.reload");
         var btn_list=this.carrot.menu.create("bible").set_label("Bible").set_lang("bible").set_icon(this.icon).set_type("dev");
         $(btn_list).click(function(){carrot.bible.list();});
 
@@ -55,6 +56,8 @@ class Carrot_Bible{
             item_book.set_icon_font("fa-solid fa-book");
             item_book.set_class_body("col-11");
             item_book.set_name(book.name);
+            item_book.set_db("bible");
+            item_book.set_act_edit("carrot.bible.edit_book");
             var html_body='';
             html_body+='<div class="col-6">'+book.name+'</div>';
             html_body+='<div class="col-6 dev text-end">';
@@ -113,6 +116,7 @@ class Carrot_Bible{
         var new_data_chapter=new Object();
         new_data_chapter["name"]="";
         new_data_chapter["tip"]="";
+        this.model_chapter_to_book="add";
         this.frm_add_or_edit_chapter(new_data_chapter).set_title("Add Chapter To Book").show();
     }
 
@@ -121,6 +125,8 @@ class Carrot_Bible{
         var name_book=$(this.emp_book_cur_edit).attr("book_name");
         var data_book=JSON.parse(this.obj_bibles[name_book]);
         var contents=data_book["contents"];
+        this.emp_book_cur_edit["index_chapter"]=index_chapter;
+        this.model_chapter_to_book="update";
         this.frm_add_or_edit_chapter(contents[index_chapter]).set_title("Edit Chapter Book").show();
         Swal.close();
     }
@@ -137,8 +143,8 @@ class Carrot_Bible{
         this.add_book(data_new);
     }
 
-    edit(){
-
+    edit_book(data,carrot){
+        carrot.bible.frm_add_or_edit(data).set_title("Edit Book").set_msg_done("Edit book success!").show();
     }
 
     frm_add_or_edit(data){
@@ -163,7 +169,11 @@ class Carrot_Bible{
     done_list_chapter(data,carrot){
         var html='';
         $(data.contents).each(function(index,chapter){
-            html+='<div role="button" class="d-block m-1 text-justify bg-light"><i class="fa-solid fa-note-sticky"></i> '+chapter.name+' ('+chapter.paragraphs.length+') <button index="'+index+'" onclick="carrot.bible.edit_chapter(this);return false;" class="btn btn-sm btn-secondary float-end"><i class="fa-solid fa-file-pen"></i></button></div>';
+            html+='<div role="button" class="d-block m-1 text-justify bg-light">';
+            html+='<i class="fa-solid fa-note-sticky"></i> '+chapter.name+' ('+chapter.paragraphs.length+')';
+            html+='<button index="'+index+'" onclick="carrot.bible.edit_chapter(this);return false;" class="btn btn-sm btn-danger float-end"><i class="fa-solid fa-trash-can"></i></button>';
+            html+='<button index="'+index+'" onclick="carrot.bible.edit_chapter(this);return false;" class="btn btn-sm btn-secondary float-end"><i class="fa-solid fa-file-pen"></i></button>';
+            html+='</div>';
         });
         Swal.fire({
             title: data.name,
@@ -207,28 +217,51 @@ class Carrot_Bible{
 
     act_done_chapter_to_book(){
         var inp_name=$("#name").val();
-        var inp_tip=$("#name").val();
+        var inp_tip=$("#tip").val();
         var book_name=$(this.emp_book_cur_edit).attr("book_name");
-        var washingtonRef = this.carrot.db.collection("bible").doc(book_name);
-
         var chap_data=new Object();
         chap_data["name"]=inp_name;
         chap_data["tip"]=inp_tip;
+        var data_book=JSON.parse(this.obj_bibles[book_name]);
+        var contents=data_book["contents"];
+
         var paragraphs=Array();
         $(".paragraph").each(function(indext,emp){
             paragraphs.push($(emp).val());
         });
         chap_data["paragraphs"]=paragraphs;
-        washingtonRef.update({
-            contents: firebase.firestore.FieldValue.arrayUnion(chap_data)
-        });
-        carrot.msg("Update bible successfully");
+
+        if(this.model_chapter_to_book=="add"){
+            var washingtonRef = this.carrot.db.collection("bible").doc(book_name);
+            washingtonRef.update({
+                contents: firebase.firestore.FieldValue.arrayUnion(chap_data)
+            });
+            data_book.contents.push(chap_data);
+            this.obj_bibles[book_name]=data_book;
+            carrot.msg("Add chapter to book bible successfully!");
+        }
+        else{
+            var index_chapter=this.emp_book_cur_edit["index_chapter"];
+            contents[index_chapter]=chap_data;
+            data_book["contents"]=contents;
+            this.obj_bibles[book_name]=data_book;
+            this.carrot.set_doc("bible",book_name,data_book);
+            carrot.msg("Update chapter to book bible successfully!");
+        }
     }
 
     add_paragraph(){
         var html='';
-        html+='<div class="form-group">';
-        html+='<input type="text" class="form-control paragraph"  placeholder="Enter Paragraph">';
+        html+='<div class="input-group">';
+            html+='<div class="input-group-prepend">';
+                html+='<div class="input-group-text">New</div>';
+            html+='</div>';
+
+            html+='<input type="text" class="form-control paragraph" value=""   placeholder="Enter Paragraph"/>';
+
+            html+='<div class="input-group-prepend">';
+                html+='<div role="button" onclick="carrot.bible.delete_paragraph(this);return false;" class="input-group-text btn-danger"><i class="fa-solid fa-delete-left"></i> &nbsp</div>';
+            html+='</div>';
         html+='</div>';
         $("#paragraphs").append(html);
     }

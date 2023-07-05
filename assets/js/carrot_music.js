@@ -303,7 +303,7 @@ class Carrot_Music{
         item_music.set_class_icon("pe-0 col-3 btn_info_music");
         item_music.set_class_body("mt-2 col-9");
         var html_body='';
-        html_body+='<li class="col-6 ratfac">';
+        html_body+='<li class="col-8 ratfac">';
             if(data_music.artist!='') html_body+='<span class="d-block fs-8 mb-2">'+data_music.artist+'</span>';
             html_body+='<i class="bi text-warning fa-solid fa-music fa-2xs"></i>';
             html_body+='<i class="bi text-warning fa-solid fa-music fa-2xs"></i>';
@@ -312,10 +312,9 @@ class Carrot_Music{
             html_body+='<i class="bi fa-solid fa-music fa-2xs"></i>';
         html_body+='</li>';
 
-        html_body+='<div class="col-6 d-flex">'; 
-        html_body+='<span role="button" class="btn_info_music text-info" aud-name="'+data_music.name+'" obj_id="'+data_music.id+'" obj_index="'+data_music.index+'" style="margin-right: 6px;"><i class="fa-sharp fa-solid fa-circle-info fa-2x"></i></span> ';
-        if(data_music.link_ytb!="") html_body+='<span role="button" class="status_video float-end text-success btn-play-video"  aud-name="'+data_music.name+'" aud-index="'+data_music.index+'" style="margin-right: 6px;"><i class="fa-sharp fa-solid fa-film fa-2x"></i></span> ';
-        if(data_music.mp3!="") html_body+='<span role="button" class="status_music float-end text-success btn-play-music"  aud-name="'+data_music.name+'" aud-index="'+data_music.index+'"><i class="fa-sharp fa-solid fa-circle-play fa-2x"></i></span> ';
+        html_body+='<div class="col-4 text-end">'; 
+        if(data_music.mp3!="") html_body+='<span role="button" class="status_music float-end text-success btn-play-music m-1"  aud-name="'+data_music.name+'" aud-index="'+data_music.index+'"><i class="fa-sharp fa-solid fa-circle-play fa-2x"></i></span> ';
+        if(data_music.link_ytb!="") html_body+='<span role="button" class="status_video float-end text-success btn-play-video m-1"  aud-name="'+data_music.name+'" aud-index="'+data_music.index+'"><i class="fa-sharp fa-solid fa-film fa-2x"></i></span> ';
         html_body+='</div>';
 
         item_music.set_body(html_body);
@@ -447,7 +446,7 @@ class Carrot_Music{
             
             html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-4">';
             html+='<i class="'+this.icon+' fs-6 me-2"></i> <l class="lang" key_lang="other_music">Other Music</l>';
-            html+='<span role="button" onclick="carrot.music.show_list_music()" class="btn float-end btn-sm btn-secondary"><i class="fa-solid fa-square-caret-right"></i> <l class="lang" key_lang="view_all">View All</l></span>';
+            html+='<span role="button" onclick="carrot.music.show_list_music()" class="btn float-end btn-sm btn-light"><i class="fa-solid fa-square-caret-right"></i> <l class="lang" key_lang="view_all">View All</l></span>';
             html+='</h4>';
 
             html+='<div id="other_code" class="row m-0">';

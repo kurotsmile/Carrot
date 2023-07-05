@@ -3,6 +3,7 @@ class Carrot_File{
     icon="fa-solid fa-laptop-file";
     id_page="file";
     obj_files=null;
+    emp_msg_field_file=null;
 
     constructor(carrot){
         this.carrot=carrot;
@@ -88,9 +89,12 @@ class Carrot_File{
 
     frm_add_or_edit(data,carrot){
         var frm=new Carrot_Form("frm_file",carrot);
-        frm.set_db(carrot.file.id_page,"id");
+        frm.set_db(carrot.file.id_page,"name");
         frm.set_icon(carrot.file.icon);
-        frm.create_field("name").set_label("Name").set_value(data["name"]);
+        frm.create_field("name").set_label("Name").set_value(data["name"]).set_main();
+        frm.create_field("type").set_label("Type").set_value(data["type"]);
+        frm.create_field("type_emp").set_label("Type Emp").set_value(data["type_emp"]);
+        frm.create_field("url").set_label("Url").set_value(data["url"]);
         frm.create_field("fullPath").set_label("Full Path").set_value(data["fullPath"]);
         frm.create_field("size").set_label("Size").set_value(data["size"]);
         frm.create_field("generation").set_label("Generation").set_value(data["generation"]);
@@ -111,5 +115,71 @@ class Carrot_File{
         else if (bytes == 1)          { bytes = bytes + " byte"; }
         else                          { bytes = "0 bytes"; }
         return bytes;
+    }
+
+    msg_list_select(emp){
+        this.emp_msg_field_file=emp;
+        var type_file=$(emp).attr("type_file");
+        this.carrot.db.collection("file").where("type_emp","==",type_file).limit(50).get().then((querySnapshot) => {
+            if(querySnapshot.docs.length>0){
+                var files=new Object();
+                querySnapshot.forEach((doc) => {
+                    var data_file=doc.data();
+                    data_file["id"]=doc.id;
+                    files[doc.id]=JSON.stringify(data_file);
+                });
+                this.done_msg_list_select(files,this.carrot);
+            }else{
+                this.done_msg_list_select(null,this.carrot);
+            }
+        }).catch((error) => {
+            console.log(error);
+            this.carrot.msg(error.message,"error");
+        });
+    }
+
+    done_msg_list_select(data,carrot){
+        var html='';
+        var list_file=this.carrot.obj_to_array(data);
+        $(list_file).each(function(index,file){
+            html+="<img role='button' file_url='"+file.url+"' file_path='"+file.fullPath+"' onclick='carrot.file.select_file_for_msg(this)' style='width:50px' class='rounded m-1' src='"+file.url+"'/>";
+        });
+        
+        Swal.fire({
+            title: 'Select File',
+            html:html,
+            showCancelButton: false
+        });
+    }
+
+    select_file_for_msg(emp){
+        var file_url=$(emp).attr("file_url");
+        var file_path=$(emp).attr("file_path");
+        var emp_id=$(this.emp_msg_field_file).attr("emp_id");
+        $("#"+emp_id).attr("value",file_url).html(carrot.file.box_file_item(file_url,file_path));
+        Swal.close();
+    }
+
+    box_file_item(url_file,path_file){
+        var html='';
+        html+='<div class="d-block text-break">';
+            html+='<div class="card-body d-flex flex-column align-items-start">';
+                html+='<div class="row">';
+                
+                    html+='<div class="col-4">';
+                        html+='<img class="rounded card-img-left flex-auto d-none d-md-block" src="'+url_file+'"/>';
+                    html+='</div>';
+                    html+='<div class="col-6">';
+                        html+='<i class="fa-solid fa-file"></i><a href="'+url_file+'" target="_blank" class="text-break fs-9">'+url_file+'</a>';
+                    html+='</div>';
+
+                    html+='<div class="col-2">';
+                        html+='<span fullPath="'+path_file+'" onclick="delete_file(this);return false;" role="button" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash-can"></i></span>';
+                    html+='</div>';
+
+                html+='</div>';
+            html+='</div>';
+        html+='</div>';
+        return html;
     }
 }

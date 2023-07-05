@@ -393,7 +393,7 @@ class Carrot_Code{
             list_code= list_code.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
             html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-4">';
             html+='<i class="'+this.icon+' fs-6 me-2"></i> <l class="lang" key_lang="other_code">Other Code</l>';
-            html+='<span role="button" onclick="carrot.code.show_list_code()" class="btn float-end btn-sm btn-secondary"><i class="fa-solid fa-square-caret-right"></i> <l class="lang" key_lang="view_all">View All</l></span></h4>';
+            html+='<span role="button" onclick="carrot.code.show_list_code()" class="btn float-end btn-sm btn-light"><i class="fa-solid fa-square-caret-right"></i> <l class="lang" key_lang="view_all">View All</l></span></h4>';
             html+='<div id="other_code" class="row m-0">';
             for(var i=0;i<12;i++){
                 var code=list_code[i];

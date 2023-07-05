@@ -206,7 +206,6 @@ class Carrot_Field{
             html+='</select>';
         }
         else if(this.type=='color'){
-            //html+='<div id="'+this.name+'" class="form-control m-0 cr_field" value_color="'+this.value+'" type="color"></div>';
             html+='<input type="color" class="form-control form-control-color cr_field m-0"  id="'+this.name+'" value="'+this.value+'" title="Choose your color"></input>';
         }
         else if(this.type=='slider'||this.type=='range'){
@@ -242,12 +241,14 @@ class Carrot_Field{
         else if(this.type=='file'){
             html+='<div class="input-group mb-3">';
             html+='<input type="file" accept="'+this.type_file+'" class="form-control m-0 '+s_class+' form-control-sm" id="'+this.name+'_file" for-emp="'+this.name+'" placeholder="'+this.placeholder+'">';
+                html+='<div class="input-group-prepend dev">';
+                    html+='<div role="button" emp_id="'+this.name+'" type_file="'+this.type_file+'" onclick="carrot.file.msg_list_select(this);return false;" class="input-group-text btn-info btn-sm"><i class="fa-regular fa-folder-open"></i>&nbsp</div>';
+                html+='</div>';
             html+='</div>';
 
-            html+='<div class="card flex-md-row mb-4 box-shadow h-md-250">';
+            html+='<div class="card flex-md-row mb-4 box-shadow h-md-250 cr_field" type="'+this.type+'" id="'+this.name+'" value="'+this.value+'" >';
             html+='<div class="card-body d-flex flex-column align-items-start">';
-            html+='<span type="'+this.type+'" id="'+this.name+'" value="'+this.value+'" type="hidden" class="cr_field text-break fs-8 text-info"></span>';
-            if(this.value!=''&&this.value!=undefined){
+            if(this.value!=''&&this.value!=undefined&&this.value!='undefined'){
                 if(this.type_file=="image/*") html+='<img class="rounded card-img-left flex-auto d-none d-md-block" src="'+this.value+'"/>';
                 else if(this.type_file=="audio/*") html+='<audio controls muted><source src="'+this.value+'" type="audio/mpeg">Your browser does not support the audio element.</audio>';
                 else html+=this.value;
@@ -466,6 +467,7 @@ class Carrot_Form{
                     var metadata = {'contentType': file.type};
                     var type_file=file.type
                     var file_name=carrot.create_id()+"_"+file.name;
+                    var type_file_emp=$("#"+id_emp+"_file").attr("accept");
                     r.child(frm.db_collection+'/'+type_file+'/'+file_name).put(file, metadata).then(function (snapshot) {
                         var file_storage=snapshot.metadata;
                         var data_file=new Object();
@@ -476,13 +478,12 @@ class Carrot_Form{
                         data_file["size"]=file_storage.size;
                         data_file["timeCreated"]=file_storage.timeCreated;
                         data_file["type"]=type_file;
-                        carrot.set_doc("file",file_storage.generation,data_file);
+                        data_file["type_emp"]=type_file_emp;
                         $("#"+id_emp).html('<i class="fa-solid fa-spinner fa-spin"></i>');
                         snapshot.ref.getDownloadURL().then(function (url) {
-                            carrot.log('File available at :'+url);
-                            var html_file='';
-                            html_file+='<div class="d-block"><i class="fa-solid fa-file"></i> <a href="'+url+'" target="_blank">'+url+'</a><span fullPath="'+path_file+'" onclick="delete_file(this);return false;" role="button" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash-can"></i></span></div>';
-                            $("#"+id_emp).attr("value",url).html(html_file);
+                            data_file["url"]=url;
+                            $("#"+id_emp).attr("value",url).html(carrot.file.box_file_item(url,path_file));
+                            carrot.set_doc("file",file_storage.generation,data_file);
                         });
                     }).catch(function (error) {
                         carrot.log(error);
@@ -545,6 +546,7 @@ class Carrot_Form{
         $("#btn_"+this.name+"_close,.box_close").click(function(){
             $('#box').modal('toggle'); 
         });
+        carrot.check_mode_site();
     }
 
     getLocation_for_address(){

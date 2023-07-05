@@ -106,6 +106,7 @@ class Ai_Lover{
         frm.create_field("icon").set_label("Icon").set_type("file").set_type_file("image/*").set_value(data["icon"]);
         frm.create_field("img").set_label("Iamge").set_type("file").set_type_file("image/*").set_value(data["img"]);
         frm.create_field("type").set_label("Type").set_value(data["type"]);
+        frm.create_field("buy").set_label("Buy Status").add_option("0","Free").add_option("1","Buy").set_type("select").set_value(data["buy"]);
         return frm;
     }
 
@@ -160,6 +161,7 @@ class Ai_Lover{
     frm_add_or_edit_floor(data){
         var frm=new Carrot_Form("frm_floor",this.carrot);
         frm.set_icon("fa-solid fa-seedling");
+        frm.set_db("floor","id");
         frm.create_field("id").set_label("ID").set_value(data.id).set_main();
         frm.create_field("icon").set_label("Icon").set_value(data.icon).set_type("file").set_type_file("image/*");
         return frm;
