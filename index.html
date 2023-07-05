@@ -40,14 +40,13 @@
     <script src="assets/plugins/sweetalert2/sweetalert2.min.js"></script>
     <script src="assets/plugins/bootstrap/popper.min.js" ></script>
     <script src="assets/plugins/bootstrap/bootstrap.min.js" crossorigin="anonymous"></script>
-    <script src="assets/plugins/scroll-fixed/jquery-scrolltofixed-min.js"></script>
     <script src="assets/plugins/testimonial/js/owl.carousel.min.js"></script>
     <script src="assets/plugins/js-snackbar/js-snackbar.min.js"></script>
     <script src="assets/plugins/messagebox/messagebox.min.js"></script>
     <script src="assets/plugins/dataTables/jquery.dataTables.js"></script>
     <script src="assets/plugins/highlight/highlight.min.js" ></script>
-    <script src="assets/js/carrot_site.js?ver=22.1"></script>
-    <script src="assets/js/main.js?ver=22.1"></script>
+    <script src="assets/js/carrot_site.js?ver=23.1"></script>
+    <script src="assets/js/main.js?ver=23.1"></script>
 
     <script>
         var PAYPAL_CLIENT = 'AYgLieFpLUDxi_LBdzDqT2ucT4MIa-O0vwX7w3CKGfQgMGROOHu-xz2y5Jes77owCYQ1eLmOII_ch2VZ';
@@ -57,7 +56,7 @@
     
 </head>
 
-<body id="main">
+<body style="padding: 0px !important;">
     <header class="head" id="head">
         <div class="logo border-bottom">
             <img role="button" id="logo_carrot" class="w-100" src="images/logo.jpg" alt="Carrot Store" onclick="carrot.home()" />
@@ -114,6 +113,7 @@
                 </div>
             </div>
         </div>
+
         <div id="main_contain" class="section-container p-2 p-xl-4">
             <div class="row m-0">
                 <div class="col-10">
@@ -128,10 +128,11 @@
         </div>
     </div>
 
-    <div class="modal " tabindex="-1" role="dialog" id="box"  data-target=".bd-example-modal-lg">
-        <div id="modal_body" class="modal-dialog" role="document">
-          <div class="modal-content" id="box_body"></div>
-        </div>
-    </div>
+
 </body>
+<div class="modal fade  bd-example-modal-lg" tabindex="0" role="dialog" id="box" data-target="bd-example-modal-lg">
+    <div id="modal_body" class="modal-dialog" role="document">
+      <div class="modal-content" id="box_body"></div>
+    </div>
+</div>
 </html>

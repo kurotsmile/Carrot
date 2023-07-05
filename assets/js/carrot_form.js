@@ -247,18 +247,7 @@ class Carrot_Field{
             html+='</div>';
 
             html+='<div class="card flex-md-row mb-4 box-shadow h-md-250 cr_field" type="'+this.type+'" id="'+this.name+'" value="'+this.value+'" >';
-            html+='<div class="card-body d-flex flex-column align-items-start">';
-            if(this.value!=''&&this.value!=undefined&&this.value!='undefined'){
-                if(this.type_file=="image/*") html+='<img class="rounded card-img-left flex-auto d-none d-md-block" src="'+this.value+'"/>';
-                else if(this.type_file=="audio/*") html+='<audio controls muted><source src="'+this.value+'" type="audio/mpeg">Your browser does not support the audio element.</audio>';
-                else html+=this.value;
-            }
-            html+='<h3 class="mb-0"><a class="text-dark">'+this.type_file+'</a></h3>';
-            if(this.value!=''){
-                html+='<div class="mb-1 text-muted">Link</div>';
-                html+='<p class="card-text mb-auto text-break"><a href="'+this.value+'" target="_blank">'+this.value+'</a></p>';
-            }
-            html+='</div>';
+            html+=carrot.file.box_file_item(this.value,this.value,this.type_file);
             html+='</div>';
 
             html+='</div>';
@@ -540,11 +529,11 @@ class Carrot_Form{
                 eval(frm.s_act_func_done);
             else
                 carrot.call_func_by_id_page(frm.db_collection,"reload")
-            $('#box').modal('toggle');
+            $('#box').modal('hide');
         });
 
         $("#btn_"+this.name+"_close,.box_close").click(function(){
-            $('#box').modal('toggle'); 
+            $('#box').modal('hide'); 
         });
         carrot.check_mode_site();
     }

@@ -142,7 +142,7 @@ class Carrot_File{
         var html='';
         var list_file=this.carrot.obj_to_array(data);
         $(list_file).each(function(index,file){
-            html+="<img role='button' file_url='"+file.url+"' file_path='"+file.fullPath+"' onclick='carrot.file.select_file_for_msg(this)' style='width:50px' class='rounded m-1' src='"+file.url+"'/>";
+            html+="<img role='button' file_url='"+file.url+"' file_type='"+file.type_emp+"' file_path='"+file.fullPath+"' onclick='carrot.file.select_file_for_msg(this)' style='width:50px' class='rounded m-1' src='"+file.url+"'/>";
         });
         
         Swal.fire({
@@ -155,28 +155,41 @@ class Carrot_File{
     select_file_for_msg(emp){
         var file_url=$(emp).attr("file_url");
         var file_path=$(emp).attr("file_path");
+        var file_type=$(emp).attr("file_type");
         var emp_id=$(this.emp_msg_field_file).attr("emp_id");
-        $("#"+emp_id).attr("value",file_url).html(carrot.file.box_file_item(file_url,file_path));
+        $("#"+emp_id).attr("value",file_url).html(carrot.file.box_file_item(file_url,file_path,file_type));
         Swal.close();
     }
 
-    box_file_item(url_file,path_file){
+    box_file_item(url_file,path_file,type_file){
+        if(url_file==""||url_file==undefined||url_file=='undefined') return "";
         var html='';
         html+='<div class="d-block text-break">';
             html+='<div class="card-body d-flex flex-column align-items-start">';
                 html+='<div class="row">';
-                
-                    html+='<div class="col-4">';
-                        html+='<img class="rounded card-img-left flex-auto d-none d-md-block" src="'+url_file+'"/>';
-                    html+='</div>';
-                    html+='<div class="col-6">';
-                        html+='<i class="fa-solid fa-file"></i><a href="'+url_file+'" target="_blank" class="text-break fs-9">'+url_file+'</a>';
-                    html+='</div>';
-
-                    html+='<div class="col-2">';
-                        html+='<span fullPath="'+path_file+'" onclick="delete_file(this);return false;" role="button" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash-can"></i></span>';
-                    html+='</div>';
-
+                    if (type_file == "image/*") {
+                        html += '<div class="col-4">';
+                        html += '<img class="rounded card-img-left flex-auto d-none d-md-block" src="'+url_file+'"/>';
+                        html += '</div>';
+                        html += '<div class="col-6">';
+                        html += '<a href="'+url_file+'" target="_blank" class="text-break fs-9"><i class="fa-solid fa-image"></i>'+url_file+'</a>';
+                        html += '</div>';
+                        html += '<div class="col-2">';
+                        html += '<span fullPath="'+path_file+'" onclick="delete_file(this);return false;" role="button" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash-can"></i></span>';
+                        html += '</div>';
+                    } else if (type_file == "audio/*") {
+                        html += '<div class="col-10">';
+                        html += '<audio syle="width:100%" controls muted><source src="'+url_file+'" type="audio/mpeg">Your browser does not support the audio element.</audio>';
+                        html += '<a href="'+url_file+'" target="_blank" class="text-break fs-9 d-block"><i class="fa-solid fa-file-audio"></i>'+url_file+'</a>';
+                        html += '</div>';
+                        html += '<div class="col-2">';
+                        html += '<span fullPath="'+path_file+'" onclick="delete_file(this);return false;" role="button" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash-can"></i></span>';
+                        html += '</div>';
+                    } else {
+                        html += '<div class="col-12">';
+                        html += '<b>'+type_file+'</b>:<a href="'+url_file+'" target="_blank" class="text-break fs-9"><i class="fa-solid fa-file"></i>'+url_file+'</a>';
+                        html += '</div>';
+                    }
                 html+='</div>';
             html+='</div>';
         html+='</div>';

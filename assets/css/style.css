@@ -712,3 +712,6 @@ html {
   background-color: #89c52927;
 }
 
+body:not(.modal-open){
+  padding-right: 0px !important;
+}

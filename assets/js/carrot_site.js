@@ -45,6 +45,7 @@ class Carrot_Site{
     player_media;
     file;
     pay;
+    radio;
     
     constructor(){
         var carrot=this;
@@ -89,6 +90,7 @@ class Carrot_Site{
         $('head').append('<script type="text/javascript" src="assets/js/carrot_code.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_icon.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_background.js?ver='+this.get_ver_cur("js")+'"></script>');
+        $('head').append('<script type="text/javascript" src="assets/js/carrot_radio.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/ai_lover.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/ai_chat.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_menu.js?ver='+this.get_ver_cur("js")+'"></script>');
@@ -111,8 +113,9 @@ class Carrot_Site{
         this.user=new Carrot_user(this);
         this.music=new Carrot_Music(this);
         this.code=new Carrot_Code(this);
-        this.icon=new Carrot_Icon(this);
+        this.icon=new Carrot_Icon(this); 
         this.audio=new Carrot_Audio(this);
+        this.radio=new Carrot_Radio(this);
         this.background=new Carrot_Background(this);
         this.bible=new Carrot_Bible(this);
         this.avatar=new Carrot_Avatar(this);
@@ -180,7 +183,7 @@ class Carrot_Site{
     }
 
     get_doc(s_collection,s_id_document,act_done){
-        Swal.showLoading();
+        Swal.showLoading(Swal.getDenyButton());
         this.log("Get " + s_collection+"."+s_id_document+" from server","alert");
         this.db.collection(s_collection).doc(s_id_document).get().then((doc) => {
             if (doc.exists) {
@@ -817,8 +820,8 @@ class Carrot_Site{
     }
 
     box(html){
-        $('#box').modal('show');
         $('#box_body').html(html);
+        $('#box').modal("show");
     }
 
     delete_cache_obj_by_collection(db_collection){
@@ -850,8 +853,8 @@ class Carrot_Site{
         carrot.check_event();
     }
 
-    msg(msg,s_icon='success'){
-        Swal.fire({icon:s_icon,title: msg,showConfirmButton: false,timer: 1500})
+    msg(msg,s_icon='success',timer=1500){
+        Swal.fire({icon:s_icon,title: msg,showConfirmButton: false,timer: timer})
     }
 
     show_pay(id_product,name_product,tip_product,price,act_done){
@@ -957,5 +960,9 @@ class Carrot_Site{
         html+='</div>';
         this.show(html);
         this.check_event();
+    }
+
+    show_loading(){
+        Swal.fire({title:"Loading",html:'<i class="fa-solid fa-spinner fa-spin"></i>',showConfirmButton: false})
     }
 }
