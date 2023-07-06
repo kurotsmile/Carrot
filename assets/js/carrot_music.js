@@ -9,6 +9,9 @@ class Carrot_Music{
 
     info_song_cur=null;
 
+    orderBy_at="publishedAt";
+    orderBy_type="desc";
+
     constructor(carrot){
         this.carrot=carrot;
         this.load_obj_song();
@@ -32,12 +35,10 @@ class Carrot_Music{
 
     show_list_music(){
         if(this.carrot.check_ver_cur("song")==false){
-            this.carrot.log("Get list song from sever and show","alert");
-            this.carrot.get_list_doc("song",this.act_done_list_music);
+            this.get_data_from_server();
         }else{
             if(this.obj_songs==null){
-                this.carrot.log("Get list song from sever and show","alert");
-                this.carrot.get_list_doc("song",this.act_done_list_music);
+                this.get_data_from_server();
             }
             else{
                 this.carrot.log("Show list song from cache","success");
@@ -46,11 +47,36 @@ class Carrot_Music{
         }
     }
 
-    act_done_list_music(obj_data,carrot){
-        carrot.update_new_ver_cur("song",true);
-        carrot.music.obj_songs=obj_data;
-        localStorage.setItem("obj_songs",JSON.stringify(carrot.music.obj_songs));
-        carrot.music.show_list_music_by_obj_songs(carrot);
+    get_data_from_server(){
+        Swal.showLoading();
+        this.carrot.log("Get list song from sever and show","alert");
+        this.carrot.db.collection("song").orderBy(this.orderBy_at,this.orderBy_type).limit(200).get().then((querySnapshot) => {
+            if(querySnapshot.docs.length>0){
+                this.obj_songs=Object();
+                querySnapshot.forEach((doc) => {
+                    var data_song=doc.data();
+                    data_song["id"]=doc.id;
+                    this.obj_songs[doc.id]=JSON.stringify(data_song);
+                });
+                this.carrot.update_new_ver_cur("song",true);
+                localStorage.setItem("obj_songs",JSON.stringify(this.obj_songs));
+                this.show_list_music_by_obj_songs(carrot);
+                Swal.close();
+            }else{
+                this.carrot.msg("None List song!","alert");
+                Swal.close();
+            }
+        }).catch((error) => {
+            console.log(error);
+            this.carrot.msg(error.message,"error");
+            Swal.close();
+        });
+    }
+
+    get_list_orderBy(orderBy_at,orderBy_type){
+        carrot.music.orderBy_at=orderBy_at;
+        carrot.music.orderBy_type=orderBy_type;
+        carrot.music.get_data_from_server();
     }
 
     show_list_music_by_obj_songs(carrot){
@@ -59,7 +85,34 @@ class Carrot_Music{
         carrot.player_media.set_act_next(carrot.music.next_music);
         carrot.player_media.set_act_prev(carrot.music.prev_music);
         var list_song=carrot.convert_obj_to_list(this.obj_songs);
-        var html='<div class="row m-0">';
+        var html='';
+        html+='<div class="row mb-1 mt-0">';
+            html+='<div class="col-12">';
+                html+='<div class="col-12" >';
+                    html+='<div class="btn-group mr-2 btn-sm" role="group" aria-label="First group">';
+                        var s_active="active";
+                        if(carrot.music.orderBy_at=="publishedAt"&&carrot.music.orderBy_type=="desc") s_active="active";
+                        else s_active="";
+                        html+='<button id="btn-add-code" class="btn btn-success btn-sm '+s_active+'" onclick="carrot.music.get_list_orderBy(\'publishedAt\',\'desc\');return false;"><i class="fa-solid fa-arrow-up-9-1"></i> Date</button>';
+                        if(carrot.music.orderBy_at=="publishedAt"&&carrot.music.orderBy_type=="asc") s_active="active";
+                        else s_active="";
+                        html+='<button id="btn-add-code" class="btn btn-success btn-sm '+s_active+'" onclick="carrot.music.get_list_orderBy(\'publishedAt\',\'asc\');return false;"><i class="fa-solid fa-arrow-down-1-9"></i> Date</button>';
+                    html+='</div>';
+
+                    html+='<div class="btn-group mr-2 btn-sm" role="group" aria-label="First group">';
+                        if(carrot.music.orderBy_at=="name"&&carrot.music.orderBy_type=="desc") s_active="active";
+                        else s_active="";
+                        html+='<button id="btn-add-code" class="btn btn-success btn-sm '+s_active+'" onclick="carrot.music.get_list_orderBy(\'name\',\'desc\');return false;"><i class="fa-solid fa-arrow-up-a-z"></i> Name</button>';
+                        if(carrot.music.orderBy_at=="name"&&carrot.music.orderBy_type=="asc") s_active="active";
+                        else s_active="";
+                        html+='<button id="btn-add-code" class="btn btn-success btn-sm '+s_active+'" onclick="carrot.music.get_list_orderBy(\'name\',\'asc\');return false;"><i class="fa-solid fa-arrow-down-z-a"></i> Name</button>';
+                    html+='</div>';
+
+                html+='</div>';
+            html+='</div>';
+        html+='</div>';
+
+        html+='<div class="row m-0">';
         $(list_song).each(function(index,song){
             song["index"]=index;
             html+=carrot.music.box_music_item(song);
@@ -143,7 +196,6 @@ class Carrot_Music{
             carrot.msg("Bài hát không tồn tại","error");
             carrot.show_404();
         }
-
     }
 
     show_info_music(data){
@@ -333,6 +385,7 @@ class Carrot_Music{
         data_music["album"]="";
         data_music["year"]="";
         data_music["date"]=$.datepicker.formatDate('yy-mm-dd', new Date());
+        data_music["publishedAt"]="";
         data_music["lang"]=this.carrot.lang;
         this.frm_add_or_edit(data_music).set_title("Add Music").set_msg_done("Add song success!").show();
         this.extenion_fnc_form();
@@ -394,6 +447,7 @@ class Carrot_Music{
         for(var i=new Date().getFullYear()+10;i>1960;i--) year_field.add_option(i,"Year "+i);
 
         frm.create_field("date").set_label("Date Create").set_type("date").set_val(data["date"]);
+        frm.create_field("publishedAt").set_label("publishedAt").set_val(data["publishedAt"]);
         var lang_field=frm.create_field("lang").set_label("Lang").set_val(data["lang"]).set_type("select");
         $(this.carrot.langs.list_lang).each(function(index,lang_data){
             lang_field.add_option(lang_data.key,lang_data.name);
@@ -410,6 +464,7 @@ class Carrot_Music{
         var id_ytb=this.carrot.player_media.get_youtube_id(link_ytb);
         $("#link_ytb").val("https://www.youtube.com/watch?v="+id_ytb);
         $.get("https://www.googleapis.com/youtube/v3/videos?part=snippet&id=" + id_ytb + "&key=AIzaSyDtrxOBgBfiRLaxKP0p_UzfE2-hsjHNKBw", function(data) {
+            console.log(data);
             $("#name").val(data.items[0].snippet.title);
             if(data.items[0].snippet.defaultLanguage!=null){
                 var lang_song=data.items[0].snippet.defaultLanguage;
@@ -417,8 +472,13 @@ class Carrot_Music{
                 $("#lang").val(l_sog[0]);
             }
             $("#album").val(data.items[0].snippet.channelTitle);
-            var tags=data.items[0].snippet.tags;
-            $("#artist").val(tags[0]);
+            if(data.items[0].snippet.tags!=null){
+                var tags=data.items[0].snippet.tags;
+                $("#artist").val(tags[0]);
+            }else{
+                $("#artist").val(data.items[0].snippet.channelTitle);
+            }
+            $("#publishedAt").val(data.items[0].snippet.publishedAt);
             var day_ytb = new Date(data.items[0].snippet.publishedAt);
             $("#year").val(day_ytb.getFullYear());
             $('.richText-editor').html(data.items[0].snippet.description.replace(/\n/g,'<br/>'));

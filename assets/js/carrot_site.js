@@ -183,7 +183,7 @@ class Carrot_Site{
     }
 
     get_doc(s_collection,s_id_document,act_done){
-        Swal.showLoading(Swal.getDenyButton());
+        Swal.showLoading();
         this.log("Get " + s_collection+"."+s_id_document+" from server","alert");
         this.db.collection(s_collection).doc(s_id_document).get().then((doc) => {
             if (doc.exists) {

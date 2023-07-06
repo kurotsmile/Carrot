@@ -471,7 +471,7 @@ class Carrot_Form{
                         $("#"+id_emp).html('<i class="fa-solid fa-spinner fa-spin"></i>');
                         snapshot.ref.getDownloadURL().then(function (url) {
                             data_file["url"]=url;
-                            $("#"+id_emp).attr("value",url).html(carrot.file.box_file_item(url,path_file));
+                            $("#"+id_emp).attr("value",url).html(carrot.file.box_file_item(url,path_file,type_file_emp));
                             carrot.set_doc("file",file_storage.generation,data_file);
                         });
                     }).catch(function (error) {
