@@ -126,6 +126,10 @@ class AI_Chat{
         $("#btn_add_chat").click(function(){
             chat.show_add();
         });
+
+        $("#box_input_search").change(function(){
+            alert("sdsd");
+        });
         this.carrot.check_event();
     }
 }

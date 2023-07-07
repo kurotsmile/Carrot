@@ -910,12 +910,14 @@ class Carrot_Site{
             html+=this.icon.list_for_home();
             html+=this.user.list_for_home();
             html+=this.audio.list_for_home();
+            html+=this.radio.list_for_home();
             this.show(html);
             this.app.check_btn_for_list_app();
             this.music.check_event();
             this.code.check_event();
             this.user.check_event();
             this.audio.check_event();
+            this.radio.check_event();
         }else{
             this.app.list();
         }

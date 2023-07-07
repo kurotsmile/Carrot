@@ -11,7 +11,10 @@ class Carrot_Langs{
     constructor(carrot){
         this.carrot=carrot;
 
-        if(localStorage.getItem("lang") == null) this.change_lang("en"); else this.carrot.lang = localStorage.getItem("lang");
+        if(localStorage.getItem("lang") == null) this.change_lang("en"); else {
+            this.carrot.lang = localStorage.getItem("lang");
+            this.lang_setting = localStorage.getItem("lang");
+        }
         if(localStorage.getItem("list_lang") != null) this.list_lang=JSON.parse(localStorage.getItem("list_lang"));
         if(localStorage.getItem("lang_web")!=null) this.lang_web=JSON.parse(localStorage.getItem("lang_web"));
         if(localStorage.getItem("obj_lang_web")!=null) this.obj_lang_web=JSON.parse(localStorage.getItem("obj_lang_web"))
@@ -71,6 +74,7 @@ class Carrot_Langs{
 
     change_lang(s_key){
         this.carrot.lang=s_key;
+        this.lang_setting=s_key;
         localStorage.setItem("lang", s_key);
         $("#key_lang").html(s_key);
     }
@@ -117,11 +121,11 @@ class Carrot_Langs{
         });
     }
 
-    list_btn_lang_select(){
+    list_btn_lang_select(class_button='btn-secondary'){
         var html='';
         var langs=this;
         html+='<div class="btn-group" role="group">';
-        html+='<button class="btn btn-secondary dropdown-toggle btn-sm" type="button" id="btn_list_lang_ai" data-bs-toggle="dropdown" aria-expanded="true" >';
+        html+='<button class="btn '+class_button+' dropdown-toggle btn-sm" type="button" id="btn_list_lang_ai" data-bs-toggle="dropdown" aria-expanded="true" >';
         html+='<i class="fa-solid fa-rectangle-list"></i> <l class="lang" key_lang="select_lang">Change country</l> ('+langs.lang_setting+')';
         html+='</button>';
         html+='<div class="dropdown-menu" aria-labelledby="btn_list_lang_ai">';

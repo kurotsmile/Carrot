@@ -50,7 +50,7 @@ class Carrot_Music{
     get_data_from_server(){
         Swal.showLoading();
         this.carrot.log("Get list song from sever and show","alert");
-        this.carrot.db.collection("song").orderBy(this.orderBy_at,this.orderBy_type).limit(200).get().then((querySnapshot) => {
+        this.carrot.db.collection("song").where("lang","==",this.carrot.langs.lang_setting).orderBy(this.orderBy_at,this.orderBy_type).limit(200).get().then((querySnapshot) => {
             if(querySnapshot.docs.length>0){
                 this.obj_songs=Object();
                 querySnapshot.forEach((doc) => {
@@ -87,8 +87,7 @@ class Carrot_Music{
         var list_song=carrot.convert_obj_to_list(this.obj_songs);
         var html='';
         html+='<div class="row mb-1 mt-0">';
-            html+='<div class="col-12">';
-                html+='<div class="col-12" >';
+            html+='<div class="col-8">';
                     html+='<div class="btn-group mr-2 btn-sm" role="group" aria-label="First group">';
                         var s_active="active";
                         if(carrot.music.orderBy_at=="publishedAt"&&carrot.music.orderBy_type=="desc") s_active="active";
@@ -99,7 +98,7 @@ class Carrot_Music{
                         html+='<button id="btn-add-code" class="btn btn-success btn-sm '+s_active+'" onclick="carrot.music.get_list_orderBy(\'publishedAt\',\'asc\');return false;"><i class="fa-solid fa-arrow-down-1-9"></i> Date</button>';
                     html+='</div>';
 
-                    html+='<div class="btn-group mr-2 btn-sm" role="group" aria-label="First group">';
+                    html+='<div class="btn-group mr-2 btn-sm" role="group" aria-label="Last group">';
                         if(carrot.music.orderBy_at=="name"&&carrot.music.orderBy_type=="desc") s_active="active";
                         else s_active="";
                         html+='<button id="btn-add-code" class="btn btn-success btn-sm '+s_active+'" onclick="carrot.music.get_list_orderBy(\'name\',\'desc\');return false;"><i class="fa-solid fa-arrow-up-a-z"></i> Name</button>';
@@ -107,9 +106,13 @@ class Carrot_Music{
                         else s_active="";
                         html+='<button id="btn-add-code" class="btn btn-success btn-sm '+s_active+'" onclick="carrot.music.get_list_orderBy(\'name\',\'asc\');return false;"><i class="fa-solid fa-arrow-down-z-a"></i> Name</button>';
                     html+='</div>';
-
-                html+='</div>';
             html+='</div>';
+
+            html+='<div class="col-4">';
+                html+='<div class="btn-group mr-2 btn-sm float-end" role="group" aria-label="End group">';
+                html+=carrot.langs.list_btn_lang_select('btn-success');
+                html+='</div>';
+            html+='</div>'
         html+='</div>';
 
         html+='<div class="row m-0">';
@@ -158,7 +161,13 @@ class Carrot_Music{
                 window.open(carrot.music.info_song_cur.mp3, "_blank");
             else
                 carrot.show_pay("song","Download Music ("+carrot.music.info_song_cur.name+")","Get file mp3 thi song from Carrot Music","1.99",carrot.music.pay_success);
-        })
+        });
+
+        $(".btn-setting-lang-change").click(function(){
+            var key_change=$(this).attr("key_change");
+            carrot.langs.lang_setting=key_change;
+            carrot.music.get_data_from_server();
+        });
 
         carrot.check_event();
     }
@@ -341,6 +350,7 @@ class Carrot_Music{
     }
 
     box_music_item(data_music,s_class='col-md-4 mb-3'){
+        if(data_music==null) return "";
         var s_url_avatar="";
         if(data_music.avatar!=null) s_url_avatar=data_music.avatar;
         if(s_url_avatar=="") s_url_avatar="images/150.png";
