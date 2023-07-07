@@ -120,7 +120,7 @@ class Carrot_File{
     msg_list_select(emp){
         this.emp_msg_field_file=emp;
         var type_file=$(emp).attr("type_file");
-        this.carrot.db.collection("file").where("type_emp","==",type_file).limit(50).get().then((querySnapshot) => {
+        this.carrot.db.collection("file").where("type_emp","==",type_file).orderBy("timeCreated","desc").limit(50).get().then((querySnapshot) => {
             if(querySnapshot.docs.length>0){
                 var files=new Object();
                 querySnapshot.forEach((doc) => {

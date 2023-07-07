@@ -2,7 +2,8 @@ class Carrot_Icon{
     carrot;
     obj_icon=null;
     icon="fa-solid fa-face-smile";
-    
+    emp_msg_field_file=null;
+
     constructor(carrot){
         this.carrot=carrot;
         this.load_obj_icon();

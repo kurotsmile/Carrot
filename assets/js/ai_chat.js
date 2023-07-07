@@ -117,6 +117,7 @@ class AI_Chat{
     }
 
     check_event(){
+        this.carrot.check_event();
         var chat=this;
         $(".btn-setting-lang-change").click(function(){
             var key_change=$(this).attr("key_change");
@@ -130,6 +131,5 @@ class AI_Chat{
         $("#box_input_search").change(function(){
             alert("sdsd");
         });
-        this.carrot.check_event();
     }
 }

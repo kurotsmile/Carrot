@@ -6,6 +6,8 @@ class Carrot_Bible{
     obj_bibles=null;
 
     model_chapter_to_book="add";
+    count_chapter=0;
+
     constructor(carrot){
         this.carrot=carrot;
         this.carrot.register_page(this.id_page,"carrot.bible.list()","carrot.bible.edit_book","carrot.bible.show","carrot.bible.reload");
@@ -193,6 +195,10 @@ class Carrot_Bible{
         frm.create_field("tip").set_label("chapter Tip").set_value(data["tip"]);
         var html_contain='';
         html_contain+="<div id='paragraphs'>";
+        if(data.paragraphs!=null)
+            this.count_chapter=data.paragraphs.length;
+        else
+            this.index_chapter=0;
         $(data.paragraphs).each(function(index,data){
             html_contain+='<div class="input-group">';
             html_contain+='<div class="input-group-prepend">';
@@ -252,16 +258,22 @@ class Carrot_Bible{
 
     add_paragraph(){
         var html='';
+        this.count_chapter+=1;
         html+='<div class="input-group">';
             html+='<div class="input-group-prepend">';
-                html+='<div class="input-group-text">New</div>';
+                html+='<div class="input-group-text">'+this.count_chapter+'</div>';
             html+='</div>';
 
-            html+='<input type="text" class="form-control paragraph" value=""   placeholder="Enter Paragraph"/>';
+            html+='<input id="p_'+this.count_chapter+'" type="text" class="form-control paragraph" value=""   placeholder="Enter Paragraph"/>';
 
             html+='<div class="input-group-prepend">';
-                html+='<div role="button" onclick="carrot.bible.delete_paragraph(this);return false;" class="input-group-text btn-danger"><i class="fa-solid fa-delete-left"></i> &nbsp</div>';
+                html+='<div  role="button" onclick="paste_tag(\'p_'+this.count_chapter+'\');return false;" class="input-group-text"><i class="fa-solid fa-clipboard"></i> &nbsp</div>';
             html+='</div>';
+
+            html+='<div class="input-group-prepend">';
+                html+='<div  role="button" onclick="carrot.bible.delete_paragraph(this);return false;" class="input-group-text btn-danger"><i class="fa-solid fa-delete-left"></i> &nbsp</div>';
+            html+='</div>';
+
         html+='</div>';
         $("#paragraphs").append(html);
     }
