@@ -46,4 +46,8 @@ class Carrot_Pay{
         carrot.show(html);
         carrot.check_event();
     }
+
+    list_product(){
+        
+    }
 }

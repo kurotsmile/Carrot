@@ -27,7 +27,7 @@ class Carrot_App{
         if (localStorage.getItem("obj_app") != null) this.obj_app=JSON.parse(localStorage.getItem("obj_app"));
     }
 
-    save_obj_app(){
+    save_obj(){
         localStorage.setItem("obj_app", JSON.stringify(this.obj_app));
     }
 
@@ -54,7 +54,7 @@ class Carrot_App{
     get_data_app_done(apps,carrot){
         carrot.log("Get app data from sever");
         carrot.app.obj_app=apps;
-        carrot.app.save_obj_app();
+        carrot.app.save_obj();
         carrot.update_new_ver_cur("app",true);
         if(carrot.app.type_show!="") carrot.app.show_list_app_from_data();
     }
@@ -165,24 +165,28 @@ class Carrot_App{
 
     show_app_by_id(id_box_app,carrot){
         carrot.log("Show app by id:"+id_box_app,"info");
-        if(carrot.app.obj_app==null){
-            carrot.log("Load info app "+id_box_app+" from sever","alert");
-            carrot.get_doc("app",id_box_app,carrot.app.show_app_info);
-        }else{
-            if(carrot.app.obj_app[id_box_app]==null){
+        if(carrot.check_ver_cur("app")){
+            if(carrot.app.obj_app==null){
                 carrot.log("Load info app "+id_box_app+" from sever","alert");
                 carrot.get_doc("app",id_box_app,carrot.app.show_app_info);
             }else{
-                carrot.log("Load info app "+id_box_app+" from cache","success");
-                var data_app=JSON.parse(carrot.app.obj_app[id_box_app]);
-                carrot.app.show_app_info(data_app,carrot);
+                if(carrot.app.obj_app[id_box_app]==null){
+                    carrot.log("Load info app "+id_box_app+" from sever","alert");
+                    carrot.get_doc("app",id_box_app,carrot.app.show_app_info);
+                }else{
+                    carrot.log("Load info app "+id_box_app+" from cache","success");
+                    var data_app=JSON.parse(carrot.app.obj_app[id_box_app]);
+                    carrot.app.show_app_info(data_app,carrot);
+                }
             }
+        }else{
+            carrot.get_doc("app",id_box_app,carrot.app.show_app_info);
         }
     }
 
     show_app_info(data,carrot){
         if(data==null) $.MessageBox(carrot.l("no_obj"));
-        carrot.change_title_page(data.name_en,"?p=app&id="+data.id);
+        carrot.change_title_page(data.name_en,"?p=app&id="+data.id,"app");
         var html='<div class="section-container p-2 p-xl-4">';
         html+='<div class="row">';
             html+='<div class="col-md-8 ps-4 ps-lg-3">';
@@ -258,7 +262,7 @@ class Carrot_App{
 
                 if(data["img1"]!=""&&data["img1"]!=undefined){
                     html+='<div class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
-                    html+='<h4 class="fw-semi fs-5 lang" key_lang="imag_describe">Screenshots</h4>';
+                    html+='<h4 class="fw-semi fs-5 lang" key_lang="screenshots">Screenshots</h4>';
                         html+='<div class="owl-carousel owl-theme">';
                         for(var i=1;i<=8;i++){
                             var key_img_data="img"+i;
@@ -273,67 +277,8 @@ class Carrot_App{
                     html+='<p class="fs-8 text-justify">'+data["describe_"+carrot.lang]+'</p>';
                 html+='</div>';
     
-                html+='<div class="about row p-2 py-3  bg-white mt-4 shadow-sm">';
-                    html+='<h4 class="fw-semi fs-5 lang" key_lang="review">Review</h4>';
-    
-                    html+='<div class="row m-0 reviewrow p-3 px-0 border-bottom">';
-                        html+='<div class="col-md-12 align-items-center col-9 rcolm">';
-                            html+='<div class="review">';
-                                html+='<li class="col-8 ratfac">';
-                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
-                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
-                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
-                                    html+='<i class="bi fa-solid fa-star"></i>';
-                                    html+='<i class="bi fa-solid fa-star"></i>';
-                                html+='</li>';
-                            html+='</div>';
-    
-                            html+='<h3 class="fs-6 fw-semi mt-2">Vinoth kumar<small class="float-end fw-normal"> 20 Aug 2022 </small></h3>';
-                            html+='<div class="review-text">Great work, keep it up</div>';
-    
-                        html+='</div>';
-                        html+='<div class="col-md-2"></div>';
-                    html+='</div>';
-    
-                    html+='<div class="row m-0 reviewrow p-3 px-0 border-bottom">';
-                        html+='<div class="col-md-12 align-items-center col-9 rcolm">';
-                            html+='<div class="review">';
-                                html+='<li class="col-8 ratfac">';
-                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
-                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
-                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
-                                    html+='<i class="bi fa-solid fa-star"></i>';
-                                    html+='<i class="bi fa-solid fa-star"></i>';
-                                html+='</li>';
-                            html+='</div>';
-    
-                            html+='<h3 class="fs-6 fw-semi mt-2">Vinoth kumar<small class="float-end fw-normal"> 20 Aug 2022 </small></h3>';
-                            html+='<div class="review-text">Great work, keep it up</div>';
-    
-                        html+='</div>';
-                        html+='<div class="col-md-2"></div>';
-                    html+='</div>';
-    
-                    html+='<div class="row m-0 reviewrow p-3 px-0 border-bottom">';
-                        html+='<div class="col-md-12 align-items-center col-9 rcolm">';
-                            html+='<div class="review">';
-                                html+='<li class="col-8 ratfac">';
-                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
-                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
-                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
-                                    html+='<i class="bi fa-solid fa-star"></i>';
-                                    html+='<i class="bi fa-solid fa-star"></i>';
-                                html+='</li>';
-                            html+='</div>';
-    
-                            html+='<h3 class="fs-6 fw-semi mt-2">Vinoth kumar<small class="float-end fw-normal"> 20 Aug 2022 </small></h3>';
-                            html+='<div class="review-text">Great work, keep it up</div>';
-    
-                        html+='</div>';
-                        html+='<div class="col-md-2"></div>';
-                    html+='</div>';
-    
-                html+='</div>';
+                html+=carrot.rate.box_comment(data);
+
             html+="</div>";
     
             html+='<div class="col-md-4">';

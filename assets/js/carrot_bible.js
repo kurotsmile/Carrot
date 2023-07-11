@@ -4,6 +4,7 @@ class Carrot_Bible{
     id_page="bible";
     emp_book_cur_edit=null;
     obj_bibles=null;
+    obj_bible_cur=null;
 
     model_chapter_to_book="add";
     count_chapter=0;
@@ -11,10 +12,14 @@ class Carrot_Bible{
     constructor(carrot){
         this.carrot=carrot;
         this.carrot.register_page(this.id_page,"carrot.bible.list()","carrot.bible.edit_book","carrot.bible.show","carrot.bible.reload");
-        var btn_list=this.carrot.menu.create("bible").set_label("Bible").set_lang("bible").set_icon(this.icon).set_type("dev");
+        var btn_list=this.carrot.menu.create("bible").set_label("Bible").set_lang("bible").set_icon(this.icon).set_type("main");
         $(btn_list).click(function(){carrot.bible.list();});
 
         if(localStorage.getItem("obj_bibles")!=null) this.obj_bibles=JSON.parse(localStorage.getItem("obj_bibles"));
+    }
+
+    save_obj(){
+        localStorage.setItem("obj_bibles",JSON.stringify(this.obj_bibles));
     }
 
     list(){
@@ -32,6 +37,7 @@ class Carrot_Bible{
                     data_book["id"]=doc.id;
                     this.obj_bibles[doc.id]=JSON.stringify(data_book);
                 });
+                this.save_obj();
                 this.act_get_list_book_done(this.obj_bibles,this.carrot);
             }else{
                 this.act_get_list_book_done(null,this.carrot);
@@ -51,25 +57,10 @@ class Carrot_Bible{
         var html_new_testament='';
 
         $(list_book).each(function(index,book){
-            var item_book=new Carrot_List_Item(carrot);
-            item_book.set_id(book.id);
+            var item_book=carrot.bible.box_book_item(book);
             item_book.set_index(index);
-            item_book.set_class("col-12 mt-1");
-            item_book.set_icon_font("fa-solid fa-book");
-            item_book.set_class_body("col-11");
-            item_book.set_name(book.name);
-            item_book.set_db("bible");
-            item_book.set_act_edit("carrot.bible.edit_book");
-            var html_body='';
-            html_body+='<div class="col-6">'+book.name+'</div>';
-            html_body+='<div class="col-6 dev text-end">';
-                html_body+='<i role="button" book_name="'+book.name+'" onclick="carrot.bible.list_chapter(this)" class="fa-solid fa-rectangle-list m-1"></i>';
-                html_body+='<i role="button" book_name="'+book.name+'" onclick="carrot.bible.add_chapter_to_book(this)" class="fa-solid fa-pen-to-square m-1"></i>';
-                html_body+='<i role="button" book_name="'+book.name+'" onclick="carrot.bible.add_chapter_to_book(this)" class="fa-solid fa-folder-plus m-1"></i>';
-            html_body+='</div>';
-            item_book.set_body(html_body);
             if(book.type=="old_testament")
-                html_old_testament+=item_book.html();
+                html_old_testament+=item_book.html();   
             else
                 html_new_testament+=item_book.html();
         });
@@ -89,15 +80,169 @@ class Carrot_Bible{
             html+='</div>';
         html+='</div>';
         carrot.show(html);
+
         $(".btn-setting-lang-change").click(function(){
             var key_change=$(this).attr("key_change");
             carrot.bible.get_list_by_key_lang(key_change);
         });
-        carrot.check_event();
+
+        $(".bible_icon").click(function(){
+            var obj_id=$(this).attr("obj_id");
+            carrot.bible.list_pub_bible_chapter(obj_id);
+        });
+
+        carrot.bible.check_event();
+    }
+
+    box_book_item(book){
+        var item_book=new Carrot_List_Item(this.carrot);
+        item_book.set_id(book.id);
+        item_book.set_class("col-12 mt-1");
+        item_book.set_icon_font("fa-solid fa-book bible_icon");
+        item_book.set_class_body("col-11");
+        item_book.set_name(book.name);
+        item_book.set_db("bible");
+        item_book.set_act_edit("carrot.bible.edit_book");
+        var html_body='';
+        html_body+='<div class="col-6">'+book.name+'</div>';
+        html_body+='<div class="col-6 dev text-end">';
+            html_body+='<i role="button" book_name="'+book.id+'" onclick="carrot.bible.list_chapter(this)" class="fa-solid fa-rectangle-list m-1"></i>';
+            html_body+='<i role="button" book_name="'+book.id+'" onclick="carrot.bible.add_chapter_to_book(this)" class="fa-solid fa-folder-plus m-1"></i>';
+        html_body+='</div>';
+        item_book.set_body(html_body);
+        return item_book;
+    }
+
+    list_pub_bible_chapter(id_book){
+        var html='';
+        var data_book=JSON.parse(this.obj_bibles[id_book]);
+        var contents=data_book.contents;
+        this.obj_bible_cur=data_book;
+        html+='<div class="row">';
+        html+='<div class="col-12"><button onclick="carrot.bible.list();return false;" class="btn btn-sm btn-secondary"><i class="fa-solid fa-square-caret-left"></i> Back</button></div>';
+        html+='</div>';
+
+        html+='<div class="row">';
+        $(contents).each(function(index,bible){
+            bible["id"]=index;
+            html+=carrot.bible.box_chapter_item(bible);
+        });
+        html+='</div>'
+        this.carrot.show(html);
+        this.carrot.bible.check_event();
+    }
+
+    back_list_bible_chapter(){
+        this.list_pub_bible_chapter(this.obj_bible_cur.id);
+    }
+
+    list_pub_bible_paragraph_in_chapter(index_id){
+        var html='';
+        var contents=this.obj_bible_cur.contents;
+        var data_contents=contents[index_id];
+        var carrot=this.carrot;
+        html+='<div class="row m-0">';
+        html+='<div class="col-12">';
+            html+='<button onclick="carrot.bible.list();return false;" class="btn btn-sm btn-secondary mr-1"><i class="fa-solid fa-synagogue"></i> All Book</button> ';
+            html+='<button onclick="carrot.bible.back_list_bible_chapter();return false;" class="btn btn-sm btn-secondary"><i class="fa-solid fa-square-caret-left"></i> Back</button>';
+        html+='</div>';
+        html+='</div>';
+
+        html+='<div class="section-container p-2 p-xl-4">';
+        html+='<div class="row">';
+
+            html+='<div class="col-8">';
+                html+='<div class="about row p-2 py-3 bg-white shadow-sm">';
+                    html+='<div class="col-md-2 p-3 text-center">';
+                        html+='<i class="fa-solid fa-book-bible fa-5x"></i>';
+                    html+='</div>';
+
+                    html+='<div class="col-md-10 p-2">';
+                        html+='<h4 class="fw-semi fs-4 mb-3">'+this.obj_bible_cur.name+'</h4>';
+                        html+='<div class="row pt-4">';
+                        
+                            html+='<div class="col-md-4 col-6 text-center">';
+                                html+='<b><l class="lang" key_lang="bible_type">Type</l> <i class="fa-solid fa-book-journal-whills"></i></b>';
+                                html+='<p>'+this.obj_bible_cur.type+'</p>';
+                            html+='</div>';
+
+                            html+='<div class="col-md-4 col-6 text-center">';
+                                html+='<b><l class="lang" key_lang="bible_count_p">Paragraphs</l> <i class="fa-solid fa-book-quran"></i></b>';
+                                html+='<p>'+data_contents.paragraphs.length+'</p>';
+                            html+='</div>';
+
+                            html+='<div class="col-md-4 col-6 text-center">';
+                                html+='<b><l class="lang" key_lang="country">Country</l> <i class="fa-solid fa-language"></i></b>';
+                                html+='<p>'+this.obj_bible_cur.lang+'</p>';
+                            html+='</div>';
+
+                        html+='</div>';
+
+                        html+='<div class="row pt-4">';
+                            html+='<div class="col-12">';
+                                html+='<button id="btn_share" type="button" class="btn d-inline btn-success"><i class="fa-solid fa-share-nodes"></i> <l class="lang" key_lang="share">Share</l> </button> ';
+                                html+='<button onclick="carrot.bible.download();return false;" class="btn d-inline btn-success"><i class="fa-brands fa-paypal"></i> Download</button>';
+                            html+='</div>';
+                        html+='</div>';
+                    html+='</div>';
+                html+='</div>';
+
+                html+='<div class="about row p-2 py-3 bg-white mt-2 shadow-sm">';
+                    html+='<h4 class="fw-semi fs-5" > Chapter '+parseInt(parseInt(index_id)+1)+'</h4>';
+                    html+='<div>';
+                        $(data_contents.paragraphs).each(function(index,p){
+                            html+='<small class="fs-8" style="position: relative;bottom: 1ex;font-size: 80%;">'+(index+1)+'</small> <span class="text-dark">'+p+'</span> ';
+                        });
+                    html+='</div>';
+                html+='</div>';
+
+                html+=carrot.rate.box_comment(this.obj_bible_cur);
+
+            html+='</div>';
+
+            html+='<div class="col-4">';
+            html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-3 lang"  key_lang="related_bible">Related Bible</h4>';
+            $(this.obj_bible_cur.contents).each(function(index,bible){
+                if(index_id!=index){
+                    bible["id"]=index;
+                    html+=carrot.bible.box_chapter_item(bible,"col-12 mt-1");
+                }
+            });
+            html+='</div>';
+
+        html+='</div>';
+        html+='</div>';
+
+        html+=this.list_for_home();
+        this.carrot.show(html);
+        this.carrot.bible.check_event();
+    }
+
+    box_chapter_item(data,s_class="col-4 mt-1"){
+        var item_chapter=new Carrot_List_Item(this.carrot);
+        item_chapter.set_id(data.id);
+        item_chapter.set_class(s_class);
+        item_chapter.set_icon_font("fa-solid fa-book-tanakh bible_chapter_icon");
+        item_chapter.set_class_body("col-11");
+        item_chapter.set_label(data.name);
+        item_chapter.set_tip(data.tip);
+        return item_chapter.html();
+    }
+
+    check_event(){
+        if(this.obj_bibles!=null){
+            this.carrot.check_event();
+
+            $(".bible_chapter_icon").click(function(){
+                var obj_id=$(this).attr("obj_id");
+                carrot.bible.list_pub_bible_paragraph_in_chapter(obj_id);
+            });
+        }
     }
 
     data_bible_new(){
         var data_new=new Object();
+        data_new["id"]=this.carrot.create_id();
         data_new["name"]="";
         data_new["type"]="old_testament";
         data_new["lang"]=this.carrot.langs.lang_setting;
@@ -152,7 +297,8 @@ class Carrot_Bible{
     frm_add_or_edit(data){
         var frm=new Carrot_Form("frm_bible",this.carrot);
         frm.set_icon(this.icon);
-        frm.set_db("bible","name");
+        frm.set_db("bible","id");
+        frm.create_field("id").set_label("Book Id").set_value(data["id"]).set_type("id").set_main();
         frm.create_field("name").set_label("Book Name").set_value(data["name"]).add_btn_toLower();
         frm.create_field("type").set_label("Book Type").add_option("old_testament","Old Testament").add_option("new_testament","New Testament").set_type("select").set_value(data["type"]);
         var field_lang=frm.create_field("lang").set_label("Book Lang").set_value(data["lang"]).set_type("select");
@@ -238,6 +384,7 @@ class Carrot_Bible{
         chap_data["paragraphs"]=paragraphs;
 
         if(this.model_chapter_to_book=="add"){
+            if(data_book.contents==null) data_book.contents=Array();
             var washingtonRef = this.carrot.db.collection("bible").doc(book_name);
             washingtonRef.update({
                 contents: firebase.firestore.FieldValue.arrayUnion(chap_data)
@@ -284,5 +431,32 @@ class Carrot_Bible{
 
     reload(carrot){
         carrot.bible.list();
+    }
+
+    download(){
+        alert("Test download");
+    }
+
+    list_for_home(){
+        var html='';
+        if(this.obj_bibles!=null){
+            var list_bible=this.carrot.obj_to_array(this.obj_bibles);
+            list_bible= list_bible.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
+
+            html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-4">';
+            html+='<i class="'+this.icon+' fs-6 me-2"></i> <l class="lang" key_lang="bible">Bible</l>';
+            html+='<span role="button" onclick="carrot.bible.list()" class="btn float-end btn-sm btn-light"><i class="fa-solid fa-square-caret-right"></i> <l class="lang" key_lang="view_all">View All</l></span>';
+            html+='</h4>';
+
+            html+='<div id="other_code" class="row m-0">';
+            $(list_bible).each(function (index,b){
+                var item_book=carrot.bible.box_book_item(b);
+                item_book.set_index(index);
+                item_book.set_class("col-4");
+                html+=item_book.html();
+            });
+            html+='</div>';
+        }
+        return html;
     }
 }

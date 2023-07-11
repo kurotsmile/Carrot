@@ -46,6 +46,7 @@ class Carrot_Site{
     file;
     pay;
     radio;
+    rate;
     
     constructor(){
         var carrot=this;
@@ -91,6 +92,7 @@ class Carrot_Site{
         $('head').append('<script type="text/javascript" src="assets/js/carrot_icon.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_background.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_radio.js?ver='+this.get_ver_cur("js")+'"></script>');
+        $('head').append('<script type="text/javascript" src="assets/js/carrot_rate.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/ai_lover.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/ai_chat.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_menu.js?ver='+this.get_ver_cur("js")+'"></script>');
@@ -126,6 +128,7 @@ class Carrot_Site{
         this.player_media=new Carrot_Player_Media(this);
         this.file=new Carrot_File(this);
         this.pay=new Carrot_Pay(this);
+        this.rate=new Carrot_Rate(this);
 
         var btn_mod_host=this.menu.create("btn_mode_host").set_label("Change Mode Host").set_type("setting").set_icon("fa-brands fa-dev");
         $(btn_mod_host).click(function(){carrot.change_host_connection();});
@@ -577,6 +580,8 @@ class Carrot_Site{
 
         $("#btn_share").click(function(){carrot.show_share();});
         $('#register_protocol_url').click(function(){carrot.register_protocol_url();});
+        
+        this.rate.check_event();
         this.check_mode_site();
     }
 
@@ -829,6 +834,7 @@ class Carrot_Site{
         if(db_collection=="icon") this.icon.delete_obj_icon();
         if(db_collection=="song") this.music.delete_obj_song();
         if(db_collection=="code") this.code.delete_obj_code();
+        if(db_collection=="audio") this.audio.delete_obj_audios();
         if(this.id_page=="address_book") this.user.delete_obj_phone_book();
     }
 
@@ -853,8 +859,12 @@ class Carrot_Site{
         carrot.check_event();
     }
 
-    msg(msg,s_icon='success',timer=1500){
-        Swal.fire({icon:s_icon,title: msg,showConfirmButton: false,timer: timer})
+    msg(msg,s_icon='success',timer=6500){
+        Swal.fire({
+            icon:s_icon,
+            title: msg,
+            timer: timer
+        });
     }
 
     show_pay(id_product,name_product,tip_product,price,act_done){
@@ -911,6 +921,7 @@ class Carrot_Site{
             html+=this.user.list_for_home();
             html+=this.audio.list_for_home();
             html+=this.radio.list_for_home();
+            html+=this.bible.list_for_home();
             this.show(html);
             this.app.check_btn_for_list_app();
             this.music.check_event();

@@ -221,7 +221,7 @@ class Carrot_user{
         carrot.user.phone_book_info_cur=data_user;
         if(data_user.avatar!=null) url_avatar=data_user.avatar;
         if(url_avatar=="") url_avatar="images/avatar_default.png";
-        carrot.change_title_page(data_user.name,"?p=phone_book&id="+data_user.id+"&user_lang="+data_user.lang);
+        carrot.change_title_page(data_user.name,"?p=phone_book&id="+data_user.id+"&user_lang="+data_user.lang,"user-"+data_user.lang);
         var html='<div class="section-container p-2 p-xl-4">';
         html+='<div class="row">';
             html+='<div class="col-md-8 ps-4 ps-lg-3">';
@@ -234,10 +234,13 @@ class Carrot_user{
                         html+=carrot.btn_dev("user-"+data_user.lang,data_user.id,"user");
 
                         html+='<div class="row pt-4">';
-                            html+='<div class="col-md-4 col-6 text-center">';
-                                html+='<b>Email <i class="fa-solid fa-envelopes-bulk"></i></b>';
-                                html+='<p class="lang" key_lang="email">'+data_user.email+'</p>';
-                            html+='</div>';
+                            if(data_user.email!=""){
+                                html+='<div class="col-md-4 col-6 text-center">';
+                                    html+='<b>Email <i class="fa-solid fa-envelopes-bulk"></i></b>';
+                                    html+='<p class="lang" key_lang="email">'+data_user.email+'</p>';
+                                html+='</div>';
+                            }
+
                             html+='<div class="col-md-4 col-6 text-center">';
                                 if(data_user.sex=="0"){
                                     html+='<b><l class="lang" key_lang="gender">Sex</l> <i class="fa-solid fa-mars"></i></b>';
@@ -280,75 +283,16 @@ class Carrot_user{
                     }
                 }
 
-                html+='<div class="about row p-2 py-3  bg-white mt-4 shadow-sm">';
-                    html+='<h4 class="fw-semi fs-5 lang" key_lang="review">Review</h4>';
-    
-                    html+='<div class="row m-0 reviewrow p-3 px-0 border-bottom">';
-                        html+='<div class="col-md-12 align-items-center col-9 rcolm">';
-                            html+='<div class="review">';
-                                html+='<li class="col-8 ratfac">';
-                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
-                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
-                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
-                                    html+='<i class="bi fa-solid fa-star"></i>';
-                                    html+='<i class="bi fa-solid fa-star"></i>';
-                                html+='</li>';
-                            html+='</div>';
-    
-                            html+='<h3 class="fs-6 fw-semi mt-2">Vinoth kumar<small class="float-end fw-normal"> 20 Aug 2022 </small></h3>';
-                            html+='<div class="review-text">Great work, keep it up</div>';
-    
-                        html+='</div>';
-                        html+='<div class="col-md-2"></div>';
-                    html+='</div>';
-    
-                    html+='<div class="row m-0 reviewrow p-3 px-0 border-bottom">';
-                        html+='<div class="col-md-12 align-items-center col-9 rcolm">';
-                            html+='<div class="review">';
-                                html+='<li class="col-8 ratfac">';
-                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
-                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
-                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
-                                    html+='<i class="bi fa-solid fa-star"></i>';
-                                    html+='<i class="bi fa-solid fa-star"></i>';
-                                html+='</li>';
-                            html+='</div>';
-    
-                            html+='<h3 class="fs-6 fw-semi mt-2">Vinoth kumar<small class="float-end fw-normal"> 20 Aug 2022 </small></h3>';
-                            html+='<div class="review-text">Great work, keep it up</div>';
-    
-                        html+='</div>';
-                        html+='<div class="col-md-2"></div>';
-                    html+='</div>';
-    
-                    html+='<div class="row m-0 reviewrow p-3 px-0 border-bottom">';
-                        html+='<div class="col-md-12 align-items-center col-9 rcolm">';
-                            html+='<div class="review">';
-                                html+='<li class="col-8 ratfac">';
-                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
-                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
-                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
-                                    html+='<i class="bi fa-solid fa-star"></i>';
-                                    html+='<i class="bi fa-solid fa-star"></i>';
-                                html+='</li>';
-                            html+='</div>';
-    
-                            html+='<h3 class="fs-6 fw-semi mt-2">Vinoth kumar<small class="float-end fw-normal"> 20 Aug 2022 </small></h3>';
-                            html+='<div class="review-text">Great work, keep it up</div>';
-    
-                        html+='</div>';
-                        html+='<div class="col-md-2"></div>';
-                    html+='</div>';
-    
-                html+='</div>';
+                html+=carrot.rate.box_comment(data_user);
+
             html+="</div>";
     
             html+='<div class="col-md-4">';
             html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-3 lang"  key_lang="related_songs">Related User</h4>';
             var list_user_other= carrot.convert_obj_to_list(carrot.user.obj_phone_book).map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
+            var count_show=0;
             for(var i=0;i<list_user_other.length;i++){
                 var u_data=list_user_other[i];
-                var count_show=0;
                 if(u_data.sex==data_user.sex){
                     if(data_user.id!=u_data.id){
                         html+=carrot.user.box_user_item(u_data,'col-md-12 mb-3');
@@ -356,12 +300,13 @@ class Carrot_user{
                         if(count_show>12) break;
                     }
                 }
-                
             };
             html+='</div>';
-    
+
         html+="</div>";
         html+="</div>";
+
+        html+=carrot.user.list_for_home();
         carrot.show(html);
         carrot.user.check_event();
     }
@@ -394,6 +339,16 @@ class Carrot_user{
         }else{
             return "";
         }
+    }
+
+    get_user_cur_info_comment(){
+        var data_info={
+            name:this.obj_login.name,
+            id:this.obj_login.id,
+            avatar:this.obj_login.avatar,
+            lang:this.obj_login.lang
+        }
+        return data_info;
     }
 
     download_vcard() {

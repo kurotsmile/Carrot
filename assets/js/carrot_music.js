@@ -27,6 +27,10 @@ class Carrot_Music{
         if(localStorage.getItem("obj_songs")!=null) this.obj_songs=JSON.parse(localStorage.getItem("obj_songs"));
     }
 
+    save_obj(){
+        localStorage.setItem("obj_songs",JSON.stringify(this.obj_songs));
+    }
+
     delete_obj_song(){
         localStorage.removeItem("obj_songs");
         this.obj_songs=null;
@@ -59,7 +63,7 @@ class Carrot_Music{
                     this.obj_songs[doc.id]=JSON.stringify(data_song);
                 });
                 this.carrot.update_new_ver_cur("song",true);
-                localStorage.setItem("obj_songs",JSON.stringify(this.obj_songs));
+                this.save_obj();
                 this.show_list_music_by_obj_songs(carrot);
                 Swal.close();
             }else{
@@ -284,48 +288,8 @@ class Carrot_Music{
                     html+='<p class="fs-8 text-justify">'+data.lyrics.replaceAll(". ","</br>")+'</p>';
                 html+='</div>';
     
-                html+='<div class="about row p-2 py-3  bg-white mt-4 shadow-sm">';
-                    html+='<h4 class="fw-semi fs-5 lang" key_lang="review">Review</h4>';
-    
-                    html+='<div class="row m-0 reviewrow p-3 px-0 border-bottom">';
-                        html+='<div class="col-md-12 align-items-center col-9 rcolm">';
-                            html+='<div class="review">';
-                                html+='<li class="col-8 ratfac">';
-                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
-                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
-                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
-                                    html+='<i class="bi fa-solid fa-star"></i>';
-                                    html+='<i class="bi fa-solid fa-star"></i>';
-                                html+='</li>';
-                            html+='</div>';
-    
-                            html+='<h3 class="fs-6 fw-semi mt-2">Vinoth kumar<small class="float-end fw-normal"> 20 Aug 2022 </small></h3>';
-                            html+='<div class="review-text">Great work, keep it up</div>';
-    
-                        html+='</div>';
-                        html+='<div class="col-md-2"></div>';
-                    html+='</div>';
-    
-                    html+='<div class="row m-0 reviewrow p-3 px-0 border-bottom">';
-                        html+='<div class="col-md-12 align-items-center col-9 rcolm">';
-                            html+='<div class="review">';
-                                html+='<li class="col-8 ratfac">';
-                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
-                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
-                                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
-                                    html+='<i class="bi fa-solid fa-star"></i>';
-                                    html+='<i class="bi fa-solid fa-star"></i>';
-                                html+='</li>';
-                            html+='</div>';
-    
-                            html+='<h3 class="fs-6 fw-semi mt-2">Vinoth kumar<small class="float-end fw-normal"> 20 Aug 2022 </small></h3>';
-                            html+='<div class="review-text">Great work, keep it up</div>';
-    
-                        html+='</div>';
-                        html+='<div class="col-md-2"></div>';
-                    html+='</div>';
-    
-                html+='</div>';
+                html+=carrot.rate.box_comment(data);
+                
             html+="</div>";
     
             html+='<div class="col-md-4">';
@@ -385,6 +349,7 @@ class Carrot_Music{
 
     add(){
         var data_music=new Object();
+        data_music["id"]="song"+this.carrot.create_id();
         data_music["name"]="";
         data_music["avatar"]="";
         data_music["artist"]="";
@@ -424,11 +389,12 @@ class Carrot_Music{
     frm_add_or_edit(data){
         var frm=new Carrot_Form("frm_music",this.carrot);
         frm.set_icon(this.icon);
-        frm.set_db("song","name");
+        frm.set_db("song","id");
         frm.create_field("song_check").set_type("msg").set_value("");
         var btn_ytb_avatar=new Carrot_Btn();
         btn_ytb_avatar.set_onclick("carrot.music.check_music()");
         btn_ytb_avatar.set_icon("fa-solid fa-wand-magic-sparkles");
+        frm.create_field("id").set_label("ID Song").set_value(data["id"]).set_type("id");
         frm.create_field("link_ytb").set_label("link ytb").add_btn_download_ytb().set_val(data["link_ytb"]).add_btn(btn_ytb_avatar).set_tip("Dán liên kết Youtube vào đây để nhập tự động thông tin bài hát");
         frm.create_field("name").set_label("Name").set_val(data["name"]).set_tip("Create id url by name").add_btn_search_google().add_btn_search_ytb().add_btn_toLower();
         frm.create_field("avatar").set_label("Avatar (url)").set_val(data["avatar"]).set_type("file").set_type_file("image/*");

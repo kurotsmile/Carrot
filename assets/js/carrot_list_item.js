@@ -36,6 +36,10 @@ class Carrot_List_Item{
         this.set_name(s_title);
     }
 
+    set_label(s_label){
+        this.set_name(s_label);
+    }
+
     set_icon(s_url){
         this.icon_img=s_url;
     }
