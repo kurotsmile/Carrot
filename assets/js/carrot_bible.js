@@ -88,11 +88,6 @@ class Carrot_Bible{
             carrot.bible.get_list_by_key_lang(key_change);
         });
 
-        $(".bible_icon").click(function(){
-            var obj_id=$(this).attr("obj_id");
-            carrot.bible.list_pub_bible_chapter(obj_id);
-        });
-
         carrot.bible.check_event();
     }
 
@@ -245,6 +240,11 @@ class Carrot_Bible{
     check_event(){
         if(this.obj_bibles!=null){
             this.carrot.check_event();
+            
+            $(".bible_icon").click(function(){
+                var obj_id=$(this).attr("obj_id");
+                carrot.bible.list_pub_bible_chapter(obj_id);
+            });
 
             $(".bible_chapter_icon").click(function(){
                 var obj_id=$(this).attr("obj_id");
@@ -469,7 +469,7 @@ class Carrot_Bible{
             $(list_bible).each(function (index,b){
                 var item_book=carrot.bible.box_book_item(b);
                 item_book.set_index(index);
-                item_book.set_class("col-4");
+                item_book.set_class("col-4 mt-2");
                 html+=item_book.html();
             });
             html+='</div>';

@@ -388,8 +388,8 @@ class Carrot_Langs{
             if (key_lang != carrot.lang) {
                 langs.change_lang(key_lang);
                 langs.get_data_lang_web();
-                carrot.delete_ver_cur("user");
                 carrot.delete_ver_cur("song");
+                carrot.user.delete_obj_phone_book();
                 carrot.check_show_by_id_page();
                 Swal.close();
             };

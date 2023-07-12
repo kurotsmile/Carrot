@@ -53,7 +53,7 @@ class Carrot_Music{
 
     get_data_from_server(){
         Swal.showLoading();
-        this.carrot.log("Get list song from sever and show","alert");
+        this.carrot.log("Get list song from sever and show","warning");
         this.carrot.db.collection("song").where("lang","==",this.carrot.langs.lang_setting).orderBy(this.orderBy_at,this.orderBy_type).limit(200).get().then((querySnapshot) => {
             if(querySnapshot.docs.length>0){
                 this.obj_songs=Object();

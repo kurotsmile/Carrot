@@ -23,7 +23,7 @@ class Carrot_Rate{
 
             html += data_user_login.name;
         } else {
-            html += '<img src="images/avatar_default.png"/>';
+            html += '<img role="button" emp_img="avatar_user_incognito" id="avatar_user_incognito" onclick="carrot.avatar.msg_list_select(this);return false" src="images/avatar_default.png"/>';
             html += "Incognito";
         }
         html += '</div>';

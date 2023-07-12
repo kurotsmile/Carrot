@@ -160,7 +160,7 @@ class Carrot_Site{
     }
 
     setup_sever_db(){
-        this.log("setup_sever_db","alert");
+        this.log("setup_sever_db","warning");
         if (localStorage.getItem("is_localhost") == null) {
             this.is_localhost = false;
         } else {
@@ -181,12 +181,12 @@ class Carrot_Site{
     }
 
     set_doc(s_collection,s_document,data){
-        this.log("Set " + s_collection+"."+s_document+" from server","alert");
+        this.log("Set " + s_collection+"."+s_document+" from server","warning");
         this.db.collection(s_collection).doc(s_document).set(data);
     }
 
     update_doc(s_collection,s_document,data){
-        this.log("Update " + s_collection+"."+s_document+" from server","alert");
+        this.log("Update " + s_collection+"."+s_document+" from server","warning");
         var washingtonRef = this.db.collection(s_collection).doc(s_document);
         return washingtonRef.update(data).then(() => {
             console.log("Document successfully updated!");
@@ -201,7 +201,7 @@ class Carrot_Site{
 
     get_doc(s_collection,s_id_document,act_done){
         Swal.showLoading();
-        this.log("Get " + s_collection+"."+s_id_document+" from server","alert");
+        this.log("Get " + s_collection+"."+s_id_document+" from server","warning");
         this.db.collection(s_collection).doc(s_id_document).get().then((doc) => {
             if (doc.exists) {
                 var data_obj = doc.data();
@@ -222,7 +222,7 @@ class Carrot_Site{
     }
 
     get_list_doc(s_collection,act_done){
-        this.log("Get List " + s_collection+" from server","alert");
+        this.log("Get List " + s_collection+" from server","warning");
         this.db.collection(s_collection).get().then((querySnapshot) => {
             var obj_data=Object();
             querySnapshot.forEach((doc) => {
@@ -725,6 +725,7 @@ class Carrot_Site{
 
     log(s_msg,s_status="info") {
         console.log(s_msg);
+        if(s_status=="alert") s_msg="warning";
         if(this.mode_site=="dev") SnackBar({message: s_msg,timeout: 5000,status:s_status,position:'tr'});
     }
 
@@ -736,7 +737,7 @@ class Carrot_Site{
                 icon: 'error',
                 html: error.toString(),
                 showCloseButton: true,
-                focusConfirm: false
+                focusConfirm: true
             });
         }
     }
@@ -874,10 +875,12 @@ class Carrot_Site{
     }
 
     msg(msg,s_icon='success',timer=6500){
+        if(s_icon=="alert") s_icon="warning";
         Swal.fire({
             icon:s_icon,
             title: msg,
-            timer: timer
+            showCloseButton: true,
+            focusConfirm: false
         });
     }
 
@@ -943,6 +946,7 @@ class Carrot_Site{
             this.user.check_event();
             this.audio.check_event();
             this.radio.check_event();
+            this.bible.check_event();
         }else{
             this.app.list();
         }
