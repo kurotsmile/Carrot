@@ -340,6 +340,11 @@ class Carrot_Form{
         return this;
     }
 
+    set_type(s_type){
+        this.type=s_type;
+        return this;
+    }
+
     create_field(name){
         var field=new Carrot_Field(name,name);
         this.add_field(field);
@@ -519,10 +524,17 @@ class Carrot_Form{
                 obj_frm[id_emp]=val_emp;
             });
 
-            if(frm.is_field_db_doc)
-                carrot.set_doc(frm.db_collection,frm.db_document,obj_frm);
-            else
-                carrot.set_doc(frm.db_collection,obj_frm[frm.db_document],obj_frm);
+            if(frm.type=="add"){
+                if(frm.is_field_db_doc)
+                    carrot.set_doc(frm.db_collection,frm.db_document,obj_frm);
+                else
+                    carrot.set_doc(frm.db_collection,obj_frm[frm.db_document],obj_frm);
+            }else{
+                if(frm.is_field_db_doc)
+                    carrot.update_doc(frm.db_collection,frm.db_document,obj_frm);
+                else
+                    carrot.update_doc(frm.db_collection,obj_frm[frm.db_document],obj_frm);
+            }
 
             carrot.msg(frm.msg_done);
             if(frm.s_act_func_done!=null)

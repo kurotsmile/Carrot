@@ -266,6 +266,11 @@ class Carrot_user{
                             html+='<button id="btn_share" type="button" class="btn d-inline btn-success"><i class="fa-solid fa-share-nodes"></i> <l class="lang" key_lang="share">Share</l> </button> ';
                             html+='<button id="register_protocol_url" type="button"  class="btn d-inline btn-success" ><i class="fa-solid fa-rocket"></i> <l class="lang" key_lang="open_with">Open with..</l> </button> ';
                             html+='<button id="btn_download" type="button" class="btn d-inline btn-success"><i class="fa-solid fa-download"></i> <l class="lang" key_lang="download">Download Vcard</l> </button> ';
+                            if(carrot.user.obj_login!=null){
+                                if(data_user.id==carrot.user.obj_login.id){
+                                    html+='<button onclick="carrot.user.show_edit_user_info_login()" type="button" class="btn d-inline btn-warning"><i class="fa-solid fa-download"></i> <l class="lang" key_lang="edit_info">Edit Info</l> </button> ';
+                                }
+                            }
                             html+='</div>';
                         html+='</div>';
 
@@ -313,6 +318,10 @@ class Carrot_user{
 
     show_user_info_login(){
         this.show_user_info(this.obj_login,this.carrot);
+    }
+
+    show_edit_user_info_login(){
+        this.edit(this.obj_login,this.carrot);
     }
 
     check_user_login(username,password){

@@ -84,8 +84,14 @@ class Carrot_Rate{
 
             html+='<h3 class="fs-6 fw-semi mt-2">' + comment.user.name + '<small class="float-end fw-normal"> '+date_comment.toLocaleDateString()+ ' </small></h3>';
             html+='<div class="review-text">' + comment.comment + '</div>';
-            html+='<button onclick="carrot.rate.delete_comment(this);return false;" class="float-end btn btn-sm btn-danger m-1"><i class="fa-solid fa-trash-can"></i></button>';
-            html+='<button onclick="carrot.rate.delete_comment(this);return false;" class="float-end btn btn-sm btn-warning m-1"><i class="fa-solid fa-pen-to-square"></i></button>';
+            
+            if(carrot.user.obj_login!=null){
+                if(comment.user.id==carrot.user.obj_login.id){
+                    html+='<button onclick="carrot.rate.delete_comment(this);return false;" data-index="'+comment.index+'" class="float-end btn btn-sm btn-danger m-1"><i class="fa-solid fa-trash-can"></i></button>';
+                    html+='<button onclick="carrot.rate.delete_comment(this);return false;" data-index="'+comment.index+'"  class="float-end btn btn-sm btn-warning m-1"><i class="fa-solid fa-pen-to-square"></i></button>';
+                }
+            }
+            
             html+='</div>';
             
             html+='<div class="col-md-2"></div>';
@@ -139,26 +145,12 @@ class Carrot_Rate{
                 date:new Date().toISOString(),
                 user:carrot.user.get_user_cur_info_comment()
             }
-            var addCommentRef =carrot.db.collection("app").doc(carrot.rate.data_obj.id);
+            var addCommentRef =carrot.db.collection(carrot.id_page).doc(carrot.rate.data_obj.id);
             addCommentRef.update({
                 rates: firebase.firestore.FieldValue.arrayUnion(data_comment)
             });
             carrot.rate.data_obj.rates.push(data_comment);
-            if(carrot.id_page=="app"){
-                carrot.app.obj_app[carrot.rate.data_obj.id]=JSON.stringify(carrot.rate.data_obj);
-                carrot.app.save_obj();
-            }
-
-            if(carrot.id_page=="code"){
-                carrot.code.obj_codes[carrot.rate.data_obj.id]=JSON.stringify(carrot.rate.data_obj);
-                carrot.code.save_obj();
-            }
-
-            if(carrot.id_page=="song"){
-                carrot.music.obj_songs[carrot.rate.data_obj.id]=JSON.stringify(carrot.rate.data_obj);
-                carrot.music.save_obj();
-            }
-
+            carrot.rate.save_obj();
             $("#all_comment").append(carrot.rate.box_comment_item(data_comment));
             $("#user_comment").hide();
             carrot.msg("Thank you for your comments!","success",6000);
@@ -166,6 +158,44 @@ class Carrot_Rate{
     }
 
     delete_comment(emp){
-        $(emp).parent().parent().remove();
+        var carrot=this.carrot;
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Are you sure to delete this review?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            var index_comment=$(emp).data("index");
+            var rates=this.data_obj.rates;
+            rates.splice(index_comment, 1);
+            this.data_obj.rates=rates;
+            console.log(this.data_obj);
+            carrot.rate.save_obj();
+
+            var UpdateCommentRef =carrot.db.collection(carrot.id_page).doc(carrot.rate.data_obj.id);
+            UpdateCommentRef.update(this.data_obj);
+            if (result.isConfirmed) $(emp).parent().parent().remove();
+        })
+    }
+
+    save_obj(){
+        console.log(carrot.app.obj_app[carrot.rate.data_obj.id]);
+        if(carrot.id_page=="app"){
+            carrot.app.obj_app[carrot.rate.data_obj.id]=JSON.stringify(carrot.rate.data_obj);
+            carrot.app.save_obj();
+        }
+
+        if(carrot.id_page=="code"){
+            carrot.code.obj_codes[carrot.rate.data_obj.id]=JSON.stringify(carrot.rate.data_obj);
+            carrot.code.save_obj();
+        }
+
+        if(carrot.id_page=="song"){
+            carrot.music.obj_songs[carrot.rate.data_obj.id]=JSON.stringify(carrot.rate.data_obj);
+            carrot.music.save_obj();
+        }
     }
 }

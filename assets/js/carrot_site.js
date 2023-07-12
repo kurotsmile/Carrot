@@ -185,6 +185,20 @@ class Carrot_Site{
         this.db.collection(s_collection).doc(s_document).set(data);
     }
 
+    update_doc(s_collection,s_document,data){
+        this.log("Update " + s_collection+"."+s_document+" from server","alert");
+        var washingtonRef = this.db.collection(s_collection).doc(s_document);
+        return washingtonRef.update(data).then(() => {
+            console.log("Document successfully updated!");
+        }).catch((error) => {
+            console.error("Error updating document: ", error);
+        });
+    }
+
+    edit_doc(s_collection,s_document,data){
+        this.update_doc(s_collection,s_document,data);
+    }
+
     get_doc(s_collection,s_id_document,act_done){
         Swal.showLoading();
         this.log("Get " + s_collection+"."+s_id_document+" from server","alert");

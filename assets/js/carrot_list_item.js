@@ -91,7 +91,7 @@ class Carrot_List_Item{
 
     html(){
         var html='';
-        var html="<div class='box_app "+this.class+"' id=\""+this.id+"\" key_search=\""+this.name+"\">";
+        var html="<div class='box_app "+this.class+"' id=\""+this.id+"\" key_search=\""+this.name+"\" data-sort='"+this.index+"'>";
             html+='<div class="app-cover p-2 shadow-md bg-white">';
             html+='<div class="row">';
                 if(this.icon_img!=null) html+='<div role="button" class="img-cover '+this.class_icon+' '+this.db_collection+'_icon" db_collection="'+this.db_collection+'" app_id="'+this.id+'"  obj_id="'+this.id+'" obj_index="'+this.index+'"><img class="rounded" src="'+this.icon_img+'" alt="'+this.name+'"></div>';

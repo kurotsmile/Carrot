@@ -56,9 +56,11 @@ class Carrot_Bible{
         var html_old_testament='';
         var html_new_testament='';
 
+        list_book.sort((a,b) => a.order - b.order); 
+
         $(list_book).each(function(index,book){
             var item_book=carrot.bible.box_book_item(book);
-            item_book.set_index(index);
+            item_book.set_index(book.order);
             if(book.type=="old_testament")
                 html_old_testament+=item_book.html();   
             else
@@ -141,6 +143,7 @@ class Carrot_Bible{
         var contents=this.obj_bible_cur.contents;
         var data_contents=contents[index_id];
         var carrot=this.carrot;
+        html+='		<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>';
         html+='<div class="row m-0">';
         html+='<div class="col-12">';
             html+='<button onclick="carrot.bible.list();return false;" class="btn btn-sm btn-secondary mr-1"><i class="fa-solid fa-synagogue"></i> All Book</button> ';
@@ -181,7 +184,10 @@ class Carrot_Bible{
                         html+='<div class="row pt-4">';
                             html+='<div class="col-12">';
                                 html+='<button id="btn_share" type="button" class="btn d-inline btn-success"><i class="fa-solid fa-share-nodes"></i> <l class="lang" key_lang="share">Share</l> </button> ';
-                                html+='<button onclick="carrot.bible.download();return false;" class="btn d-inline btn-success"><i class="fa-brands fa-paypal"></i> Download</button>';
+                                if(carrot.bible.check_pay(carrot.bible.obj_bible_cur.id))
+                                    html+='<button id="btn_download" class="btn d-inline btn-success"><i class="fa-solid fa-download"></i> <l class="lang" key_lang="download">Download</l> </button>';
+                                else
+                                    html+='<button id="btn_download" class="btn d-inline btn-success"><i class="fa-brands fa-paypal"></i> <l class="lang" key_lang="download">Download</l> </button>';
                             html+='</div>';
                         html+='</div>';
                     html+='</div>';
@@ -216,6 +222,13 @@ class Carrot_Bible{
         html+=this.list_for_home();
         this.carrot.show(html);
         this.carrot.bible.check_event();
+
+        $("#btn_download").click(function(){
+            if(carrot.bible.check_pay(carrot.bible.obj_bible_cur.id))
+                carrot.bible.act_download(carrot);
+            else
+                carrot.show_pay("Bible","Download Bible ("+carrot.bible.obj_bible_cur.name+")","Download bible book","2.99",carrot.bible.pay_success);
+        });
     }
 
     box_chapter_item(data,s_class="col-4 mt-1"){
@@ -241,11 +254,13 @@ class Carrot_Bible{
     }
 
     data_bible_new(){
+        var list_bible=this.carrot.obj_to_array(this.obj_bibles);
         var data_new=new Object();
         data_new["id"]=this.carrot.create_id();
         data_new["name"]="";
         data_new["type"]="old_testament";
         data_new["lang"]=this.carrot.langs.lang_setting;
+        data_new["order"]=list_bible.length;
         return data_new;
     }
 
@@ -291,7 +306,7 @@ class Carrot_Bible{
     }
 
     edit_book(data,carrot){
-        carrot.bible.frm_add_or_edit(data).set_title("Edit Book").set_msg_done("Edit book success!").show();
+        carrot.bible.frm_add_or_edit(data).set_title("Edit Book").set_type("edit").set_msg_done("Edit book success!").show();
     }
 
     frm_add_or_edit(data){
@@ -305,6 +320,7 @@ class Carrot_Bible{
         $(this.carrot.langs.list_lang).each(function(index,lang){
             field_lang.add_option(lang.key,lang.name);
         });
+        frm.create_field("order").set_label("Book Order").set_value(data["order"]).set_type("number");
         return frm;
     }
 
@@ -433,8 +449,9 @@ class Carrot_Bible{
         carrot.bible.list();
     }
 
-    download(){
-        alert("Test download");
+    act_download(carrot){
+        var txt_contents='sdsd';
+        carrot.bible.download_bible(carrot.bible.obj_bible_cur.name+".txt",txt_contents);
     }
 
     list_for_home(){
@@ -458,5 +475,29 @@ class Carrot_Bible{
             html+='</div>';
         }
         return html;
+    }
+
+    check_pay(id_bible){
+        if(localStorage.getItem("buy_"+carrot.bible.id_page+"_"+id_bible)!=null)
+            return true;
+        else
+            return false;
+    }
+
+    pay_success(carrot){
+        $("#btn_download").removeClass("btn-info").addClass("btn-success").html('<i class="fa-solid fa-download"></i> <l class="lang" key_lang="download">Download</l>');
+        localStorage.setItem("buy_"+carrot.bible.id_page+"_"+carrot.bible.obj_bible_cur.id,"1");
+        carrot.bible.act_download(carrot);
+    }
+
+    download_bible(filename, text) {
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+        element.setAttribute('download', filename);
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+        this.carrot.msg("Download Success!");
     }
 }
