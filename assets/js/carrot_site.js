@@ -259,20 +259,6 @@ class Carrot_Site{
         });
     }
 
-    act_done_add_or_edit=(data)=>{
-        this.log("act_done_add_or_edit");
-        var act_msg_success=data.act_msg_success;
-        var db_collection=data.db_collection;
-        var db_doc=data.db_doc;
-
-        delete(data.act_msg_success);
-        delete(data.db_collection);
-        delete(data.db_doc);
-        this.db.collection(db_collection).doc(data[db_doc]).set(data);
-        this.call_func_by_id_page(db_collection,"reload");
-        $.MessageBox(act_msg_success);
-    }
-
     load_recognition(){
         var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
         var carrot=this;

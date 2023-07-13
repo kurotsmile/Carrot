@@ -236,7 +236,7 @@ class Carrot_Field{
             html+='<textarea class="form-control m-0 cr_field" id="'+this.name+'" placeholder="'+this.placeholder+'" rows="3">'+this.value+'</textarea>';
         }
         else if(this.type=='id'){
-            html+='<p id="'+this.name+'" type="id" class="cr_field" value="'+this.value+'">'+this.value+'</p>';
+            html+='<p id="'+this.name+'" type="id" class="cr_field fs-9 text-info" value="'+this.value+'">'+this.value+'</p>';
         }
         else if(this.type=='file'){
             html+='<div class="input-group mb-3">';

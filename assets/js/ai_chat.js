@@ -23,7 +23,7 @@ class AI_Chat{
 
     data_new_chat(){
         var data_new_chat=Object();
-        data_new_chat["id"]=this.carrot.create_id();
+        data_new_chat["id"]="chat"+this.carrot.create_id();
         data_new_chat["key"]="";
         data_new_chat["msg"]="";
         data_new_chat["status"]="pending";
@@ -80,10 +80,17 @@ class AI_Chat{
     add_chat_with_father(emp){
         var father=$(emp).parent().parent().parent().parent().parent().parent();
         var father_emp=$(father).clone();
+        var father_emp_sex_user=$(emp).attr("sex_user");
+        var father_emp_sex_character=$(emp).attr("sex_character");
+        var father_emp_id_chat=$(emp).attr("id_chat");
+
         var data_new=this.data_new_chat();
         $(father_emp).find("#btn_add_father_chat").remove();
         $(father_emp).find(".dev").remove();
         data_new["father_emp"]=father_emp.html();
+        data_new["sex_user"]=father_emp_sex_user;
+        data_new["sex_character"]=father_emp_sex_character;
+        data_new["pater"]=father_emp_id_chat;
         this.show_add_or_edit_chat(data_new).set_title("Continue the conversation").set_msg_done("Add chat success!").show();
     }
 
@@ -179,10 +186,11 @@ class AI_Chat{
         var s_body='';
         item_list.set_index(data.index);
         item_list.set_id(data.id);
-        if(data.parent==null)
-            item_list.set_icon_font("fa-sharp fa-solid fa-comment mt-2");
+        if(data.pater!=''&&data.pater!='0')
+            item_list.set_icon_font("fa-solid fa-comments mt-2");
         else
-            item_list.set_icon_font("fa-solid fa-comments mt-2 text-success");
+            item_list.set_icon_font("fa-sharp fa-solid fa-comment mt-2");
+            
         item_list.set_name(data.key);
         item_list.set_tip('<i class="fa-solid fa-circle" style="color:'+data.color+'"></i> '+data.msg);
 
@@ -195,7 +203,7 @@ class AI_Chat{
         s_body+=' <i class="fa-sharp fa-solid fa-right-left"></i> ';
         if(data.sex_character=='0') s_body+='<i class="fa-solid fa-mars text-primary"></i>'; else s_body+='<i class="fa-solid fa-venus text-danger"></i>';
 
-        s_body+='<i id="btn_add_father_chat" role="button" onclick="carrot.ai.chat.add_chat_with_father(this);return false;" class="fa-solid fa-square-plus float-end fa-2x text-success"></i>';
+        s_body+='<i id="btn_add_father_chat" role="button" sex_user="'+data.sex_user+'" sex_character="'+data.sex_character+'" id_chat="'+data.id+'" onclick="carrot.ai.chat.add_chat_with_father(this);return false;" class="fa-solid fa-square-plus float-end fa-2x text-success"></i>';
 
         item_list.set_body('<div class="col-12">'+s_body+'</div>');
         item_list.set_class_body("mt-2 col-11 fs-9");
