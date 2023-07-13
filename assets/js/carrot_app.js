@@ -286,14 +286,15 @@ class Carrot_App{
             
             var list_app=carrot.convert_obj_to_list(carrot.app.obj_app);
             list_app= list_app.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
-            $(list_app).each(function(intdex,app_item){
-                if(data.type==app_item.type&&data.id!=app_item.id) html+=carrot.app.box_app_item(app_item,'col-md-12 mb-3');
+            $(list_app).each(function(index,app_item){
+                if(index<12) if(data.type==app_item.type&&data.id!=app_item.id) html+=carrot.app.box_app_item(app_item,'col-md-12 mb-3');
             });
             html+='</div>';
     
         html+="</div>";
         html+="</div>";
 
+        html+=carrot.app.list_for_home();
         carrot.app.type_show="all";
         carrot.show(html);
         carrot.app.check_btn_for_list_app();

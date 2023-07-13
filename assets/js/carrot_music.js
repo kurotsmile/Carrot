@@ -363,27 +363,10 @@ class Carrot_Music{
         data_music["publishedAt"]="";
         data_music["lang"]=this.carrot.lang;
         this.frm_add_or_edit(data_music).set_title("Add Music").set_msg_done("Add song success!").show();
-        this.extenion_fnc_form();
     }
 
     edit(data,carrot){
         carrot.music.frm_add_or_edit(data).set_title("Edit Music").set_msg_done("Update song success!").show();
-        carrot.music.extenion_fnc_form();
-    }
-
-    extenion_fnc_form(){
-        var carrot=this.carrot;
-        $("#name").on("change",function(){
-            var val_name=$(this).val();
-            var url_song='https://carrotstore.web.app/?p=song&id='+encodeURIComponent(val_name);
-            $("#name_tip").attr("role","button");
-            $("#name_tip").html(url_song);
-            $("#name_tip").click(async function(){
-                await navigator.clipboard.writeText(url_song);
-                carrot.msg("Copy Success!");
-                $("#name_tip").removeClass("text-muted").addClass("text-success");
-            });
-        })
     }
 
     frm_add_or_edit(data){
@@ -395,6 +378,8 @@ class Carrot_Music{
         btn_ytb_avatar.set_onclick("carrot.music.check_music()");
         btn_ytb_avatar.set_icon("fa-solid fa-wand-magic-sparkles");
         frm.create_field("id").set_label("ID Song").set_value(data["id"]).set_type("id");
+        var html_msg_id='<a class="fs-9" id="link_song" href="https://carrotstore.web.app/?p=song&id='+data["id"]+'" target="_blank">https://carrotstore.web.app/?p=song&id='+data["id"]+'</a>';
+        frm.create_field("msg_id").set_type("msg").set_val(html_msg_id);
         frm.create_field("link_ytb").set_label("link ytb").add_btn_download_ytb().set_val(data["link_ytb"]).add_btn(btn_ytb_avatar).set_tip("Dán liên kết Youtube vào đây để nhập tự động thông tin bài hát");
         frm.create_field("name").set_label("Name").set_val(data["name"]).set_tip("Create id url by name").add_btn_search_google().add_btn_search_ytb().add_btn_toLower();
         frm.create_field("avatar").set_label("Avatar (url)").set_val(data["avatar"]).set_type("file").set_type_file("image/*");

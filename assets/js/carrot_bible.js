@@ -182,7 +182,7 @@ class Carrot_Bible{
                                 if(carrot.bible.check_pay(carrot.bible.obj_bible_cur.id))
                                     html+='<button id="btn_download" class="btn d-inline btn-success"><i class="fa-solid fa-download"></i> <l class="lang" key_lang="download">Download</l> </button>';
                                 else
-                                    html+='<button id="btn_download" class="btn d-inline btn-success"><i class="fa-brands fa-paypal"></i> <l class="lang" key_lang="download">Download</l> </button>';
+                                    html+='<button id="btn_download" class="btn d-inline btn-info"><i class="fa-brands fa-paypal"></i> <l class="lang" key_lang="download">Download</l> </button>';
                             html+='</div>';
                         html+='</div>';
                     html+='</div>';

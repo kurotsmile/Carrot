@@ -6,6 +6,7 @@ class Carrot_Code{
 
     icon="fa-solid fa-code";
     id_page="code";
+    type="all";
     
     constructor(carrot){
         this.carrot=carrot;
@@ -114,10 +115,38 @@ class Carrot_Code{
             }  
             else{
                 this.carrot.log("Load data code from cache");
-                this.show_list_from_data();
+                this.show_list_from_data(this.obj_codes,this.carrot);
             }  
         }else{
             this.carrot.log("Get data code from sever");
+            this.carrot.get_list_doc("code",this.act_get_list_code_from_sever);
+        }
+    }
+
+    list_code_by_type(type){
+        this.type=type;
+        var carrot=this.carrot;
+        if(type!="all"){
+            Swal.showLoading();
+            this.carrot.db.collection("code").where("code_type", "==",this.type).limit(200).get().then((querySnapshot) => {
+                if(querySnapshot.docs.length>0){
+                    var codes=Object();
+                    querySnapshot.forEach((doc) => {
+                        var data_code=doc.data();
+                        data_code["id"]=doc.id;
+                        codes[doc.id]=JSON.stringify(data_code);
+                    });
+                    Swal.close();
+                    this.show_list_from_data(codes,carrot);
+                }else{
+                    Swal.close();
+                }
+            }).catch((error) => {
+                Swal.close();
+                console.log(error);
+                this.carrot.msg(error.message,"error");
+            });
+        }else{
             this.carrot.get_list_doc("code",this.act_get_list_code_from_sever);
         }
     }
@@ -126,14 +155,14 @@ class Carrot_Code{
         carrot.code.obj_codes=codes;
         carrot.code.save_obj();
         carrot.update_new_ver_cur("code",true);
-        carrot.code.show_list_from_data();
+        carrot.code.show_list_from_data(codes,carrot);
     }
 
-    show_list_from_data(){
-        var carrot=this.carrot;
+    show_list_from_data(codes,carrot){
         var html='';
-        var list_code=carrot.convert_obj_to_list(carrot.code.obj_codes);
+        var list_code=carrot.obj_to_array(codes);
         var lis_lang_code=hljs.listLanguages();
+        lis_lang_code.push("all");
 
         html+='<div class="row mb-2">';
             html+='<div class="col-12 btn-group btn-sm" role="group" aria-label="Menu Lang Code">';
@@ -141,9 +170,14 @@ class Carrot_Code{
                     html+='<button id="btn-add-code" class="btn btn-secondary btn-sm" onclick="carrot.code.add();return false;"><i class="fa-solid fa-square-plus"></i> Add Code</button>';
 
                     html+='<div class="btn-group" role="group">';
-                        html+='<button class="btn btn-secondary dropdown-toggle btn-sm" type="button" id="btn_list_type_code" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-rectangle-list"></i> Select source code type</button>';
+                        html+='<button class="btn btn-secondary dropdown-toggle btn-sm" type="button" id="btn_list_type_code" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-rectangle-list"></i> Select source code type ('+carrot.code.type+')</button>';
                     html+='<div class="dropdown-menu" aria-labelledby="btn_list_type_code">';
-                        for(var i=0;i<lis_lang_code.length;i++) html+='<button role="button" class="btn btn-secondary btn-sm m-1"><i class="fa-brands fa-codepen"></i> '+lis_lang_code[i]+'</button>';
+                        for(var i=0;i<lis_lang_code.length;i++){
+                            var css_active='';
+                            if(lis_lang_code[i]==carrot.code.type) css_active="btn-success";
+                            else css_active="btn-secondary";
+                            html+='<button onclick="carrot.code.list_code_by_type(\''+lis_lang_code[i]+'\')" role="button" class="btn  btn-sm m-1 '+css_active+'"><i class="fa-brands fa-codepen"></i> '+lis_lang_code[i]+'</button>';
+                        }
                     html+='</div>';
                     html+='</div>';
                 html+='</div>';
