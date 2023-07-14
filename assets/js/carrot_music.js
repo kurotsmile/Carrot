@@ -68,7 +68,6 @@ class Carrot_Music{
                 Swal.close();
             }else{
                 this.carrot.msg("None List song!","alert");
-                Swal.close();
             }
         }).catch((error) => {
             console.log(error);

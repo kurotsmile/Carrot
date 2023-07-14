@@ -239,5 +239,6 @@ class Carrot_Pay{
         html+=sapphire_package.html();
         html+='</div>';
         this.carrot.show(html);
+        this.carrot.check_event();
     }
 }

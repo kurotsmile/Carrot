@@ -369,58 +369,68 @@ class Carrot_user{
         var text='';
         var arr_name=this.phone_book_info_cur.name.split(' ');
         var Prefix="";
-        if(this.phone_book_info_cur.sex=="0") Prefix="Mr"; else Prefix="Ms";
-        console.log(arr_name);
-        text+="BEGIN:VCARD\n";
-        text+="VERSION:3.0";
-        text+="FN;CHARSET=UTF-8:"+carrot.user.phone_book_info_cur.name+"\n";
 
-        if(arr_name.length>1){
-            var lastname = arr_name[0];
-            var firstname = arr_name[1];
-            text+="N;CHARSET=UTF-8:"+firstname+"; "+lastname+"; ;"+Prefix+";"+firstname+"\n";
-            text+="NICKNAME;CHARSET=UTF-8:"+firstname+" "+lastname+"\n";
-        }else{
-            text+="N;CHARSET=UTF-8:"+firstname+";;;"+Prefix+";\n";
-            text+="NICKNAME;CHARSET=UTF-8:"+carrot.user.phone_book_info_cur.name+"\n";  
-        }
+        html2canvas($("#imageid"), {
+            logging: true, 
+            letterRendering: 1, 
+            allowTaint: false,
+            useCORS: true,
+            onrendered: function (canvas) {
+                if(carrot.user.phone_book_info_cur.sex=="0") Prefix="Mr"; else Prefix="Ms";
 
-        if(this.phone_book_info_cur.email!=""){
-            text+="EMAIL;CHARSET=UTF-8;type=HOME,INTERNET:"+this.phone_book_info_cur.email+"\n";
-            text+="EMAIL;CHARSET=UTF-8;type=WORK,INTERNET:"+this.phone_book_info_cur.email+"\n";
-        }
-
-        if(this.phone_book_info_cur.phone!=""){
-            text+="TEL;TYPE=HOME,VOICE:"+this.phone_book_info_cur.phone+"\n";
-        }
-
-        if(this.phone_book_info_cur.address!=""){
-            var address=this.phone_book_info_cur.address;
-            if(address.name!=""){
-                text+="LABEL;CHARSET=UTF-8;TYPE=HOME:Home\n";
-                text+="ADR;CHARSET=UTF-8;TYPE=HOME:;;"+address.name+";530000;Vietnam\n";
-                text+="LABEL;CHARSET=UTF-8;TYPE=WORK:Company Address\n";
-                text+="ADR;CHARSET=UTF-8;TYPE=WORK:;;"+address.name+";530000;Vietnam\n";
-            }
-        }
-
-        text+="TITLE;CHARSET=UTF-8:Carrot Store\n";
-        text+="ROLE;CHARSET=UTF-8:user\n";
-        text+="ORG;CHARSET=UTF-8:Carrot\n";
-        text+="URL;type=WORK;CHARSET=UTF-8:"+window.location+"\n";
-        text+="X-SOCIALPROFILE;TYPE=facebook:https://www.facebook.com/kurotsmile\n";
-        text+="X-SOCIALPROFILE;TYPE=web:https://carrotstore.web.app\n";
-        text+="REV:"+new Date().toJSON()+"\n";
-        text+="END:VCARD\n";
+                text+="BEGIN:VCARD\n";
+                text+="VERSION:3.0";
+                text+="FN;CHARSET=UTF-8:"+carrot.user.phone_book_info_cur.name+"\n";
+                text+="PHOTO;ENCODING=b;TYPE=JPEG:"+canvas.toDataURL("image/png")+"\n";
         
-
-        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-        element.setAttribute('download', filename);
-        element.style.display = 'none';
-        document.body.appendChild(element);
-        element.click();
-        document.body.removeChild(element);
-        carrot.msg("Download Success!");
+                if(arr_name.length>1){
+                    var lastname = arr_name[0];
+                    var firstname = arr_name[1];
+                    text+="N;CHARSET=UTF-8:"+firstname+"; "+lastname+"; ;"+Prefix+";"+firstname+"\n";
+                    text+="NICKNAME;CHARSET=UTF-8:"+firstname+" "+lastname+"\n";
+                }else{
+                    text+="N;CHARSET=UTF-8:"+firstname+";;;"+Prefix+";\n";
+                    text+="NICKNAME;CHARSET=UTF-8:"+carrot.user.phone_book_info_cur.name+"\n";  
+                }
+        
+                if(carrot.user.phone_book_info_cur.email!=""){
+                    text+="EMAIL;CHARSET=UTF-8;type=HOME,INTERNET:"+carrot.user.phone_book_info_cur.email+"\n";
+                    text+="EMAIL;CHARSET=UTF-8;type=WORK,INTERNET:"+carrot.user.phone_book_info_cur.email+"\n";
+                }
+        
+                if(carrot.user.phone_book_info_cur.phone!=""){
+                    text+="TEL;TYPE=HOME,VOICE:"+carrot.user.phone_book_info_cur.phone+"\n";
+                }
+        
+                if(carrot.user.phone_book_info_cur.address!=""){
+                    var address=carrot.user.phone_book_info_cur.address;
+                    if(address.name!=""){
+                        text+="LABEL;CHARSET=UTF-8;TYPE=HOME:Home\n";
+                        text+="ADR;CHARSET=UTF-8;TYPE=HOME:;;"+address.name+";530000;Vietnam\n";
+                        text+="LABEL;CHARSET=UTF-8;TYPE=WORK:Company Address\n";
+                        text+="ADR;CHARSET=UTF-8;TYPE=WORK:;;"+address.name+";530000;Vietnam\n";
+                    }
+                }
+        
+                text+="TITLE;CHARSET=UTF-8:Carrot Store\n";
+                text+="ROLE;CHARSET=UTF-8:user\n";
+                text+="ORG;CHARSET=UTF-8:Carrot\n";
+                text+="URL;type=WORK;CHARSET=UTF-8:"+window.location+"\n";
+                text+="X-SOCIALPROFILE;TYPE=facebook:https://www.facebook.com/kurotsmile\n";
+                text+="X-SOCIALPROFILE;TYPE=web:https://carrotstore.web.app\n";
+                text+="REV:"+new Date().toJSON()+"\n";
+                text+="END:VCARD\n";
+                
+        
+                element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+                element.setAttribute('download', filename);
+                element.style.display = 'none';
+                document.body.appendChild(element);
+                element.click();
+                document.body.removeChild(element);
+                carrot.msg("Download Success!");
+            }
+        });
     }  
 
     list_for_home(){

@@ -929,6 +929,7 @@ class Carrot_Site{
             this.app.check_btn_for_list_app();
             this.music.check_event();
             this.code.check_event();
+            this.icon.check_event();
             this.user.check_event();
             this.audio.check_event();
             this.radio.check_event();
