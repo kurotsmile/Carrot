@@ -387,4 +387,25 @@ class Carrot_App{
         html+=carrot.link_store.list_for_home();
         return html;
     }
+
+    site_map(){
+        var xml='';
+        this.carrot.db.collection("app").get().then((querySnapshot) => {
+            if(querySnapshot.docs.length>0){
+                querySnapshot.forEach((doc) => {
+                    let today = new Date().toISOString().slice(0, 10);
+                    xml+='<url>';
+                    xml+='<loc>https://carrotstore.web.app/?p=app&id='+doc.id+'</loc>';
+                    xml+='<lastmod>'+today+'</lastmod>';
+                    xml+='<changefreq>daily</changefreq>';
+                    xml+='<priority>0.9</priority>';
+                    xml+='</url>';
+                });
+            }
+        }).catch((error) => {
+            console.log(error);
+            this.carrot.msg(error.message,"error");
+        });
+        return xml;
+    }
 }

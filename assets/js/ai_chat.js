@@ -57,7 +57,10 @@ class AI_Chat{
             frm.create_field("father_emp").set_value(data["father_emp"]).set_type("msg").add_class("row").add_class("bg-light").add_class("p-2");
         }
         frm.create_field("id").set_label("Id chat").set_val(data["id"]).set_type("id");
-        frm.create_field("key").set_label("Key").set_val(data["key"]).set_tip("Câu hỏi người dùng đối với Ai")
+        var btn_add_msg=new Carrot_Btn();
+        btn_add_msg.set_icon("fa-solid fa-comment-dots");
+        btn_add_msg.set_act("carrot.ai.chat.add_msg_for_key()");
+        frm.create_field("key").set_label("Key").set_val(data["key"]).set_tip("Câu hỏi người dùng đối với Ai").add_btn(btn_add_msg);
         frm.create_field("msg").set_label("Msg").set_val(data["msg"]).set_tip("Câu trả lời của Ai khi được hỏi đúng với từ khóa").set_type("textarea");
         frm.create_field("status").set_label("Status").set_val(data["status"]).set_type("select").add_option("pending","Pending - Chờ Duyệt").add_option("passed","Passed - Sử dụng").add_option("reserve","Reserve - Sử dụng tạm thời");
         frm.create_field("sex_user").set_label("Sex User").set_val(data["sex_user"]).set_type("select").add_option("0","Boy").add_option("1","Girl");
@@ -92,6 +95,30 @@ class AI_Chat{
         data_new["sex_character"]=father_emp_sex_character;
         data_new["pater"]=father_emp_id_chat;
         this.show_add_or_edit_chat(data_new).set_title("Continue the conversation").set_msg_done("Add chat success!").show();
+    }
+
+    add_msg_for_key(){
+        var html='';
+        html+='<div class="row">';
+        html+='<div class="col-12">';
+        for(var i=0;i<=24;i++){
+            html+='<span role="button" onclick="carrot.ai.chat.select_key_msg(\'hi_'+i+'\')" class="btn btn-info btn-sm m-1"><i class="fa-solid fa-comment-dots"></i> hi_'+i+'</span>';
+        }
+        html+='<span role="button" onclick="carrot.ai.chat.select_key_msg(\'hit\')" class="btn btn-info btn-sm m-1"><i class="fa-solid fa-hand-back-fist"></i> Hit</span>';
+        html+='</div>';
+        html+='</div>';
+
+        Swal.fire({
+            title: "Add Msg For Key",
+            html: html,
+            showCloseButton: true,
+            focusConfirm: true
+        });
+    }
+
+    select_key_msg(s_key){
+        $("#key").val(s_key);
+        Swal.close();
     }
 
     list(){

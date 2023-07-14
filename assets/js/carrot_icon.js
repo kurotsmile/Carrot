@@ -14,6 +14,7 @@ class Carrot_Icon{
     constructor(carrot){
         this.carrot=carrot;
         this.load_obj_icon();
+        this.load_obj_icon_category();
 
         carrot.register_page("icon","carrot.icon.list()","carrot.icon.edit","carrot.icon.get_info");
         var btn_add=carrot.menu.create("add_icon").set_label("Add Icon").set_type("add").set_icon(this.icon);
@@ -28,8 +29,16 @@ class Carrot_Icon{
         if (localStorage.getItem("obj_icon") != null) this.obj_icon=JSON.parse(localStorage.getItem("obj_icon"));
     }
 
+    load_obj_icon_category(){
+        if (localStorage.getItem("obj_icon_category") != null) this.obj_icon_category=JSON.parse(localStorage.getItem("obj_icon_category"));
+    }
+
     save_obj_icon(){
         localStorage.setItem("obj_icon", JSON.stringify(this.obj_icon));
+    }
+
+    save_obj_icon_category(){
+        localStorage.setItem("obj_icon_category", JSON.stringify(this.obj_icon_category));
     }
 
     delete_obj_icon(){
@@ -247,12 +256,13 @@ class Carrot_Icon{
 
                             html+='<div class="col-md-4 col-6 text-center">';
                                 html+='<b><l class="lang" key_lang="genre">Category</l> <i class="fa-solid fa-guitar"></i></b>';
-                                html+='<p>'+data.icon+'</p>';
+                                if(data.category==null||data.category==undefined||data.category=="") data.category="Unknown";
+                                html+='<p>'+data.category+'</p>';
                             html+='</div>';
 
                             html+='<div class="col-md-4 col-6 text-center">';
-                                html+='<b><l class="lang" key_lang="genre">Category</l> <i class="fa-solid fa-guitar"></i></b>';
-                                html+='<p>'+data.name+'</p>';
+                                html+='<b><l class="lang" key_lang="file">File</l> <i class="fa-solid fa-file"></i></b>';
+                                html+='<p>'+data.name+'.zip</p>';
                             html+='</div>';
 
                         html+='</div>';

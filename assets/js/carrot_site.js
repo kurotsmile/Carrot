@@ -49,7 +49,6 @@ class Carrot_Site{
     rate;
     
     constructor(){
-        var carrot=this;
         this.firebaseConfig_mainhost={
             apiKey: "AIzaSyDzsx1KYLZL5COz1NaTD8cOz8GYalX2Dxc",
             authDomain: "carrotstore.firebaseapp.com",
@@ -141,6 +140,9 @@ class Carrot_Site{
 
         var btn_import_file_json=this.menu.create("btn_import_file_json").set_label("Import Collection (File)").set_type("setting").set_icon("fa-solid fa-file-import");
         $(btn_import_file_json).click(function(){carrot.show_import_json_file();});
+
+        var btn_site_map=this.menu.create("btn_site_map").set_label("Site Map").set_type("setting").set_icon("fa-solid fa-sitemap");
+        $(btn_site_map).click(function(){carrot.show_site_map();});
 
         $("#btn_model_site").click(function(){carrot.change_mode_site();});
 
@@ -430,7 +432,7 @@ class Carrot_Site{
 
     act_del_obj(db_collection,db_doc_id){
         this.db.collection(db_collection).doc(db_doc_id).delete().then(() => {
-            $.MessageBox("Document "+db_doc_id+" successfully deleted!");
+            carrot.msg("Document "+db_doc_id+" successfully deleted!");
             this.delete_cache_obj_by_collection(db_collection);
             console.log("Document "+db_doc_id+" successfully deleted!");
             this.call_func_by_id_page(db_collection,"reload");
@@ -978,5 +980,13 @@ class Carrot_Site{
         html+='</div>';
         this.show(html);
         this.check_event();
+    }
+
+    show_site_map(){
+        var html='<?xml version="1.0" encoding="utf-8"?>';
+        html+='<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" >';
+        html+=this.app.site_map();
+        html+='</urlset>';
+        this.show(html);
     }
 }

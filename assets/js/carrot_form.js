@@ -14,6 +14,12 @@ class Carrot_Btn{
 
     set_onclick(s_func){
         this.onclick=s_func;
+        return this;
+    }
+
+    set_act(s_act){
+        this.set_onclick(s_act);
+        return this;
     }
 
     set_label(s_label){
