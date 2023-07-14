@@ -195,4 +195,32 @@ class Carrot_File{
         html+='</div>';
         return html;
     }
+
+    get_base64data_file(url_file) {
+        var carrot=this.carrot;
+        return new Promise((resolve) => {
+            var storageRef = carrot.storage.ref();
+            var path=url_file.split('/');
+            var path_files=path[path.length-1];
+            var path_file=path_files.split('?');
+            path_file=path_file[0];
+            path_file=path_file.replaceAll("%2F","/");
+            storageRef.child(path_file).getDownloadURL().then((url) => {
+                var xhr = new XMLHttpRequest();
+                xhr.responseType = 'blob';
+                xhr.onload = (event) => {
+                    var blob = xhr.response;
+                    var reader = new FileReader();
+                    reader.readAsDataURL(blob); 
+                    reader.onloadend = function(){
+                        resolve(reader.result);
+                    }
+                };
+                xhr.open('GET', url);
+                xhr.send();
+            }).catch((error) => {
+                console.log(error);
+            });
+        })
+    }
 }
