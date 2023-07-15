@@ -258,14 +258,14 @@ class Carrot_Langs{
         html+='</div>';
 
         html += '<table class="table table-striped table-hover mt-3" id="table_setting_lang">';
-        html += '<thead class="thead-light">';
+        html += '<thead class="thead-light fs-9">';
         html += '<tr>';
         html += '<th scope="col" class="w-10">Key</th>';
         html += '<th scope="col" class="w-25">Value</th>';
         html += '<th scope="col">New Lang</th>';
         html += '</tr>';
         html += '</thead>';
-        html += '<tbody id="body_table_lang_setting">';
+        html += '<tbody id="body_table_lang_setting" class="fs-9">';
         
         $.each(data_lang_tag, function(key, value){
             var s_val_change='';
@@ -284,10 +284,10 @@ class Carrot_Langs{
             html += '</td>';
             html += '<td scope="col">';
                 html += '<div class="input-group">';
-                    html += '<input id="inp_'+key+'" type="text" value="'+s_val_change+'" class="form-control inp-lang input-sm" data-key="'+key+'"/>';
+                    html += '<input id="inp_'+key+'" type="text" value="'+s_val_change+'" class="form-control inp-lang input-sm m-0 p-1 fs-9" data-key="'+key+'"/>';
                     html += '<div class="input-group-append">';
-                    if(key!="id") html += '<button class="btn btn-outline-secondary" type="button" onclick="paste_tag(\'inp_'+key+'\')"><i class="fa-solid fa-paste"></i> Paste</button>';
-                    if(data_lang_change.id=="en"&&key!="id") html += '<button class="btn btn-danger" type="button" onclick=" $(this).parent().parent().parent().parent().remove();"><i class="fa-solid fa-trash"></i> Delete</button>';
+                    if(key!="id") html += '<button class="btn btn-outline-secondary btn-sm" type="button" onclick="paste_tag(\'inp_'+key+'\')"><i class="fa-solid fa-paste"></i> Paste</button>';
+                    if(data_lang_change.id=="en"&&key!="id") html += '<button class="btn btn-danger bt-sm" type="button" onclick=" $(this).parent().parent().parent().parent().remove();"><i class="fa-solid fa-trash"></i> Delete</button>';
                     html += '</div>';
                 html += '</div>';
             html += '</td>';
@@ -343,7 +343,7 @@ class Carrot_Langs{
             html_new_field+='<td scope="col" class="w-25">New key <b class="text-danger">('+data.key+')</b></td>';
             html_new_field+='<td scope="col">';
                 html_new_field += '<div class="input-group">';
-                    html_new_field+='<input id="inp_'+data.key+'" type="text" value="'+data.value+'" class="form-control inp-lang input-sm" data-key="'+data.key+'"/>';
+                    html_new_field+='<input id="inp_'+data.key+'" type="text" value="'+data.value+'" class="form-control inp-lang input-sm m-0" data-key="'+data.key+'"/>';
                     html_new_field+='<div class="input-group-append">';
                         html_new_field+='<button class="btn btn-outline-secondary" type="button" onclick="paste_tag(\'inp_'+data.key+'\')"><i class="fa-solid fa-paste"></i> Paste</button>';
                         html_new_field+='<button class="btn btn-danger" type="button" onclick=" $(this).parent().parent().parent().parent().remove();"><i class="fa-solid fa-trash"></i> Delete</button>';

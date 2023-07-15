@@ -197,5 +197,10 @@ class Carrot_Rate{
             carrot.music.obj_songs[carrot.rate.data_obj.id]=JSON.stringify(carrot.rate.data_obj);
             carrot.music.save_obj();
         }
+
+        if(carrot.id_page=="bible"){
+            carrot.bible.obj_bibles[carrot.rate.data_obj.id]=JSON.stringify(carrot.rate.data_obj);
+            carrot.bible.save_obj();
+        }
     }
 }
