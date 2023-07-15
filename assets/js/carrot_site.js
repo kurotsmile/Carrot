@@ -401,7 +401,19 @@ class Carrot_Site{
         $.each(this.obj_version_new,function(key,value){   
             frm.create_field(key).set_label(key).set_val(value).set_type("number");
         });
+        var btn_add_level=frm.create_btn();
+        btn_add_level.set_icon("fa-solid fa-arrows-up-to-line");
+        btn_add_level.set_act("carrot.add_level_all_field_version()");
         frm.show();
+    }
+
+    add_level_all_field_version(){
+        $(".cr_field").each(function(index,emp){
+            var val_ver=$(emp).val();
+            val_ver=parseFloat(val_ver)+0.1;
+            val_ver=val_ver.toFixed(2);
+            $(emp).val(val_ver);
+        });
     }
     
     done_update_data_version(){

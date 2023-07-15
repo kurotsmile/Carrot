@@ -169,17 +169,18 @@ class Carrot_Icon{
         if(s_url_icon=="") s_url_icon="images/64.png";
         var item_icon=new Carrot_List_Item(carrot);
         item_icon.set_db("icon");
-        item_icon.set_id(data_icon.name);
+        item_icon.set_id(data_icon.id);
         item_icon.set_class(s_class);
         item_icon.set_class_icon("col-md-12 mb-3 col-12 text-center icon_info");
         item_icon.set_icon(s_url_icon);
-        item_icon.set_name(data_icon.id);
+        item_icon.set_name(data_icon.name);
         item_icon.set_body("<span class='fs-8' style='color:"+data_icon.color+"'>"+data_icon.color+"</span>");
         return item_icon.html();
     }
 
     add(){
         var data_icon=new Object();
+        data_icon["id"]="icon"+this.carrot.create_id();
         data_icon["name"]="";
         data_icon["icon"]="";
         data_icon["color"]="";
@@ -193,8 +194,9 @@ class Carrot_Icon{
 
     add_or_edit(data){
         var frm=new Carrot_Form("frm_icon",this.carrot);
-        frm.set_db("icon","name");
+        frm.set_db("icon","id");
         frm.set_icon_font(this.icon);
+        frm.create_field("id").set_label("ID").set_val(data["id"]).set_type("id").set_main();
         frm.create_field("name").set_label("Name").set_val(data["name"]);
         frm.create_field("icon").set_label("Icon").set_val(data["icon"]).set_type("file").set_type_file("image/*");
         frm.create_field("color").set_label("Color").set_val(data["color"]).set_type("color");
