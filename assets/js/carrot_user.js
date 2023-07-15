@@ -70,6 +70,7 @@ class Carrot_user{
             $("#acc_info_name").html(this.obj_login.name);
             if(this.obj_login.avatar!=null&&this.obj_login.avatar!="") $("#acc_info_avatar").attr("src",this.obj_login.avatar);
         }
+        this.carrot.rate.check_status_user_login();
     }
 
     list(){

@@ -725,7 +725,7 @@ class Carrot_Site{
 
     log(s_msg,s_status="info") {
         console.log(s_msg);
-        if(s_status=="alert") s_msg="warning";
+        if(s_status=="alert") s_status="warning";
         if(this.mode_site=="dev") SnackBar({message: s_msg,timeout: 5000,status:s_status,position:'tr'});
     }
 

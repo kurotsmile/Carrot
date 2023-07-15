@@ -14,18 +14,15 @@ class Carrot_Rate{
 
         html += '<div id="user_comment" class="row m-0 reviewrow p-3 px-0 border-bottom">';
         html += '<div class="col-md-2 align-items-center col-2 rcolm fs-8">';
-        var data_user_login = carrot.user.obj_login;
-        if (data_user_login != null) {
-            if (data_user_login.avatar != null)
-                html += '<img src="' + data_user_login.avatar + '"/>';
-            else
-                html += '<img src="images/avatar_default.png"/>';
-
-            html += data_user_login.name;
-        } else {
-            html += '<img role="button" emp_img="avatar_user_incognito" id="avatar_user_incognito" onclick="carrot.avatar.msg_list_select(this);return false" src="images/avatar_default.png"/>';
-            html += "Incognito";
-        }
+            var data_user_login = carrot.user.obj_login;
+            var name_user_rate='Incognito';
+            var url_avatar_user_rate='images/avatar_default.png';
+            if (data_user_login != null) {
+                if (data_user_login.avatar != null) url_avatar_user_rate=data_user_login.avatar;
+                name_user_rate=data_user_login.name;
+            }
+            html += '<img role="button" emp_img="avatar_user_rate" id="avatar_user_rate" onclick="carrot.avatar.msg_list_select(this);return false" src="'+url_avatar_user_rate+'"/>';
+            html += '<span id="name_user_rate">'+name_user_rate+'</span>';
         html += '</div>';
 
         html += '<div class="col-md-10 align-items-center col-10 rcolm">';
@@ -64,6 +61,18 @@ class Carrot_Rate{
 
         html += '</div>';
         return html;
+    }
+
+    check_status_user_login(){
+        var data_user_login = carrot.user.obj_login;
+        var name_user_rate='Incognito';
+        var url_avatar_user_rate='images/avatar_default.png';
+        if (data_user_login != null) {
+            if (data_user_login.avatar != null) url_avatar_user_rate=data_user_login.avatar;
+            name_user_rate=data_user_login.name;
+        }
+        $("#avatar_user_rate").attr("src",url_avatar_user_rate);
+        $("#name_user_rate").html(name_user_rate);
     }
 
     box_comment_item(comment){

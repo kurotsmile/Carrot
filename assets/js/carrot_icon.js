@@ -17,6 +17,8 @@ class Carrot_Icon{
 
     data_icon_x_64=null;
 
+    cur_show_icon_category='';
+
     constructor(carrot){
         this.carrot=carrot;
         this.load_obj_icon();
@@ -107,11 +109,38 @@ class Carrot_Icon{
         else{
             var list_category=carrot.obj_to_array(carrot.icon.obj_icon_category);
             var html='';
+            var s_css="";
             $(list_category).each(function(index,cat){
-                html+='<button class="btn btn-success btn-sm" data-index="'+index+'"><i class="'+cat.icon+'"></i> '+cat.key+'</button>';
+                if(carrot.icon.cur_show_icon_category==cat.key) s_css="active"; else s_css="";
+                html+='<button onclick="carrot.icon.select_show_category(\''+cat.key+'\')" class="btn btn-success btn-sm '+s_css+'" data-index="'+index+'"><i class="'+cat.icon+'"></i> '+cat.key+'</button>';
             });
             $("#list_icon_category").html(html);
         }
+    }
+
+    select_show_category(key_category){
+        carrot.icon.cur_show_icon_category=key_category;
+        Swal.showLoading();
+        this.carrot.log("Get list Icon by category from sever","warning");
+        this.carrot.db.collection("icon").where("category","==",key_category).limit(200).get().then((querySnapshot) => {
+            if(querySnapshot.docs.length>0){
+                this.obj_icon=Object();
+                querySnapshot.forEach((doc) => {
+                    var data_icon=doc.data();
+                    data_icon["id"]=doc.id;
+                    this.obj_icon[doc.id]=JSON.stringify(data_icon);
+                });
+                this.save_obj_icon();
+                this.show_all_icon_from_list_icon();
+                Swal.close();
+            }else{
+                this.carrot.msg("None List Icon!","alert");
+            }
+        }).catch((error) => {
+            console.log(error);
+            this.carrot.msg(error.message,"error");
+            Swal.close();
+        });
     }
 
     list_category(){
