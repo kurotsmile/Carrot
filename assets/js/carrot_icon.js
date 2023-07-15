@@ -22,7 +22,7 @@ class Carrot_Icon{
         this.load_obj_icon();
         this.load_obj_icon_category();
 
-        carrot.register_page("icon","carrot.icon.list()","carrot.icon.edit","carrot.icon.get_info");
+        carrot.register_page("icon","carrot.icon.list()","carrot.icon.edit","carrot.icon.get_info","carrot.icon.reload");
         var btn_add=carrot.menu.create("add_icon").set_label("Add Icon").set_type("add").set_icon(this.icon);
         $(btn_add).click(function(){carrot.icon.add();});
         var btn_list=carrot.menu.create("list_icon").set_label("Add Icon").set_type("main").set_lang("icon").set_icon(this.icon);
@@ -452,5 +452,10 @@ class Carrot_Icon{
         }
     
         return new Blob([uInt8Array], { type: contentType });
+    }
+
+    reload(carrot){
+        carrot.icon.delete_obj_icon();
+        carrot.icon.list();
     }
 }
