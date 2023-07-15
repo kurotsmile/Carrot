@@ -23,6 +23,7 @@ class Carrot_Icon{
         this.load_obj_icon_category();
 
         carrot.register_page("icon","carrot.icon.list()","carrot.icon.edit","carrot.icon.get_info","carrot.icon.reload");
+        carrot.register_page("icon_category","carrot.icon.list_category()","carrot.icon.edit_category");
         var btn_add=carrot.menu.create("add_icon").set_label("Add Icon").set_type("add").set_icon(this.icon);
         $(btn_add).click(function(){carrot.icon.add();});
         var btn_list=carrot.menu.create("list_icon").set_label("Add Icon").set_type("main").set_lang("icon").set_icon(this.icon);
@@ -73,11 +74,13 @@ class Carrot_Icon{
         html+='<div class="row mb-2">';
         html+='<div class="col-12">';
             html+='<div class="btn-group mr-2 btn-sm" role="group" aria-label="First group">';
-                html+='<button onclick="carrot.icon.add();" class="btn btn-sm btn-success"><i class="fa-solid fa-square-plus"></i> Add Icon</button>';
-                html+='<button onclick="carrot.icon.add_category();" class="btn btn-sm btn-success"><i class="fa-solid fa-square-plus"></i> Add Category</button>';
+                html+='<button onclick="carrot.icon.add();" class="btn btn-sm dev btn-success"><i class="fa-solid fa-square-plus"></i> Add Icon</button>';
+                html+='<button onclick="carrot.icon.add_category();" class="btn dev btn-sm btn-success"><i class="fa-solid fa-square-plus"></i> Add Category</button>';
             html+='</div>';
 
-            html+='<div class="btn-group mr-2 btn-sm" role="group" aria-label="First group">';
+            html+='<div class="btn-group mr-2 btn-sm" id="list_icon_category" role="group" aria-label="Mid group"></div>';
+
+            html+='<div class="btn-group mr-2 btn-sm float-end" role="group" aria-label="Last group">';
                 var css_active="";
                 if(this.type_show=="list_icon") css_active="active"; else css_active="";
                 html+='<button onclick="carrot.icon.list();" class="btn btn-sm btn-success '+css_active+'"><i class="fa-regular fa-rectangle-list"></i> List Icon</button>';
@@ -92,18 +95,34 @@ class Carrot_Icon{
 
     get_category(){
         this.carrot.get_list_doc("icon_category",this.done_get_category);
+        this.carrot.update_new_ver_cur("icon_category");
     }
 
     done_get_category(datas,carrot){
         carrot.icon.obj_icon_category=datas;
-        carrot.icon.show_list_category();
+        carrot.icon.save_obj_icon_category();
+        if(carrot.icon.type_show!="list_icon"){
+            carrot.icon.show_list_category();
+        }
+        else{
+            var list_category=carrot.obj_to_array(carrot.icon.obj_icon_category);
+            var html='';
+            $(list_category).each(function(index,cat){
+                html+='<button class="btn btn-success btn-sm" data-index="'+index+'"><i class="'+cat.icon+'"></i> '+cat.key+'</button>';
+            });
+            $("#list_icon_category").html(html);
+        }
     }
 
     list_category(){
-        if(this.obj_icon_category==null){
-            this.get_category();
+        if(this.carrot.check_ver_cur("icon_category")){
+            if(this.obj_icon_category==null){
+                this.get_category();
+            }else{
+                this.show_list_category();
+            }
         }else{
-            this.show_list_category();
+            this.get_category();
         }
     }
 
@@ -111,6 +130,7 @@ class Carrot_Icon{
         var html='';
         var carrot=this.carrot;
         var list_category=this.carrot.obj_to_array(this.obj_icon_category);
+        carrot.change_title_page("Icon Catgeory","?p=icon_category","icon_category");
         carrot.icon.type_show="list_category";
 
         html+=carrot.icon.menu();
@@ -119,6 +139,11 @@ class Carrot_Icon{
             var item_cat_icon=new Carrot_List_Item(carrot);
             item_cat_icon.set_title(category.key);
             item_cat_icon.set_index(index);
+            item_cat_icon.set_db("icon_category");
+            if(category.icon!=null) item_cat_icon.set_icon_font(category.icon);
+            item_cat_icon.set_obj_js("icon");
+            item_cat_icon.set_id(category.key);
+            item_cat_icon.set_act_edit("carrot.icon.edit_category");
             item_cat_icon.set_class("col-md-4 mb-3");
             item_cat_icon.set_class_icon("col-2");
             item_cat_icon.set_class_body("col-10");
@@ -142,6 +167,7 @@ class Carrot_Icon{
         var list_icon=carrot.convert_obj_to_list(this.obj_icon);
         var html="";
         carrot.icon.type_show="list_icon";
+        if(carrot.icon.obj_icon_category!=null) carrot.icon.get_category();
         html+=carrot.icon.menu();
 
         html+='<div class="row m-0">';
@@ -214,7 +240,12 @@ class Carrot_Icon{
     add_category(){
         var data_new=new Object();
         data_new["key"]="";
+        data_new["icon"]="";
         this.add_or_edit_category(data_new).set_title("Add Category").set_msg_done("Add Icon Category Success!!!").show();
+    }
+
+    edit_category(data,carrot){
+        carrot.icon.add_or_edit_category(data).set_title("Edit Category").set_msg_done("Update Icon Category Success!!!").show();
     }
 
     add_or_edit_category(data){
@@ -222,6 +253,7 @@ class Carrot_Icon{
         frm.set_db("icon_category","key");
         frm.set_icon_font("fa-solid fa-rectangle-list");
         frm.create_field("key").set_label("Name Key").set_val(data["key"]).set_main();
+        frm.create_field("icon").set_label("Icon (Font)").set_val(data["icon"]);
         return frm;
     }
 
