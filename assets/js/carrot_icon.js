@@ -185,6 +185,7 @@ class Carrot_Icon{
         data_icon["icon"]="";
         data_icon["color"]="";
         data_icon["category"]="";
+        data_icon["date_create"]=new Date().toISOString();
         this.add_or_edit(data_icon).set_title("Add icon").set_msg_done("Add icon success!").show();
     }
 
@@ -206,6 +207,7 @@ class Carrot_Icon{
         $(list_category).each(function(index,category){
             category_field.add_option(category.key,category.key);
         });
+        frm.create_field("date_create").set_label("Date Create").set_val(data["date_create"]);
         return frm;
     }
 
