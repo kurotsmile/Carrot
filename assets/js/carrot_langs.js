@@ -269,14 +269,15 @@ class Carrot_Langs{
         
         $.each(data_lang_tag, function(key, value){
             var s_val_change='';
+            var s_class="";
             if(data_lang_change!=null){
                 if(data_lang_change[key]!=null){
                     s_val_change=data_lang_change[key];
                 }
             }
-
+            if(s_val_change=='') s_class="bg-danger";
             if(key=='id'&&s_val_change=='') s_val_change=langs.lang_setting;
-            html += '<tr>';
+            html += '<tr class="'+s_class+'">';
             html += '<td scope="col" class="w-10"><b>'+key+'</b></td>';
             html += '<td scope="col" class="w-25">';
                 html += '<span id="txt_'+key+'">'+value+'</span> '
