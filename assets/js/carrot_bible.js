@@ -11,7 +11,8 @@ class Carrot_Bible{
 
     constructor(carrot){
         this.carrot=carrot;
-        this.carrot.register_page(this.id_page,"carrot.bible.list()","carrot.bible.edit_book","carrot.bible.show","carrot.bible.reload");
+        this.carrot.register_page(this.id_page,"carrot.bible.list()","carrot.bible.edit_book","carrot.bible.show_list_book_in_bible","carrot.bible.reload");
+        this.carrot.register_page("bible_chapter","carrot.bible.list()","carrot.bible.edit_book","carrot.bible.show_all_paragraph_in_chapter","carrot.bible.reload");
         var btn_list=this.carrot.menu.create("bible").set_label("Bible").set_lang("bible").set_icon(this.icon).set_type("main");
         $(btn_list).click(function(){carrot.bible.list();});
 
@@ -110,10 +111,15 @@ class Carrot_Bible{
         return item_book;
     }
 
+    show_list_book_in_bible(id_bible,carrot){
+        carrot.bible.list_pub_bible_chapter(id_bible);
+    }
+
     list_pub_bible_chapter(id_book){
         var html='';
         var data_book=JSON.parse(this.obj_bibles[id_book]);
         var contents=data_book.contents;
+        this.carrot.change_title_page(data_book.name,"?p=bible&id="+data_book.id,"bible");
         this.obj_bible_cur=data_book;
         html+='<div class="row">';
         html+='<div class="col-12"><button onclick="carrot.bible.list();return false;" class="btn btn-sm btn-secondary"><i class="fa-solid fa-square-caret-left"></i> Back</button></div>';
@@ -133,12 +139,15 @@ class Carrot_Bible{
         this.list_pub_bible_chapter(this.obj_bible_cur.id);
     }
 
-    list_pub_bible_paragraph_in_chapter(index_id){
+    show_all_paragraph_in_chapter(index_chapter,carrot){
+        carrot.bible.list_pub_bible_paragraph_in_chapter(index_chapter,carrot);
+    }
+
+    list_pub_bible_paragraph_in_chapter(index_id,carrot){
         var html='';
-        var contents=this.obj_bible_cur.contents;
+        var contents=carrot.bible.obj_bible_cur.contents;
         var data_contents=contents[index_id];
-        var carrot=this.carrot;
-        html+='		<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>';
+        carrot.change_title_page(this.obj_bible_cur.name+" ("+(parseInt(index_id)+1)+")","?p=bible_chapter&id="+this.obj_bible_cur.id+"&chapter="+index_id,"bible_chapter");
         html+='<div class="row m-0">';
         html+='<div class="col-12">';
             html+='<button onclick="carrot.bible.list();return false;" class="btn btn-sm btn-secondary mr-1"><i class="fa-solid fa-synagogue"></i> All Book</button> ';
@@ -170,6 +179,11 @@ class Carrot_Bible{
                             html+='</div>';
 
                             html+='<div class="col-md-4 col-6 text-center">';
+                                html+='<b>Ebook File <i class="fa-solid fa-file"></i></b>';
+                                html+='<p>'+this.obj_bible_cur.name+'.epub</p>';
+                            html+='</div>';
+
+                            html+='<div class="col-md-4 col-6 text-center">';
                                 html+='<b><l class="lang" key_lang="country">Country</l> <i class="fa-solid fa-language"></i></b>';
                                 html+='<p>'+this.obj_bible_cur.lang+'</p>';
                             html+='</div>';
@@ -178,11 +192,12 @@ class Carrot_Bible{
 
                         html+='<div class="row pt-4">';
                             html+='<div class="col-12">';
-                                html+='<button id="btn_share" type="button" class="btn d-inline btn-success"><i class="fa-solid fa-share-nodes"></i> <l class="lang" key_lang="share">Share</l> </button> ';
+                                html+='<button id="btn_share" type="button" class="btn d-inline btn-success m-1"><i class="fa-solid fa-share-nodes"></i> <l class="lang" key_lang="share">Share</l> </button> ';
                                 if(carrot.bible.check_pay(carrot.bible.obj_bible_cur.id))
-                                    html+='<button id="btn_download" class="btn d-inline btn-success"><i class="fa-solid fa-download"></i> <l class="lang" key_lang="download">Download</l> </button>';
+                                    html+='<button id="btn_download" class="btn d-inline btn-success m-1"><i class="fa-solid fa-download"></i> <l class="lang" key_lang="download">Download</l> </button>';
                                 else
-                                    html+='<button id="btn_download" class="btn d-inline btn-info"><i class="fa-brands fa-paypal"></i> <l class="lang" key_lang="download">Download</l> </button>';
+                                    html+='<button id="btn_download" class="btn d-inline btn-info m-1"><i class="fa-brands fa-paypal"></i> <l class="lang" key_lang="download">Download</l> </button>';
+                                
                             html+='</div>';
                         html+='</div>';
                     html+='</div>';
@@ -238,6 +253,7 @@ class Carrot_Bible{
     }
 
     check_event(){
+        var carrot=this.carrot;
         if(this.obj_bibles!=null){
             this.carrot.check_event();
             
@@ -248,7 +264,7 @@ class Carrot_Bible{
 
             $(".bible_chapter_icon").click(function(){
                 var obj_id=$(this).attr("obj_id");
-                carrot.bible.list_pub_bible_paragraph_in_chapter(obj_id);
+                carrot.bible.list_pub_bible_paragraph_in_chapter(obj_id,carrot);
             });
         }
     }
@@ -450,8 +466,7 @@ class Carrot_Bible{
     }
 
     act_download(carrot){
-        var txt_contents='sdsd';
-        carrot.bible.download_bible(carrot.bible.obj_bible_cur.name+".txt",txt_contents);
+        carrot.bible.create_ebook();
     }
 
     list_for_home(){
@@ -499,5 +514,103 @@ class Carrot_Bible{
         element.click();
         document.body.removeChild(element);
         this.carrot.msg("Download Success!");
+    }
+
+    create_ebook(){
+        var file_mimetype='application/epub+zip';
+        var container_xml='';
+        var content_opf='';
+        var toc_ncx='';
+        var zip=new JSZip();
+        var book_data=this.obj_bible_cur;
+        //console.log(this.obj_bible_cur);
+        var contents=book_data.contents;
+        container_xml+='<?xml version="1.0" encoding="UTF-8"?>';
+        container_xml+='<container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">';
+            container_xml+='<rootfiles>';
+                container_xml+='<rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml"/>';
+            container_xml+='</rootfiles>';
+        container_xml+='</container>';
+
+        toc_ncx+='<?xml version="1.0" encoding="UTF-8"?>';
+        toc_ncx+='<!DOCTYPE ncx PUBLIC "-//NISO//DTD ncx 2005-1//EN" "http://www.daisy.org/z3986/2005/ncx-2005-1.dtd">';
+        toc_ncx+='<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1">';
+
+            toc_ncx+='<head>';
+                toc_ncx+='<meta name="dtb:uid" content="urn:uuid:7a8a677c-ed6b-4ea1-a2dd-d46f4c886a73"/>';
+                toc_ncx+='<meta name="dtb:depth" content="1"/>';
+                toc_ncx+='<meta name="dtb:totalPageCount" content="0"/>';
+                toc_ncx+='<meta name="dtb:maxPageNumber" content="0"/>';
+            toc_ncx+='</head>';
+
+            toc_ncx+='<docTitle>';
+                toc_ncx+='<text>'+this.obj_bible_cur.name+'</text>';
+            toc_ncx+='</docTitle>';
+
+            toc_ncx+='<navMap>';
+
+                $(contents).each(function(index,chapter){
+                    toc_ncx+='<navPoint id="navPoint-'+index+'" playOrder="1">';
+                    toc_ncx+='<navLabel><text>'+chapter.name+'</text></navLabel>';
+                    toc_ncx+='<content src="Text/chapter_'+index+'.xhtml"/>';
+                    toc_ncx+='</navPoint>';
+                });
+
+            toc_ncx+='</navMap>';
+
+        toc_ncx+='</ncx>';
+
+
+        content_opf+='<?xml version="1.0" encoding="utf-8"?>';
+        content_opf+='<package version="2.0" unique-identifier="BookId" xmlns="http://www.idpf.org/2007/opf">';
+
+            content_opf+='<metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">';
+                content_opf+='<dc:identifier opf:scheme="UUID" id="BookId">urn:uuid:7a8a677c-ed6b-4ea1-a2dd-d46f4c886a73</dc:identifier>';
+                content_opf+='<dc:language>'+this.carrot.lang+'</dc:language>';
+                content_opf+='<dc:title>'+this.obj_bible_cur.name+'</dc:title>';
+                content_opf+='<meta name="Sigil version" content="1.9.30"/>';
+                content_opf+='<dc:date opf:event="modification" xmlns:opf="http://www.idpf.org/2007/opf">2023-07-16</dc:date>';
+            content_opf+='</metadata>';
+
+            content_opf+='<manifest>';
+                content_opf+='<item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml"/>';
+                $(contents).each(function(index,chapter){
+                    content_opf+='<item id="chapter_'+index+'" href="Text/chapter_'+index+'.xhtml" media-type="application/xhtml+xml"/>';
+                });
+            content_opf+='</manifest>';
+
+            content_opf+='<spine toc="ncx">';
+                $(contents).each(function(index,chapter){
+                    content_opf+='<itemref idref="chapter_'+index+'"/>';
+                });
+            content_opf+='</spine>';
+
+        content_opf+='</package>';
+
+        zip.file("mimetype",file_mimetype);
+        zip.file("META-INF/container.xml",container_xml);
+        zip.file("OEBPS/toc.ncx",toc_ncx);
+        zip.file("OEBPS/content.opf",content_opf);
+
+        $(contents).each(function(index,chapter){
+            var xhtml='';
+            var paragraphs=chapter.paragraphs;
+            xhtml+='<?xml version="1.0" encoding="utf-8"?>';
+            xhtml+='<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">';
+            xhtml+='<html xmlns="http://www.w3.org/1999/xhtml">';
+            xhtml+='<head><title>Chapter '+(parseInt(index)+1)+'</title></head>';
+            xhtml+='<body>';
+                xhtml+='<h2>'+book_data.name+' '+(parseInt(index)+1)+'</h2>';
+                for(var i=0;i<paragraphs.length;i++){
+                    xhtml+='<p><sup>'+(i+1)+'</sup> '+paragraphs[i]+'</p>';
+                };
+            xhtml+='</body>';
+            xhtml+='</html>';
+            zip.file("OEBPS/Text/chapter_"+index+".xhtml",xhtml);
+        });
+
+        zip.generateAsync({type:"blob"}).then(function(content) {
+            saveAs(content, book_data.name+".epub");
+        });
     }
 }

@@ -15,8 +15,6 @@ class Carrot_Icon{
     data_icon_24=null;
     data_icon_16=null;
 
-    data_icon_x_64=null;
-
     cur_show_icon_category='';
 
     constructor(carrot){
@@ -169,7 +167,7 @@ class Carrot_Icon{
             item_cat_icon.set_title(category.key);
             item_cat_icon.set_index(index);
             item_cat_icon.set_db("icon_category");
-            if(category.icon!=null) item_cat_icon.set_icon_font(category.icon);
+            if(category.icon!=null) item_cat_icon.set_icon_font(category.icon+" icon_catgeory");
             item_cat_icon.set_obj_js("icon");
             item_cat_icon.set_id(category.key);
             item_cat_icon.set_act_edit("carrot.icon.edit_category");
@@ -181,6 +179,11 @@ class Carrot_Icon{
         html+='</div>';
         carrot.show(html);
         carrot.check_event();
+
+        $(".icon_catgeory").click(function(){
+            var obj_id=$(this).attr("obj_id");
+            carrot.icon.select_show_category(obj_id);
+        });
     }
 
     act_done_get_data_list_icon(ions,carrot){
@@ -373,7 +376,7 @@ class Carrot_Icon{
                     html+='<h6 class="pt-3 pl-3">Folders</h6>';
                     html+='<hr>';
                     html+='<ul class="mb-1 pl-3 pb-2">';
-                        html+='<li><i class="fa-solid fa-file-zipper"></i> '+data.name+'</li>';
+                        html+='<li><i class="fa-solid fa-file-zipper"></i> '+data.name+'.zip</li>';
                         html+='<li>&nbsp;<i class="fa-solid fa-folder"></i> png</li>';
                         html+='<li>&nbsp;&nbsp;<i class="fa-solid fa-caret-right"></i> <i class="fa-solid fa-file"></i> 64.png</li>';
                         html+='<li>&nbsp;&nbsp;<i class="fa-solid fa-caret-right"></i> <i class="fa-solid fa-file"></i> 32.png</li>';
@@ -437,8 +440,6 @@ class Carrot_Icon{
         var carrot=this.carrot;
         var name_icon=carrot.icon.obj_icon_info_cur.name;
         const zip = new JSZip();
-        console.log(carrot.icon.data_icon_64);
-        console.log(carrot.icon.data_icon_32);
         zip.file(name_icon+"/png/64.png",carrot.icon.data_icon_64);
         zip.file(name_icon+"/png/32.png",carrot.icon.data_icon_32);
         zip.file(name_icon+"/png/24.png",carrot.icon.data_icon_24);
