@@ -27,6 +27,7 @@ class Carrot_Site{
 
     /*Firebase*/
     db;
+    auth;
     firebase;
     storage;
 
@@ -173,9 +174,12 @@ class Carrot_Site{
         }
 
         if(this.firebase==null) this.firebase =firebase.initializeApp(this.firebaseConfig_mainhost);
+
+        this.auth=this.firebase.auth();
         this.storage = this.firebase.storage();
         this.db = this.firebase.firestore();
         if(this.is_localhost){
+            this.auth.useEmulator("http://localhost:9099");
             this.db.useEmulator('localhost', 8082);
             this.storage.useEmulator('localhost', 9199);
         }
@@ -692,35 +696,66 @@ class Carrot_Site{
     show_import_json_file(){
         var carrot=this;
         var html='';
-        html+='<div class="row"><div class="col-12"><input type="file" id="input-file-import"></div></div>';
+        html='<div class="section-container p-2 p-xl-4">';
+        html+='<div class="row">';
+            html+='<div class="col-6">';
+                html+='<form>';
+                html+='<div class="form-row">';
+                html+='<h2>Import Data</h2>';
+                html+='</div>';
+                html+='<div class="form-row">';
+                        html+='<div class="custom-file">';
+                            html+='<label for="input-file-import"><i class="fa-solid fa-database"></i> File data json</label>';
+                            html+='<input type="file" class="custom-file-input form-control"" id="input-file-import">';
+                            html+='<small id="emailHelp" class="form-text text-muted">Upload <b>json</b> data file to update data into the system</small>';
+                        html+='</div>';
+                html+='</div>';
+                html+='</form>';
+            html+='</div>';
+            html+='<div class="col-6">';
+                html+='<form>';
+                html+='<div class="form-row">';
+                html+='<h2>Export Data</h2>';
+                html+='</div>';
+                html+='<div class="form-row">';
+                        html+='<div class="custom-file">';
+                            html+='<label for="input-file-import"><i class="fa-solid fa-file-arrow-down"></i> Download file json database </label>';
+                            html+='<br/><div class="btn btn-success" role="button" onclick="carrot.download_json();return false;"><i class="fa-solid fa-file-arrow-down"></i> Download</div><br/>';
+                            html+='<small id="emailHelp" class="form-text text-muted">Download <b>json</b> data file to backup data into the system</small>';
+                        html+='</div>';
+                html+='</div>';
+                html+='</form>';
+            html+='</div>';
+        html+='</div>';
+
         html+='<div class="row"><pre><code class="language-json col-12" id="file_contain"></code></pre></div>';
+        html+='</div>';
         this.show(html);
+        
 
         $("#input-file-import").on('change',function() {
             var file = $(this).get(0).files;
             var reader = new FileReader();
             reader.readAsText(file[0]);
+            Swal.showLoading();
             reader.addEventListener("load", function(e) {
                 var textFromFileLoaded = e.target.result;
                 var obj_json=JSON.parse(textFromFileLoaded);
-                carrot.import_json_by_data(obj_json);
+                var name_collection = obj_json.collection;
+                var all_item = obj_json.all_item;
                 var jsonPretty = JSON.stringify(obj_json, null, '\t');
+
+                $.each(all_item, function (index, d) {
+                    var doc_id = d["id_import"];
+                    delete d["id_import"];
+                    carrot.db.collection(name_collection).doc(doc_id).set(d);
+                });
+                
+                carrot.msg("Import Data Success!");
                 $("#file_contain").html(jsonPretty);
                 hljs.highlightAll();
             })
         });
-    }
-
-    import_json_by_data(data){
-        var name_collection = data.collection;
-        var all_item = data.all_item;
-        var carrot=this;
-        $.each(all_item, function (index, d) {
-            var doc_id = d["id_import"];
-            delete d["id_import"];
-            carrot.db.collection(name_collection).doc(doc_id).set(d);
-        });
-        $.MessageBox("Import Success!");
     }
 
     log(s_msg,s_status="info") {

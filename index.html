@@ -49,8 +49,8 @@
     <script src="assets/plugins/messagebox/messagebox.min.js"></script>
     <script src="assets/plugins/dataTables/jquery.dataTables.js"></script>
     <script src="assets/plugins/highlight/highlight.min.js" ></script>
-    <script src="assets/js/carrot_site.js?ver=25.6"></script>
-    <script src="assets/js/main.js?ver=25.6"></script>
+    <script src="assets/js/carrot_site.js?ver=26.6"></script>
+    <script src="assets/js/main.js?ver=26.6"></script>
 
     <script>
         var PAYPAL_CLIENT = 'AYgLieFpLUDxi_LBdzDqT2ucT4MIa-O0vwX7w3CKGfQgMGROOHu-xz2y5Jes77owCYQ1eLmOII_ch2VZ';
@@ -98,7 +98,7 @@
                     <div id="btn_pay_product" onclick="carrot.pay.list_product()" class="btn-menu btn btn-small btn-light cpfs-8" ><i class="fa-solid fa-bag-shopping"></i></div>
 
                     <div class="dropdown pt-2 d-inline">
-                        <div id="btn_login" class="btn btn-small btn-light cpfs-8">
+                        <div id="btn_login" onclick="carrot.user.login();" class="btn btn-small btn-light cpfs-8">
                             <i class="fa-solid fa-user"></i> <lang class="lang" key_lang="login">Login</lang>
                         </div>
 
@@ -107,8 +107,8 @@
                         </div>
 
                         <ul class="dropdown-menu" id="menu_account" aria-labelledby="btn_acc_info">
-                            <li><a role="button" id="btn_acc_login_info" class="dropdown-item"><i class="fa-solid fa-circle-info"></i> <l class="lang" key_lang="acc_info">Edit Info</l></a></li>
-                            <li><a id="btn_logout" class="dropdown-item" href="#" > <i class="fa-solid fa-right-from-bracket"></i> <l class="lang" key_lang="logout">Logout</l></a></li>
+                            <li><a id="btn_acc_login_info" class="dropdown-item" role="button" onclick="carrot.user.show_user_info_login();return false;"><i class="fa-solid fa-circle-info"></i> <l class="lang" key_lang="acc_info">Edit Info</l></a></li>
+                            <li><a id="btn_logout" class="dropdown-item" role="button" onclick="carrot.user.user_logout();return false;" > <i class="fa-solid fa-right-from-bracket"></i> <l class="lang" key_lang="logout">Logout</l></a></li>
                         </ul>
                     </div>
 

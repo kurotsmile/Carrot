@@ -69,50 +69,13 @@ function delete_file(emp){
     });
 }
 
-function customer_field_for_db(data,collection,key_name_doc,smg_success){
-    data["act_msg_success"]={'defaultValue':smg_success,'customClass':'d-none'};
-    data["db_collection"]={'defaultValue':collection,'customClass':'d-none'};
-    data["db_doc"]={'defaultValue':key_name_doc,'customClass':'d-none'};
-}
-
 var carrot=new Carrot_Site();
 $(document).ready(function () {
     $("#load_bar").css("width","0%");
     $("#head").hide();
     $("#head_nav").hide();
     $("#logo_carrot").on("contextmenu", function () { carrot.act_mode_dev(); return false; });
-    $("#btn_download_json").click(function () {carrot.download_json();});
     $("#btn_recognition").click(function(){carrot.start_recognition();});
-    $("#btn_import_json_url").click(function () {
-        var url_json = prompt("Enter url json", "Enter url");
-        if (url_json != null) {
-            $.ajax(url_json, {
-                success: function (data) {
-                    carrot.import_json_by_data(data);
-                }
-            });
-        };
-    });
-    $("#btn_acc_login_info").click(function(){carrot.user.show_user_info_login();})
-    $("#btn_login").click(function () {
-        $.MessageBox({
-            message: "<b><i class='fa-solid fa-key'></i> "+carrot.l('login')+"</b>",
-            input: {
-                usernames: {type: "text",label: carrot.l("phone"),title: "Enter Your Phone"},
-                password: {type: "password",label:carrot.l("password"),title: "Type password here"},
-                dummy_caption: {type: "caption",message: carrot.l("login_tip")}
-            },
-            top: "auto",
-            buttonFail:carrot.l("cancel"),
-            buttonDone  : {login:{text:carrot.l('login'),keyCode: 12},register:{text:carrot.l("register"),keyCode: 13}},
-        }).done(function(data,button) {
-            var username=data.usernames;
-            var password=data.password;
-            if(button=='login') carrot.user.check_user_login(username,password);
-            if(button=='register') carrot.user.show_register();
-        });
-    });
-    $("#btn_logout").click(function(){carrot.user.user_logout();});
 
     var lang_page=carrot.get_param_url("lang");
     if(lang_page!=null){

@@ -36,6 +36,119 @@ class Carrot_user{
         });
     }
 
+    login_user_google(){
+        var provider_google = new firebase.auth.GoogleAuthProvider();
+        provider_google.addScope('https://www.googleapis.com/auth/contacts.readonly');
+        carrot.firebase.auth().languageCode = this.carrot.lang;
+        carrot.firebase.auth().signInWithPopup(provider_google).then((result) => {
+            var user = result.user;
+            carrot.user.login_success(user);
+        }).catch((error) => {
+            carrot.msg(error.message,"error");
+        });
+    }
+
+    login_user_twitter(){
+        var provider_twitter = new firebase.auth.TwitterAuthProvider();
+        carrot.firebase.auth().languageCode = this.carrot.lang;
+        carrot.firebase.auth().signInWithPopup(provider_twitter).then((result) => {
+            var user = result.user;
+            carrot.user.login_success(user);
+        }).catch((error) => {
+            carrot.msg(error.message,"error");
+        });
+    }
+
+    login_user_apple(){
+        var provider_apple = new firebase.auth.OAuthProvider('apple.com');
+        provider_apple.addScope('email');
+        provider_apple.addScope('name');
+        carrot.firebase.auth().signInWithPopup(provider_apple).then((result) => {
+            var user = result.user;
+            carrot.user.login_success(user);
+        }).catch((error) => {
+            carrot.msg(error.message,"error");
+        });
+    }
+
+    login_user_github(){
+        var provider_github = new firebase.auth.GoogleAuthProvider();
+        provider_github.addScope('repo');
+        carrot.firebase.auth().signInWithPopup(provider_github).then((result) => {
+            var user = result.user;
+            carrot.user.login_success(user);
+        }).catch((error) => {
+            carrot.msg(error.message,"error");
+        });
+    }
+
+    login_success(data_user){
+        var user=data_user.multiFactor.user;
+        console.log(user);
+        alert(user.displayName);
+        Swal.close();
+    }
+
+    login(){
+        var html='';
+        html+='<form class="row">';
+            html+='<div class="col-6 fs-9 text-justify">';
+                html+='<div class="form-group">';
+                    html+='<label for="login_user"><i class="fa-solid fa-phone"></i> '+this.carrot.l("phone","Phone")+'</label>';
+                    html+='<input  class="form-control form-control-sm mt-1"" id="login_user" aria-describedby="emailHelp" placeholder="Enter Your Phone">';
+                html+='</div>';
+
+                html+='<div class="form-group">';
+                    html+='<label for="login_password"><i class="fa-solid fa-lock"></i> '+this.carrot.l("password","Password")+'</label>';
+                    html+='<input type="password" class="form-control form-control-sm mt-1" id="login_password" placeholder="Password">';
+                html+='</div>';
+
+                html+='<div class="form-group">';
+                    html+='<small class="fs-9">'+this.carrot.l("login_tip")+'</small>';
+                html+='</div>';
+
+                html+='<div class="form-group mt-2 text-center">';
+                    html+='<div id="btn_user_login" role="button" class="btn btn-success m-1 btn-sm"><i class="fa-solid fa-key"></i> '+this.carrot.l("login","Login")+'</div>';
+                    html+='<div onclick="Swal.close();return false;" role="button" class="btn m-1 btn-sm"><i class="fa-solid fa-circle-xmark"></i> '+this.carrot.l("cancel","Cancel")+'</div>';
+                html+='</div>';
+            html+='</div>';
+            
+            html+='<div class="col-6 fs-9">';
+                html+='<button onclick="carrot.user.login_user_google();return false;" class="btn btn-info fs-9 m-2 d-block btn-sm"><i class="fa-brands fa-google"></i> login with google account</button>';
+                html+='<button onclick="carrot.user.login_user_twitter();return false;" class="btn btn-info fs-9 m-2 d-block btn-sm"><i class="fa-brands fa-twitter"></i> login with twitter account</button>';
+                html+='<button onclick="carrot.user.login_user_apple();return false;" class="btn btn-info fs-9 m-2 d-block btn-sm"><i class="fa-brands fa-apple"></i> login with Apple account</button>';
+                html+='<button onclick="carrot.user.login_user_github();return false;" class="btn btn-info fs-9 m-2 d-block btn-sm"><i class="fa-brands fa-square-github"></i> login with Github account</button>';
+                html+='<button onclick="carrot.user.show_register();Swal.close();return false;" class="btn btn-success fs-9 m-2 d-block btn-lg"><i class="fa-solid fa-user-plus"></i> '+this.carrot.l("register","Register")+'</button>';
+            html+='</div>';
+
+        html+='</form>';
+        Swal.fire({
+            title: this.carrot.l("login","Login"),
+            html:html,
+            showConfirmButton: false
+        });
+
+        $("#btn_user_login").click(function(){
+            var login_user=$("#login_user").val();
+            var login_password=$("#login_password").val();
+            carrot.user.check_user_login(login_user,login_password);
+        });
+
+    }
+
+    check_login(){
+        var provider_google = new firebase.auth.GoogleAuthProvider();
+        provider_google.addScope('https://www.googleapis.com/auth/contacts.readonly');
+        carrot.firebase.auth().currentUser.linkWithPopup(provider_google).then((result) => {
+            var credential = result.credential;
+            var user = result.user;
+            console.log(user);
+            console.log(credential);
+          }).catch((error) => {
+            console.log(error);
+          });
+    }
+
     save_obj_phone_book(){
         localStorage.setItem("obj_phone_book", JSON.stringify(this.obj_phone_book));
     }
@@ -328,20 +441,22 @@ class Carrot_user{
     }
 
     check_user_login(username,password){
+        Swal.showLoading();
         this.carrot.db.collection("user-"+this.carrot.lang).where("phone", "==", username).where("password", "==", password).get().then((querySnapshot) => {
             if(querySnapshot.docs.length>0){
+                Swal.close();
                 querySnapshot.forEach((doc) => {
                     var data_login=doc.data();
                     data_login["id"]=doc.id;
                     carrot.user.set_user_login(data_login);
                 });
             }else{
-                $.MessageBox("Đăng nhập thất bại!");
+                carrot.msg("Đăng nhập thất bại!","error");
             }
         })
         .catch((error) => {
             this.log(error.message)
-            $.MessageBox("Đăng nhập thất bại!");
+            carrot.msg("Đăng nhập thất bại!","error");
         });
     }
 
