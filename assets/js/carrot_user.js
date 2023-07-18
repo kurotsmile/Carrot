@@ -84,8 +84,14 @@ class Carrot_user{
 
     login_success(data_user){
         var user=data_user.multiFactor.user;
+        var data_user_login=new Object();
         console.log(user);
-        alert(user.displayName);
+        data_user_login.email=user.email;
+        data_user_login.name=user.displayName;
+        data_user_login.phone=user.phoneNumber;
+        data_user_login.avatar=user.photoURL;
+        data_user_login.id=user.uid;
+        this.set_user_login(data_user_login);
         Swal.close();
     }
 
@@ -166,9 +172,13 @@ class Carrot_user{
     }
 
     user_logout(){
-        this.obj_login=null;
-        localStorage.removeItem("obj_login");
-        this.show_info_user_login_in_header();
+        carrot.firebase.auth().signOut().then(function() {
+            carrot.user.obj_login=null;
+            localStorage.removeItem("obj_login");
+            carrot.user.show_info_user_login_in_header();
+        }, function(error) {
+            console.error('Sign Out Error', error);
+        });
     }
 
     show_info_user_login_in_header(){

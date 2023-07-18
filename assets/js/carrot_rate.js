@@ -22,7 +22,7 @@ class Carrot_Rate{
                 name_user_rate=data_user_login.name;
             }
             html += '<img role="button" emp_img="avatar_user_rate" id="avatar_user_rate" onclick="carrot.avatar.msg_list_select(this);return false" src="'+url_avatar_user_rate+'"/>';
-            html += '<span id="name_user_rate">'+name_user_rate+'</span>';
+            html += '<span class="d-block" id="name_user_rate">'+name_user_rate+'</span>';
         html += '</div>';
 
         html += '<div class="col-md-10 align-items-center col-10 rcolm">';

@@ -179,7 +179,7 @@ class Carrot_Site{
         this.storage = this.firebase.storage();
         this.db = this.firebase.firestore();
         if(this.is_localhost){
-            this.auth.useEmulator("http://localhost:9099");
+            this.auth.useEmulator("http://localhost:9099", { disableWarnings: true });
             this.db.useEmulator('localhost', 8082);
             this.storage.useEmulator('localhost', 9199);
         }
