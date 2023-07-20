@@ -335,6 +335,7 @@ class Carrot_Field{
             html+='</select>';
         }
         else{
+            if(this.value==undefined) this.value='';
             html+='<div class="input-group mb-3">';
             html+='<input type="'+this.type+'" value="'+this.value+'" class="form-control m-0 '+s_class+' cr_field form-control-sm" id="'+this.name+'" placeholder="'+this.placeholder+'">';
             html+='<div class="input-group-append">';
