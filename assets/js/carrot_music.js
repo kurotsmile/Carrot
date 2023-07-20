@@ -17,10 +17,9 @@ class Carrot_Music{
         this.load_obj_song();
 
         carrot.register_page(this.id_page,"carrot.music.show_list_music()","carrot.music.edit","carrot.music.show_info_music_by_id","carrot.music.reload");
-        var btn_add=carrot.menu.create("add_music").set_label("Add Music").set_icon(this.icon).set_type("add");
-        $(btn_add).click(function(){carrot.music.add();});
-        var btn_list=carrot.menu.create("list_music").set_label("Music").set_lang("music").set_icon(this.icon).set_type("main");
-        $(btn_list).click(function(){carrot.music.show_list_music();});
+
+        carrot.menu.create("add_music").set_label("Add Music").set_icon(this.icon).set_type("add").set_act("carrot.music.add()");
+        carrot.menu.create("list_music").set_label("Music").set_lang("music").set_icon(this.icon).set_type("main").set_act("carrot.music.show_list_music()");
     }
 
     load_obj_song(){

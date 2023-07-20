@@ -45,14 +45,14 @@ class AI_Chat{
     }
 
     edit(data,carrot){
-        if(data["lang"]!="") data["lang"]=carrot.lang.lang_setting;
+        if(data["lang"]==null||data["lang"]=='') data["lang"]=carrot.lang.lang_setting;
         carrot.ai_lover.chat.show_add_or_edit_chat(data).set_title("Update Chat").set_msg_done("Update Chat Success!").show();
     }
 
     show_add_or_edit_chat(data){
         var frm=new Carrot_Form("chat",this.carrot);
         frm.set_icon_font(this.icon);
-        frm.set_db("chat-"+data["lang"],"id");
+        frm.set_db("chat-"+this.carrot.lang.lang_setting,"id");
         if(data.father_emp!=null){
             frm.create_field("father_emp").set_value(data["father_emp"]).set_type("msg").add_class("row").add_class("bg-light").add_class("p-2");
         }
@@ -76,7 +76,7 @@ class AI_Chat{
         frm.create_field("user").set_label("User").set_val(data["user"]);
         frm.create_field("limit").set_label("Limit Chat").set_val(data["limit"]).set_type("slider");
         frm.create_field("date_create").set_label("Date Create").set_val(data["date_create"]);
-        frm.create_field("lang").set_label("Lang").set_val(data["lang"]);
+        frm.create_field("lang").set_label("Lang").set_type("lang").set_val(data["lang"]);
         return frm;
     }
 
