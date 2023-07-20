@@ -54,7 +54,7 @@ class Carrot_Ebook{
                 html+='<button onclick="carrot.ebook.write_new();return false;" class="btn btn-success btn-sm m-1"><i class="fa-solid fa-marker"></i> Write a book</button>';
                 html+='<button onclick="carrot.ebook.add();return false;" class="btn btn-success btn-sm m-1"><i class="fa-solid fa-plus"></i> Add book</button>';
                 html+='<button onclick="carrot.ebook.add_category();return false;" class="btn btn-success dev btn-sm m-1"><i class="fa-solid fa-square-plus"></i> Add Category</button>';
-                
+
                 html+='<button onclick="carrot.ebook.list();return false;" class="btn btn-success btn-sm m-1"><i class="fa-solid fa-swatchbook"></i> list Ebook</button>';
                 html+='<button onclick="carrot.ebook.list_category();return false;" class="btn btn-success btn-sm m-1"><i class="fa-solid fa-hurricane"></i> list Category</button>';
                 html+='<button onclick="carrot.ebook.delete_all_data();return false;" class="btn btn-danger dev btn-sm m-1"><i class="fa-solid fa-dumpster-fire"></i> Delete All data</button>';
@@ -67,7 +67,7 @@ class Carrot_Ebook{
                     $(list_category).each(function(index,cat){
                         if(cat.name==this.type_category_show) css_active="btn-success";
                         else css_active="btn-secondary";
-                        html+='<button onclick="carrot.code.list_code_by_type(\''+cat.name+'\')" role="button" class="btn  btn-sm m-1 '+css_active+'"><i class="fa-brands fa-codepen"></i> '+cat.name+'</button>';
+                        html+='<button role="button" class="dropdown-item btn '+css_active+'"><i class="'+cat.icon+'"></i> '+cat.name+'</button>';
                     });
                 html+='</div>';
                 html+='</div>';
@@ -120,29 +120,43 @@ class Carrot_Ebook{
 
     show_list_ebook_by_data(datas,carrot){
         var list_ebook=carrot.obj_to_array(datas);
-        this.carrot.change_title_page("Ebook","?p=ebook","ebook");
+        carrot.change_title_page("Ebook","?p=ebook","ebook");
         var html='';
         html+=carrot.ebook.menu();
         
         html+='<div class="row mt-2">';
         $(list_ebook).each(function(index,ebook){
-            var item_ebook=new Carrot_List_Item(carrot);
-            item_ebook.set_index(index);
-            item_ebook.set_db("ebook");
-            item_ebook.set_id(ebook.id);
-            item_ebook.set_title(ebook.title);
-            item_ebook.set_tip(ebook.category);
-            item_ebook.set_icon_font(carrot.ebook.icon);
-            item_ebook.set_class("col-md-4 mb-3"); 
-            item_ebook.set_class_icon("col-md-2");
-            item_ebook.set_class_body("col-md-10");
-            html+=item_ebook.html();
+            ebook.index=index;
+            html+=carrot.ebook.box_ebook_item(ebook);
         });
         html+='</div>';
 
         this.carrot.show(html);
         this.carrot.check_event();
         if(this.carrot.ebook.obj_categorys==null) this.carrot.ebook.get_data_category();
+        this.check_event();
+    }
+
+    check_event(){
+        var carrot=this.carrot;
+        $(".ebook_icon").click(function(){
+            var obj_id=$(this).attr("obj_id");
+            carrot.get_doc("ebook",obj_id,carrot.ebook.show);
+        });
+    }
+
+    box_ebook_item(ebook,s_class='col-md-4 mb-3'){
+        var item_ebook=new Carrot_List_Item(carrot);
+        item_ebook.set_index(ebook.index);
+        item_ebook.set_db("ebook");
+        item_ebook.set_id(ebook.id);
+        item_ebook.set_title(ebook.title);
+        item_ebook.set_tip(ebook.category);
+        item_ebook.set_icon_font(carrot.ebook.icon+" ebook_icon");
+        item_ebook.set_class(s_class); 
+        item_ebook.set_class_icon("col-md-2");
+        item_ebook.set_class_body("col-md-10");
+        return item_ebook.html();
     }
 
     write_new(){
@@ -264,8 +278,11 @@ class Carrot_Ebook{
                     $("#list_ebook_category").html("");
                     var list_cat=this.carrot.obj_to_array(this.carrot.ebook.obj_categorys);
                     var html_cat='';
+                    var css_active='';
                     $(list_cat).each(function(index,cat){
-                        html_cat+='<button>'+cat.name+'</button>';
+                        if(cat.name==carrot.ebook.type_category_show) css_active="btn-success";
+                        else css_active="btn-secondary";
+                        html_cat+='<button role="button" class="dropdown-item btn '+css_active+'"><i class="'+cat.icon+'"></i> '+cat.name+'</button>';
                     });
                     $("#list_ebook_category").html(html_cat);
                 }
@@ -315,6 +332,49 @@ class Carrot_Ebook{
         html+='</div>';
         carrot.show(html);
         carrot.check_event();
+    }
+
+    show(data,carrot){
+        var html='<div class="section-container p-2 p-xl-4">';
+        html+='<div class="row">';
+            html+='<div class="col-md-8 ps-4 ps-lg-3">';
+                html+='<div class="row bg-white shadow-sm">';
+                    html+='<div class="col-md-2 p-3 text-center">';
+                        html+='<i class="fa-solid fa-book fa-4x"></i>';
+                    html+='</div>';
+                    html+='<div class="col-md-10 p-3 text-center">';
+                        html+='<h4 class="fw-semi fs-4 mb-3">'+data.title+'</h4>';
+                        html+=carrot.btn_dev("ebook",data.id);
+                        html+='<div class="row pt-4">';
+
+                        html+='<div class="col-md-4 col-6 text-center">';
+                            html+='<b><l class="lang" key_lang="category">Category</l> <i class="fa-brands fa-phabricator"></i></b>';
+                            html+='<p>'+data.category+'</p>';
+                        html+='</div>';
+
+                        html+='</div>';
+                    html+="</div>";
+                html+="</div>";
+            html+="</div>";
+
+            html+='<div class="col-md-4 ps-4 ps-lg-3">';
+                html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-3 lang"  key_lang="related_ebooks">Related EBook</h4>';
+                var list_ebook_other=carrot.convert_obj_to_list(carrot.ebook.obj_ebooks).map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
+                var count_ebook=0;
+                for(var i=0;i<list_ebook_other.length;i++){
+                    var ebook=list_ebook_other[i];
+                    if(data.id!=ebook.id){
+                        html+=carrot.ebook.box_ebook_item(ebook,'col-md-12 mb-3');
+                        count_ebook++;
+                        if(count_ebook>12)break;
+                    }
+                };
+            html+="</div>";
+        html+="</div>";
+        html+="</div>";
+        carrot.show(html);
+        carrot.check_event();
+        carrot.ebook.check_event();
     }
 
     reload(carrot){
