@@ -273,7 +273,7 @@ class Carrot_Field{
             html+='<hr/>';
         }else if(this.type=="address"){
             var data_address=null;
-            if(this.value==''){
+            if(this.value==''||this.value==null){
                 data_address={"lat":null,"lot":null,"name":""};
             }else{
                 data_address=this.value;
@@ -287,6 +287,52 @@ class Carrot_Field{
             html+='</div>';
         }else if(this.type=="msg"){
             html+='<div id="'+this.name+'" class="'+s_class+'">'+this.value+'</div>';
+        }else if(this.type=="user"){
+            html+='<div id="'+this.name+'" type="'+this.type+'" class="input-group mb-3 cr_field" value="'+encodeURI(JSON.stringify(this.value))+'">';
+            if(carrot.user.obj_login==null){
+                html+='<div role="button" onclick="carrot.user.login();" class="btn btn-sm btn-info"><i class="fa-solid fa-user"></i> '+carrot.l("login","Login")+'</div>';
+            }else{
+                var data_user_login = this.value;
+
+                var name_user_rate='Incognito';
+                var url_avatar_user_rate='images/avatar_default.png';
+                var id_user_login="";
+
+                if (data_user_login != null) {
+                    if (data_user_login.avatar != null) url_avatar_user_rate=data_user_login.avatar;
+                    if(data_user_login.name!=null) name_user_rate=data_user_login.name;
+                    if(data_user_login.id !=null) id_user_login=data_user_login.id;
+                }
+
+                html+='<div class="row">';
+                    html+='<div class="col-2">';
+                        html+= '<img role="button" emp_img="avatar_user_rate" id="avatar_user_rate" onclick="carrot.avatar.msg_list_select(this);return false" src="'+url_avatar_user_rate+'"/>';
+                    html+='</div>';
+
+                    html+='<div class="col-10">';
+                        html+= '<span class="d-block" id="name_user_rate">'+name_user_rate+'</span>';
+                        if(id_user_login!="") html+= '<span class="d-block fs-9" id="name_user_rate">'+id_user_login+'</span>';
+                        html+='<span role="button" onclick="carrot.user.user_logout();return false;" class="btn btn-sm btn-danger"><i class="fa-solid fa-right-from-bracket"></i> '+carrot.l("logout","Logout")+'</span>';
+                    html+='</div>';
+
+                html+='</div>';
+            }
+            html+='</div>';
+        }else if(this.type=='lang'){
+            var frm=this;
+            $(carrot.langs.list_lang).each(function(index,lang){
+                frm.add_option(lang.key,lang.name);
+            });
+
+            html+='<select id="'+this.name+'" type="lang" class="cr_field form-select form-select-sm">';
+            for(var i=0;i<this.options.length;i++){
+                var item_option=this.options[i];
+                if(item_option.key==this.value)
+                    html+='<option value="'+item_option.key+'" selected>'+item_option.val+'</option>';
+                else
+                    html+='<option value="'+item_option.key+'">'+item_option.val+'</option>';
+            }
+            html+='</select>';
         }
         else{
             html+='<div class="input-group mb-3">';
@@ -524,6 +570,13 @@ class Carrot_Form{
                     data_address["lat"]=lat_address;
                     val_emp=data_address;
                 }
+                else if(type_emp=='user'){
+                    var obj_user=$(this).attr("value");
+                    obj_user=decodeURI(obj_user);
+                    obj_user=JSON.parse(obj_user);
+                    val_emp=obj_user;
+                }
+                else if(type_emp=="lang") val_emp=$(this).val();
                 else if(type_emp=="avatar") val_emp=$(this).attr("value");
                 else val_emp=$(this).val();
 

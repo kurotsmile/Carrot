@@ -48,6 +48,8 @@ class Carrot_Site{
     pay;
     radio;
     rate;
+    ebook;
+    piano;
     
     constructor(){
         this.firebaseConfig_mainhost={
@@ -92,6 +94,8 @@ class Carrot_Site{
         $('head').append('<script type="text/javascript" src="assets/js/carrot_icon.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_background.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_radio.js?ver='+this.get_ver_cur("js")+'"></script>');
+        $('head').append('<script type="text/javascript" src="assets/js/carrot_ebook.js?ver='+this.get_ver_cur("js")+'"></script>');
+        $('head').append('<script type="text/javascript" src="assets/js/carrot_piano.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_rate.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/ai_lover.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/ai_chat.js?ver='+this.get_ver_cur("js")+'"></script>');
@@ -120,6 +124,7 @@ class Carrot_Site{
         this.radio=new Carrot_Radio(this);
         this.background=new Carrot_Background(this);
         this.bible=new Carrot_Bible(this);
+        this.ebook=new Carrot_Ebook(this);
         this.avatar=new Carrot_Avatar(this);
         this.ai_lover=new Ai_Lover(this);
         this.ai=this.ai_lover;
@@ -129,6 +134,7 @@ class Carrot_Site{
         this.file=new Carrot_File(this);
         this.pay=new Carrot_Pay(this);
         this.rate=new Carrot_Rate(this);
+        this.piano=new Carrot_Piano(this);
 
         var btn_mod_host=this.menu.create("btn_mode_host").set_label("Change Mode Host").set_type("setting").set_icon("fa-brands fa-dev");
         $(btn_mod_host).click(function(){carrot.change_host_connection();});
@@ -1009,7 +1015,7 @@ class Carrot_Site{
         });
     }
 
-    show_404(){
+    show_404(list_btn=null){
         var html='';
         html+='<div class="d-flex align-items-center justify-content-center vh-100">';
         html+='<div class="text-center row">';
@@ -1021,7 +1027,12 @@ class Carrot_Site{
         html+='<p class="lead">';
         html+='The page you’re looking for doesn’t exist.';
         html+='</p>';
-        html+='<a role="button" class="btn btn-primary" onClick="carrot.home();return false;">Go Home</a>';
+        html+='<a role="button" class="btn btn-success" onClick="carrot.home();return false;"><i class="fa-solid fa-house"></i> Go Home</a>';
+        if(list_btn!=null){
+            $(list_btn).each(function(index,btn){
+                html+=btn.html();
+            });
+        }
         html+='</div>';
         html+='</div>';
         html+='</div>';

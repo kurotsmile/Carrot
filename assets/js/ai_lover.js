@@ -20,11 +20,6 @@ class Ai_Lover{
         $(btn_list_floor).click(function(){
             carrot.ai.list_floor();
         });
-
-        var btn_test_pay=carrot.menu.create("test_pay").set_label("Test Play").set_icon("fa-brands fa-paypal").set_type("dev");
-        $(btn_test_pay).click(function(){
-            carrot.show_error_connect_sever();
-        });
     }
 
     html(){

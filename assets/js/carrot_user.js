@@ -91,6 +91,9 @@ class Carrot_user{
         data_user_login.phone=user.phoneNumber;
         data_user_login.avatar=user.photoURL;
         data_user_login.id=user.uid;
+        data_user_login.sex="0";
+        data_user_login.lang=this.carrot.lang;
+        this.carrot.set_doc("user-"+this.carrot.lang,user.uid,data_user_login);
         this.set_user_login(data_user_login);
         Swal.close();
     }
@@ -478,6 +481,19 @@ class Carrot_user{
         }
     }
 
+    get_user_login(){
+        if(this.obj_login!=null){
+            var obj_user=new Object();
+            obj_user.id=this.obj_login.id;
+            obj_user.name=this.obj_login.name;
+            obj_user.avatar=this.obj_login.avatar;
+            obj_user.lang=this.obj_login.lang;
+            return obj_user;
+        }else{
+            return null;
+        }
+    }
+
     get_user_cur_info_comment(){
         var data_info={
             name:this.obj_login.name,
@@ -567,7 +583,7 @@ class Carrot_user{
 
             html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-4">';
             html+='<i class="'+this.icon+' fs-6 me-2"></i> <l class="lang" key_lang="other_user">Other User</l>';
-            html+='<span role="button" onclick="carrot.user.list()" class="btn float-end btn-sm btn-secondary"><i class="fa-solid fa-square-caret-right"></i> <l class="lang" key_lang="view_all">View All</l></span>';
+            html+='<span role="button" onclick="carrot.user.list()" class="btn float-end btn-sm btn-light"><i class="fa-solid fa-square-caret-right"></i> <l class="lang" key_lang="view_all">View All</l></span>';
             html+='</h4>';
 
             html+='<div id="other_user" class="row m-0">';

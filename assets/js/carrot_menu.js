@@ -50,6 +50,16 @@ class Menu_Item extends HTMLLIElement{
         return this;
     }
 
+    set_act(event){
+        this.set_act_click(event);
+        return this;
+    }
+
+    set_act_click(event){
+        $(this).click(function(){eval(event);});
+        return this;
+    }
+
     set_lang(key){
         this.key_lang=key;
         this.innerHTML=this.html();

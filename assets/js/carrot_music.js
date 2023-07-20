@@ -228,7 +228,7 @@ class Carrot_Music{
                     html+='</div>';
                     html+='<div class="col-md-8 p-2">';
                         html+='<h4 class="fw-semi fs-4 mb-3">'+data.name+'</h4>';
-                        html+=this.carrot.btn_dev("song",data.id);
+                        html+=this.carrot.btn_dev("song",data.id,"music","carrot.music.edit");
                         html+='<div class="row pt-4">';
                             if(data.genre!=''){
                                 html+='<div class="col-md-4 col-6 text-center">';
@@ -325,6 +325,7 @@ class Carrot_Music{
         item_music.set_name(data_music.name);
         item_music.set_index(data_music.index);
         item_music.set_icon(s_url_avatar);
+        item_music.set_act_edit("carrot.music.edit");
         item_music.set_class_icon("pe-0 col-3 btn_info_music");
         item_music.set_class_body("mt-2 col-9");
         var html_body='';
