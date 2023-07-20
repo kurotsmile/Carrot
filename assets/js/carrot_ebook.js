@@ -12,7 +12,7 @@ class Carrot_Ebook{
 
     constructor(carrot){
         this.carrot=carrot;
-        carrot.register_page("ebook","carrot.ebook.list()","carrot.ebook.edit","carrot.ebook.show","carrot.ebook.reload");
+        carrot.register_page("ebook","carrot.ebook.list()","carrot.ebook.edit","carrot.ebook.show_ebook_by_id","carrot.ebook.reload");
         carrot.register_page("ebook_category","carrot.ebook.list_category()","carrot.ebook.edit_category","carrot.ebook.show_category","carrot.ebook.reload_category");
         
         carrot.menu.create("ebook").set_label("Ebook").set_icon(this.icon).set_type("main").set_act("carrot.ebook.list()");
@@ -225,11 +225,11 @@ class Carrot_Ebook{
         new_data["date"]=$.datepicker.formatDate('yy-mm-dd', new Date());
         new_data["lang"]=this.carrot.lang;
         new_data["user"]=this.carrot.user.get_user_login();
-        this.frm_add_or_edit(new_data).set_title("Add Ebook").set_msg_done("Add ebook success!!!").show();
+        this.frm_add_or_edit(new_data).set_title("Add Ebook").set_msg_done("Add ebook success!!!").set_type("add").show();
     }
 
     edit(data,carrot){
-        carrot.ebook.frm_add_or_edit(data).set_title("Update Ebook").set_msg_done("Update ebook success!!!").show();
+        carrot.ebook.frm_add_or_edit(data).set_title("Update Ebook").set_msg_done("Update ebook success!!!").set_type("update").show();
     }
 
     frm_add_or_edit(data){
@@ -257,11 +257,11 @@ class Carrot_Ebook{
         $(this.carrot.langs.list_lang).each(function(index,lang){
             new_data["name_"+lang.key]="";
         });
-        this.frm_add_or_edit_category(new_data).set_title("Add Category").set_msg_done("Add Category Success!").show();
+        this.frm_add_or_edit_category(new_data).set_title("Add Category").set_msg_done("Add Category Success!").set_type("add").show();
     }
 
     edit_category(data,carrot){
-        carrot.ebook.frm_add_or_edit_category(data).set_title("Update Category").set_msg_done("Update Category Success").show();
+        carrot.ebook.frm_add_or_edit_category(data).set_title("Update Category").set_msg_done("Update Category Success").set_type("update").show();
     }
 
     frm_add_or_edit_category(data){
@@ -350,9 +350,18 @@ class Carrot_Ebook{
         carrot.check_event();
     }
 
+    show_ebook_by_id(id_ebook,carrot){
+        carrot.get_doc("ebook",id_ebook,carrot.ebook.show);
+    }
+
     show(data,carrot){
+        carrot.change_title_page(data.title,"?p=ebook&id="+data.id,"ebook");
         carrot.ebook.obj_ebook_cur=data;
         carrot.ebook.index_chapter_edit=0;
+        if(data.contents==null){
+            data.contents=Array();
+            data.contents.push({title:'',content:''});
+        }
         var html='<div class="section-container p-2 p-xl-4">';
         html+='<div class="row">';
             html+='<div class="col-md-8 ps-4 ps-lg-3">';
@@ -371,6 +380,11 @@ class Carrot_Ebook{
                         html+='<div class="col-md-4 col-6 text-center">';
                             html+='<b><l class="lang" key_lang="category">Category</l> <i class="fa-brands fa-phabricator"></i></b>';
                             html+='<p>'+data.category+'</p>';
+                        html+='</div>';
+
+                        html+='<div class="col-md-4 col-6 text-center">';
+                        html+='<b><l class="lang" key_lang="total_chapters">Total Chapters</l> <i class="fa-brands fa-phabricator"></i></b>';
+                        html+='<p>'+data.contents.length+' Chapters</p>';
                         html+='</div>';
 
                         html+='<div class="col-md-4 col-6 text-center">';
@@ -406,7 +420,7 @@ class Carrot_Ebook{
                             for(var i=0;i<contents.length;i++){
                                 if(carrot.ebook.index_chapter_edit==i) s_class="active";
                                 else s_class='';
-                                html+='<button type="button" class="btn btn-secondary btn-sm '+s_class+'">'+(i+1)+'</button>';
+                                html+='<button type="button" data-index="'+i+'" onclick="carrot.ebook.select_chapter_for_content_edit(this)" class="btn btn-secondary btn-sm '+s_class+' btn_chapter">'+(i+1)+'</button>';
                             }
                             html+='</div>';
 
@@ -448,27 +462,42 @@ class Carrot_Ebook{
 
     add_chapter_to_content(){
         var count_chapter=0;
-        var content=null;
+        var contents=null;
         if(this.obj_ebook_cur.contents!=null){
+            contents=this.obj_ebook_cur.contents;
             count_chapter=this.obj_ebook_cur.contents.length;
+
+            var new_conent=new Object();
+            new_conent.content="";
+            new_conent.title="";
+            this.obj_ebook_cur.contents.push(new_conent);
         }
         count_chapter++;
-        var html='<button type="button" class="btn btn-secondary btn-sm">'+count_chapter+'</button>';
+        this.index_chapter_edit=count_chapter;
+        $('.richText-editor').html('');
+        $(".btn_chapter").removeClass("active");
+        var html='<button type="button" data-index="'+(count_chapter-1)+'" onclick="carrot.ebook.select_chapter_for_content_edit(this)" class="btn btn-secondary active btn-sm btn_chapter">'+count_chapter+'</button>';
         $("#list_chapter_content").append(html);
     }
 
     save_chapter_to_content(){
         var chap_data=new Object();
         chap_data["content"]=$("#book_content").val();
+        var contents=this.obj_ebook_cur.contents;
+        contents[this.index_chapter_edit]=chap_data;
+        this.obj_ebook_cur.contents=contents;
         var washingtonRef = this.carrot.db.collection("ebook").doc(this.obj_ebook_cur.id);
-        washingtonRef.update({
-            contents: firebase.firestore.FieldValue.arrayUnion(chap_data)
-        });
+        washingtonRef.update({contents:contents});
         this.carrot.msg("Save book success");
     }
 
-    select_chapter_for_content_edit(index){
-        
+    select_chapter_for_content_edit(emp){
+        var emp_index=$(emp).data("index");
+        this.index_chapter_edit=emp_index;
+        var data_chapter=this.obj_ebook_cur.contents[emp_index];
+        $('.richText-editor').html(data_chapter.content);
+        $(".btn_chapter").removeClass("active");
+        $(emp).addClass("active");
     }
  
     reload(carrot){

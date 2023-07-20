@@ -132,20 +132,20 @@ class Carrot_Music{
 
         $(".btn-play-music").unbind('click');
         $(".btn-play-music").click(function(){
-            var aud_name=$(this).attr("aud-name");
+            var aud_id=$(this).attr("aud-id");
             var aud_index=$(this).attr("aud-index");
             $(this).effect( "bounce","fast");
             carrot.player_media.index_song_cur=aud_index;
-            carrot.player_media.open(this,carrot.music.play_music_by_name(aud_name));
+            carrot.player_media.open(this,carrot.music.play_music_by_name(aud_id));
         });
 
         $(".btn-play-video").unbind('click');
         $(".btn-play-video").click(function(){
-            var aud_name=$(this).attr("aud-name");
+            var aud_id=$(this).attr("aud-id");
             var aud_index=$(this).attr("aud-index");
             $(this).effect( "bounce","fast");
             carrot.player_media.index_song_cur=aud_index;
-            carrot.player_media.open(this,carrot.music.play_video_by_name(aud_name));
+            carrot.player_media.open(this,carrot.music.play_video_by_name(aud_id));
         });
 
         $(".btn_info_music").unbind('click');
@@ -222,8 +222,8 @@ class Carrot_Music{
                 html+='<div class="row bg-white shadow-sm">';
                     html+='<div class="col-md-4 p-3 text-center">';
                         html+='<img class="w-100" src="'+data.avatar+'" alt="'+data.name+'">';
-                        if(data.mp3!="") html+='<i role="button" class="fa-sharp fa-solid fa-circle-play fa-5x text-success mt-2 mr-2 btn-play-music" aud-index="'+data.index+'" aud-name="'+data.name+'"></i> ';
-                        if(data.link_ytb!="") html+='<i role="button" class="fa-sharp fa-solid fa-film fa-5x text-success mt-2 btn-play-video" aud-index="'+data.index+'" aud-name="'+data.name+'"></i>';
+                        if(data.mp3!="") html+='<i role="button" class="fa-sharp fa-solid fa-circle-play fa-5x text-success mt-2 mr-2 btn-play-music" aud-index="'+data.index+'" aud-id="'+data.id+'"></i> ';
+                        if(data.link_ytb!="") html+='<i role="button" class="fa-sharp fa-solid fa-film fa-5x text-success mt-2 btn-play-video" aud-index="'+data.index+'" aud-id="'+data.id+'"></i>';
                     html+='</div>';
                     html+='<div class="col-md-8 p-2">';
                         html+='<h4 class="fw-semi fs-4 mb-3">'+data.name+'</h4>';
@@ -338,8 +338,8 @@ class Carrot_Music{
         html_body+='</li>';
 
         html_body+='<div class="col-4 text-end">'; 
-        if(data_music.mp3!="") html_body+='<span role="button" class="status_music float-end text-success btn-play-music m-1"  aud-name="'+data_music.name+'" aud-index="'+data_music.index+'"><i class="fa-sharp fa-solid fa-circle-play fa-2x"></i></span> ';
-        if(data_music.link_ytb!="") html_body+='<span role="button" class="status_video float-end text-success btn-play-video m-1"  aud-name="'+data_music.name+'" aud-index="'+data_music.index+'"><i class="fa-sharp fa-solid fa-film fa-2x"></i></span> ';
+        if(data_music.mp3!="") html_body+='<span role="button" class="status_music float-end text-success btn-play-music m-1"  aud-id="'+data_music.id+'" aud-index="'+data_music.index+'"><i class="fa-sharp fa-solid fa-circle-play fa-2x"></i></span> ';
+        if(data_music.link_ytb!="") html_body+='<span role="button" class="status_video float-end text-success btn-play-video m-1"  aud-id="'+data_music.id+'" aud-index="'+data_music.index+'"><i class="fa-sharp fa-solid fa-film fa-2x"></i></span> ';
         html_body+='</div>';
 
         item_music.set_body(html_body);

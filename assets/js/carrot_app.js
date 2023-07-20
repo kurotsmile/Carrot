@@ -332,11 +332,11 @@ class Carrot_App{
         new_data_app["img3"]="";
         new_data_app["img4"]="";
         new_data_app["img5"]="";
-        this.frm_add_or_edit(new_data_app).set_title("Add App").set_msg_done("Add app success!").show();
+        this.frm_add_or_edit(new_data_app).set_title("Add App").set_msg_done("Add app success!").set_type("add").show();
     }
 
     edit(data,carrot){
-        carrot.app.frm_add_or_edit(data).set_title("Edit App").set_msg_done("Edit app success!").show();
+        carrot.app.frm_add_or_edit(data).set_title("Edit App").set_msg_done("Edit app success!").set_type("update").show();
     }
 
     frm_add_or_edit(data){
