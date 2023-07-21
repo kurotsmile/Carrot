@@ -197,6 +197,11 @@ class Carrot_Site{
         this.db.collection(s_collection).doc(s_document).set(data);
     }
 
+    set_doc_merge(s_collection,s_document,data){
+        this.log("Set " + s_collection+"."+s_document+" from server","warning");
+        this.db.collection(s_collection).doc(s_document).set(data,{merge:true});
+    }
+
     update_doc(s_collection,s_document,data){
         this.log("Update " + s_collection+"."+s_document+" from server","warning");
         var washingtonRef = this.db.collection(s_collection).doc(s_document);

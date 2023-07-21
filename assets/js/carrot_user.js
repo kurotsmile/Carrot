@@ -93,7 +93,7 @@ class Carrot_user{
         data_user_login.id=user.uid;
         data_user_login.sex="0";
         data_user_login.lang=this.carrot.lang;
-        this.carrot.set_doc("user-"+this.carrot.lang,user.uid,data_user_login);
+        carrot.set_doc_merge("user-"+this.carrot.lang,user.uid,data_user_login);
         this.set_user_login(data_user_login);
         Swal.close();
     }
@@ -199,39 +199,50 @@ class Carrot_user{
         this.carrot.rate.check_status_user_login();
         $(".user_data").each(function(index,emp){
             $(emp).attr("value",encodeURI(JSON.stringify(carrot.user.get_user_login())));
-            $(emp).html(carrot.user.box_item_form_user_login());
+            $(emp).html(carrot.user.box_item_field_form_user(carrot.user.get_user_login()));
         });
     }
 
-    box_item_form_user_login(){
+    box_item_field_form_user(data_user){
         var html='';
-        if(carrot.user.obj_login==null){
+        if(data_user==null){
             html+='<div role="button" onclick="carrot.user.login();" class="btn btn-sm btn-info"><i class="fa-solid fa-user"></i> '+carrot.l("login","Login")+'</div>';
         }else{
             var name_user_field='Incognito';
             var url_avatar_user_field='images/avatar_default.png';
             var id_user_field="";
 
-            if (carrot.user.obj_login!= null) {
-                if(carrot.user.obj_login.avatar!= null) url_avatar_user_field=carrot.user.obj_login.avatar;
-                if(carrot.user.obj_login.name!=null) name_user_field=carrot.user.obj_login.name;
-                if(carrot.user.obj_login.id!=null) id_user_field=carrot.user.obj_login.id;
-            }
+            if(data_user.name!=null) name_user_field=data_user.name;
+            if(data_user.avatar!= null) url_avatar_user_field=data_user.avatar;
+            if(data_user.id!=null) id_user_field=data_user.id;
 
             html+='<div class="row">';
                 html+='<div class="col-2">';
-                    html+= '<img role="button" emp_img="avatar_user_field" id="avatar_user_field" onclick="carrot.avatar.msg_list_select(this);return false" src="'+url_avatar_user_field+'"/>';
+                    html+='<img role="button" emp_img="avatar_user_field" id="avatar_user_field" onclick="carrot.avatar.msg_list_select(this);return false" src="'+url_avatar_user_field+'"/>';
                 html+='</div>';
 
                 html+='<div class="col-10">';
-                    html+= '<span class="d-block" id="name_user_field">'+name_user_field+'</span>';
-                    if(id_user_field!="") html+= '<span class="d-block fs-9" id="id_user_field">'+id_user_field+'</span>';
-                    html+='<span role="button" onclick="carrot.user.user_logout();return false;" class="btn btn-sm btn-danger"><i class="fa-solid fa-right-from-bracket"></i> '+carrot.l("logout","Logout")+'</span>';
+                    html+='<span class="d-block" id="name_user_field">'+name_user_field+'</span>';
+                    if(id_user_field!="") html+='<span class="d-block fs-9" id="id_user_field">'+id_user_field+'</span>';
+                    if(carrot.user.obj_login!=null){
+                        if(id_user_field==carrot.user.obj_login.id){
+                            html+='<span role="button" onclick="carrot.user.user_logout();return false;" class="btn btn-sm btn-danger"><i class="fa-solid fa-right-from-bracket"></i> '+carrot.l("logout","Logout")+'</span>';
+                        }else{
+                            html+='<span role="button" onclick="carrot.user.change_field_user_to_info_user_login();return false;" class="btn btn-sm btn-info"><i class="fa-solid fa-rotate"></i> Change to logged in user </span>';
+                        }
+                    }
                 html+='</div>';
 
             html+='</div>';
         }
         return html;
+    }
+
+    change_field_user_to_info_user_login(){
+        $(".user_data").each(function(index,emp){
+            $(emp).attr("value",encodeURI(JSON.stringify(carrot.user.get_user_login())));
+            $(emp).html(carrot.user.box_item_field_form_user(carrot.user.get_user_login()));
+        });
     }
 
     list(){
@@ -338,19 +349,20 @@ class Carrot_user{
         data_user_new["status_share"]="";
         data_user_new["email"]="";
         data_user_new["address"]="";
+        data_user_new["role"]="";
         data_user_new["lang"]=this.carrot.lang;
-        this.frm_add_or_edit(data_user_new).set_title(this.carrot.l("register","Register User")).set_msg_done("Register User Success!").show();
+        this.frm_add_or_edit(data_user_new).set_title(this.carrot.l("register","Register User")).set_msg_done("Register User Success!").set_type("add").show();
         this.carrot.check_event();
     }
-
+    
     edit(data,carrot){
-        carrot.user.frm_add_or_edit(data).set_title("Edit User").set_msg_done("Update user success!").show();
+        carrot.user.frm_add_or_edit(data).set_title("Edit User").set_msg_done("Update user success!").set_type("update").show();
         carrot.check_event();
     }
 
     frm_add_or_edit(data){
         var frm=new Carrot_Form("frm_user",this.carrot);
-        frm.set_db("user-"+this.carrot.lang,"id")
+        frm.set_db("user-"+this.carrot.lang,"id");
         frm.set_icon(this.icon);
         frm.create_field("id").set_label("ID").set_value(data.id).set_main().set_type("id");
         frm.create_field("name").set_label("Full Name").set_value(data.name);
@@ -365,6 +377,9 @@ class Carrot_user{
         var field_share=frm.create_field("status_share").set_label("Share Status").set_value(data.status_share).set_type("select");
         field_share.add_option("0","Share");
         field_share.add_option("1","No share");
+        var field_role=frm.create_field("role").set_label("Role").set_val(data.role).set_dev().set_type("select");
+        field_role.add_option("user","basic user");
+        field_role.add_option("admin","Administrators");
         var field_lang=frm.create_field("lang").set_label(this.carrot.l("country","Country")).set_value(data.lang).set_type("select");
         $(this.carrot.langs.list_lang).each(function(index,lang){
             field_lang.add_option(lang.key,lang.name);
@@ -378,12 +393,16 @@ class Carrot_user{
     }
     
     show_user_info(data_user,carrot){
-        if(data_user==null){$.MessageBox("This user no longer exists");return false;}
+        if(data_user==null){
+            carrot.msg("This user no longer exists","alert");
+            carrot.show_404();
+            return false;
+        }
         var url_avatar='';
         carrot.user.phone_book_info_cur=data_user;
         if(data_user.avatar!=null) url_avatar=data_user.avatar;
-        if(url_avatar=="") url_avatar="images/avatar_default.png";
-        carrot.change_title_page(data_user.name,"?p=phone_book&id="+data_user.id+"&user_lang="+data_user.lang,"user-"+data_user.lang);
+        if(url_avatar==""||url_avatar=="null") url_avatar="images/avatar_default.png";
+        carrot.change_title_page(data_user.name,"?p=phone_book&id="+data_user.id+"&user_lang="+data_user.lang,"phone_book");
         var html='<div class="section-container p-2 p-xl-4">';
         html+='<div class="row">';
             html+='<div class="col-md-8 ps-4 ps-lg-3">';
@@ -413,14 +432,19 @@ class Carrot_user{
                                     html+='<p class="lang" key_lang="girl">'+data_user.sex+'</p>';
                                 }
                             html+='</div>';
+
                             html+='<div class="col-md-4 col-6 text-center">';
                                 html+='<b><l class="lang" key_lang="country">Country</l> <i class="fa-solid fa-language"></i></b>';
                                 html+='<p>'+data_user.lang+'</p>';
                             html+='</div>';
-                            html+='<div class="col-md-4 col-6 text-center">';
+
+                            if(data_user.phone!=null){
+                                html+='<div class="col-md-4 col-6 text-center">';
                                 html+='<b><l class="lang" key_lang="phone">Phone</l> <i class="fa-solid fa-user"></i></b>';
                                 html+='<p>'+data_user.phone+'</p>';
-                            html+='</div>';
+                                html+='</div>';
+                            }
+
                         html+='</div>';
 
                         html+='<div class="row pt-4">';
@@ -485,7 +509,7 @@ class Carrot_user{
     }
 
     show_edit_user_info_login(){
-        this.edit(this.obj_login,this.carrot);
+        this.carrot.get_doc("user-"+this.obj_login.lang,this.obj_login.id,carrot.user.edit);
     }
 
     check_user_login(username,password){
@@ -511,6 +535,14 @@ class Carrot_user{
     get_user_login_id(){
         if(this.obj_login!=null){
             return this.obj_login["id"];
+        }else{
+            return "";
+        }
+    }
+
+    get_user_login_role(){
+        if(this.obj_login!=null){
+            return this.obj_login.role;
         }else{
             return "";
         }

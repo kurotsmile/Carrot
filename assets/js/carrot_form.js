@@ -57,8 +57,8 @@ class Carrot_Field{
     list_btn=Array();
     options=Array();
     is_field_main=false;
+    is_dev=false;
     type_file='';
-
     emp_address=null;
     
     constructor(name,label,type='input',placeholder='Enter data here'){
@@ -108,6 +108,11 @@ class Carrot_Field{
 
     set_main(){
         this.is_field_main=true;
+        return this;
+    }
+
+    set_dev(){
+        this.is_dev=true;
         return this;
     }
 
@@ -172,9 +177,10 @@ class Carrot_Field{
     html(){
         var html='';
         var s_class='';
+        var s_class_dev='';
         for(var i=0;i<this.list_class.length;i++) s_class+=' '+this.list_class[i]+' ';
-
-        html+='<div class="form-group">';
+        if(this.is_dev) s_class_dev="dev";
+        html+='<div class="form-group '+s_class_dev+'">';
 
         if(this.type!='line'&&this.type!='msg'){
             html+='<label class="form-label fw-bolder fs-8" for="'+this.name+'">';
@@ -259,7 +265,7 @@ class Carrot_Field{
             html+='</div>';
         }else if(this.type=="avatar"){
             var url_img_avatar="";
-            if(this.value==null||this.value==undefined) url_img_avatar="images/avatar_default.png";
+            if(this.value==null||this.value==undefined||this.value=="null") url_img_avatar="images/avatar_default.png";
             else url_img_avatar=this.value;
             html+='<div class="input-group mb-3 text-center">';
                 html+='<div class="card flex-md-row mb-4 box-shadow h-md-250">';
@@ -289,34 +295,7 @@ class Carrot_Field{
             html+='<div id="'+this.name+'" class="'+s_class+'">'+this.value+'</div>';
         }else if(this.type=="user"){
             html+='<div id="'+this.name+'" type="'+this.type+'" class="input-group mb-3 cr_field user_data" value="'+encodeURI(JSON.stringify(this.value))+'">';
-            if(carrot.user.obj_login==null){
-                html+='<div role="button" onclick="carrot.user.login();" class="btn btn-sm btn-info"><i class="fa-solid fa-user"></i> '+carrot.l("login","Login")+'</div>';
-            }else{
-                var data_user_login = this.value;
-
-                var name_user_rate='Incognito';
-                var url_avatar_user_rate='images/avatar_default.png';
-                var id_user_login="";
-
-                if (data_user_login != null) {
-                    if (data_user_login.avatar != null) url_avatar_user_rate=data_user_login.avatar;
-                    if(data_user_login.name!=null) name_user_rate=data_user_login.name;
-                    if(data_user_login.id !=null) id_user_login=data_user_login.id;
-                }
-
-                html+='<div class="row">';
-                    html+='<div class="col-2">';
-                        html+= '<img role="button" emp_img="avatar_user_rate" id="avatar_user_rate" onclick="carrot.avatar.msg_list_select(this);return false" src="'+url_avatar_user_rate+'"/>';
-                    html+='</div>';
-
-                    html+='<div class="col-10">';
-                        html+= '<span class="d-block" id="name_user_rate">'+name_user_rate+'</span>';
-                        if(id_user_login!="") html+= '<span class="d-block fs-9" id="name_user_rate">'+id_user_login+'</span>';
-                        html+='<span role="button" onclick="carrot.user.user_logout();return false;" class="btn btn-sm btn-danger"><i class="fa-solid fa-right-from-bracket"></i> '+carrot.l("logout","Logout")+'</span>';
-                    html+='</div>';
-
-                html+='</div>';
-            }
+            html+=carrot.user.box_item_field_form_user(this.value);
             html+='</div>';
         }else if(this.type=='lang'){
             var frm=this;
