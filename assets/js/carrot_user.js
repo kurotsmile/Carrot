@@ -85,7 +85,6 @@ class Carrot_user{
     login_success(data_user){
         var user=data_user.multiFactor.user;
         var data_user_login=new Object();
-        console.log(user);
         data_user_login.email=user.email;
         data_user_login.name=user.displayName;
         data_user_login.phone=user.phoneNumber;
@@ -93,9 +92,17 @@ class Carrot_user{
         data_user_login.id=user.uid;
         data_user_login.sex="0";
         data_user_login.lang=this.carrot.lang;
-        carrot.set_doc_merge("user-"+this.carrot.lang,user.uid,data_user_login);
-        this.set_user_login(data_user_login);
+        this.obj_login=data_user_login;
+        carrot.set_doc_merge("user-"+this.carrot.lang,user.uid,data_user_login,this.done_login_success);
         Swal.close();
+    }
+
+    done_login_success(carrot){
+        carrot.get_doc("user-"+carrot.lang,carrot.user.obj_login.id,carrot.user.get_user_data_login_from_server);
+    }
+
+    get_user_data_login_from_server(data,carrot){
+        carrot.user.set_user_login(data);
     }
 
     login(){
@@ -442,6 +449,13 @@ class Carrot_user{
                                 html+='<div class="col-md-4 col-6 text-center">';
                                 html+='<b><l class="lang" key_lang="phone">Phone</l> <i class="fa-solid fa-user"></i></b>';
                                 html+='<p>'+data_user.phone+'</p>';
+                                html+='</div>';
+                            }
+
+                            if(data_user.role!=null){
+                                html+='<div class="col-md-4 col-6 text-center">';
+                                html+='<b><l class="lang" key_lang="role">Role</l> <i class="fa-solid fa-hat-cowboy"></i></b>';
+                                html+='<p>'+data_user.role+'</p>';
                                 html+='</div>';
                             }
 

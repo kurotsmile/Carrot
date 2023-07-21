@@ -197,9 +197,11 @@ class Carrot_Site{
         this.db.collection(s_collection).doc(s_document).set(data);
     }
 
-    set_doc_merge(s_collection,s_document,data){
+    set_doc_merge(s_collection,s_document,data,act_done=null){
         this.log("Set " + s_collection+"."+s_document+" from server","warning");
-        this.db.collection(s_collection).doc(s_document).set(data,{merge:true});
+        this.db.collection(s_collection).doc(s_document).set(data,{merge:true}).then(() => {
+            if(act_done!=null) eval(act_done)(carrot);
+        });
     }
 
     update_doc(s_collection,s_document,data){
