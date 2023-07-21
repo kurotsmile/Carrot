@@ -5,6 +5,8 @@ class Carrot_Ebook{
     obj_categorys=null;
 
     index_chapter_edit=0;
+    is_change_status=false;
+
     icon='fa-solid fa-book';
 
     type_category_show='all';
@@ -53,8 +55,7 @@ class Carrot_Ebook{
         var html='';
         html+='<div class="row">';
             html+='<div class="col-8">';
-                html+='<button onclick="carrot.ebook.write_new();return false;" class="btn btn-success btn-sm m-1"><i class="fa-solid fa-marker"></i> Write a book</button>';
-                html+='<button onclick="carrot.ebook.add();return false;" class="btn btn-success btn-sm m-1"><i class="fa-solid fa-plus"></i> Add book</button>';
+                html+='<button onclick="carrot.ebook.add();return false;" class="btn btn-success btn-sm m-1"><i class="fa-solid fa-marker"></i> Write a book</button>';
                 html+='<button onclick="carrot.ebook.add_category();return false;" class="btn btn-success dev btn-sm m-1"><i class="fa-solid fa-square-plus"></i> Add Category</button>';
 
                 html+='<button onclick="carrot.ebook.list();return false;" class="btn btn-success btn-sm m-1"><i class="fa-solid fa-swatchbook"></i> list Ebook</button>';
@@ -166,54 +167,6 @@ class Carrot_Ebook{
         item_ebook.set_class_icon("col-md-2");
         item_ebook.set_class_body("col-md-10");
         return item_ebook.html();
-    }
-
-    write_new(){
-        var carrot=this.carrot;
-        var html='<div class="section-container p-2 p-xl-4">';
-        html+=carrot.ebook.menu();
-        html+='<div class="row">';
-            html+='<div class="col-12">';
-                html+='<link rel="stylesheet" href="assets/plugins/richtex/richtext.min.css">';
-                html+='<script type="text/javascript" src="assets/plugins/richtex/jquery.richtext.js"></script>';
-                html+='<form>';
-
-                    html+='<div class="form-group">';
-                    html+='<label for="book_title">Book Titlte</label>';
-                    html+='<input type="text" class="form-control" id="book_title" aria-describedby="book_title" placeholder="Enter Book Title">';
-                    html+='<small id="emailHelp" class="form-text text-muted">Enter your title for easy management and search</small>';
-                    html+='</div>';
-
-                    html+='<div class="form-group">';
-                    html+='<label for="book_content">Contents</label>';
-                    html+='<textarea class="form-control" id="book_content" rows="10"></textarea>';
-                    html+='</div>';
-
-                    html+='<div class="form-group mt-2">';
-                    html+='<div type="submit" id="btn_ebook_done" role="button" class="btn btn-success content"><i class="fa-solid fa-circle-check"></i> '+this.carrot.l("done","Done")+'</div>';
-                    html+='</div>';
-                    
-                html+='</form>';
-                html+='<script>$(document).ready(function(){$("#book_content").richText();});</script>';
-            html+='</div>';
-        html+='</div>';
-        html+='</div>';
-        this.carrot.show(html);
-        this.carrot.check_event();
-
-        $("#btn_ebook_done").click(function(){
-            var book_title=$("#book_title").val();
-            var book_content=$("#book_content").val();
-            var data_ebook=new Object();
-            data_ebook.id="ebook"+carrot.create_id();
-            data_ebook.title=book_title;
-            data_ebook.content=book_content;
-            data_ebook.lang=carrot.lang;
-            carrot.set_doc("ebook",data_ebook.id,data_ebook);
-            carrot.ebook.delete_obj();
-            carrot.msg("Add ebook success!","success");
-            carrot.ebook.list();
-        });
     }
 
     add(){
@@ -361,43 +314,49 @@ class Carrot_Ebook{
         if(data.contents==null){
             data.contents=Array();
             data.contents.push({title:'',content:''});
+            carrot.ebook.obj_ebook_cur.contents=data.contents;
         }
         var html='<div class="section-container p-2 p-xl-4">';
         html+='<div class="row">';
             html+='<div class="col-md-8 ps-4 ps-lg-3">';
                 html+='<div class="row bg-white shadow-sm">';
                     html+='<div class="col-md-2 p-3 text-center">';
-                        if(data.icon!=null)
-                            html+='<img class="rounded" src="'+data.icon+'"/>';
-                        else
+                        if(data.icon==null||data.icon==undefined||data.icon=='undefined')
                             html+='<i class="fa-solid fa-book fa-4x"></i>';
+                        else
+                            html+='<img class="rounded" src="'+data.icon+'"/>';
                     html+='</div>';
                     html+='<div class="col-md-10 p-3 text-center">';
                         html+='<h4 class="fw-semi fs-4 mb-3">'+data.title+'</h4>';
                         html+=carrot.btn_dev("ebook",data.id);
                         html+='<div class="row pt-4">';
+                            html+='<div class="col-md-4 col-6 text-center">';
+                                html+='<b><l class="lang" key_lang="category">Category</l> <i class="fa-brands fa-phabricator"></i></b>';
+                                html+='<p>'+data.category+'</p>';
+                            html+='</div>';
 
-                        html+='<div class="col-md-4 col-6 text-center">';
-                            html+='<b><l class="lang" key_lang="category">Category</l> <i class="fa-brands fa-phabricator"></i></b>';
-                            html+='<p>'+data.category+'</p>';
+                            html+='<div class="col-md-4 col-6 text-center">';
+                            html+='<b><l class="lang" key_lang="total_chapters">Total Chapters</l> <i class="fa-brands fa-phabricator"></i></b>';
+                            html+='<p>'+data.contents.length+' Chapters</p>';
+                            html+='</div>';
+
+                            html+='<div class="col-md-4 col-6 text-center">';
+                            html+='<b><l class="lang" key_lang="file">File</l> <i class="fa-solid fa-file-arrow-down"></i></b>';
+                            html+='<p>'+data.title+'.epub</p>';
+                            html+='</div>';
+
+                            html+='<div class="col-md-4 col-6 text-center">';
+                                html+='<b><l class="lang" key_lang="author">Author</l> <i class="fa-solid fa-user-nurse"></i></b>';
+                                html+='<p>'+data.user.name+'</p>';
+                            html+='</div>';
                         html+='</div>';
 
-                        html+='<div class="col-md-4 col-6 text-center">';
-                        html+='<b><l class="lang" key_lang="total_chapters">Total Chapters</l> <i class="fa-brands fa-phabricator"></i></b>';
-                        html+='<p>'+data.contents.length+' Chapters</p>';
+                        html+='<div class="row pt-2">';
+                            html+='<div class="col-12">';
+                            html+='<button id="btn_share" type="button" class="btn d-inline btn-success"><i class="fa-solid fa-share-nodes"></i> <l class="lang" key_lang="share">Share</l> </button> ';
+                            html+='</div>';
                         html+='</div>';
 
-                        html+='<div class="col-md-4 col-6 text-center">';
-                        html+='<b><l class="lang" key_lang="file">File</l> <i class="fa-solid fa-file-arrow-down"></i></b>';
-                        html+='<p>'+data.title+'.epub</p>';
-                        html+='</div>';
-
-                        html+='<div class="col-md-4 col-6 text-center">';
-                            html+='<b><l class="lang" key_lang="author">Author</l> <i class="fa-solid fa-user-nurse"></i></b>';
-                            html+='<p>'+data.user.name+'</p>';
-                        html+='</div>';
-
-                        html+='</div>';
                     html+="</div>";
                 html+="</div>";
 
@@ -406,31 +365,34 @@ class Carrot_Ebook{
                     html+='<script type="text/javascript" src="assets/plugins/richtex/jquery.richtext.js"></script>';
                     html+='<h4 class="fw-semi fs-5 lang" key_lang="content">Content</h4>';
                     html+='<small>Với chương trình tạo ebook bạn có thể dễ dàng viết sách, tiểu thuyết và tải xuống với định dạng ebook đọc tiếp trên các thiết bị di động</small>';
-                    html+='<p class="fs-6 text-justify">';
-                    html+='Select Chaper Edit';
-                    var contents=Array();
-                    var content='';
-                    if(data.contents!=null){
-                        contents=data.contents;
-                        content=contents[carrot.ebook.index_chapter_edit].content;
-                    }
-                        html+='<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">';
-                            html+='<div class="btn-group m-2" role="group" aria-label="First group" id="list_chapter_content">';
-                            var s_class='';
-                            for(var i=0;i<contents.length;i++){
-                                if(carrot.ebook.index_chapter_edit==i) s_class="active";
-                                else s_class='';
-                                html+='<button type="button" data-index="'+i+'" onclick="carrot.ebook.select_chapter_for_content_edit(this)" class="btn btn-secondary btn-sm '+s_class+' btn_chapter">'+(i+1)+'</button>';
-                            }
-                            html+='</div>';
+                    html+='<form class="fs-6 text-justify">';
+                        html+='<div class="form-group">';
+                            html+='<label for="chapter_title">Chapter Title</label>';
+                            html+='<input type="email" class="form-control m-0" id="chapter_title" value="'+data.contents[carrot.ebook.index_chapter_edit].title+'" aria-describedby="ChapterTitle" placeholder="Enter Chapter Title">';
+                            html+='<small id="emailHelp" class="form-text text-muted">Nhập tiêu đề cho chương</small>';
+                        html+='</div>';
 
-                            html+='<div class="btn-group m-2" role="group" aria-label="Third group">';
-                            html+='<button onclick="carrot.ebook.add_chapter_to_content()"  type="button" class="btn btn-secondary btn-sm"><i class="fa-solid fa-plus"></i></button>';
+                        html+='<div class="form-group mt-2">';
+                        html+='<label for="chapter_select">Select Chaper Edit</label>';
+                            html+='<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">';
+                                html+='<div class="btn-group m-2" role="group" aria-label="First group" id="list_chapter_content">';
+                                var s_class='';
+                                for(var i=0;i<data.contents.length;i++){
+                                    if(carrot.ebook.index_chapter_edit==i) s_class="active";
+                                    else s_class='';
+                                    html+='<button type="button" data-index="'+i+'" onclick="carrot.ebook.select_chapter_for_content_edit(this)" class="btn btn-secondary btn-sm '+s_class+' btn_chapter">'+(i+1)+'</button>';
+                                }
+                                html+='</div>';
+
+                                html+='<div class="btn-group m-2" role="group" aria-label="Third group">';
+                                html+='<button onclick="carrot.ebook.add_chapter_to_content()"  type="button" class="btn btn-secondary btn-sm"><i class="fa-solid fa-plus"></i></button>';
+                                html+='</div>';
                             html+='</div>';
                         html+='</div>';
-                    html+='</p>';
+
+                    html+='</form>';
                     html+='<p class="fs-6 text-justify">';
-                    html+='<textarea class="form-control" id="book_content" rows="10">'+content+'</textarea>';
+                    html+='<textarea class="form-control" id="book_content" rows="10">'+data.contents[carrot.ebook.index_chapter_edit].content+'</textarea>';
                     html+='</p>';
                     html+='<script>$(document).ready(function(){$("#book_content").richText();});</script>';
                     html+='<p>';
@@ -458,23 +420,28 @@ class Carrot_Ebook{
         carrot.show(html);
         carrot.check_event();
         carrot.ebook.check_event();
+
+        $('.richText-editor,#chapter_title').change(function(){
+            carrot.ebook.is_change_status=true;
+        });
     }
 
     add_chapter_to_content(){
+        if(this.is_change_status==true){
+            this.carrot.msg("The old chapter has not been saved, please save it before creating a new chapter","alert");
+            return;
+        }
         var count_chapter=0;
         var contents=null;
         if(this.obj_ebook_cur.contents!=null){
             contents=this.obj_ebook_cur.contents;
             count_chapter=this.obj_ebook_cur.contents.length;
-
-            var new_conent=new Object();
-            new_conent.content="";
-            new_conent.title="";
-            this.obj_ebook_cur.contents.push(new_conent);
+            this.obj_ebook_cur.contents.push({title:'',content:''});
         }
         count_chapter++;
         this.index_chapter_edit=count_chapter;
         $('.richText-editor').html('');
+        $("#chapter_title").val("Chương "+count_chapter);
         $(".btn_chapter").removeClass("active");
         var html='<button type="button" data-index="'+(count_chapter-1)+'" onclick="carrot.ebook.select_chapter_for_content_edit(this)" class="btn btn-secondary active btn-sm btn_chapter">'+count_chapter+'</button>';
         $("#list_chapter_content").append(html);
@@ -482,10 +449,12 @@ class Carrot_Ebook{
 
     save_chapter_to_content(){
         var chap_data=new Object();
+        chap_data["title"]=$("#chapter_title").val();
         chap_data["content"]=$("#book_content").val();
         var contents=this.obj_ebook_cur.contents;
         contents[this.index_chapter_edit]=chap_data;
         this.obj_ebook_cur.contents=contents;
+        this.is_change_status=false;
         var washingtonRef = this.carrot.db.collection("ebook").doc(this.obj_ebook_cur.id);
         washingtonRef.update({contents:contents});
         this.carrot.msg("Save book success");
@@ -495,6 +464,7 @@ class Carrot_Ebook{
         var emp_index=$(emp).data("index");
         this.index_chapter_edit=emp_index;
         var data_chapter=this.obj_ebook_cur.contents[emp_index];
+        $("#chapter_title").val(data_chapter.title);
         $('.richText-editor').html(data_chapter.content);
         $(".btn_chapter").removeClass("active");
         $(emp).addClass("active");

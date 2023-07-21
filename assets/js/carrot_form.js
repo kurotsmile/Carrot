@@ -288,7 +288,7 @@ class Carrot_Field{
         }else if(this.type=="msg"){
             html+='<div id="'+this.name+'" class="'+s_class+'">'+this.value+'</div>';
         }else if(this.type=="user"){
-            html+='<div id="'+this.name+'" type="'+this.type+'" class="input-group mb-3 cr_field" value="'+encodeURI(JSON.stringify(this.value))+'">';
+            html+='<div id="'+this.name+'" type="'+this.type+'" class="input-group mb-3 cr_field user_data" value="'+encodeURI(JSON.stringify(this.value))+'">';
             if(carrot.user.obj_login==null){
                 html+='<div role="button" onclick="carrot.user.login();" class="btn btn-sm btn-info"><i class="fa-solid fa-user"></i> '+carrot.l("login","Login")+'</div>';
             }else{

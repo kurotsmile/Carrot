@@ -197,6 +197,41 @@ class Carrot_user{
             if(this.obj_login.avatar!=null&&this.obj_login.avatar!="") $("#acc_info_avatar").attr("src",this.obj_login.avatar);
         }
         this.carrot.rate.check_status_user_login();
+        $(".user_data").each(function(index,emp){
+            $(emp).attr("value",encodeURI(JSON.stringify(carrot.user.get_user_login())));
+            $(emp).html(carrot.user.box_item_form_user_login());
+        });
+    }
+
+    box_item_form_user_login(){
+        var html='';
+        if(carrot.user.obj_login==null){
+            html+='<div role="button" onclick="carrot.user.login();" class="btn btn-sm btn-info"><i class="fa-solid fa-user"></i> '+carrot.l("login","Login")+'</div>';
+        }else{
+            var name_user_field='Incognito';
+            var url_avatar_user_field='images/avatar_default.png';
+            var id_user_field="";
+
+            if (carrot.user.obj_login!= null) {
+                if(carrot.user.obj_login.avatar!= null) url_avatar_user_field=carrot.user.obj_login.avatar;
+                if(carrot.user.obj_login.name!=null) name_user_field=carrot.user.obj_login.name;
+                if(carrot.user.obj_login.id!=null) id_user_field=carrot.user.obj_login.id;
+            }
+
+            html+='<div class="row">';
+                html+='<div class="col-2">';
+                    html+= '<img role="button" emp_img="avatar_user_field" id="avatar_user_field" onclick="carrot.avatar.msg_list_select(this);return false" src="'+url_avatar_user_field+'"/>';
+                html+='</div>';
+
+                html+='<div class="col-10">';
+                    html+= '<span class="d-block" id="name_user_field">'+name_user_field+'</span>';
+                    if(id_user_field!="") html+= '<span class="d-block fs-9" id="id_user_field">'+id_user_field+'</span>';
+                    html+='<span role="button" onclick="carrot.user.user_logout();return false;" class="btn btn-sm btn-danger"><i class="fa-solid fa-right-from-bracket"></i> '+carrot.l("logout","Logout")+'</span>';
+                html+='</div>';
+
+            html+='</div>';
+        }
+        return html;
     }
 
     list(){
@@ -468,7 +503,7 @@ class Carrot_user{
             }
         })
         .catch((error) => {
-            this.log(error.message)
+            console.log(error.message);
             carrot.msg("Đăng nhập thất bại!","error");
         });
     }

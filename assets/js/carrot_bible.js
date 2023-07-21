@@ -174,7 +174,7 @@ class Carrot_Bible{
                             html+='</div>';
 
                             html+='<div class="col-md-4 col-6 text-center">';
-                                html+='<b><l class="lang" key_lang="bible_count_p">Paragraphs</l> <i class="fa-solid fa-book-quran"></i></b>';
+                                html+='<b><l class="lang" key_lang="bible_count_p">Paragraphs</l> <i class="fa-solid fa-paragraph"></i></b>';
                                 html+='<p>'+data_contents.paragraphs.length+'</p>';
                             html+='</div>';
 
