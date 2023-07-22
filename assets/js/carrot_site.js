@@ -596,6 +596,8 @@ class Carrot_Site{
         $(".btn_app_del").click(function(){
             var db_collection=$(this).attr("db_collection");
             var db_document=$(this).attr("db_document");
+            var db_obj=$(this).attr("db_obj");
+            var event_fun=$(this).attr("onclick");
             Swal.fire({
                 title: 'Are you sure?',
                 text: "You won't be able to revert this "+db_collection+"."+db_document+" ?",
@@ -605,7 +607,12 @@ class Carrot_Site{
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
-                if (result.isConfirmed) carrot.act_del_obj(db_collection,db_document);
+                if (result.isConfirmed){
+                    if(event_fun!=undefined)
+                        eval(event_fun);
+                    else
+                        carrot.act_del_obj(db_collection,db_document);
+                }
             })
         });
 

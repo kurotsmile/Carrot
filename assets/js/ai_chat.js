@@ -1,5 +1,6 @@
 class AI_Chat{
     carrot;
+    obj_chats;
     icon="fa-solid fa-comments";
 
     orderBy_at="date_create";
@@ -12,8 +13,8 @@ class AI_Chat{
         this.carrot=carrot;
         carrot.register_page("chat","carrot.ai.chat.list()","carrot.ai.chat.edit","carrot.ai.chat.show","carrot.ai.chat.reload");
         var btn_list_chat=carrot.menu.create_menu("list_chat").set_label("List Chat").set_icon(this.icon).set_type("main").set_lang("chat");
-        var btn_add_chat=carrot.menu.create_menu("add_chat").set_label("Add Chat").set_icon(this.icon).set_act("carrot.ai.chat.show_add()").set_type("add");
         $(btn_list_chat).click(function(){carrot.ai.chat.show_all_chat(carrot.lang);});
+        carrot.menu.create_menu("add_chat").set_label("Add Chat").set_icon(this.icon).set_act("carrot.ai.chat.show_add()").set_type("add");
     }
 
     show_add(){
@@ -51,11 +52,11 @@ class AI_Chat{
     show_add_or_edit_chat(data){
         var frm=new Carrot_Form("chat",this.carrot);
         frm.set_icon_font(this.icon);
-        frm.set_db("chat-"+this.carrot.lang.lang_setting,"id");
+        frm.set_db("chat-"+carrot.langs.lang_setting,"id");
         if(data.father_emp!=null){
             frm.create_field("father_emp").set_value(data["father_emp"]).set_type("msg").add_class("row").add_class("bg-light").add_class("p-2");
         }
-        frm.create_field("id").set_label("Id chat").set_val(data["id"]).set_type("id");
+        frm.create_field("id").set_label("Id chat").set_val(data["id"]).set_type("id").set_main();
         var btn_add_msg=new Carrot_Btn();
         btn_add_msg.set_icon("fa-solid fa-comment-dots");
         btn_add_msg.set_act("carrot.ai.chat.add_msg_for_key()");
@@ -126,17 +127,19 @@ class AI_Chat{
 
     show_all_chat(lang_show=''){
         Swal.showLoading();
-        if(lang_show!='') this.carrot.langs.lang_setting=lang_show;
-        this.carrot.change_title_page("Ai Lover", "?p=chat","chat");
+        if(lang_show!=''){
+            this.carrot.langs.lang_setting=lang_show;
+            carrot.register_page("chat-"+lang_show,"carrot.ai.chat.list()","carrot.ai.chat.edit","carrot.ai.chat.show","carrot.ai.chat.reload");
+        }
         this.carrot.db.collection("chat-"+this.carrot.langs.lang_setting).where(this.where_a,this.where_b,this.where_c).orderBy(this.orderBy_at,this.orderBy_type).limit(100).get().then((querySnapshot) => {
-            var obj_data=Object();
+            this.obj_chats=new Object();
             querySnapshot.forEach((doc) => {
                 var item_data=doc.data();
                 item_data["id"]=doc.id;
-                obj_data[doc.id]=JSON.stringify(item_data);
+                this.obj_chats[doc.id]=JSON.stringify(item_data);
             });
             Swal.close();
-            this.act_done_show_all_chat(obj_data,this.carrot);
+            this.act_done_show_all_chat(this.obj_chats,this.carrot);
         }).catch((error) => {
             this.carrot.msg(error.message,"error",12000);
         });
@@ -157,7 +160,8 @@ class AI_Chat{
     act_done_show_all_chat(datas,carrot){
         var html='';
         var html_menu='';
-        html_menu+='<button id="btn_add_chat" type="button" class="btn btn-info btn-sm"><i class="fa-solid fa-circle-plus"></i> Add New Chat</button>';
+        carrot.change_title_page("Ai Lover", "?p=chat","chat");
+        html_menu+='<button onclick="carrot.ai.chat.show_add()" type="button" class="btn btn-info btn-sm"><i class="fa-solid fa-circle-plus"></i> Add New Chat</button>';
 
         html_menu+='<div class="btn-group" role="group">';
             html_menu+='<button class="btn btn-success dropdown-toggle btn-sm" type="button" id="btn_status_chat" data-bs-toggle="dropdown" aria-expanded="true" >';
@@ -233,7 +237,7 @@ class AI_Chat{
 
         item_list.set_body('<div class="col-12">'+s_body+'</div>');
         item_list.set_class_body("mt-2 col-11 fs-9");
-        item_list.set_db_collection("chat-"+carrot.langs.lang_setting);
+        item_list.set_db("chat-"+carrot.langs.lang_setting);
         item_list.set_obj_js("carrot.ai.chat");
         item_list.set_act_edit("carrot.ai.chat.edit");
         return item_list.html();
@@ -246,10 +250,6 @@ class AI_Chat{
         $(".btn-setting-lang-change").click(function(){
             var key_change=$(this).attr("key_change");
             chat.show_all_chat(key_change);
-        });
-
-        $("#btn_add_chat").click(function(){
-            chat.show_add();
         });
 
         $("#box_input_search").change(function(){
@@ -286,22 +286,39 @@ class AI_Chat{
             html+='<div class="row">';
                 html+='<div class="col-md-8 ps-4 ps-lg-3">';
                     html+='<div class="row bg-white shadow-sm">';
+
                         html+='<div class="col-md-2 p-3 text-center">';
                             html+='<i class="fa-solid fa-comment fa-3x"></i>;'
                         html+='</div>';
 
                         html+='<div class="col-md-10 p-2">';
                             html+='<h4 class="fw-semi fs-4 mb-3">'+data.key+'</h4>';
+                            html+=carrot.btn_dev("chat",data.id,"carrot.ai.chat","carrot.ai.chat.edit");
                             html+='<p class="fs-9">'+data.msg+'</p>';
+                            html+='<div class="row pt-4">';
+
+                                html+='<div class="col-md-4 col-6 text-center">';
+                                    html+='<b><l class="lang" key_lang="sex_character">Sex Character</l> <i class="fa-solid fa-people-arrows"></i></b>';
+                                    html+='<p>'+data.sex_character+'</p>';
+                                html+='</div>';
+
+                                html+='<div class="col-md-4 col-6 text-center">';
+                                    html+='<b><l class="lang" key_lang="sex_user">Sex User</l> <i class="fa-solid fa-restroom"></i></b>';
+                                    html+='<p>'+data.sex_user+'</p>';
+                                html+='</div>';
+
+                            html+='</div>';
                         html+='</div>';
+
                     html+='</div>';
                 html+='</div>';
             html+='</div>';
         html+='</div>';
         carrot.show(html);
+        carrot.check_event();
     }
 
     reload(carrot){
-        carrot.ai.chat.list();
+        carrot.ai.chat.show_all_chat(carrot.lang.lang_setting);
     }
 }
