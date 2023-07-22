@@ -517,100 +517,18 @@ class Carrot_Bible{
     }
 
     create_ebook(){
-        var file_mimetype='application/epub+zip';
-        var container_xml='';
-        var content_opf='';
-        var toc_ncx='';
-        var zip=new JSZip();
-        var book_data=this.obj_bible_cur;
-        //console.log(this.obj_bible_cur);
-        var contents=book_data.contents;
-        container_xml+='<?xml version="1.0" encoding="UTF-8"?>';
-        container_xml+='<container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">';
-            container_xml+='<rootfiles>';
-                container_xml+='<rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml"/>';
-            container_xml+='</rootfiles>';
-        container_xml+='</container>';
-
-        toc_ncx+='<?xml version="1.0" encoding="UTF-8"?>';
-        toc_ncx+='<!DOCTYPE ncx PUBLIC "-//NISO//DTD ncx 2005-1//EN" "http://www.daisy.org/z3986/2005/ncx-2005-1.dtd">';
-        toc_ncx+='<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1">';
-
-            toc_ncx+='<head>';
-                toc_ncx+='<meta name="dtb:uid" content="urn:uuid:7a8a677c-ed6b-4ea1-a2dd-d46f4c886a73"/>';
-                toc_ncx+='<meta name="dtb:depth" content="1"/>';
-                toc_ncx+='<meta name="dtb:totalPageCount" content="0"/>';
-                toc_ncx+='<meta name="dtb:maxPageNumber" content="0"/>';
-            toc_ncx+='</head>';
-
-            toc_ncx+='<docTitle>';
-                toc_ncx+='<text>'+this.obj_bible_cur.name+'</text>';
-            toc_ncx+='</docTitle>';
-
-            toc_ncx+='<navMap>';
-
-                $(contents).each(function(index,chapter){
-                    toc_ncx+='<navPoint id="navPoint-'+index+'" playOrder="1">';
-                    toc_ncx+='<navLabel><text>'+chapter.name+'</text></navLabel>';
-                    toc_ncx+='<content src="Text/chapter_'+index+'.xhtml"/>';
-                    toc_ncx+='</navPoint>';
-                });
-
-            toc_ncx+='</navMap>';
-
-        toc_ncx+='</ncx>';
-
-
-        content_opf+='<?xml version="1.0" encoding="utf-8"?>';
-        content_opf+='<package version="2.0" unique-identifier="BookId" xmlns="http://www.idpf.org/2007/opf">';
-
-            content_opf+='<metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">';
-                content_opf+='<dc:identifier opf:scheme="UUID" id="BookId">urn:uuid:7a8a677c-ed6b-4ea1-a2dd-d46f4c886a73</dc:identifier>';
-                content_opf+='<dc:language>'+this.carrot.lang+'</dc:language>';
-                content_opf+='<dc:title>'+this.obj_bible_cur.name+'</dc:title>';
-                content_opf+='<meta name="Sigil version" content="1.9.30"/>';
-                content_opf+='<dc:date opf:event="modification" xmlns:opf="http://www.idpf.org/2007/opf">2023-07-16</dc:date>';
-            content_opf+='</metadata>';
-
-            content_opf+='<manifest>';
-                content_opf+='<item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml"/>';
-                $(contents).each(function(index,chapter){
-                    content_opf+='<item id="chapter_'+index+'" href="Text/chapter_'+index+'.xhtml" media-type="application/xhtml+xml"/>';
-                });
-            content_opf+='</manifest>';
-
-            content_opf+='<spine toc="ncx">';
-                $(contents).each(function(index,chapter){
-                    content_opf+='<itemref idref="chapter_'+index+'"/>';
-                });
-            content_opf+='</spine>';
-
-        content_opf+='</package>';
-
-        zip.file("mimetype",file_mimetype);
-        zip.file("META-INF/container.xml",container_xml);
-        zip.file("OEBPS/toc.ncx",toc_ncx);
-        zip.file("OEBPS/content.opf",content_opf);
-
+        var ebook_file=new Carrot_Ebook_File();
+        var contents=this.obj_bible_cur.contents;
+        ebook_file.set_lang(this.obj_bible_cur.lang);
+        ebook_file.set_title(this.obj_bible_cur.name);
         $(contents).each(function(index,chapter){
             var xhtml='';
             var paragraphs=chapter.paragraphs;
-            xhtml+='<?xml version="1.0" encoding="utf-8"?>';
-            xhtml+='<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">';
-            xhtml+='<html xmlns="http://www.w3.org/1999/xhtml">';
-            xhtml+='<head><title>Chapter '+(parseInt(index)+1)+'</title></head>';
-            xhtml+='<body>';
-                xhtml+='<h2>'+book_data.name+' '+(parseInt(index)+1)+'</h2>';
-                for(var i=0;i<paragraphs.length;i++){
-                    xhtml+='<p><sup>'+(i+1)+'</sup> '+paragraphs[i]+'</p>';
-                };
-            xhtml+='</body>';
-            xhtml+='</html>';
-            zip.file("OEBPS/Text/chapter_"+index+".xhtml",xhtml);
+            for(var i=0;i<paragraphs.length;i++){
+                xhtml+='<p><sup>'+(i+1)+'</sup> '+paragraphs[i]+'</p>';
+            };
+            ebook_file.add_chapter("Chapter "+(index+1),xhtml);
         });
-
-        zip.generateAsync({type:"blob"}).then(function(content) {
-            saveAs(content, book_data.name+".epub");
-        });
+        ebook_file.download();
     }
 }

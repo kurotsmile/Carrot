@@ -1,10 +1,121 @@
 class Carrot_Ebook_File{
-    file_mimetype='application/epub+zip';
+
+    //Meta Info
+    title='Undefined';
+    lang='en';
+
     container_xml='';
     content_opf='';
     toc_ncx='';
-    constructor(){
+    chapters=Array();
 
+    constructor(){
+        this.container_xml+='<?xml version="1.0" encoding="UTF-8"?>';
+        this.container_xml+='<container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">';
+            this.container_xml+='<rootfiles>';
+                this.container_xml+='<rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml"/>';
+            this.container_xml+='</rootfiles>';
+        this.container_xml+='</container>';
+    }
+
+    set_title(title){
+        this.title=title;
+        return this;
+    }
+
+    set_name(name){
+        return this.set_title(name);
+    }
+
+    set_lang(lang){
+        this.lang=lang;
+        return this;
+    }
+
+    add_chapter(s_chapter_title,s_chapter_content){
+        this.chapters.push({title:s_chapter_title,content:s_chapter_content});
+        return this;
+    }
+
+    download(){
+        var zip=new JSZip();
+        var ebook_file=this;
+
+        this.toc_ncx+='<?xml version="1.0" encoding="UTF-8"?>';
+        this.toc_ncx+='<!DOCTYPE ncx PUBLIC "-//NISO//DTD ncx 2005-1//EN" "http://www.daisy.org/z3986/2005/ncx-2005-1.dtd">';
+        this.toc_ncx+='<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1">';
+
+            this.toc_ncx+='<head>';
+                this.toc_ncx+='<meta name="dtb:uid" content="urn:uuid:7a8a677c-ed6b-4ea1-a2dd-d46f4c886a73"/>';
+                this.toc_ncx+='<meta name="dtb:depth" content="1"/>';
+                this.toc_ncx+='<meta name="dtb:totalPageCount" content="0"/>';
+                this.toc_ncx+='<meta name="dtb:maxPageNumber" content="0"/>';
+            this.toc_ncx+='</head>';
+
+            this.toc_ncx+='<docTitle>';
+                this.toc_ncx+='<text>'+ebook_file.title+'</text>';
+            this.toc_ncx+='</docTitle>';
+
+            this.toc_ncx+='<navMap>';
+                for(var i=0;i<this.chapters.length;i++){
+                    this.toc_ncx+='<navPoint id="navPoint-'+i+'" playOrder="1">';
+                    this.toc_ncx+='<navLabel><text>'+this.chapters[i].title+'</text></navLabel>';
+                    this.toc_ncx+='<content src="Text/chapter_'+i+'.xhtml"/>';
+                    this.toc_ncx+='</navPoint>';
+                }
+            this.toc_ncx+='</navMap>';
+
+        this.toc_ncx+='</ncx>';
+
+        
+        this.content_opf+='<?xml version="1.0" encoding="utf-8"?>';
+        this.content_opf+='<package version="2.0" unique-identifier="BookId" xmlns="http://www.idpf.org/2007/opf">';
+
+            this.content_opf+='<metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">';
+                this.content_opf+='<dc:identifier opf:scheme="UUID" id="BookId">urn:uuid:7a8a677c-ed6b-4ea1-a2dd-d46f4c886a73</dc:identifier>';
+                this.content_opf+='<dc:language>'+this.lang+'</dc:language>';
+                this.content_opf+='<dc:title>'+this.title+'</dc:title>';
+                this.content_opf+='<meta name="Sigil version" content="1.9.30"/>';
+                this.content_opf+='<dc:date opf:event="modification" xmlns:opf="http://www.idpf.org/2007/opf">2023-07-16</dc:date>';
+            this.content_opf+='</metadata>';
+
+            this.content_opf+='<manifest>';
+                this.content_opf+='<item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml"/>';
+                for(var i=0;i<this.chapters.length;i++){
+                    this.content_opf+='<item id="chapter_'+i+'" href="Text/chapter_'+i+'.xhtml" media-type="application/xhtml+xml"/>';
+                };
+            this.content_opf+='</manifest>';
+
+            this.content_opf+='<spine toc="ncx">';
+                for(var i=0;i<this.chapters.length;i++){
+                    this.content_opf+='<itemref idref="chapter_'+i+'"/>';
+                };
+            this.content_opf+='</spine>';
+
+        this.content_opf+='</package>';
+
+        zip.file("mimetype","application/epub+zip");
+        zip.file("META-INF/container.xml",this.container_xml);
+        zip.file("OEBPS/toc.ncx",this.toc_ncx);
+        zip.file("OEBPS/content.opf",this.content_opf);
+
+        for(var i=0;i<this.chapters.length;i++){
+            var xhtml='';
+            xhtml+='<?xml version="1.0" encoding="utf-8"?>';
+            xhtml+='<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">';
+            xhtml+='<html xmlns="http://www.w3.org/1999/xhtml">';
+            xhtml+='<head><title>Chapter '+(i+1)+'</title></head>';
+            xhtml+='<body>';
+                xhtml+='<h2>'+this.chapters[i].title+'</h2>';
+                xhtml+=this.chapters[i].content;
+            xhtml+='</body>';
+            xhtml+='</html>';
+            zip.file("OEBPS/Text/chapter_"+i+".xhtml",xhtml);
+        };
+
+        zip.generateAsync({type:"blob"}).then(function(content) {
+            saveAs(content,ebook_file.title+".epub");
+        });
     }
 }
 
@@ -375,83 +486,22 @@ class Carrot_Ebook{
                         html+='<div class="row pt-2">';
                             html+='<div class="col-12">';
                             html+='<button id="btn_share" role="button" type="button" class="btn d-inline btn-success m-1"><i class="fa-solid fa-share-nodes"></i> <l class="lang" key_lang="share">Share</l> </button>';
-                            html+='<button id="btn_download" class="btn d-inline btn-success m-1"><i class="fa-solid fa-download"></i> <l class="lang" key_lang="download">Download</l> </button>';
+                            html+='<button id="btn_download" onclick="carrot.ebook.download()" class="btn d-inline btn-success m-1"><i class="fa-solid fa-download"></i> <l class="lang" key_lang="download">Download</l> </button>';
                             if(data.user.id==carrot.user.get_user_login_id()) html+='<button role="button" onclick="carrot.ebook.edit_info_book_cur()" type="button" class="btn d-inline btn-success m-1"><i class="fa-solid fa-pen-to-square"></i> <l class="lang" key_lang="edit_info">Edit Info</l> </button>';
-                            if(carrot.user.get_user_login_role()=="admin") html+='<button role="button" onclick="carrot.ebook.edit_info_book_cur()" type="button" class="btn d-inline btn-success m-1"><i class="fa-solid fa-pen-ruler"></i> <l class="lang" key_lang="edit_content">Edit Content</l> </button>';
+                            if(carrot.user.get_user_login_role()=="admin") html+='<button role="button" onclick="carrot.ebook.change_mode_editor_content()" type="button" class="btn d-inline btn-success m-1"><i class="fa-solid fa-pen-ruler"></i> <l class="lang" key_lang="edit_content">Edit Content</l> </button>';
                             html+='</div>';
                         html+='</div>';
 
                     html+="</div>";
                 html+="</div>";
 
-                html+='<div class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
-                    html+='<h4 class="fw-semi fs-5 lang" key_lang="content">Content</h4>';
+                html+='<div class="about row p-2 py-3 bg-white mt-4 shadow-sm" id="body_content_book">';
                     if(data.user.id==carrot.user.get_user_login_id()){
                         carrot.ebook.type_content_show="edit";
-                        html+='<link rel="stylesheet" href="assets/plugins/richtex/richtext.min.css">';
-                        html+='<script type="text/javascript" src="assets/plugins/richtex/jquery.richtext.js"></script>';
-                        html+='<small>Với chương trình tạo ebook bạn có thể dễ dàng viết sách, tiểu thuyết và tải xuống với định dạng ebook đọc tiếp trên các thiết bị di động</small>';
-                        html+='<form class="fs-6 text-justify">';
-                            html+='<div class="form-group">';
-                                html+='<label for="chapter_title">Chapter Title</label>';
-                                html+='<input type="email" class="form-control m-0" id="chapter_title" value="'+data.contents[carrot.ebook.index_chapter_edit].title+'" aria-describedby="ChapterTitle" placeholder="Enter Chapter Title">';
-                                html+='<small id="emailHelp" class="form-text text-muted">Nhập tiêu đề cho chương</small>';
-                            html+='</div>';
-
-                            html+='<div class="form-group mt-2">';
-                            html+='<label for="chapter_select">Select Chaper Edit</label>';
-                                html+='<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">';
-                                    html+='<div class="btn-group m-2" role="group" aria-label="First group" id="list_chapter_content">';
-                                    var s_class='';
-                                    for(var i=0;i<data.contents.length;i++){
-                                        if(carrot.ebook.index_chapter_edit==i) s_class="active";
-                                        else s_class='';
-                                        html+='<button type="button" data-index="'+i+'" onclick="carrot.ebook.select_chapter_for_content_edit(this)" class="btn btn-secondary btn-sm '+s_class+' btn_chapter">'+(i+1)+'</button>';
-                                    }
-                                    html+='</div>';
-
-                                    html+='<div class="btn-group m-2" role="group" aria-label="Third group">';
-                                    html+='<button onclick="carrot.ebook.add_chapter_to_content()"  type="button" class="btn btn-secondary btn-sm"><i class="fa-solid fa-plus"></i></button>';
-                                    html+='</div>';
-                                html+='</div>';
-                            html+='</div>';
-
-                        html+='</form>';
-                        html+='<p class="fs-6 text-justify">';
-                        html+='<textarea class="form-control" id="book_content" rows="10">'+data.contents[carrot.ebook.index_chapter_edit].content+'</textarea>';
-                        html+='</p>';
-                        html+='<script>$(document).ready(function(){$("#book_content").richText();});</script>';
-                        html+='<p>';
-                        html+='<button onclick="carrot.ebook.save_chapter_to_content();" class="btn btn-success m-2" role="button"><i class="fa-solid fa-floppy-disk"></i> '+carrot.l("done","Done")+'</button>';
-                        html+='</p>';
+                        html+=carrot.ebook.show_body_editor(data);
                     }else{
                         carrot.ebook.type_content_show="view";
-                        html+='<div class="fs-6 text-justify">';
-                        html+='<h6 id="chapter_title">'+data.contents[carrot.ebook.index_chapter_edit].title+'</h6>';
-                        html+='<div id="chapter_body">'+data.contents[carrot.ebook.index_chapter_edit].content+'</div>';
-                        html+='</div>';
-                        html+='<div class="text-center">';
-                            html+='<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">';
-
-                                html+='<div class="btn-group m-2" role="group" aria-label="Prev Page">';
-                                    html+='<button onclick="carrot.ebook.prev_read_chapter_content()"  type="button" class="btn btn-secondary btn-sm"><i class="fa-solid fa-backward-step"></i></button>';
-                                html+='</div>';
-
-                                html+='<div class="btn-group m-2" role="group" aria-label="Mind Button Group Chapter" id="list_chapter_content">';
-                                var s_class='';
-                                for(var i=0;i<data.contents.length;i++){
-                                    if(carrot.ebook.index_chapter_edit==i) s_class="active";
-                                    else s_class='';
-                                    html+='<button type="button" data-index="'+i+'" onclick="carrot.ebook.select_chapter_for_content_edit(this)" class="btn btn-secondary btn-sm '+s_class+' btn_chapter">'+(i+1)+'</button>';
-                                }
-                                html+='</div>';
-
-                                html+='<div class="btn-group m-2" role="group" aria-label="Next Page">';
-                                    html+='<button onclick="carrot.ebook.next_read_chapter_content()"  type="button" class="btn btn-secondary btn-sm"><i class="fa-solid fa-forward-step"></i></button>';
-                                html+='</div>';
-
-                            html+='</div>';
-                        html+='</div>';
+                        html+=carrot.ebook.show_body_view(data);
                     }
                 html+='</div>';
 
@@ -479,6 +529,92 @@ class Carrot_Ebook{
         $('.richText-editor,#chapter_title').change(function(){
             carrot.ebook.is_change_status=true;
         });
+    }
+
+    change_mode_editor_content(){
+        if(this.type_content_show=="view")
+            this.type_content_show="editor";
+        else
+            this.type_content_show="view";
+        
+        if(this.type_content_show=="view")
+            $("#body_content_book").html(this.show_body_view(this.obj_ebook_cur));
+        else
+            $("#body_content_book").html(this.show_body_editor(this.obj_ebook_cur));
+    }
+
+    show_body_editor(data){
+        var html='';
+        html+='<h4 class="fw-semi fs-5 lang" key_lang="content_editor">Content Editor</h4>';
+        html+='<link rel="stylesheet" href="assets/plugins/richtex/richtext.min.css">';
+        html+='<script type="text/javascript" src="assets/plugins/richtex/jquery.richtext.js"></script>';
+        html+='<small>Với chương trình tạo ebook bạn có thể dễ dàng viết sách, tiểu thuyết và tải xuống với định dạng ebook đọc tiếp trên các thiết bị di động</small>';
+        html+='<form class="fs-6 text-justify">';
+            html+='<div class="form-group">';
+                html+='<label for="chapter_title">Chapter Title</label>';
+                html+='<input type="email" class="form-control m-0" id="chapter_title" value="'+data.contents[carrot.ebook.index_chapter_edit].title+'" aria-describedby="ChapterTitle" placeholder="Enter Chapter Title">';
+                html+='<small id="emailHelp" class="form-text text-muted">Nhập tiêu đề cho chương</small>';
+            html+='</div>';
+
+            html+='<div class="form-group mt-2">';
+            html+='<label for="chapter_select">Select Chaper Edit</label>';
+                html+='<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">';
+                    html+='<div class="btn-group m-2" role="group" aria-label="First group" id="list_chapter_content">';
+                    var s_class='';
+                    for(var i=0;i<data.contents.length;i++){
+                        if(carrot.ebook.index_chapter_edit==i) s_class="active";
+                        else s_class='';
+                        html+='<button type="button" data-index="'+i+'" onclick="carrot.ebook.select_chapter_for_content_edit(this)" class="btn btn-secondary btn-sm '+s_class+' btn_chapter">'+(i+1)+'</button>';
+                    }
+                    html+='</div>';
+
+                    html+='<div class="btn-group m-2" role="group" aria-label="Third group">';
+                    html+='<button onclick="carrot.ebook.add_chapter_to_content()"  type="button" class="btn btn-secondary btn-sm"><i class="fa-solid fa-plus"></i></button>';
+                    html+='</div>';
+                html+='</div>';
+            html+='</div>';
+
+        html+='</form>';
+        html+='<p class="fs-6 text-justify">';
+        html+='<textarea class="form-control" id="book_content" rows="10">'+data.contents[carrot.ebook.index_chapter_edit].content+'</textarea>';
+        html+='</p>';
+        html+='<script>$(document).ready(function(){$("#book_content").richText();});</script>';
+        html+='<p>';
+        html+='<button onclick="carrot.ebook.save_chapter_to_content();" class="btn btn-success m-2" role="button"><i class="fa-solid fa-floppy-disk"></i> '+carrot.l("done","Done")+'</button>';
+        html+='</p>';
+        return html;
+    }
+
+    show_body_view(data){
+        var html='';
+        html+='<h4 class="fw-semi fs-5 lang" key_lang="content">Content</h4>';
+        html+='<div class="fs-6 text-justify">';
+        html+='<h6 id="chapter_title">'+data.contents[carrot.ebook.index_chapter_edit].title+'</h6>';
+        html+='<div id="chapter_body">'+data.contents[carrot.ebook.index_chapter_edit].content+'</div>';
+        html+='</div>';
+        html+='<div class="text-center">';
+            html+='<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">';
+
+                html+='<div class="btn-group m-2" role="group" aria-label="Prev Page">';
+                    html+='<button onclick="carrot.ebook.prev_read_chapter_content()"  type="button" class="btn btn-secondary btn-sm"><i class="fa-solid fa-backward-step"></i></button>';
+                html+='</div>';
+
+                html+='<div class="btn-group m-2" role="group" aria-label="Mind Button Group Chapter" id="list_chapter_content">';
+                var s_class='';
+                for(var i=0;i<data.contents.length;i++){
+                    if(carrot.ebook.index_chapter_edit==i) s_class="active";
+                    else s_class='';
+                    html+='<button type="button" data-index="'+i+'" onclick="carrot.ebook.select_chapter_for_content_edit(this)" class="btn btn-secondary btn-sm '+s_class+' btn_chapter">'+(i+1)+'</button>';
+                }
+                html+='</div>';
+
+                html+='<div class="btn-group m-2" role="group" aria-label="Next Page">';
+                    html+='<button onclick="carrot.ebook.next_read_chapter_content()"  type="button" class="btn btn-secondary btn-sm"><i class="fa-solid fa-forward-step"></i></button>';
+                html+='</div>';
+
+            html+='</div>';
+        html+='</div>';
+        return html;
     }
 
     add_chapter_to_content(){
@@ -518,7 +654,13 @@ class Carrot_Ebook{
     select_chapter_for_content_edit(emp){
         var emp_index=$(emp).data("index");
         this.index_chapter_edit=emp_index;
-        var data_chapter=this.obj_ebook_cur.contents[emp_index];
+        this.select_index_chapter_content(emp_index);
+        $(".btn_chapter").removeClass("active");
+        $(emp).addClass("active");
+    }
+
+    select_index_chapter_content(index){
+        var data_chapter=this.obj_ebook_cur.contents[index];
         if(this.type_content_show=="view"){
             $("#chapter_title").html(data_chapter.title);
             $('#chapter_body').html(data_chapter.content);
@@ -526,9 +668,18 @@ class Carrot_Ebook{
             $("#chapter_title").val(data_chapter.title);
             $('.richText-editor').html(data_chapter.content);
         }
+    }
 
-        $(".btn_chapter").removeClass("active");
-        $(emp).addClass("active");
+    prev_read_chapter_content(){
+        this.index_chapter_edit--;
+        if(this.index_chapter_edit<=0) this.index_chapter_edit=this.obj_ebook_cur.contents.length-1;
+        this.select_index_chapter_content(this.index_chapter_edit);
+    }
+
+    next_read_chapter_content(){
+        this.index_chapter_edit++;
+        if(this.index_chapter_edit>=this.obj_ebook_cur.contents.length) this.index_chapter_edit=0;
+        this.select_index_chapter_content(this.index_chapter_edit);
     }
  
     reload(carrot){
@@ -545,5 +696,15 @@ class Carrot_Ebook{
         this.delete_obj();
         this.delete_category_obj();
         this.carrot.msg("Delete all data success!");
+    }
+
+    download(){
+        var ebook_file=new Carrot_Ebook_File();
+        ebook_file.set_title(this.obj_ebook_cur.title);
+        ebook_file.set_lang(this.obj_ebook_cur.lang);
+        $(this.obj_ebook_cur.contents).each(function(index,content){
+            ebook_file.add_chapter(content.title,content.content);
+        });
+        ebook_file.download();
     }
 }
