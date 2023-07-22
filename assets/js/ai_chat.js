@@ -67,8 +67,10 @@ class AI_Chat{
         frm.create_field("sex_character").set_label("Sex Character").set_val(data["sex_character"]).set_type("select").add_option("0","Boy").add_option("1","Girl");
         frm.create_field("color").set_label("Color").set_val(data["color"]).set_type("color");
         frm.create_field("icon").set_label("Icon").set_val(data["icon"]).set_type("icon");
-        frm.create_field("action").set_label("Action").set_val(data["action"]);
-        frm.create_field("face").set_label("Face").set_val(data["face"]);
+        var field_action=frm.create_field("action").set_label("Action").set_val(data["action"]).set_type("select");
+        for(var i=0;i<=40;i++) field_action.add_option(i,"Action "+i);
+        var field_face=frm.create_field("face").set_label("Face").set_val(data["face"]).set_type("select");
+        for(var i=0;i<=18;i++) field_face.add_option(i,"Face "+i);
         frm.create_field("func").set_label("Function App").set_val(data["func"]);
         frm.create_field("mp3").set_label("Mp3 (Url audio)").set_val(data["mp3"]);
         frm.create_field("link").set_label("Link (url Web or  URL scheme App)").set_val(data["link"]);
@@ -276,11 +278,15 @@ class AI_Chat{
     }
 
     show(id,carrot){
+        id=decodeURI(id);
         carrot.get_doc("chat-"+carrot.langs.lang_setting,id,carrot.ai.chat.show_info);
     }
 
     show_info(data,carrot){
-        carrot.change_title_page("Chat Info","?p=chat&id="+data.key,"chat");
+        carrot.change_title_page("Chat Info","?p=chat&id="+data.id+"&lang_chat="+carrot.langs.lang_setting,"chat");
+        if(data.lang==null){
+            data.lang=carrot.langs.lang_setting;
+        }
         var html='';
         html='<div class="section-container p-2 p-xl-4">';
             html+='<div class="row">';
@@ -293,7 +299,7 @@ class AI_Chat{
 
                         html+='<div class="col-md-10 p-2">';
                             html+='<h4 class="fw-semi fs-4 mb-3">'+data.key+'</h4>';
-                            html+=carrot.btn_dev("chat",data.id,"carrot.ai.chat","carrot.ai.chat.edit");
+                            html+=carrot.btn_dev("chat-"+data.lang,data.id,"carrot.ai.chat","carrot.ai.chat.edit");
                             html+='<p class="fs-9">'+data.msg+'</p>';
                             html+='<div class="row pt-4">';
 
@@ -306,6 +312,13 @@ class AI_Chat{
                                     html+='<b><l class="lang" key_lang="sex_user">Sex User</l> <i class="fa-solid fa-restroom"></i></b>';
                                     html+='<p>'+data.sex_user+'</p>';
                                 html+='</div>';
+
+                                
+                                html+='<div class="col-md-4 col-6 text-center">';
+                                    html+='<b><l class="lang" key_lang="status">Status</l> <i class="fa-brands fa-suse"></i></b>';
+                                    html+='<p>'+data.status+'</p>';
+                                html+='</div>';
+
 
                             html+='</div>';
                         html+='</div>';

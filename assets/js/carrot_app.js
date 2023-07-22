@@ -276,7 +276,15 @@ class Carrot_App{
                     html+='<h4 class="fw-semi fs-5 lang" key_lang="describe">About this Game</h4>';
                     html+='<p class="fs-8 text-justify">'+data["describe_"+carrot.lang]+'</p>';
                 html+='</div>';
-    
+
+                if(data.youtube_link!=null){
+                    var id_ytb=this.carrot.player_media.get_youtube_id(data.youtube_link);
+                    html+='<div class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
+                        html+='<h4 class="fw-semi fs-5 lang" key_lang="intro_video">Intro video</h4>';
+                        html+='<iframe width="100%" height="360" src="https://www.youtube.com/embed/'+id_ytb+'" title="'+data.name_en+'" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>';
+                    html+='</div>';
+                }
+
                 html+=carrot.rate.box_comment(data);
 
             html+="</div>";
@@ -318,6 +326,7 @@ class Carrot_App{
             new_data_app["name_"+lang.key]="";
             new_data_app["describe_"+lang.key]="";
         });
+        new_data_app["youtube_link"]="";
         new_data_app["google_play"]="";
         new_data_app["amazon_app_store"]="";
         new_data_app["microsoft_store"]="";
@@ -355,12 +364,11 @@ class Carrot_App{
             frm.create_field("describe_"+lang.key).set_label("Describe ("+lang.key+")").set_value(data[key_describe_lang]).set_type("textarea");
             frm.create_field("hr").set_type("line");
         });
-
+        frm.create_field("youtube_link").set_label("Youtube link").set_type("link").set_value(data.youtube_link);
         $(this.carrot.link_store.list_link_store).each(function(index,store){
             var key_val=store.key;
             frm.create_field(store.key).set_label("<i class='"+store.icon+"'></i> "+store.name).set_value(data[key_val]);
         });
-
         frm.create_field("img1").set_label("Image Describe 1").set_type("file").set_value(data.img1).set_type_file("image/*");
         frm.create_field("img2").set_label("Image Describe 2").set_type("file").set_value(data.img2).set_type_file("image/*");
         frm.create_field("img3").set_label("Image Describe 3").set_type("file").set_value(data.img3).set_type_file("image/*");

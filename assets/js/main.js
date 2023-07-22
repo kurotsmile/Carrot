@@ -87,4 +87,32 @@ $(document).ready(function () {
         }
     }
     carrot.check_version_data();
+
+
+    var myMenu = [{
+        icon: 'fa fa-home',
+        label: 'Home Page',
+        action:function(){carrot.home();},
+        submenu: null,
+        disabled: false
+      },
+      {
+        icon: 'fa-solid fa-bag-shopping',
+        label: 'Shop',
+        action:function(){carrot.pay.list_product();},
+        submenu: null,
+        disabled: false
+      },
+      {
+        icon: 'fa-solid fa-heart',
+        label: 'About Us',
+        action:function(){carrot.about_us.show_page();},
+        submenu: null,
+        disabled: false
+      },
+    ];
+    $('body').on('contextmenu', function(e) {
+      e.preventDefault();
+      superCm.createMenu(myMenu, e);
+    });
 });

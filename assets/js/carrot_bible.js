@@ -482,10 +482,14 @@ class Carrot_Bible{
 
             html+='<div id="other_code" class="row m-0">';
             $(list_bible).each(function (index,b){
-                var item_book=carrot.bible.box_book_item(b);
-                item_book.set_index(index);
-                item_book.set_class("col-4 mt-2");
-                html+=item_book.html();
+                if(index<12){
+                    var item_book=carrot.bible.box_book_item(b);
+                    item_book.set_index(index);
+                    item_book.set_class("col-4 mt-2");
+                    html+=item_book.html();
+                }else{
+                    return false;
+                }
             });
             html+='</div>';
         }
