@@ -298,10 +298,14 @@ class Carrot_Icon{
             html+='<i class="'+this.icon+' fs-6 me-2"></i> <l class="lang" key_lang="other_icon">Other Icon</l>';
             html+='<span role="button" onclick="carrot.icon.list()" class="btn float-end btn-sm btn-light"><i class="fa-solid fa-square-caret-right"></i> <l class="lang" key_lang="view_all">View All</l></span></h4>';
             html+='<div id="other_code" class="row m-0">';
-            for(var i=0;i<12;i++){
-                var icon=list_icon[i];
-                html+=this.box_icon_item(icon);
-            }
+            $(list_icon).each(function(index,icon){
+                if(index<12){
+                    icon["index"]=index;
+                    html+=carrot.icon.box_icon_item(icon);
+                }else{
+                    return false;
+                }
+            });
             html+='</div>';
         }
         return html;

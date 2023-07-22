@@ -10,11 +10,10 @@ class AI_Chat{
 
     constructor(carrot){
         this.carrot=carrot;
-        carrot.register_page("chat","carrot.ai.chat.list()","carrot.ai.chat.edit");
+        carrot.register_page("chat","carrot.ai.chat.list()","carrot.ai.chat.edit","carrot.ai.chat.show","carrot.ai.chat.reload");
         var btn_list_chat=carrot.menu.create_menu("list_chat").set_label("List Chat").set_icon(this.icon).set_type("main").set_lang("chat");
-        var btn_add_chat=carrot.menu.create_menu("add_chat").set_label("Add Chat").set_icon(this.icon).set_type("add");
+        var btn_add_chat=carrot.menu.create_menu("add_chat").set_label("Add Chat").set_icon(this.icon).set_act("carrot.ai.chat.show_add()").set_type("add");
         $(btn_list_chat).click(function(){carrot.ai.chat.show_all_chat(carrot.lang);});
-        $(btn_add_chat).click(function(){carrot.ai.chat.show_add();});
     }
 
     show_add(){
@@ -214,9 +213,9 @@ class AI_Chat{
         item_list.set_index(data.index);
         item_list.set_id(data.id);
         if(data.pater!=''&&data.pater!='0')
-            item_list.set_icon_font("fa-solid fa-comments mt-2");
+            item_list.set_icon_font("fa-solid fa-comments mt-2 chat_icon");
         else
-            item_list.set_icon_font("fa-sharp fa-solid fa-comment mt-2");
+            item_list.set_icon_font("fa-sharp fa-solid fa-comment mt-2 chat_icon");
             
         item_list.set_name(data.key);
         item_list.set_tip('<i class="fa-solid fa-circle" style="color:'+data.color+'"></i> '+data.msg);
@@ -235,11 +234,13 @@ class AI_Chat{
         item_list.set_body('<div class="col-12">'+s_body+'</div>');
         item_list.set_class_body("mt-2 col-11 fs-9");
         item_list.set_db_collection("chat-"+carrot.langs.lang_setting);
+        item_list.set_obj_js("carrot.ai.chat");
         item_list.set_act_edit("carrot.ai.chat.edit");
         return item_list.html();
     }
 
     check_event(){
+        var carrot=this.carrot;
         this.carrot.check_event();
         var chat=this;
         $(".btn-setting-lang-change").click(function(){
@@ -267,5 +268,40 @@ class AI_Chat{
                 this.carrot.msg(error.message,"error",12000);
             });
         });
+
+        $(".chat_icon").click(function(){
+            var obj_id=$(this).attr("obj_id");
+            carrot.ai.chat.show(obj_id,carrot);
+        });
+    }
+
+    show(id,carrot){
+        carrot.get_doc("chat-"+carrot.langs.lang_setting,id,carrot.ai.chat.show_info);
+    }
+
+    show_info(data,carrot){
+        carrot.change_title_page("Chat Info","?p=chat&id="+data.key,"chat");
+        var html='';
+        html='<div class="section-container p-2 p-xl-4">';
+            html+='<div class="row">';
+                html+='<div class="col-md-8 ps-4 ps-lg-3">';
+                    html+='<div class="row bg-white shadow-sm">';
+                        html+='<div class="col-md-2 p-3 text-center">';
+                            html+='<i class="fa-solid fa-comment fa-3x"></i>;'
+                        html+='</div>';
+
+                        html+='<div class="col-md-10 p-2">';
+                            html+='<h4 class="fw-semi fs-4 mb-3">'+data.key+'</h4>';
+                            html+='<p class="fs-9">'+data.msg+'</p>';
+                        html+='</div>';
+                    html+='</div>';
+                html+='</div>';
+            html+='</div>';
+        html+='</div>';
+        carrot.show(html);
+    }
+
+    reload(carrot){
+        carrot.ai.chat.list();
     }
 }
