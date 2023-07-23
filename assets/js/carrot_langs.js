@@ -7,6 +7,7 @@ class Carrot_Langs{
 
     lang_web=null;//One obj seve
     obj_lang_web=Object();//List obj save
+    arr_lang_setting_db=Array();
 
     constructor(carrot){
         this.carrot=carrot;
@@ -20,9 +21,7 @@ class Carrot_Langs{
         if(localStorage.getItem("obj_lang_web")!=null) this.obj_lang_web=JSON.parse(localStorage.getItem("obj_lang_web"))
 
         carrot.register_page("lang","carrot.langs.list()","carrot.langs.edit_lang","carrot.langs.reload");
-        carrot.register_page("lang_app_setting","carrot.langs.show_setting_lang_app()","carrot.langs.edit_lang");
-        carrot.register_page("lang_web_setting","carrot.langs.show_setting_lang_web()","carrot.langs.edit_lang");
-        carrot.register_page("lang_app_ai_lover","carrot.langs.show_setting_lang_ai()","carrot.langs.edit_lang");
+        carrot.register_page("lang_setting","carrot.langs.show_setting_lang_app()","carrot.langs.edit_lang");
 
         var btn_add=carrot.menu.create("add_lang").set_label("Add Lang").set_icon(this.icon).set_type("add");
         var btn_list=carrot.menu.create("list_lang").set_label("List Lang").set_icon(this.icon).set_type("dev");
@@ -51,6 +50,36 @@ class Carrot_Langs{
         localStorage.removeItem("list_lang");
         this.list_lang=Array();
         this.carrot.delete_ver_cur("lang");
+    }
+
+    menu(btn_extension=''){
+        var html='';
+        html +='<h3>Dịch thuật đa ngôn ngữ <small class="text-info">'+carrot.langs.lang_setting_db_collection+'</small></h3>';
+        html+='<div class="row mb-3">';
+            html+='<div class="col-12 m-0 btn-toolba" role="toolbar" aria-label="Toolbar with button groups">';
+                html+='<div role="group" aria-label="First group"  class="btn-group mr-2">';
+                    if(carrot.langs.lang_setting_db_collection=="lang_app")
+                        html+='<button onclick="carrot.langs.show_setting_lang_app()" type="button" class="btn btn-info btn-sm"><i class="'+this.icon+'"></i> App Lang</button>';
+                    else
+                        html+='<button onclick="carrot.langs.show_setting_lang_app()" type="button" class="btn btn-dark btn-sm"><i class="fa-solid fa-list"></i> App Lang</button>';
+
+                    if(carrot.langs.lang_setting_db_collection=="lang_web")
+                        html+='<button onclick="carrot.langs.show_setting_lang_web()" type="button" class="btn btn-info btn-sm"><i class="'+this.icon+'"></i> Web Lang</button>';
+                    else
+                        html+='<button onclick="carrot.langs.show_setting_lang_web()" type="button" class="btn btn-dark btn-sm"><i class="fa-solid fa-list"></i> Web Lang</button>';
+
+                    if(carrot.langs.lang_setting_db_collection=="lang_app_ai_lover")
+                        html+='<button onclick="carrot.langs.show_setting_lang_ai()" type="button" class="btn btn-info btn-sm"><i class="'+this.icon+'"></i> Ai Lover</button>';
+                    else
+                        html+='<button onclick="carrot.langs.show_setting_lang_ai()" type="button" class="btn btn-dark btn-sm"><i class="fa-solid fa-list"></i> Ai Lover</button>';
+
+                    html+='<button onclick="carrot.langs.list_category_setting_lang();" type="button" class="btn btn-dark btn-sm"><i class="fa-solid fa-rectangle-list"></i> Category Lang Setting</button>';
+                    html+=btn_extension;
+                    html+=carrot.langs.list_btn_lang_select();
+                html+='</div>';
+            html+='</div>';
+        html+='</div>';
+        return html;
     }
 
     get_all_data_lang() {
@@ -114,9 +143,7 @@ class Carrot_Langs{
         $(".lang").each(function(index,emp){
             var key_lang=$(emp).attr("key_lang");
             if(langs.lang_web!=null){
-                if(langs.lang_web[key_lang]!=null){
-                    $(emp).html(langs.lang_web[key_lang].trim());
-                }
+                if(langs.lang_web[key_lang]!=null) $(emp).html(langs.lang_web[key_lang].trim());
             }
         });
     }
@@ -213,11 +240,23 @@ class Carrot_Langs{
                         this.carrot.langs.lang_setting_db_collection=s_collection;
                         this.carrot.langs.show_setting_lang(data_obj_lang_tag,data_obj_lang_change);
                         Swal.close();
+                    }else{
+                        data_obj_lang_tag["id"]=this.lang_setting;
+                        data_obj_lang_change["id"]=this.lang_setting;
+                        this.carrot.langs.lang_setting_db_collection=s_collection;
+                        this.carrot.langs.show_setting_lang(data_obj_lang_tag,data_obj_lang_change);
+                        Swal.close();
                     }
                 }).catch((error) => {
                     this.carrot.log(error.message);
                     Swal.close();
                 });
+            }else{
+                data_obj_lang_tag["id"]=this.lang_setting;
+                data_obj_lang_change["id"]=this.lang_setting;
+                this.carrot.langs.lang_setting_db_collection=s_collection;
+                this.carrot.langs.show_setting_lang(data_obj_lang_tag,data_obj_lang_change);
+                Swal.close();
             }
         }).catch((error) => {
             this.carrot.log(error.message);
@@ -228,44 +267,18 @@ class Carrot_Langs{
     show_setting_lang(data_lang_tag,data_lang_change){
         var html = '';
         var langs=this;
+        this.carrot.change_title_page("Lang Setting","?p="+langs.lang_setting_db_collection,"lang_setting");
 
-        if(langs.lang_setting_db_collection=="lang_app") this.carrot.change_title_page("Lang App Setting","?p=lang_app_setting","lang_app_setting");
-        if(langs.lang_setting_db_collection=="lang_web") this.carrot.change_title_page("Lang Web Setting","?p=lang_web_setting","lang_web_setting");
-        if(langs.lang_setting_db_collection=="lang_app_ai_lover") this.carrot.change_title_page("Lang Web Setting","?p=lang_app_ai_lover","lang_app_ai_lover");
-
-        html +='<h3>Dịch thuật đa ngôn ngữ <small class="text-info">'+langs.lang_setting_db_collection+'</small></h3>';
-        html+='<div class="row mb-3">';
-            html+='<div class="col-12 m-0 btn-toolba" role="toolbar" aria-label="Toolbar with button groups">';
-                html+='<div role="group" aria-label="First group"  class="btn-group mr-2">';
-                    if(langs.lang_setting_db_collection=="lang_app")
-                        html+='<button id="btn_lang_app" type="button" class="btn btn-info btn-sm"><i class="'+this.icon+'"></i> App Lang</button>';
-                    else
-                        html+='<button id="btn_lang_app" type="button" class="btn btn-dark btn-sm"><i class="fa-solid fa-list"></i> App Lang</button>';
-
-                    if(langs.lang_setting_db_collection=="lang_web")
-                        html+='<button id="btn_lang_web" type="button" class="btn btn-info btn-sm"><i class="'+this.icon+'"></i> Web Lang</button>';
-                    else
-                        html+='<button id="btn_lang_web" type="button" class="btn btn-dark btn-sm"><i class="fa-solid fa-list"></i> Web Lang</button>';
-
-                    if(langs.lang_setting_db_collection=="lang_app_ai_lover")
-                        html+='<button id="btn_lang_ai" type="button" class="btn btn-info btn-sm"><i class="'+this.icon+'"></i> Ai Lover</button>';
-                    else
-                        html+='<button id="btn_lang_ai" type="button" class="btn btn-dark btn-sm"><i class="fa-solid fa-list"></i> Ai Lover</button>';
-
-                html+=langs.list_btn_lang_select();
-                html+='</div>';
-            html+='</div>';
-        html+='</div>';
-
-        html += '<table class="table table-striped table-hover mt-3" id="table_setting_lang">';
-        html += '<thead class="thead-light fs-9">';
-        html += '<tr>';
-        html += '<th scope="col" class="w-10">Key</th>';
-        html += '<th scope="col" class="w-25">Value</th>';
-        html += '<th scope="col">New Lang</th>';
-        html += '</tr>';
-        html += '</thead>';
-        html += '<tbody id="body_table_lang_setting" class="fs-9">';
+        html+=carrot.langs.menu();
+        html+='<table class="table table-striped table-hover mt-3" id="table_setting_lang">';
+        html+='<thead class="thead-light fs-9">';
+        html+='<tr>';
+        html+='<th scope="col" class="w-10">Key</th>';
+        html+='<th scope="col" class="w-25">Value</th>';
+        html+='<th scope="col">New Lang</th>';
+        html+='</tr>';
+        html+='</thead>';
+        html+='<tbody id="body_table_lang_setting" class="fs-9">';
         
         $.each(data_lang_tag, function(key, value){
             var s_val_change='';
@@ -277,25 +290,25 @@ class Carrot_Langs{
             }
             if(s_val_change=='') s_class="bg-danger";
             if(key=='id'&&s_val_change=='') s_val_change=langs.lang_setting;
-            html += '<tr class="'+s_class+'">';
-            html += '<td scope="col" class="w-10"><b>'+key+'</b></td>';
-            html += '<td scope="col" class="w-25">';
-                html += '<span id="txt_'+key+'">'+value+'</span> '
-                if(key!='id') html += '<button class="btn btn-outline-secondary btn-sm" type="button" onclick="copy_txt_tag(\'txt_'+key+'\')"><i class="fa-solid fa-copy"></i></button> <button class="btn btn-outline-secondary btn-sm" type="button" onclick="tr(\'txt_'+key+'\',\''+langs.lang_setting+'\')"><i class="fa-solid fa-language"></i></button>';
-            html += '</td>';
-            html += '<td scope="col">';
-                html += '<div class="input-group">';
-                    html += '<input id="inp_'+key+'" type="text" value="'+s_val_change+'" class="form-control inp-lang input-sm m-0 p-1 fs-9" data-key="'+key+'"/>';
-                    html += '<div class="input-group-append">';
-                    if(key!="id") html += '<button class="btn btn-outline-secondary btn-sm" type="button" onclick="paste_tag(\'inp_'+key+'\')"><i class="fa-solid fa-paste"></i> Paste</button>';
-                    if(data_lang_change.id=="en"&&key!="id") html += '<button class="btn btn-danger bt-sm" type="button" onclick=" $(this).parent().parent().parent().parent().remove();"><i class="fa-solid fa-trash"></i> Delete</button>';
-                    html += '</div>';
-                html += '</div>';
-            html += '</td>';
-            html += '</tr>';
+            html+='<tr class="'+s_class+'">';
+            html+='<td scope="col" class="w-10"><b>'+key+'</b></td>';
+            html+='<td scope="col" class="w-25">';
+                html+='<span id="txt_'+key+'">'+value+'</span> '
+                if(key!='id') html+='<button class="btn btn-outline-secondary btn-sm" type="button" onclick="copy_txt_tag(\'txt_'+key+'\')"><i class="fa-solid fa-copy"></i></button> <button class="btn btn-outline-secondary btn-sm" type="button" onclick="tr(\'txt_'+key+'\',\''+langs.lang_setting+'\')"><i class="fa-solid fa-language"></i></button>';
+            html+='</td>';
+            html+='<td scope="col">';
+                html+='<div class="input-group">';
+                    html+='<input id="inp_'+key+'" type="text" value="'+s_val_change+'" class="form-control inp-lang input-sm m-0 p-1 fs-9" data-key="'+key+'"/>';
+                    html+='<div class="input-group-append">';
+                    if(key!="id") html+='<button class="btn btn-outline-secondary btn-sm" type="button" onclick="paste_tag(\'inp_'+key+'\')"><i class="fa-solid fa-paste"></i> Paste</button>';
+                    if(data_lang_change.id=="en"&&key!="id") html+='<button class="btn btn-danger bt-sm" type="button" onclick=" $(this).parent().parent().parent().parent().remove();"><i class="fa-solid fa-trash"></i> Delete</button>';
+                    html+='</div>';
+                html+='</div>';
+            html+='</td>';
+            html+='</tr>';
         });
-        html += '</tbody>';
-        html += '</table>';
+        html+='</tbody>';
+        html+='</table>';
 
         html+='<button id="btn_done_setting_lang" type="button" class="btn btn-primary mr-1 mt-1"><i class="fa-solid fa-square-check"></i> Done</button> ';
         if(data_lang_change.id=="en") html+='<button id="btn_add_field_setting_lang" type="button" class="btn btn-secondary mr-1 mt-1 btn-sm" ><i class="fa-solid fa-add"></i> Add Field</button>';
@@ -326,10 +339,6 @@ class Carrot_Langs{
             carrot.set_doc(langs.lang_setting_db_collection,langs.lang_setting,data_inp_lang);
             $.MessageBox("Cập nhật "+langs.lang_setting_db_collection+" - "+langs.lang_setting+" thành công!")
         });
-
-        $("#btn_lang_app").click(function(){langs.show_setting_lang_app();});
-        $("#btn_lang_web").click(function(){langs.show_setting_lang_web();});
-        $("#btn_lang_ai").click(function(){langs.show_setting_lang_ai();});
     }
 
     add_field_for_setting_lang(){
@@ -415,5 +424,62 @@ class Carrot_Langs{
     reload(carrot){
         carrot.langs.delete_list_lang();
         carrot.langs.get_data_lang_web();
+    }
+
+    list_category_setting_lang(){
+        carrot.get_doc("setting_web","lang",carrot.langs.done_list_category_setting_lang);
+    }
+
+    done_list_category_setting_lang(data,carrot){
+        carrot.langs.arr_lang_setting_db=data.lang_setting;
+        var array_setting_lang=data.lang_setting;
+        var html='';
+        var html_btn_extension='';
+        html_btn_extension+='<button onclick="carrot.langs.add_setting_lang()" class="btn btn-sm btn-success"><i class="fa-solid fa-square-plus"></i> Add setting lang</button>';
+        html+=carrot.langs.menu(html_btn_extension);
+        html+='<div class="row">';
+        $(array_setting_lang).each(function(index,langs){
+            var item_lang_setting=new Carrot_List_Item(carrot);
+            item_lang_setting.set_index(index);
+            item_lang_setting.set_id(langs);
+            item_lang_setting.set_icon_font(carrot.langs.icon+" icon_lang_setting_db");
+            item_lang_setting.set_class_icon("col-2");
+            item_lang_setting.set_class_body("col-10");
+            item_lang_setting.set_title(langs);
+            html+=item_lang_setting.html();
+        });
+        html+='</div>';
+        carrot.show(html);
+        carrot.check_event();
+
+        $(".icon_lang_setting_db").click(function(){
+            var obj_id=$(this).attr("obj_id");
+            carrot.langs.select_db_setting_lang(obj_id);
+        });
+    }
+
+    add_setting_lang(){
+        var frm=new Carrot_Form("frm",carrot);
+        frm.set_title("Add setting lang");
+        frm.set_icon("fa-solid fa-square-plus");
+        frm.create_field("db_lang").set_label("DB lang name(slug_name)");
+        frm.off_btn_done();
+        var btn_add_lang_setting=frm.create_btn();
+        btn_add_lang_setting.set_icon("fa-add");
+        btn_add_lang_setting.set_act("carrot.langs.submit_add_setting_lang()");
+        frm.show();
+    }
+
+    submit_add_setting_lang(){
+        var db_lang=$("#db_lang").val();
+        carrot.langs.arr_lang_setting_db.push(db_lang);
+        var data_db_lang={lang_setting:carrot.langs.arr_lang_setting_db};
+        this.carrot.set_doc_merge("setting_web","lang",data_db_lang);
+        this.carrot.msg("Add lang db setting:"+db_lang);
+        $('#box').modal('hide'); 
+    }
+
+    select_db_setting_lang(s_name_db){
+        this.show_setting_lang_by_key(this.lang_setting,s_name_db);
     }
 }

@@ -291,11 +291,11 @@ class Carrot_user{
             html+='</div>';
             html+='<div class="row">';
                 html+='<div class="col-12 ratfac">';
-                html+='<i class="bi text-warning fa-solid fa-heart"></i>';
-                html+='<i class="bi text-warning fa-solid fa-heart"></i>';
-                html+='<i class="bi text-warning fa-solid fa-heart"></i>';
-                html+='<i class="bi text-danger fa-solid fa-heart"></i>';
-                html+='<i class="bi fa-solid fa-heart"></i>';
+                html+='<i class="bi text-warning fa-solid fa-heart fa-beat m-1"></i>';
+                html+='<i class="bi text-warning fa-solid fa-heart fa-beat m-1" style="--fa-animation-duration: 0.5s;"></i>';
+                html+='<i class="bi text-warning fa-solid fa-heart fa-beat m-1 fa-fade"></i>';
+                html+='<i class="bi text-danger fa-solid fa-heart fa-beat m-1 fa-fade" style="--fa-animation-duration: 0.5s;"></i>';
+                html+='<i class="bi fa-solid fa-heart fa-beat m-1" style="--fa-beat-scale: 1.3;"></i>';
                 html+='</div>';
             html+='</div>';
         html+='</div>';
@@ -463,7 +463,7 @@ class Carrot_user{
 
                         html+='<div class="row pt-4">';
                             html+='<div class="col-12 text-center">';
-                            if(data_user.phone!="") html+='<a href="tel:+'+data_user.phone+'" id="btn_call" type="button" class="btn d-inline btn-success m-1"><i class="fa-solid fa-phone-volume"></i> <l class="lang" key_lang="call">Call</l></a>';
+                            if(data_user.phone!=null) html+='<a href="tel:+'+data_user.phone+'" id="btn_call" type="button" class="btn d-inline btn-success m-1"><i class="fa-solid fa-phone-volume"></i> <l class="lang" key_lang="call">Call</l></a>';
                             if(data_user.email!="") html+='<a href="mailto:'+data_user.email+'" id="btn_send" type="button" class="btn d-inline btn-success m-1"><i class="fa-solid fa-paper-plane"></i> <l class="lang" key_lang="send_mail">Send Mail</l></a>';
                             html+='<button id="btn_share" type="button" class="btn d-inline btn-success m-1"><i class="fa-solid fa-share-nodes"></i> <l class="lang" key_lang="share">Share</l></button>';
                             html+='<button id="register_protocol_url" type="button"  class="btn d-inline btn-success m-1" ><i class="fa-solid fa-rocket"></i> <l class="lang" key_lang="open_with">Open with..</l></button>';

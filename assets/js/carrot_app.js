@@ -207,7 +207,7 @@ class Carrot_App{
                                     var link_store_app=data[store.key];
                                     if(link_store_app.trim()!=""){
                                         html_store_link+="<a class='link_app' title=\""+store.name+"\" target=\"_blank\" href=\""+link_store_app+"\"><i class=\""+store.icon+"\"></i></a>";
-                                        html_store_link_lager+="<a class='mt-6 mb-6 mr-6 ml-6 d-inline' title=\""+store.name+"\" target=\"_blank\" href=\""+link_store_app+"\"><img style='width:100px' src='"+store.img+"'></a> ";
+                                        html_store_link_lager+="<a class='m-1' title=\""+store.name+"\" target=\"_blank\" href=\""+link_store_app+"\"><img class='m-1' style='width:100px' src='"+store.img+"'></a> ";
                                     }
                                 }
                             });
@@ -285,6 +285,40 @@ class Carrot_App{
                     html+='</div>';
                 }
 
+                html+='<div class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
+                    html+='<div class="col-md-4 text-center">';
+                        html+='<h4 class="fw-semi fs-5 lang" key_lang="qr_code">QR Code</h4>';
+                        html+='<div id="qr_cdoe" class="rounded m-1"></div>';
+                        html+='<small class="m-1">Use other devices capable of scanning and recognizing qr code barcodes to continue using the current link</small>';
+                    html+='</div>';
+
+                    html+='<div class="col-md-8">';
+                        html+='<h4 class="fw-semi fs-5" key_lang="qr_code">Other Link</h4>';
+                        if(carrot.link_store.list_link_store!=null){
+                            html+='<table class="table table-striped">';
+                            $(carrot.link_store.list_link_store).each(function(index,store){
+                                if(data[store.key]!=null){
+                                    var link_store_app=data[store.key];
+                                    if(link_store_app.trim()!=""){
+                                        html+='<tr>';
+                                            html+='<td>';
+                                                html+='<i class="'+store.icon+'"></i>';
+                                            html+='</td>';
+                                            html+='<td>';
+                                                html+=store.name;
+                                            html+='</td>';
+                                            html+='<td class="fs-6">';
+                                                html+='<a class="link_app" title="'+store.name+'" target="_blank" href="'+link_store_app+'">'+link_store_app+'</a>';
+                                            html+='</td>';
+                                        html+='</tr>';
+                                    }
+                                }
+                            });
+                            html+='</table>';
+                        }
+                    html+='</div>';
+                html+='</div>';
+
                 html+=carrot.rate.box_comment(data);
 
             html+="</div>";
@@ -306,6 +340,35 @@ class Carrot_App{
         carrot.app.type_show="all";
         carrot.show(html);
         carrot.app.check_btn_for_list_app();
+        $("#qr_cdoe").qrcode({
+            render: 'canvas',
+            minVersion: 1,
+            maxVersion: 40,
+            ecLevel: 'L',
+            left: 0,
+            top: 0,
+            size: 200,
+            fill: '#428400',
+            background: null,
+            text: window.location.href,
+            radius: 5,
+            quiet: 0,
+            // modes
+            // 0: normal
+            // 1: label strip
+            // 2: label box
+            // 3: image strip
+            // 4: image box
+            mode:  0,
+            mSize: 0.1,
+            mPosX: 0.5,
+            mPosY: 0.5,
+            label: 'no label',
+            fontname: 'sans',
+            fontcolor: '#000',
+        
+            image: null
+        });
     }
 
     check_btn_for_list_app(){

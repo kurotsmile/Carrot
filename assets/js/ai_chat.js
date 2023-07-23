@@ -313,12 +313,20 @@ class AI_Chat{
                                     html+='<p>'+data.sex_user+'</p>';
                                 html+='</div>';
 
-                                
                                 html+='<div class="col-md-4 col-6 text-center">';
                                     html+='<b><l class="lang" key_lang="status">Status</l> <i class="fa-brands fa-suse"></i></b>';
                                     html+='<p>'+data.status+'</p>';
                                 html+='</div>';
 
+                                html+='<div class="col-md-4 col-6 text-center">';
+                                    html+='<b><l class="lang" key_lang="color">Color</l> <i class="fa-solid fa-palette"></i></b>';
+                                    html+='<p>'+data.color+'</p>';
+                                html+='</div>';
+
+                                html+='<div class="col-md-4 col-6 text-center">';
+                                    html+='<b><l class="lang" key_lang="date_create">Date Create</l> <i class="fa-regular fa-calendar"></i></b>';
+                                    html+='<p>'+data.date_create+'</p>';
+                                html+='</div>';
 
                             html+='</div>';
                         html+='</div>';
