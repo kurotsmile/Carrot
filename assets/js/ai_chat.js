@@ -61,7 +61,12 @@ class AI_Chat{
         btn_add_msg.set_icon("fa-solid fa-comment-dots");
         btn_add_msg.set_act("carrot.ai.chat.add_msg_for_key()");
         frm.create_field("key").set_label("Key").set_val(data["key"]).set_tip("Câu hỏi người dùng đối với Ai").add_btn(btn_add_msg);
-        frm.create_field("msg").set_label("Msg").set_val(data["msg"]).set_tip("Câu trả lời của Ai khi được hỏi đúng với từ khóa").set_type("textarea");
+        var btn_add_key_fnc=new Carrot_Btn();
+        btn_add_key_fnc.set_label(" Add Key func");
+        btn_add_key_fnc.set_icon("fa-solid fa-circle-plus");
+        btn_add_key_fnc.set_class("btn-sm mt-1 btn-secondary fs-9");
+        btn_add_key_fnc.set_act("carrot.ai.chat.add_key_fnc_for_msg_field()");
+        frm.create_field("msg").set_label("Msg").set_val(data["msg"]).set_tip("Câu trả lời của Ai khi được hỏi đúng với từ khóa").set_type("textarea").add_btn(btn_add_key_fnc);
         frm.create_field("status").set_label("Status").set_val(data["status"]).set_type("select").add_option("pending","Pending - Chờ Duyệt").add_option("passed","Passed - Sử dụng").add_option("reserve","Reserve - Sử dụng tạm thời");
         frm.create_field("sex_user").set_label("Sex User").set_val(data["sex_user"]).set_type("select").add_option("0","Boy").add_option("1","Girl");
         frm.create_field("sex_character").set_label("Sex Character").set_val(data["sex_character"]).set_type("select").add_option("0","Boy").add_option("1","Girl");
@@ -80,6 +85,29 @@ class AI_Chat{
         frm.create_field("date_create").set_label("Date Create").set_val(data["date_create"]);
         frm.create_field("lang").set_label("Lang").set_type("lang").set_val(data["lang"]);
         return frm;
+    }
+
+    add_key_fnc_for_msg_field(){
+        var list_parameter_msg=Array("{ten_user}","{ten_nv}","{gio}","{phut}","{ngay}","{thang}","{nam}","{thu}","{key_chat}");
+        var html='';
+        $(list_parameter_msg).each(function(index,key){
+            html+='<button onclick="carrot.ai.chat.select_key_parameter_for_msg(\''+key+'\');" class="btn btn-sm btn-info m-1"><i class="fa-brands fa-keycdn"></i> '+key+'</button>';
+        });
+        Swal.fire({
+            title:"Parameter Msg Key",
+            html:html
+        });
+    }
+
+    select_key_parameter_for_msg(s_key){
+        var cursorPos = $('#msg').prop('selectionStart');
+        var v = $('#msg').val();
+        var textBefore = v.substring(0,  cursorPos);
+        var textAfter  = v.substring(cursorPos, v.length);
+    
+        $('#msg').val(textBefore + s_key + textAfter);
+
+        Swal.close();
     }
 
     add_chat_with_father(emp){

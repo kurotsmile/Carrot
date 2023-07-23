@@ -246,6 +246,11 @@ class Carrot_Field{
         }
         else if(this.type=='textarea'){
             html+='<textarea class="form-control m-0 cr_field" id="'+this.name+'" placeholder="'+this.placeholder+'" rows="3">'+this.value+'</textarea>';
+            if(this.htm_btn_extension()!=""){
+                html+='<div class="input-group mb-3 mt-2">';
+                html+=this.htm_btn_extension();
+                html+='</div>';
+            }
         }
         else if(this.type=='id'){
             html+='<p id="'+this.name+'" type="id" class="cr_field fs-9 text-info" value="'+this.value+'">'+this.value+'</p>';
