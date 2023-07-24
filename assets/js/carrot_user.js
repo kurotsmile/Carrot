@@ -357,6 +357,7 @@ class Carrot_user{
         data_user_new["email"]="";
         data_user_new["address"]="";
         data_user_new["role"]="";
+        data_user_new["type"]="";
         data_user_new["lang"]=this.carrot.lang;
         this.frm_add_or_edit(data_user_new).set_title(this.carrot.l("register","Register User")).set_msg_done("Register User Success!").set_type("add").show();
         this.carrot.check_event();
@@ -384,16 +385,28 @@ class Carrot_user{
         var field_share=frm.create_field("status_share").set_label("Share Status").set_value(data.status_share).set_type("select");
         field_share.add_option("0","Share");
         field_share.add_option("1","No share");
+        var field_type=frm.create_field("type").set_label("Type").set_value(data.type).set_dev().set_type("select");
+        field_type.add_option("free","Free");
+        field_type.add_option("basic","Basic");
+        field_type.add_option("pro","Pro");
+        field_type.add_option("gold","Gold");
+        field_type.add_option("sapphire","Sapphire");
         var field_role=frm.create_field("role").set_label("Role").set_val(data.role).set_dev().set_type("select");
         field_role.add_option("user","basic user");
         field_role.add_option("admin","Administrators");
         var field_lang=frm.create_field("lang").set_label(this.carrot.l("country","Country")).set_value(data.lang).set_type("select");
         $(this.carrot.langs.list_lang).each(function(index,lang){
+            lang.index=index;
             field_lang.add_option(lang.key,lang.name);
         });
+        frm.set_act_done("carrot.user.after_done_update_user()");
         return frm;
     }
 
+    after_done_update_user(){
+        carrot.get_doc("user-"+carrot.user.obj_login.lang,carrot.user.obj_login.id,carrot.user.get_user_data_login_from_server);
+    }
+    
     show_user_by_id(user_id,carrot){
         var user_lang=carrot.get_param_url("user_lang");
         carrot.get_doc("user-"+user_lang,user_id,carrot.user.show_user_info);
@@ -456,6 +469,13 @@ class Carrot_user{
                                 html+='<div class="col-md-4 col-6 text-center">';
                                 html+='<b><l class="lang" key_lang="role">Role</l> <i class="fa-solid fa-hat-cowboy"></i></b>';
                                 html+='<p>'+data_user.role+'</p>';
+                                html+='</div>';
+                            }
+
+                            if(data_user.type!=null){
+                                html+='<div class="col-md-4 col-6 text-center">';
+                                html+='<b><l class="lang" key_lang="type">Type</l> <i class="fa-solid fa-hurricane"></i></b>';
+                                html+='<p>'+data_user.type+'</p>';
                                 html+='</div>';
                             }
 
@@ -680,5 +700,10 @@ class Carrot_user{
     reload(carrot){
         carrot.user.delete_obj_phone_book();
         carrot.user.list();
+    }
+
+    change_type_user(id_product_service){
+        carrot.user.obj_login.type=id_product_service;
+        this.carrot.update_doc("user-"+carrot.user.obj_login.lang,carrot.user.obj_login.id,carrot.user.obj_login);
     }
 }
