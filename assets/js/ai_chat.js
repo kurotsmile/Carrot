@@ -348,7 +348,7 @@ class AI_Chat{
 
                                 html+='<div class="col-md-4 col-6 text-center">';
                                     html+='<b><l class="lang" key_lang="color">Color</l> <i class="fa-solid fa-palette"></i></b>';
-                                    html+='<p>'+data.color+'</p>';
+                                    html+='<p style="color:'+data.color+'">'+data.color+'</p>';
                                 html+='</div>';
 
                                 html+='<div class="col-md-4 col-6 text-center">';

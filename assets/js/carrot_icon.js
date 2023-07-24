@@ -15,7 +15,7 @@ class Carrot_Icon{
     data_icon_24=null;
     data_icon_16=null;
 
-    cur_show_icon_category='';
+    cur_show_icon_category='all';
 
     constructor(carrot){
         this.carrot=carrot;
@@ -26,7 +26,7 @@ class Carrot_Icon{
         carrot.register_page("icon_category","carrot.icon.list_category()","carrot.icon.edit_category");
         var btn_add=carrot.menu.create("add_icon").set_label("Add Icon").set_type("add").set_icon(this.icon);
         $(btn_add).click(function(){carrot.icon.add();});
-        var btn_list=carrot.menu.create("list_icon").set_label("Add Icon").set_type("main").set_lang("icon").set_icon(this.icon);
+        var btn_list=carrot.menu.create("list_icon").set_label("Icon").set_type("main").set_lang("icon").set_icon(this.icon);
         $(btn_list).click(function(){carrot.icon.list();});
         var btn_add_icon_category=carrot.menu.create("add_icon_category").set_label("Add Icon Category").set_type("add").set_icon("fa-solid fa-rectangle-list");
         $(btn_add_icon_category).click(function(){carrot.icon.add_category();});
@@ -52,6 +52,11 @@ class Carrot_Icon{
         localStorage.removeItem("obj_icon");
         this.obj_icon=null;
     }
+    
+    delete_obj_icon_category(){
+        localStorage.removeItem("obj_icon_category");
+        this.obj_icon_category=null;
+    }
 
     list(){
         if(this.carrot.check_ver_cur("icon")==false){
@@ -76,9 +81,21 @@ class Carrot_Icon{
             html+='<div class="btn-group mr-2 btn-sm" role="group" aria-label="First group">';
                 html+='<button onclick="carrot.icon.add();" class="btn btn-sm dev btn-success"><i class="fa-solid fa-square-plus"></i> Add Icon</button>';
                 html+='<button onclick="carrot.icon.add_category();" class="btn dev btn-sm btn-success"><i class="fa-solid fa-square-plus"></i> Add Category</button>';
+                html+='<button onclick="carrot.icon.delete_all_data();return false;" class="btn btn-danger dev btn-sm"><i class="fa-solid fa-dumpster-fire"></i> Delete All data</button>';
+                html+='<div class="btn-group" role="group">';
+                    html+='<button class="btn btn-secondary dropdown-toggle btn-sm" type="button" id="btn_list_icon_category" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-rectangle-list"></i> Category ('+carrot.icon.cur_show_icon_category+')</button>';
+                    html+='<div class="dropdown-menu" aria-labelledby="btn_list_ebook_category" id="list_icon_category">';
+                        var list_category=this.carrot.obj_to_array(this.obj_icon_category);
+                        var css_active='';
+                        list_category.push({key:"all",icon:"fa-solid fa-rectangle-list"});
+                        $(list_category).each(function(index,cat){
+                            if(cat.key==carrot.icon.cur_show_icon_category) css_active="btn-success";
+                            else css_active="btn-secondary";
+                            html+='<button role="button" onclick="carrot.icon.select_show_category(\''+cat.key+'\')" class="dropdown-item btn '+css_active+'"><i class="'+cat.icon+'"></i> '+cat.key+'</button>';
+                        });
+                    html+='</div>';
+                html+='</div>';
             html+='</div>';
-
-            html+='<div class="btn-group mr-2 btn-sm" id="list_icon_category" role="group" aria-label="Mid group"></div>';
 
             html+='<div class="btn-group mr-2 btn-sm float-end" role="group" aria-label="Last group">';
                 var css_active="";
@@ -105,14 +122,37 @@ class Carrot_Icon{
             carrot.icon.show_list_category();
         }
         else{
-            var list_category=carrot.obj_to_array(carrot.icon.obj_icon_category);
-            var html='';
-            var s_css="";
-            $(list_category).each(function(index,cat){
-                if(carrot.icon.cur_show_icon_category==cat.key) s_css="active"; else s_css="";
-                html+='<button onclick="carrot.icon.select_show_category(\''+cat.key+'\')" class="btn btn-success btn-sm '+s_css+'" data-index="'+index+'"><i class="'+cat.icon+'"></i> '+cat.key+'</button>';
+            carrot.icon.show_data_to_dropdown_category_icon();
+        }
+    }
+
+    show_data_to_dropdown_category_icon(){
+        var html='';
+        var list_category=this.carrot.obj_to_array(this.obj_icon_category);
+        var css_active='';
+        list_category.push({key:"all",icon:"fa-solid fa-rectangle-list"});
+        $(list_category).each(function(index,cat){
+            cat.index=index;
+            if(cat.key==carrot.icon.cur_show_icon_category) css_active="btn-success";
+            else css_active="btn-secondary";
+            html+='<button role="button" onclick="carrot.icon.select_show_category(\''+cat.key+'\')" class="dropdown-item btn '+css_active+'"><i class="'+cat.icon+'"></i> '+cat.key+'</button>';
+        });
+        $("#list_icon_category").html(html);
+    }
+
+    done_get_data_icon(querySnapshot){
+        if(querySnapshot.docs.length>0){
+            this.obj_icon=Object();
+            querySnapshot.forEach((doc) => {
+                var data_icon=doc.data();
+                data_icon["id"]=doc.id;
+                this.obj_icon[doc.id]=JSON.stringify(data_icon);
             });
-            $("#list_icon_category").html(html);
+            this.save_obj_icon();
+            this.show_all_icon_from_list_icon();
+            Swal.close();
+        }else{
+            this.carrot.msg("None List Icon!","alert");
         }
     }
 
@@ -120,25 +160,24 @@ class Carrot_Icon{
         carrot.icon.cur_show_icon_category=key_category;
         Swal.showLoading();
         this.carrot.log("Get list Icon by category from sever","warning");
-        this.carrot.db.collection("icon").where("category","==",key_category).limit(200).get().then((querySnapshot) => {
-            if(querySnapshot.docs.length>0){
-                this.obj_icon=Object();
-                querySnapshot.forEach((doc) => {
-                    var data_icon=doc.data();
-                    data_icon["id"]=doc.id;
-                    this.obj_icon[doc.id]=JSON.stringify(data_icon);
-                });
-                this.save_obj_icon();
-                this.show_all_icon_from_list_icon();
+        if(key_category=="all"){
+            carrot.db.collection("icon").limit(200).get().then((querySnapshot) => {
+                carrot.icon.done_get_data_icon(querySnapshot);
+            }).catch((error) => {
+                console.log(error);
+                carrot.msg(error.message,"error");
                 Swal.close();
-            }else{
-                this.carrot.msg("None List Icon!","alert");
-            }
-        }).catch((error) => {
-            console.log(error);
-            this.carrot.msg(error.message,"error");
-            Swal.close();
-        });
+            });
+        }else{
+            this.carrot.db.collection("icon").where("category","==",key_category).limit(200).get().then((querySnapshot) => {
+                carrot.icon.done_get_data_icon(querySnapshot);
+            }).catch((error) => {
+                console.log(error);
+                this.carrot.msg(error.message,"error");
+                Swal.close();
+            });
+        }
+
     }
 
     list_category(){
@@ -199,7 +238,8 @@ class Carrot_Icon{
         var list_icon=carrot.convert_obj_to_list(this.obj_icon);
         var html="";
         carrot.icon.type_show="list_icon";
-        if(carrot.icon.obj_icon_category!=null) carrot.icon.get_category();
+        if(carrot.icon.obj_icon_category==null) carrot.icon.get_category();
+        else carrot.icon.show_data_to_dropdown_category_icon();
         html+=carrot.icon.menu();
 
         html+='<div class="row m-0">';
@@ -318,6 +358,8 @@ class Carrot_Icon{
     info(data,carrot){
         carrot.change_title_page("icon","?p=icon&id="+data.id,carrot.icon.id_page);
         carrot.icon.obj_icon_info_cur=data;
+        if(carrot.icon.obj_icon_category==null) carrot.icon.get_category();
+        else carrot.icon.show_data_to_dropdown_category_icon();
         var html='';
         html+=carrot.icon.menu();
         html+='<div class="section-container p-2 p-xl-4 pt-0">';
@@ -525,5 +567,11 @@ class Carrot_Icon{
     reload(carrot){
         carrot.icon.delete_obj_icon();
         carrot.icon.list();
+    }
+
+    delete_all_data(){
+        this.delete_obj_icon();
+        this.delete_obj_icon_category();
+        this.carrot.msg("Delete all data success!");
     }
 }
