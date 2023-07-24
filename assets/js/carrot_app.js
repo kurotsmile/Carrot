@@ -207,7 +207,7 @@ class Carrot_App{
                                     var link_store_app=data[store.key];
                                     if(link_store_app.trim()!=""){
                                         html_store_link+="<a class='link_app' title=\""+store.name+"\" target=\"_blank\" href=\""+link_store_app+"\"><i class=\""+store.icon+"\"></i></a>";
-                                        html_store_link_lager+="<a class='m-1' title=\""+store.name+"\" target=\"_blank\" href=\""+link_store_app+"\"><img class='m-1' style='width:100px' src='"+store.img+"'></a> ";
+                                        html_store_link_lager+="<a title=\""+store.name+"\" target=\"_blank\" href=\""+link_store_app+"\"><img class='m-1' style='width:100px' src='"+store.img+"'></a> ";
                                     }
                                 }
                             });

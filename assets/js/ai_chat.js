@@ -80,7 +80,7 @@ class AI_Chat{
         frm.create_field("mp3").set_label("Mp3 (Url audio)").set_val(data["mp3"]);
         frm.create_field("link").set_label("Link (url Web or  URL scheme App)").set_val(data["link"]);
         frm.create_field("pater").set_label("Pater").set_val(data["pater"]);
-        frm.create_field("user").set_label("User").set_val(data["user"]);
+        frm.create_field("user").set_label("User").set_val(data["user"]).set_type("user");
         frm.create_field("limit").set_label("Limit Chat").set_val(data["limit"]).set_type("slider");
         frm.create_field("date_create").set_label("Date Create").set_val(data["date_create"]);
         frm.create_field("lang").set_label("Lang").set_type("lang").set_val(data["lang"]);
@@ -351,10 +351,28 @@ class AI_Chat{
                                     html+='<p style="color:'+data.color+'">'+data.color+'</p>';
                                 html+='</div>';
 
+                                if(data.icon!=null&&carrot.icon.obj_icon!=null){
+                                    var icon=carrot.icon.obj_icon[data.icon];
+                                    if(icon!=null){
+                                        icon=JSON.parse(icon);
+                                        html+='<div class="col-md-4 col-6 text-center">';
+                                            html+='<b><l class="lang" key_lang="icon">Icon</l> <i class="fa-solid fa-smile"></i></b>';
+                                            html+='<p><img style="width:32px;" src="'+icon.icon+'"/></p>';
+                                        html+='</div>';
+                                    }
+                                }
+
                                 html+='<div class="col-md-4 col-6 text-center">';
                                     html+='<b><l class="lang" key_lang="date_create">Date Create</l> <i class="fa-regular fa-calendar"></i></b>';
                                     html+='<p>'+data.date_create+'</p>';
                                 html+='</div>';
+
+                                if(data.user.name!=undefined){
+                                    html+='<div class="col-md-4 col-6 text-center">';
+                                    html+='<b><l class="lang" key_lang="author">Author</l> <i class="fa-solid fa-user-nurse"></i></b>';
+                                    html+='<p>'+data.user.name+'</p>';
+                                    html+='</div>';
+                                }
 
                             html+='</div>';
                         html+='</div>';

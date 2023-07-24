@@ -5,7 +5,7 @@ class Carrot_Icon{
     obj_icon_info_cur=null;
 
     icon="fa-solid fa-face-smile";
-    emp_msg_field_file=null;
+    emp_msg_field=null;
     id_page="icon";
 
     type_show="list_icon";
@@ -118,12 +118,25 @@ class Carrot_Icon{
     done_get_category(datas,carrot){
         carrot.icon.obj_icon_category=datas;
         carrot.icon.save_obj_icon_category();
-        if(carrot.icon.type_show!="list_icon"){
+        if(carrot.icon.type_show=="list_category"){
             carrot.icon.show_list_category();
+        }else if(carrot.icon.type_show=='list_msg'){
+            carrot.icon.show_data_to_form_list_msg_category_icon();
         }
         else{
             carrot.icon.show_data_to_dropdown_category_icon();
         }
+    }
+
+    show_data_to_form_list_msg_category_icon(){
+        var html='';
+        var list_cat_icon=carrot.obj_to_array(carrot.icon.obj_icon_category);
+        var emp_id=$(carrot.icon.emp_msg_field).attr("id");
+        $(list_cat_icon).each(function(index,cat){
+            cat.index=index;
+            html+='<div onclick="carrot.icon.msg_list_select(this);return false;" data-emp-id="'+emp_id+'" data-category-key="'+cat.key+'" class="btn btn-sm btn-secondary rounded text-white m-1"><i class="'+cat.icon+'"></i> '+cat.key+'</div>';
+        });
+        $("#"+emp_id).parent().append(html);
     }
 
     show_data_to_dropdown_category_icon(){
@@ -573,5 +586,86 @@ class Carrot_Icon{
         this.delete_obj_icon();
         this.delete_obj_icon_category();
         this.carrot.msg("Delete all data success!");
+    }
+
+    msg_list_select(emp){
+        this.emp_msg_field=emp;
+        var category_key=$(emp).data("category-key");
+        if(category_key=="all"){
+            if(this.obj_icon==null){
+                this.carrot.db.collection("icon").limit(28).get().then((querySnapshot) => {
+                    if(querySnapshot.docs.length>0){
+                        this.obj_icon=new Object();
+                        querySnapshot.forEach((doc) => {
+                            var data_icon=doc.data();
+                            data_icon["id"]=doc.id;
+                            this.obj_icon[doc.id]=JSON.stringify(data_icon);
+                        });
+                        this.save_obj_icon();
+                        this.done_msg_list_select(this.obj_icon,this.carrot);
+                    }else{
+                        this.done_msg_list_select(null,this.carrot);
+                    }
+                }).catch((error) => {
+                    console.log(error);
+                    this.carrot.msg(error.message,"error");
+                });
+            }else{
+                this.done_msg_list_select(this.obj_icon,this.carrot);
+            }
+        }else{
+            this.carrot.db.collection("icon").where("category","==",category_key).limit(28).get().then((querySnapshot) => {
+                if(querySnapshot.docs.length>0){
+                    this.obj_icon=new Object();
+                    querySnapshot.forEach((doc) => {
+                        var data_icon=doc.data();
+                        data_icon["id"]=doc.id;
+                        this.obj_icon[doc.id]=JSON.stringify(data_icon);
+                    });
+                    this.save_obj_icon();
+                    this.done_msg_list_select(this.obj_icon,this.carrot);
+                }else{
+                    this.done_msg_list_select(null,this.carrot);
+                }
+            }).catch((error) => {
+                console.log(error);
+                this.carrot.msg(error.message,"error");
+            });
+        }
+
+        if(this.obj_icon_category==null){
+            this.type_show="list_msg";
+            this.get_category();
+        }
+    }
+
+    done_msg_list_select(data,carrot){
+        var html='';
+        var list_icon=carrot.obj_to_array(data);
+        var color_bg='';
+        var emp_id=$(carrot.icon.emp_msg_field).data("emp-id");
+        var id_icon=$("#"+emp_id).attr("value");
+        $(list_icon).each(function(index,icon){
+            icon.index=index;
+            if(id_icon==icon.id) color_bg='bg-info'; else color_bg='';
+            html+="<img role='button' title='"+icon.name+"' data-id-icon='"+icon.id+"' data-color='"+icon.color+"' file_url='"+icon.icon+"' onclick='carrot.icon.select_icon_for_msg(this);return false;' style='width:50px' class='rounded m-1 "+color_bg+"' src='"+icon.icon+"'/>";
+            if(index>19) return false;
+        });
+        
+        Swal.fire({
+            title: 'Select Icon',
+            html:html,
+            showCancelButton: false
+        });
+    }
+
+    select_icon_for_msg(emp){
+        var file_url=$(emp).attr("file_url");
+        var id_icon=$(emp).data("id-icon");
+        var color_icon=$(emp).data("color");
+        var emp_id=$(carrot.icon.emp_msg_field).data("emp-id");
+        $("#"+emp_id).attr("value",id_icon).attr("src",file_url);
+        if($('#color').length) $("#color").val(color_icon);
+        Swal.close();
     }
 }

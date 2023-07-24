@@ -224,25 +224,23 @@ class Carrot_Field{
             html+='<input type="range" min="1" max="4" value="'+this.value+'" class="form-range cr_field" id="'+this.name+'"></input>'
         }
         else if(this.type=='icon'){
-            html+='<div id="'+this.name+'" class="form-control m-0 cr_field" type="icon" value="'+this.value+'">';
-            html+='<div id="'+this.name+'_show_val"  class="d-block text-info">'+this.value+'</div>';
-            if(localStorage.getItem("obj_icon")){
-                var obj_icon=JSON.parse(localStorage.getItem("obj_icon"));
-                var list_obj=Array();
-                var id_icon_cur=this.value;
-                $.each(obj_icon,function(key,val){list_obj.push(JSON.parse(val));});
-                list_obj=list_obj.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
-                $(list_obj).each(function(index,icon_obj){
-                    if(index>=24) return false;
-                    if(icon_obj.icon!=""){
-                        if(icon_obj.id==id_icon_cur)
-                            html+='<img class="rounded float-left m-2 frm_icon_field btn-info" style="width:36px;" role="button" icon-id="'+icon_obj.id+'" src="'+icon_obj.icon+'"/>';
-                        else
-                            html+='<img class="rounded float-left m-2 frm_icon_field" style="width:36px;" role="button" icon-id="'+icon_obj.id+'" src="'+icon_obj.icon+'"/>';
-                    }
-                });
-                html+='</div>';
+            var url_icon='images/64.png';
+            var field=this;
+            if(this.value!=""&&carrot.icon.obj_icon!=null){
+                var icon=carrot.icon.obj_icon[this.value];
+                if(icon!=null){
+                    icon=JSON.parse(icon);
+                    url_icon=icon.icon;
+                }
             }
+            html+='<div class="input-group mb-3">';
+                html+='<img id="'+this.name+'" type="icon" onclick="carrot.icon.msg_list_select(this)" data-emp-id="'+field.name+'" data-category-key="all" value="'+this.value+'" class="btn btn-sm rounded btn-info cr_field m-1" style="width:64px;" role="button" src="'+url_icon+'"/>';
+                var list_cat_icon=carrot.obj_to_array(carrot.icon.obj_icon_category);
+                $(list_cat_icon).each(function(index,cat){
+                    cat.index=index;
+                    html+='<div onclick="carrot.icon.msg_list_select(this);return false;" data-emp-id="'+field.name+'" data-category-key="'+cat.key+'" class="btn btn-sm btn-secondary rounded text-white m-1"><i class="'+cat.icon+'"></i> '+cat.key+'</div>';
+                });
+            html+='</div>';
         }
         else if(this.type=='textarea'){
             html+='<textarea class="form-control m-0 cr_field" id="'+this.name+'" placeholder="'+this.placeholder+'" rows="3">'+this.value+'</textarea>';
@@ -478,16 +476,6 @@ class Carrot_Form{
         $(".cr_field").each(function(){
             var id_emp=$(this).attr("id");
             var type_emp=$(this).attr("type");
-
-            if(type_emp=="icon"){
-                $(".frm_icon_field").click(function(){
-                    var id_name_icon=$(this).attr("icon-id");
-                    $(".frm_icon_field").removeClass("btn-info");
-                    $("#"+id_emp).attr("value",id_name_icon);
-                    $("#"+id_emp+"_show_val").html(id_name_icon);
-                    $(this).addClass("btn-info");
-                });
-            }
 
             if(type_emp=="file"){
                 $("#"+id_emp+"_file").on("change",function(evt){
