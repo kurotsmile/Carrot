@@ -349,7 +349,7 @@ class Carrot_App{
                     html+='<p class="fs-8 text-justify">'+data["describe_"+carrot.lang]+'</p>';
                 html+='</div>';
 
-                if(data.youtube_link!=null){
+                if(data.youtube_link!=null&&data.youtube_link!=""){
                     var id_ytb=this.carrot.player_media.get_youtube_id(data.youtube_link);
                     html+='<div class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
                         html+='<h4 class="fw-semi fs-5 lang" key_lang="intro_video">Intro video</h4>';
