@@ -9,6 +9,8 @@ Carrot Store ứng dụng web giới thiệu các trò chơi,ứng dụng và d�
 `URL:`https://carrotstore.web.app
 `URL:`https://kurotsmile.github.io/Carrot
 
+![Logo](https://carrotstore.web.app/images/logo.png)
+
 ## Các tính năng nỗi bậc
 - Các ứng dụng và trò chơi
 - Danh sách liên hệ
