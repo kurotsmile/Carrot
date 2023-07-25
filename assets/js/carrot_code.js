@@ -273,6 +273,10 @@ class Carrot_Code{
                                 html+='<b><l class="lang" key_lang="interface">Interface</l> <i class="fa-solid fa-brush"></i></b>';
                                 html+='<p>'+data.code_theme+'</p>';
                             html+='</div>';
+                            html+='<div class="col-md-4 col-6 text-center">';
+                                html+='<b><l class="lang" key_lang="author">Author</l> <i class="fa-solid fa-user-nurse"></i></b>';
+                                html+='<p>'+data.user.name+'</p>';
+                            html+='</div>';
                         html+='</div>';
 
                         html+='<div class="row pt-4">';
