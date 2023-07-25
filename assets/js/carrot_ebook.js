@@ -165,11 +165,15 @@ class Carrot_Ebook{
 
     list(){
        this.type_list_show="list_ebook";
-        if(this.obj_ebooks==null){
-            this.get_list_ebook();
+       if(this.carrot.check_ver_cur("icon")){
+            if(this.obj_ebooks==null){
+                this.get_list_ebook();
+            }else{
+                this.carrot.log("Get list ebook from cache and show","success");
+                this.show_list_ebook_by_data(this.obj_ebooks,this.carrot);
+            }
         }else{
-            this.carrot.log("Get list ebook from cache and show","success");
-            this.show_list_ebook_by_data(this.obj_ebooks,this.carrot);
+            this.get_list_ebook();
         }
     }
 

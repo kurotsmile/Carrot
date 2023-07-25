@@ -40,23 +40,94 @@ class Carrot_App{
         this.type_show=type;
         if(this.carrot.check_ver_cur("app")){
             if(this.obj_app==null){
-                this.carrot.get_list_doc("app",this.get_data_app_done);
+                this.get_data_app();
             }
             else{
                 this.carrot.log("Show list app:"+type);
                 this.show_list_app_from_data();
             }
         }else{
-            this.carrot.get_list_doc("app",this.get_data_app_done);
+            this.get_data_app();
         }
     }
 
-    get_data_app_done(apps,carrot){
-        carrot.log("Get app data from sever");
-        carrot.app.obj_app=apps;
-        carrot.app.save_obj();
-        carrot.update_new_ver_cur("app",true);
-        if(carrot.app.type_show!="") carrot.app.show_list_app_from_data();
+    menu(){
+        var html='';
+        html+='<div class="row dev mb-2">';
+            html+='<div class="col-md-12">';
+                html+='<div class="btn-group" role="group">';
+                    html+='<div class="btn btn-sm btn-success" onclick="carrot.app.get_all_data_app();"><i class="fa-solid fa-table-list"></i> All App</div>';
+                    html+='<div class="btn btn-sm btn-success" onclick="carrot.app.get_public_data_app();"><i class="fa-solid fa-van-shuttle"></i> Public App</div>';
+                    html+='<div class="btn btn-sm btn-success" onclick="carrot.app.get_draft_data_app();"><i class="fa-solid fa-layer-group"></i> Draft App</div>';
+                    html+='<div class="btn btn-sm btn-danger" onclick="carrot.app.delete_all_data();"><i class="fa-solid fa-dumpster-fire"></i> Delete All data</div>';
+                html+='</div>';
+            html+='</div>';
+        html+='</div>';
+        return html;
+    }
+
+    get_all_data_app(){
+        this.carrot.db.collection("app").get().then((querySnapshot)=>{this.done_get_data_app(querySnapshot);}).catch((error)=>{
+            console.log(error);
+            this.carrot.msg(error.message,"error");
+            Swal.close();
+        });
+    }
+
+    get_public_data_app(){
+        this.carrot.db.collection("app").where("status","==","publish").get().then((querySnapshot)=>{this.done_get_data_app(querySnapshot);}).catch((error)=>{
+            console.log(error);
+            this.carrot.msg(error.message,"error");
+            Swal.close();
+        });
+    }
+
+    get_draft_data_app(){
+        this.carrot.db.collection("app").where("status","==","draft").get().then((querySnapshot)=>{this.done_get_data_app(querySnapshot);}).catch((error)=>{
+            console.log(error);
+            this.carrot.msg(error.message,"error");
+            Swal.close();
+        });
+    }
+
+    done_get_data_app(querySnapshot){
+        if(querySnapshot.docs.length>0){
+            this.obj_app=Object();
+            querySnapshot.forEach((doc)=>{
+                var app=doc.data();
+                app["id"]=doc.id;
+                this.obj_app[doc.id]=JSON.stringify(app);
+            });
+            this.carrot.app.show_list_app_from_data();
+            Swal.close();
+        }else{
+            this.carrot.msg("List App None","alert");
+        }
+    }
+
+    get_data_app(){
+        Swal.showLoading();
+        this.carrot.log("Get All data app from sever","warning");
+        this.carrot.db.collection("app").where("status","==","publish").get().then((querySnapshot)=>{
+            if(querySnapshot.docs.length>0){
+                this.obj_app=Object();
+                querySnapshot.forEach((doc)=>{
+                    var app=doc.data();
+                    app["id"]=doc.id;
+                    this.obj_app[doc.id]=JSON.stringify(app);
+                });
+                this.carrot.update_new_ver_cur("app",true);
+                this.save_obj();
+                this.carrot.app.show_list_app_from_data();
+                Swal.close();
+            }else{
+                this.carrot.msg("List App None","alert");
+            }
+        }).catch((error)=>{
+            console.log(error);
+            this.carrot.msg(error.message,"error");
+            Swal.close();
+        });
     }
 
     show_list_app_from_data(){
@@ -149,6 +220,7 @@ class Carrot_App{
     show_list_app(list_app){
         var html="";
         var carrot=this.carrot;
+        html+=carrot.app.menu();
         html+='<div id="all_app" class="row m-0">';
         $(list_app).each(function(index,data_app) {
             html+=carrot.app.box_app_item(data_app,'col-md-4 mb-3');
@@ -449,6 +521,11 @@ class Carrot_App{
         carrot.app.show_list_app_and_game("all");
     }
 
+    delete_all_data(){
+        this.delete_obj_app();
+        this.carrot.msg("Delete all data success!");
+    }
+
     list_for_home(){
         var list_app=this.carrot.obj_to_array(this.obj_app);
         var html='';
@@ -465,9 +542,9 @@ class Carrot_App{
 
     site_map(){
         var xml='';
-        this.carrot.db.collection("app").get().then((querySnapshot) => {
+        this.carrot.db.collection("app").get().then((querySnapshot)=>{
             if(querySnapshot.docs.length>0){
-                querySnapshot.forEach((doc) => {
+                querySnapshot.forEach((doc)=>{
                     let today = new Date().toISOString().slice(0, 10);
                     xml+='<url>';
                     xml+='<loc>https://carrotstore.web.app/?p=app&id='+doc.id+'</loc>';
@@ -476,11 +553,11 @@ class Carrot_App{
                     xml+='<priority>0.9</priority>';
                     xml+='</url>';
                 });
+                return xml;
             }
-        }).catch((error) => {
+        }).catch((error)=>{
             console.log(error);
             this.carrot.msg(error.message,"error");
         });
-        return xml;
     }
 }
