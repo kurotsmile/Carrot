@@ -277,7 +277,7 @@ class Carrot_Pay{
 
         html+='<div class="row">';
         var type_user_login='';
-        if(this.carrot.user.obj_login.type!=null) type_user_login=this.carrot.user.obj_login.type;
+        if(this.carrot.user.obj_login!=null) type_user_login=this.carrot.user.obj_login.type;
         $(list_service).each(function(index,product){
             if(type_user_login==product.id) product.active();
             html+=product.html();
