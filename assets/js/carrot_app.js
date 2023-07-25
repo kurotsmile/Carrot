@@ -2,6 +2,7 @@ class Carrot_App{
     carrot;
     obj_app=null;
     type_show;
+    status_view='publish';
     icon="fa-solid fa-gamepad";
 
     constructor(carrot){
@@ -53,12 +54,16 @@ class Carrot_App{
 
     menu(){
         var html='';
+        var s_class='';
         html+='<div class="row dev mb-2">';
             html+='<div class="col-md-12">';
                 html+='<div class="btn-group" role="group">';
-                    html+='<div class="btn btn-sm btn-success" onclick="carrot.app.get_all_data_app();"><i class="fa-solid fa-table-list"></i> All App</div>';
-                    html+='<div class="btn btn-sm btn-success" onclick="carrot.app.get_public_data_app();"><i class="fa-solid fa-van-shuttle"></i> Public App</div>';
-                    html+='<div class="btn btn-sm btn-success" onclick="carrot.app.get_draft_data_app();"><i class="fa-solid fa-layer-group"></i> Draft App</div>';
+                    if(this.status_view=='all') s_class='active'; else s_class='';
+                    html+='<div class="btn btn-sm btn-success '+s_class+'" onclick="carrot.app.get_all_data_app();"><i class="fa-solid fa-table-list"></i> All App</div>';
+                    if(this.status_view=='publish') s_class='active'; else s_class='';
+                    html+='<div class="btn btn-sm btn-success '+s_class+'" onclick="carrot.app.get_public_data_app();"><i class="fa-solid fa-van-shuttle"></i> Public App</div>';
+                    if(this.status_view=='draft') s_class='active'; else s_class='';
+                    html+='<div class="btn btn-sm btn-success '+s_class+'" onclick="carrot.app.get_draft_data_app();"><i class="fa-solid fa-layer-group"></i> Draft App</div>';
                     html+='<div class="btn btn-sm btn-danger" onclick="carrot.app.delete_all_data();"><i class="fa-solid fa-dumpster-fire"></i> Delete All data</div>';
                 html+='</div>';
             html+='</div>';
@@ -67,6 +72,7 @@ class Carrot_App{
     }
 
     get_all_data_app(){
+        this.status_view="all";
         this.carrot.db.collection("app").get().then((querySnapshot)=>{this.done_get_data_app(querySnapshot);}).catch((error)=>{
             console.log(error);
             this.carrot.msg(error.message,"error");
@@ -75,6 +81,7 @@ class Carrot_App{
     }
 
     get_public_data_app(){
+        this.status_view="publish";
         this.carrot.db.collection("app").where("status","==","publish").get().then((querySnapshot)=>{this.done_get_data_app(querySnapshot);}).catch((error)=>{
             console.log(error);
             this.carrot.msg(error.message,"error");
@@ -83,6 +90,7 @@ class Carrot_App{
     }
 
     get_draft_data_app(){
+        this.status_view="draft";
         this.carrot.db.collection("app").where("status","==","draft").get().then((querySnapshot)=>{this.done_get_data_app(querySnapshot);}).catch((error)=>{
             console.log(error);
             this.carrot.msg(error.message,"error");
@@ -107,6 +115,7 @@ class Carrot_App{
 
     get_data_app(){
         Swal.showLoading();
+        this.status_view="publish";
         this.carrot.log("Get All data app from sever","warning");
         this.carrot.db.collection("app").where("status","==","publish").get().then((querySnapshot)=>{
             if(querySnapshot.docs.length>0){
