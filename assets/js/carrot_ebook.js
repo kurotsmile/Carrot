@@ -316,7 +316,7 @@ class Carrot_Ebook{
         frm.set_icon(this.icon);
         frm.set_db("ebook","id");
         frm.create_field("id").set_label("ID Ebook").set_val(data["id"]).set_type("id");
-        frm.create_field("icon").set_label("Icon (File image 740 x 1186)").set_val(data["icon"]).set_type("file");
+        frm.create_field("icon").set_label("Icon (File image 740 x 1186)").set_val(data["icon"]).set_type("file").set_type_file("image/*");
         frm.create_field("title").set_label("Title Ebook").set_val(data["title"]);
         var field_cat=frm.create_field("category").set_label("Category").set_val(data["category"]).set_type("select");
         var list_category=this.carrot.obj_to_array(this.obj_categorys);

@@ -404,6 +404,7 @@ class Carrot_App{
         new_data_app["img3"]="";
         new_data_app["img4"]="";
         new_data_app["img5"]="";
+        new_data_app["status"]="";
         this.frm_add_or_edit(new_data_app).set_title("Add App").set_msg_done("Add app success!").set_type("add").show();
     }
 
@@ -437,6 +438,9 @@ class Carrot_App{
         frm.create_field("img3").set_label("Image Describe 3").set_type("file").set_value(data.img3).set_type_file("image/*");
         frm.create_field("img4").set_label("Image Describe 4").set_type("file").set_value(data.img4).set_type_file("image/*");
         frm.create_field("img5").set_label("Image Describe 5").set_type("file").set_value(data.img5).set_type_file("image/*");
+        var field_status=frm.create_field("status").set_label("Status").set_value(data.status).set_type("select");
+        field_status.add_option("draft","Draft");
+        field_status.add_option("publish","Publish");
         return frm;
     }
 

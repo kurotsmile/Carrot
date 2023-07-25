@@ -59,7 +59,14 @@ class Carrot_File{
         html+='<div class="row">';
         $(list_file).each(function(index,f){
             var item_file=new Carrot_List_Item(carrot);
-            item_file.set_icon_font("fa-solid fa-file");
+
+            if(f.type_emp=="image/*")
+                item_file.set_icon_font("fa-solid fa-file-image");
+            else if(f.type_emp=="audio/*")
+                item_file.set_icon_font("fa-solid fa-file-audio");
+            else
+                item_file.set_icon_font("fa-solid fa-file");
+
             item_file.set_id(f.id);
             item_file.set_db("file");
             item_file.set_index(index);
@@ -142,7 +149,12 @@ class Carrot_File{
         var html='';
         var list_file=this.carrot.obj_to_array(data);
         $(list_file).each(function(index,file){
-            html+="<img role='button' file_url='"+file.url+"' file_type='"+file.type_emp+"' file_path='"+file.fullPath+"' onclick='carrot.file.select_file_for_msg(this)' style='width:50px' class='rounded m-1' src='"+file.url+"'/>";
+            if(file.type_emp=="image/*")
+                html+="<img role='button' file_url='"+file.url+"' file_type='"+file.type_emp+"' file_path='"+file.fullPath+"' onclick='carrot.file.select_file_for_msg(this)' style='width:50px' class='rounded m-1' src='"+file.url+"'/>";
+            else if(file.type_emp=="audio/*")
+                html+='<div role="button" file_url="'+file.url+'" file_type="'+file.type_emp+'" file_path="'+file.fullPath+'" onclick="carrot.file.select_file_for_msg(this)" class="btn btn-sm bg-secondary text-white rounded fs-9 m-1"><i class="fa-solid fa-file-audio"></i><br/>'+file.name+'</div>';
+            else
+                html+="<img role='button' file_url='"+file.url+"' file_type='"+file.type_emp+"' file_path='"+file.fullPath+"' onclick='carrot.file.select_file_for_msg(this)' style='width:50px' class='rounded m-1' src='"+file.url+"'/>";
         });
         
         Swal.fire({
