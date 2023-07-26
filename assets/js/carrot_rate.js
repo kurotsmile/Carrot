@@ -24,7 +24,7 @@ class Carrot_Rate{
                 name_user_rate=data_user_login.name;
             }
             html += '<img role="button" emp_img="avatar_user_rate" id="avatar_user_rate" onclick="carrot.avatar.msg_list_select(this);return false" src="'+url_avatar_user_rate+'"/>';
-            html += '<span class="d-block" id="name_user_rate">'+name_user_rate+'</span>';
+            html += '<span class="d-block bg-secondary text-white text-center pt-1 pb-1" id="name_user_rate">'+name_user_rate+'</span>';
         html += '</div>';
 
         html += '<div class="col-md-10 align-items-center col-10 rcolm">';
@@ -66,24 +66,27 @@ class Carrot_Rate{
     }
 
     box_rank(data){
-        var html='';
-        html+='<div id="all_comment" class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
-        html+='<h4 class="fw-semi fs-5"><i class="fa-solid fa-ranking-star"></i> <l class="lang" key_lang="player_rankings">Player rankings</l></h4>';
-        html+='<table class="table table-striped table-hover">';
-        html+='<tbody>';
         if (data.rank!=null) {
-            var list_rank= data.rank;
-            $(list_rank).each(function (index,rank) {
-                rank["index"] = index;
-                html+=carrot.rate.box_rank_item(rank);
-            });
+            var html='';
+            html+='<div id="all_comment" class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
+            html+='<h4 class="fw-semi fs-5"><i class="fa-solid fa-ranking-star"></i> <l class="lang" key_lang="player_rankings">Player rankings</l></h4>';
+            html+='<table class="table table-striped table-hover">';
+            html+='<tbody>';
+
+                var list_rank= data.rank;
+                $(list_rank).each(function (index,rank) {
+                    rank["index"] = index;
+                    html+=carrot.rate.box_rank_item(rank);
+                });
+
+            html+='</tbody>';
+            html+='</table>';
+            html+='</div>';
+            return html;
         } else {
             data.rank = Array();
+            return "";
         }
-        html+='</tbody>';
-        html+='</table>';
-        html+='</div>';
-        return html;
     }
 
     check_status_user_login(){
