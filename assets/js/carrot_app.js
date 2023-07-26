@@ -359,7 +359,7 @@ class Carrot_App{
                 html+='</div>';
 
                 if(data.youtube_link!=null&&data.youtube_link!=""){
-                    var id_ytb=this.carrot.player_media.get_youtube_id(data.youtube_link);
+                    var id_ytb=carrot.player_media.get_youtube_id(data.youtube_link);
                     html+='<div class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
                         html+='<h4 class="fw-semi fs-5 lang" key_lang="intro_video">Intro video</h4>';
                         html+='<iframe width="100%" height="360" src="https://www.youtube.com/embed/'+id_ytb+'" title="'+data.name_en+'" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>';

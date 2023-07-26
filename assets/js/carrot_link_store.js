@@ -1,25 +1,38 @@
 class Carrot_Link_Store{
     carrot;
     icon="fa-solid fa-store";
+    icon_share="fa-solid fa-share-nodes";
     list_link_store=null;
+    list_link_share=null;
 
     constructor(carrot){
         this.carrot=carrot;
         this.load_obj_link_store();
 
         carrot.register_page("link_store","carrot.link_store.list()","carrot.link_store.edit");
-        var btn_add=carrot.menu.create("add_link_store").set_label("Add Link Store").set_icon(this.icon).set_type("add");
-        var btn_list=carrot.menu.create("list_link_store").set_label("List Store").set_icon(this.icon).set_type("dev");
-        $(btn_list).click(function(){carrot.link_store.list();});
-        $(btn_add).click(function(){carrot.link_store.add();});
+        carrot.register_page("link_share","carrot.link_store.list_share()","carrot.link_store.edit_share");
+
+        carrot.menu.create("add_link_store").set_label("Add Link Store").set_icon(this.icon).set_type("add").set_act("carrot.link_store.add()");
+        carrot.menu.create("list_link_store").set_label("List Store").set_icon(this.icon).set_type("dev").set_act("carrot.link_store.list()");
+
+        carrot.menu.create("add_link_share").set_label("Add Link Share").set_icon(this.icon_share).set_type("add").set_act("carrot.link_store.add_share()");
+        carrot.menu.create("list_link_share").set_label("List Link Share").set_icon(this.icon_share).set_type("dev").set_act("carrot.link_store.list_share()");
     }
 
     load_obj_link_store(){
         if(localStorage.getItem("link_store")!=null) this.list_link_store=JSON.parse(localStorage.getItem("link_store"));
     }
 
+    load_obj_link_share(){
+        if(localStorage.getItem("link_share")!=null) this.list_link_store=JSON.parse(localStorage.getItem("link_share"));
+    }
+
     save_list_link_store(){
         localStorage.setItem("link_store", JSON.stringify(this.list_link_store));
+    }
+
+    save_list_link_share(){
+        localStorage.setItem("link_share", JSON.stringify(this.list_link_share));
     }
 
     get_all_data_link_store(act_done=null) {
@@ -116,5 +129,84 @@ class Carrot_Link_Store{
             html+="</div>";
         }
         return html;
+    }
+
+    add_share(){
+        var new_data=new Object();
+        new_data["name"]="";
+        this.frm_add_or_edit_link_share(new_data).set_title("Add Link Share").show();
+    }
+
+    edit_share(data,carrot){
+        carrot.link_store.frm_add_or_edit_link_share(data).set_title("Update Link Share").show();
+    }
+
+    frm_add_or_edit_link_share(data){
+        var frm=new Carrot_Form("frm_share",this.carrot);
+        frm.set_icon(this.icon_share);
+        frm.create_field("name").set_label("Name share").set_value(data.name);
+        frm.create_field("icon").set_label("Icon share(image png )").set_value(data.icon).set_type("file").set_type_file("image/*");
+        frm.create_field("font").set_label("Font icon").set_value(data.font);
+        frm.create_field("web").set_label("Web Link share").set_value(data.web);
+        frm.create_field("android").set_label("Android Link share").set_value(data.android);
+        frm.create_field("window").set_label("Window link share").set_value(data.window);
+        return frm;
+    }
+
+    get_data_share(){
+        this.carrot.db.collection("share").get().then((querySnapshot) => {
+            if(querySnapshot.docs.length>0){
+                this.list_link_share=Array();
+                querySnapshot.forEach((doc) => {
+                    var data_link_share=doc.data();
+                    data_link_share["id"]=doc.id;
+                    this.list_link_share.push(data_link_share);
+                });
+                this.save_list_link_share();
+                this.carrot.update_new_ver_cur("link_share",true);
+                this.show_list_share_from_data(this.list_link_share,this.carrot);
+            }
+        }).catch((error) => {
+            carrot.log(error.message)
+        });
+    }
+
+    show_list_share_from_data(data,carrot){
+        carrot.change_title_page("List Share","?p=link_share","link_share");
+        var html='';
+        html+='<div class="row">';
+        $(data).each(function(index,share){
+            var item_share=new Carrot_List_Item(carrot);
+            var html_body='';
+            item_share.set_db_collection("share");
+            item_share.set_id(share.id);
+            item_share.set_index(index);
+            item_share.set_obj_js("link_store");
+            item_share.set_name(share.name);
+            item_share.set_tip(share.id);
+            item_share.set_icon_font("fa-solid "+share.font);
+            item_share.set_class_body("col-md-10 fs-9");
+            item_share.set_class_icon("col-md-2");
+            item_share.set_act_edit("carrot.link_store.edit_share");
+
+            html_body+='<ul>';
+                html_body+='<li><i class="fa-brands fa-android"></i> <b>android</b>:'+share.android+'</li>';
+                html_body+='<li><i class="fa-brands fa-edge"></i> <b>web</b>:'+share.web+'</li>';
+                html_body+='<li><i class="fa-brands fa-windows"></i> <b>window</b>:'+share.window+'</li>';
+            html_body+='</ul>';
+
+            item_share.set_body(html_body);
+            html+=item_share.html();
+        });
+        html+='</div>';
+        carrot.show(html);
+        carrot.check_event();
+    }
+
+    list_share(){
+        if(this.list_link_share==null)
+            this.get_data_share();
+        else
+            this.show_list_share_from_data(this.list_link_share,this.carrot);
     }
 }

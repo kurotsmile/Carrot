@@ -118,8 +118,12 @@ class Carrot_Product{
             }
 
             html+='<div class="card-body">';
-            html+='<a data-id-product="'+this.id+'" data-name-product="'+this.title+'" data-tip-product="'+this.tip+'" data-price-product="'+this.price+'" onclick="carrot.pay.buy_product(this);return false;" class="card-link btn btn-success"><i class="fa-brands fa-paypal"></i> Buy Now</a>';
-            html+='<a onclick="carrot.show_pay(\''+this.title+'\',\''+this.title+'\',\''+this.tip+'\',\''+this.price+'\',null);return false;" class="card-link btn btn-success"><i class="fa-solid fa-money-bill-wave"></i> Upgared</a>';
+            if(this.is_active==false){
+                html+='<a data-id-product="'+this.id+'" data-name-product="'+this.title+'" data-tip-product="'+this.tip+'" data-price-product="'+this.price+'" onclick="carrot.pay.buy_product(this);return false;" class="card-link btn btn-success"><i class="fa-brands fa-paypal"></i> Buy Now</a>';
+                html+='<a onclick="carrot.show_pay(\''+this.title+'\',\''+this.title+'\',\''+this.tip+'\',\''+this.price+'\',null);return false;" class="card-link btn btn-success"><i class="fa-solid fa-money-bill-wave"></i> Upgared</a>';
+            }else{
+                html+='<a onclick="carrot.pay.cancel_service(this);return false;" class="btn btn-sm btn-outline-light" data-name-service="'+this.title+'" data-id-service="'+this.id+'"><i class="fa-solid fa-ban"></i> Cancel service</a>';
+            }
             html+='</div>';
         html+='</div>';
         html+='</div>';
@@ -294,6 +298,24 @@ class Carrot_Pay{
         var tip_product=$(emp).data("tip-product");
         carrot.pay.id_product_temp=id_product;
         carrot.show_pay(id_product,name_product,tip_product,price_product,carrot.pay.pay_success);
+    }
+
+    cancel_service(emp){
+        var name_service=$(emp).data("name-service");
+        var id_service=$(emp).data("id-service");
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Are you sure you want to cancel the service '"+name_service+"'?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed){
+
+            }
+        })
     }
 
     pay_success(){
