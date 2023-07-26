@@ -17,6 +17,13 @@
             "name": "Carrot Store",
             "url": "http://localhost",
             "webRoot": "${workspaceFolder}"
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Carrot Store (git)",
+            "url": "https://kurotsmile.github.io/Carrot/",
+            "webRoot": "${workspaceFolder}"
         }
     ]
 }
