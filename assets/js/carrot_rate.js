@@ -1,6 +1,8 @@
 class Carrot_Rate{
     carrot;
     data_obj=null;
+    data_rank_obj=null;
+
     constructor(carrot){
         this.carrot=carrot;
     }
@@ -31,11 +33,11 @@ class Carrot_Rate{
         html += '</div>';
 
         html += '<div id="rate_star" value="0" class="form-group mt-3 mb-3">';
-        html += '<i role="button" class="fa-regular fa-star fa-2xl rate_star" value="1" value_txt="' + carrot.l("rate_star_1", "Badvery bad") + '" id="rate_star_1"></i>';
-        html += '<i role="button" class="fa-regular fa-star fa-2xl rate_star" value="2" value_txt="' + carrot.l("rate_star_2", "Bad") + '" id="rate_star_2"></i>';
-        html += '<i role="button" class="fa-regular fa-star fa-2xl rate_star" value="3" value_txt="' + carrot.l("rate_star_3", "Normal") + '" id="rate_star_3"></i>';
-        html += '<i role="button" class="fa-regular fa-star fa-2xl rate_star" value="4" value_txt="' + carrot.l("rate_star_4", "Good") + '" id="rate_star_4"></i>';
-        html += '<i role="button" class="fa-regular fa-star fa-2xl rate_star" value="5" value_txt="' + carrot.l("rate_star_5", "Very good") + '" id="rate_star_5"></i>';
+        html += '<i role="button" class="fa-regular fa-star fa-2xl rate_star" value="1" value_txt="'+carrot.l("rate_star_1", "Badvery bad") + '" id="rate_star_1"></i>';
+        html += '<i role="button" class="fa-regular fa-star fa-2xl rate_star" value="2" value_txt="'+carrot.l("rate_star_2", "Bad") + '" id="rate_star_2"></i>';
+        html += '<i role="button" class="fa-regular fa-star fa-2xl rate_star" value="3" value_txt="'+carrot.l("rate_star_3", "Normal") + '" id="rate_star_3"></i>';
+        html += '<i role="button" class="fa-regular fa-star fa-2xl rate_star" value="4" value_txt="'+carrot.l("rate_star_4", "Good") + '" id="rate_star_4"></i>';
+        html += '<i role="button" class="fa-regular fa-star fa-2xl rate_star" value="5" value_txt="'+carrot.l("rate_star_5", "Very good") + '" id="rate_star_5"></i>';
         html += '</div>';
 
         html += '<div id="star_val_show" class="form-group text-primary"></div>';
@@ -63,6 +65,27 @@ class Carrot_Rate{
         return html;
     }
 
+    box_rank(data){
+        var html='';
+        html+='<div id="all_comment" class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
+        html+='<h4 class="fw-semi fs-5"><i class="fa-solid fa-ranking-star"></i> <l class="lang" key_lang="player_rankings">Player rankings</l></h4>';
+        html+='<table class="table table-striped table-hover">';
+        html+='<tbody>';
+        if (data.rank!=null) {
+            var list_rank= data.rank;
+            $(list_rank).each(function (index,rank) {
+                rank["index"] = index;
+                html+=carrot.rate.box_rank_item(rank);
+            });
+        } else {
+            data.rank = Array();
+        }
+        html+='</tbody>';
+        html+='</table>';
+        html+='</div>';
+        return html;
+    }
+
     check_status_user_login(){
         var data_user_login = carrot.user.obj_login;
         var name_user_rate='Incognito';
@@ -79,32 +102,61 @@ class Carrot_Rate{
         var html='';
         var date_comment=new Date(comment.date);
         html+='<div class="row m-0 reviewrow p-3 px-0 border-bottom">';
-            html+='<div class="col-md-12 align-items-center col-9 rcolm">';
-            html+='<div class="review">';
-            html+='<li class="col-8 ratfac">';
-            for(var i=1;i<=5;i++){
-                if(i<=comment.star)
-                    html+='<i class="bi text-warning fa-solid fa-star"></i>';
-                else
-                    html+='<i class="bi fa-solid fa-star"></i>';
-            }
-            html+='</li>';
+
+            html+='<div class="col-md-1 align-items-center col-1 rcolm">';
+                var url_avatar_user_field='images/avatar_default.png';
+                if(comment.user!=null){
+                    if(comment.user.avatar!=null) url_avatar_user_field=comment.user.avatar;
+                    html+='<img src="'+url_avatar_user_field+'" class="rounder w-100"/>';
+                }else{
+                    html+='<i class="fa-solid fa-user fa-2x"></i>';
+                }
             html+='</div>';
 
-            html+='<h3 class="fs-6 fw-semi mt-2">' + comment.user.name + '<small class="float-end fw-normal"> '+date_comment.toLocaleDateString()+ ' </small></h3>';
-            html+='<div class="review-text">' + comment.comment + '</div>';
-            
-            if(carrot.user.obj_login!=null){
-                if(comment.user.id==carrot.user.obj_login.id){
-                    html+='<button onclick="carrot.rate.delete_comment(this);return false;" data-index="'+comment.index+'" class="float-end btn btn-sm btn-danger m-1"><i class="fa-solid fa-trash-can"></i></button>';
-                    html+='<button onclick="carrot.rate.delete_comment(this);return false;" data-index="'+comment.index+'"  class="float-end btn btn-sm btn-warning m-1"><i class="fa-solid fa-pen-to-square"></i></button>';
+            html+='<div class="col-md-11 align-items-center col-11 rcolm">';
+                html+='<div class="review">';
+                    html+='<li class="col-8 ratfac">';
+                    for(var i=1;i<=5;i++){
+                        if(i<=comment.star)
+                            html+='<i class="bi text-warning fa-solid fa-star"></i>';
+                        else
+                            html+='<i class="bi fa-solid fa-star"></i>';
+                    }
+                    html+='</li>';
+                html+='</div>';
+
+                html+='<h3 class="fs-6 fw-semi mt-2">'+comment.user.name + '<small class="float-end fw-normal"> '+date_comment.toLocaleDateString()+ ' </small></h3>';
+                html+='<div class="review-text">'+comment.comment + '</div>';
+                
+                if(carrot.user.obj_login!=null){
+                    if(comment.user.id==carrot.user.obj_login.id){
+                        html+='<button onclick="carrot.rate.delete_comment(this);return false;" data-index="'+comment.index+'" class="float-end btn btn-sm btn-danger m-1"><i class="fa-solid fa-trash-can"></i></button>';
+                        html+='<button onclick="carrot.rate.delete_comment(this);return false;" data-index="'+comment.index+'"  class="float-end btn btn-sm btn-warning m-1"><i class="fa-solid fa-pen-to-square"></i></button>';
+                    }
                 }
-            }
-            
             html+='</div>';
             
             html+='<div class="col-md-2"></div>';
         html+='</div>';
+        return html;
+    }
+
+    box_rank_item(rank){
+        var html='';
+        var date_rank=new Date(rank.date);
+        var url_avatar_user_field='images/avatar_default.png';
+        var name_user_field="Incognito";
+        if(rank.user!=null){
+            if(rank.user.avatar!=null) url_avatar_user_field=rank.user.avatar;
+            name_user_field=rank.user.name;
+        }
+        html+='<tr>';
+            html+='<td class="w-20 col-1"><img class="rounder" style="width:24px" src="'+url_avatar_user_field+'"/></td>';
+            html+='<td class="w-20 col-2">'+name_user_field+'</td>';
+            html+='<td class="w-20 col-4">'+rank.scores+'</td>';
+            html+='<td class="w-20 col-1">'+rank.type+'</td>';
+            html+='<td class="w-20 col-4">'+date_rank.toLocaleDateString()+'</td>';
+        html+='</tr>';
         return html;
     }
 

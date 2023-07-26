@@ -9,8 +9,8 @@ class Carrot_Link_Store{
         this.carrot=carrot;
         this.load_obj_link_store();
 
-        carrot.register_page("link_store","carrot.link_store.list()","carrot.link_store.edit");
-        carrot.register_page("link_share","carrot.link_store.list_share()","carrot.link_store.edit_share");
+        carrot.register_page("link_store","carrot.link_store.list()","carrot.link_store.edit","","carrot.link_store.reload_link_share");
+        carrot.register_page("link_share","carrot.link_store.list_share()","carrot.link_store.edit_share","","carrot.link_store.reload_link_share");
 
         carrot.menu.create("add_link_store").set_label("Add Link Store").set_icon(this.icon).set_type("add").set_act("carrot.link_store.add()");
         carrot.menu.create("list_link_store").set_label("List Store").set_icon(this.icon).set_type("dev").set_act("carrot.link_store.list()");
@@ -33,6 +33,16 @@ class Carrot_Link_Store{
 
     save_list_link_share(){
         localStorage.setItem("link_share", JSON.stringify(this.list_link_share));
+    }
+
+    delete_list_link_store(){
+        this.list_link_store=null;
+        localStorage.removeItem("link_store");
+    }
+
+    delete_list_link_share(){
+        this.list_link_share=null;
+        localStorage.removeItem("link_share");
     }
 
     get_all_data_link_store(act_done=null) {
@@ -144,7 +154,8 @@ class Carrot_Link_Store{
     frm_add_or_edit_link_share(data){
         var frm=new Carrot_Form("frm_share",this.carrot);
         frm.set_icon(this.icon_share);
-        frm.create_field("name").set_label("Name share").set_value(data.name);
+        frm.set_db("share","name");
+        frm.create_field("name").set_label("Name share").set_value(data.name).set_main();
         frm.create_field("icon").set_label("Icon share(image png )").set_value(data.icon).set_type("file").set_type_file("image/*");
         frm.create_field("font").set_label("Font icon").set_value(data.font);
         frm.create_field("web").set_label("Web Link share").set_value(data.web);
@@ -184,15 +195,15 @@ class Carrot_Link_Store{
             item_share.set_obj_js("link_store");
             item_share.set_name(share.name);
             item_share.set_tip(share.id);
-            item_share.set_icon_font("fa-solid "+share.font);
+            item_share.set_icon_font(share.font);
             item_share.set_class_body("col-md-10 fs-9");
             item_share.set_class_icon("col-md-2");
             item_share.set_act_edit("carrot.link_store.edit_share");
 
             html_body+='<ul>';
-                html_body+='<li><i class="fa-brands fa-android"></i> <b>android</b>:'+share.android+'</li>';
-                html_body+='<li><i class="fa-brands fa-edge"></i> <b>web</b>:'+share.web+'</li>';
-                html_body+='<li><i class="fa-brands fa-windows"></i> <b>window</b>:'+share.window+'</li>';
+                html_body+='<li><i class="fa-brands fa-android text-info"></i> <b>android</b>:'+share.android+'</li>';
+                html_body+='<li><i class="fa-brands fa-edge text-info"></i> <b>web</b>:'+share.web+'</li>';
+                html_body+='<li><i class="fa-brands fa-windows text-info"></i> <b>window</b>:'+share.window+'</li>';
             html_body+='</ul>';
 
             item_share.set_body(html_body);
@@ -208,5 +219,10 @@ class Carrot_Link_Store{
             this.get_data_share();
         else
             this.show_list_share_from_data(this.list_link_share,this.carrot);
+    }
+
+    reload_link_share(carrot){
+        carrot.link_store.delete_list_link_share();
+        carrot.link_store.list_share();
     }
 }

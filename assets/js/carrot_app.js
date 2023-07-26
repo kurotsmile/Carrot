@@ -401,17 +401,17 @@ class Carrot_App{
                 html+='</div>';
 
                 html+=carrot.rate.box_comment(data);
+                html+=carrot.rate.box_rank(data);
 
             html+="</div>";
     
             html+='<div class="col-md-4">';
-            html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-3 lang"  key_lang="related_apps">Related Apps</h4>';
-            
-            var list_app=carrot.convert_obj_to_list(carrot.app.obj_app);
-            list_app= list_app.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
-            $(list_app).each(function(index,app_item){
-                if(index<12) if(data.type==app_item.type&&data.id!=app_item.id) html+=carrot.app.box_app_item(app_item,'col-md-12 mb-3');
-            });
+                html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-3 lang"  key_lang="related_apps">Related Apps</h4>';
+                var list_app=carrot.convert_obj_to_list(carrot.app.obj_app);
+                list_app= list_app.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
+                $(list_app).each(function(index,app_item){
+                    if(index<12) if(data.type==app_item.type&&data.id!=app_item.id) html+=carrot.app.box_app_item(app_item,'col-md-12 mb-3');
+                });
             html+='</div>';
     
         html+="</div>";
