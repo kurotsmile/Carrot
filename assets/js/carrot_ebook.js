@@ -563,7 +563,7 @@ class Carrot_Ebook{
             html+='<div class="form-group mt-2">';
             html+='<label for="chapter_select">Select Chaper Edit</label>';
                 html+='<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">';
-                    html+='<div class="btn-group m-2" role="group" aria-label="First group" id="list_chapter_content">';
+                    html+='<div class="btn-group m-2 d-inline" role="group" aria-label="First group" id="list_chapter_content">';
                     var s_class='';
                     for(var i=0;i<data.contents.length;i++){
                         if(carrot.ebook.index_chapter_edit==i) s_class="active";
@@ -603,7 +603,7 @@ class Carrot_Ebook{
                     html+='<button onclick="carrot.ebook.prev_read_chapter_content()"  type="button" class="btn btn-secondary btn-sm"><i class="fa-solid fa-backward-step"></i></button>';
                 html+='</div>';
 
-                html+='<div class="btn-group m-2" role="group" aria-label="Mind Button Group Chapter" id="list_chapter_content">';
+                html+='<div class="btn-group m-2 d-inline" role="group" aria-label="Mind Button Group Chapter" id="list_chapter_content">';
                 var s_class='';
                 for(var i=0;i<data.contents.length;i++){
                     if(carrot.ebook.index_chapter_edit==i) s_class="active";
