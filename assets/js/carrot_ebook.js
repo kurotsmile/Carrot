@@ -75,7 +75,7 @@ class Carrot_Ebook_File{
                 this.content_opf+='<dc:identifier opf:scheme="UUID" id="BookId">urn:uuid:7a8a677c-ed6b-4ea1-a2dd-d46f4c886a73</dc:identifier>';
                 this.content_opf+='<dc:language>'+this.lang+'</dc:language>';
                 this.content_opf+='<dc:title>'+this.title+'</dc:title>';
-                this.content_opf+='<meta name="Sigil version" content="1.9.30"/>';
+                this.content_opf+='<meta name="Carrot Ebook version" content="1.9.30"/>';
                 this.content_opf+='<dc:date opf:event="modification" xmlns:opf="http://www.idpf.org/2007/opf">2023-07-16</dc:date>';
             this.content_opf+='</metadata>';
 
