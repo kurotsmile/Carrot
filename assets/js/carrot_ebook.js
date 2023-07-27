@@ -140,6 +140,7 @@ class Carrot_Ebook{
         carrot.register_page("ebook_category","carrot.ebook.list_category()","carrot.ebook.edit_category","carrot.ebook.show_category","carrot.ebook.reload_category");
         
         carrot.menu.create("ebook").set_label("Ebook").set_icon(this.icon).set_type("main").set_act("carrot.ebook.list()");
+        carrot.menu.create("add_ebook").set_label("Add Ebook").set_icon(this.icon).set_type("add").set_act("carrot.ebook.add()");
 
         if(localStorage.getItem("obj_ebooks")!=null) this.obj_ebooks=JSON.parse(localStorage.getItem("obj_ebooks"));
         if(localStorage.getItem("obj_categorys")!=null) this.obj_categorys=JSON.parse(localStorage.getItem("obj_categorys"));
@@ -303,6 +304,7 @@ class Carrot_Ebook{
         new_data["category"]="";
         new_data["date"]=$.datepicker.formatDate('yy-mm-dd', new Date());
         new_data["lang"]=this.carrot.lang;
+        new_data["status"]="draft";
         new_data["user"]=this.carrot.user.get_user_login();
         this.frm_add_or_edit(new_data).set_title("Add Ebook").set_msg_done("Add ebook success!!!").set_type("add").show();
     }
@@ -329,6 +331,9 @@ class Carrot_Ebook{
         });
         frm.create_field("date").set_label("Public Date").set_val(data["date"]).set_type("date");
         frm.create_field("lang").set_label("Lang eBook").set_val(data["lang"]).set_type("lang");
+        var field_status=frm.create_field("status").set_label("Status").set_value(data.status).set_type("select");
+        field_status.add_option("draft","Draft");
+        field_status.add_option("publish","Publish");
         frm.create_field("user").set_label("Public User").set_val(data["user"]).set_type("user");
         return frm;
     }
