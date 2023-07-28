@@ -994,6 +994,7 @@ class Carrot_Site{
             html+=this.audio.list_for_home();
             html+=this.radio.list_for_home();
             html+=this.bible.list_for_home();
+            html+=this.ebook.list_for_home();
             this.show(html);
             this.app.check_btn_for_list_app();
             this.music.check_event();
@@ -1003,6 +1004,7 @@ class Carrot_Site{
             this.audio.check_event();
             this.radio.check_event();
             this.bible.check_event();
+            this.ebook.check_event();
         }else{
             this.app.list();
         }

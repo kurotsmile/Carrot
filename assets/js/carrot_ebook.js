@@ -305,6 +305,7 @@ class Carrot_Ebook{
         new_data["date"]=$.datepicker.formatDate('yy-mm-dd', new Date());
         new_data["lang"]=this.carrot.lang;
         new_data["status"]="draft";
+        new_data["author"]="";
         new_data["user"]=this.carrot.user.get_user_login();
         this.frm_add_or_edit(new_data).set_title("Add Ebook").set_msg_done("Add ebook success!!!").set_type("add").show();
     }
@@ -334,6 +335,7 @@ class Carrot_Ebook{
         var field_status=frm.create_field("status").set_label("Status").set_value(data.status).set_type("select");
         field_status.add_option("draft","Draft");
         field_status.add_option("publish","Publish");
+        frm.create_field("author").set_label("Author").set_val(data["author"]);
         frm.create_field("user").set_label("Public User").set_val(data["user"]).set_type("user");
         return frm;
     }
@@ -496,8 +498,9 @@ class Carrot_Ebook{
                             html+='<div class="col-12">';
                             html+='<button id="btn_share" role="button" type="button" class="btn d-inline btn-success m-1"><i class="fa-solid fa-share-nodes"></i> <l class="lang" key_lang="share">Share</l> </button>';
                             html+='<button id="btn_download" onclick="carrot.ebook.download()" class="btn d-inline btn-success m-1"><i class="fa-solid fa-download"></i> <l class="lang" key_lang="download">Download</l> </button>';
-                            if(data.user.id==carrot.user.get_user_login_id()) html+='<button role="button" onclick="carrot.ebook.edit_info_book_cur()" type="button" class="btn d-inline btn-success m-1"><i class="fa-solid fa-pen-to-square"></i> <l class="lang" key_lang="edit_info">Edit Info</l> </button>';
-                            if(carrot.user.get_user_login_role()=="admin") html+='<button role="button" onclick="carrot.ebook.change_mode_editor_content()" type="button" class="btn d-inline btn-success m-1"><i class="fa-solid fa-pen-ruler"></i> <l class="lang" key_lang="edit_content">Edit Content</l> </button>';
+                            html+='<button id="btn_ebook_menu" onclick="carrot.ebook.table_of_contents()" class="btn d-inline btn-success m-1"><i class="fa-brands fa-elementor"></i> <l class="lang" key_lang="table_of_contents">Table of contents</l> </button>';
+                            if(data.user.id==carrot.user.get_user_login_id()) html+='<button role="button" onclick="carrot.ebook.edit_info_book_cur()" type="button" class="btn d-inline btn-warning m-1"><i class="fa-solid fa-pen-to-square"></i> <l class="lang" key_lang="edit_info">Edit Info</l> </button>';
+                            if(carrot.user.get_user_login_role()=="admin") html+='<button role="button" onclick="carrot.ebook.change_mode_editor_content()" type="button" class="btn d-inline btn-info m-1"><i class="fa-solid fa-pen-ruler"></i> <l class="lang" key_lang="edit_content">Edit Content</l> </button>';
                             html+='</div>';
                         html+='</div>';
 
@@ -597,33 +600,45 @@ class Carrot_Ebook{
     show_body_view(data){
         var html='';
         html+='<h4 class="fw-semi fs-5 lang" key_lang="content">Content</h4>';
+        html+=this.nav_chapter(data);
         html+='<div class="fs-6 text-justify">';
         html+='<h6 id="chapter_title">'+data.contents[carrot.ebook.index_chapter_edit].title+'</h6>';
         html+='<div id="chapter_body">'+data.contents[carrot.ebook.index_chapter_edit].content+'</div>';
         html+='</div>';
+        html+=this.nav_chapter(data);
+        return html;
+    }
+
+    nav_chapter(data){
+        var html='';
         html+='<div class="text-center">';
             html+='<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">';
-
-                html+='<div class="btn-group m-2" role="group" aria-label="Prev Page">';
-                    html+='<button onclick="carrot.ebook.prev_read_chapter_content()"  type="button" class="btn btn-secondary btn-sm"><i class="fa-solid fa-backward-step"></i></button>';
-                html+='</div>';
-
                 html+='<div class="btn-group m-2 d-inline" role="group" aria-label="Mind Button Group Chapter" id="list_chapter_content">';
-                var s_class='';
-                for(var i=0;i<data.contents.length;i++){
-                    if(carrot.ebook.index_chapter_edit==i) s_class="active";
-                    else s_class='';
-                    html+='<button type="button" data-index="'+i+'" onclick="carrot.ebook.select_chapter_for_content_edit(this)" class="btn btn-secondary btn-sm '+s_class+' btn_chapter">'+(i+1)+'</button>';
-                }
+                    html+='<button onclick="carrot.ebook.prev_read_chapter_content()"  type="button" class="btn btn-success btn-sm fs-5"><i class="fa-solid fa-backward-step"></i> </button>';
+                    var s_class='';
+                    for(var i=0;i<data.contents.length;i++){
+                        if(carrot.ebook.index_chapter_edit==i) s_class="active";
+                        else s_class='';
+                        html+='<button type="button" data-index="'+i+'" onclick="carrot.ebook.select_chapter_for_content_edit(this)" class="btn btn-success btn-sm '+s_class+' btn_chapter fs-9 nav_item_chapter_'+i+'">'+(i+1)+'</button>';
+                    }
+                    html+='<button onclick="carrot.ebook.next_read_chapter_content()"  type="button" class="btn btn-success btn-sm fs-5"><i class="fa-solid fa-forward-step"></i> </button>';
                 html+='</div>';
-
-                html+='<div class="btn-group m-2" role="group" aria-label="Next Page">';
-                    html+='<button onclick="carrot.ebook.next_read_chapter_content()"  type="button" class="btn btn-secondary btn-sm"><i class="fa-solid fa-forward-step"></i></button>';
-                html+='</div>';
-
             html+='</div>';
         html+='</div>';
         return html;
+    }
+
+    table_of_contents(){
+        var html='';
+        html+='<div class="d-block">';
+        $(this.obj_ebook_cur.contents).each(function(index,chapter){
+            html+='<div role="button" data-index="'+index+'" onclick="carrot.ebook.select_chapter_for_content_edit(this)"  class="text-justify btn d-block btn-success btn-sm m-1">'+chapter.title+'</div>';
+        });
+        html+='</div>';
+        Swal.fire({
+            title:"Table Of Contents",
+            html:html
+        });
     }
 
     add_chapter_to_content(){
@@ -643,7 +658,7 @@ class Carrot_Ebook{
         $('.richText-editor').html('');
         $("#chapter_title").val("Chương "+count_chapter);
         $(".btn_chapter").removeClass("active");
-        var html='<button type="button" data-index="'+(count_chapter-1)+'" onclick="carrot.ebook.select_chapter_for_content_edit(this)" class="btn btn-secondary active btn-sm btn_chapter">'+count_chapter+'</button>';
+        var html='<button type="button"  data-index="'+(count_chapter-1)+'" onclick="carrot.ebook.select_chapter_for_content_edit(this)" class="btn btn-secondary active btn-sm btn_chapter nav_item_chapter_'+(count_chapter-1)+'">'+count_chapter+'</button>';
         $("#list_chapter_content").append(html);
     }
 
@@ -664,8 +679,6 @@ class Carrot_Ebook{
         var emp_index=$(emp).data("index");
         this.index_chapter_edit=emp_index;
         this.select_index_chapter_content(emp_index);
-        $(".btn_chapter").removeClass("active");
-        $(emp).addClass("active");
     }
 
     select_index_chapter_content(index){
@@ -677,6 +690,9 @@ class Carrot_Ebook{
             $("#chapter_title").val(data_chapter.title);
             $('.richText-editor').html(data_chapter.content);
         }
+        $(".btn_chapter").removeClass("active");
+        $(".nav_item_chapter_"+index).addClass("active");
+        Swal.close();
     }
 
     prev_read_chapter_content(){
@@ -715,5 +731,29 @@ class Carrot_Ebook{
             ebook_file.add_chapter(content.title,content.content);
         });
         ebook_file.download();
+    }
+
+    list_for_home(){
+        var html='';
+        if(this.obj_ebooks!=null){
+            var list_ebook=this.carrot.obj_to_array(this.obj_ebooks);
+            list_ebook= list_ebook.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
+
+            html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-4">';
+            html+='<i class="'+this.icon+' fs-6 me-2"></i> <l class="lang" key_lang="ebook">Ebook</l>';
+            html+='<span role="button" onclick="carrot.ebook.list()" class="btn float-end btn-sm btn-light"><i class="fa-solid fa-square-caret-right"></i> <l class="lang" key_lang="view_all">View All</l></span>';
+            html+='</h4>';
+
+            html+='<div id="other_code" class="row m-0">';
+            $(list_ebook).each(function (index,b){
+                if(index<12){
+                    html+=carrot.ebook.box_ebook_item(b);
+                }else{
+                    return false;
+                }
+            });
+            html+='</div>';
+        }
+        return html;
     }
 }
