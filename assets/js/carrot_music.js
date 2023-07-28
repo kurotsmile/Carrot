@@ -285,9 +285,10 @@ class Carrot_Music{
                     html+='<h4 class="fw-semi fs-5 lang" key_lang="describe">Lyrics</h4>';
                     html+='<p class="fs-8 text-justify">'+data.lyrics.replaceAll(". ","</br>")+'</p>';
                 html+='</div>';
-    
+
                 html+=carrot.rate.box_comment(data);
-                
+                html+=carrot.link_store.box_qrdoce();
+
             html+="</div>";
     
             html+='<div class="col-md-4">';

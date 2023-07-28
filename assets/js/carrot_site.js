@@ -618,6 +618,29 @@ class Carrot_Site{
 
         $("#btn_share").click(function(){carrot.show_share();});
         $('#register_protocol_url').click(function(){carrot.register_protocol_url();});
+
+        $("#qr_cdoe").qrcode({
+            render: 'canvas',
+            minVersion: 1,
+            maxVersion: 40,
+            ecLevel: 'L',
+            left: 0,
+            top: 0,
+            size: 200,
+            fill: '#428400',
+            background: null,
+            text: window.location.href,
+            radius: 5,
+            quiet: 0,
+            mode:  0,
+            mSize: 0.1,
+            mPosX: 0.5,
+            mPosY: 0.5,
+            label: 'no label',
+            fontname: 'sans',
+            fontcolor: '#000',
+            image: null
+        });
         
         this.rate.check_event();
         this.check_mode_site();

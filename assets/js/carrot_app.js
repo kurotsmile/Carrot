@@ -180,6 +180,7 @@ class Carrot_App{
     }
 
     box_app_item(data_app,s_class='col-md-4 mb-3'){
+        if(data_app==null) return '';
         var key_name="name_"+this.carrot.lang;
         var s_url_icon="";
         if(data_app.icon!=null) s_url_icon=data_app.icon;
@@ -245,7 +246,6 @@ class Carrot_App{
     }
 
     show_app_by_id(id_box_app,carrot){
-        carrot.log("Show app by id:"+id_box_app,"info");
         if(carrot.check_ver_cur("app")){
             if(carrot.app.obj_app==null){
                 carrot.log("Load info app "+id_box_app+" from sever","warning");
@@ -257,6 +257,7 @@ class Carrot_App{
                 }else{
                     carrot.log("Load info app "+id_box_app+" from cache","success");
                     var data_app=JSON.parse(carrot.app.obj_app[id_box_app]);
+                    console.log(data_app);
                     carrot.app.show_app_info(data_app,carrot);
                 }
             }
@@ -421,35 +422,6 @@ class Carrot_App{
         carrot.app.type_show="all";
         carrot.show(html);
         carrot.app.check_btn_for_list_app();
-        $("#qr_cdoe").qrcode({
-            render: 'canvas',
-            minVersion: 1,
-            maxVersion: 40,
-            ecLevel: 'L',
-            left: 0,
-            top: 0,
-            size: 200,
-            fill: '#428400',
-            background: null,
-            text: window.location.href,
-            radius: 5,
-            quiet: 0,
-            // modes
-            // 0: normal
-            // 1: label strip
-            // 2: label box
-            // 3: image strip
-            // 4: image box
-            mode:  0,
-            mSize: 0.1,
-            mPosX: 0.5,
-            mPosY: 0.5,
-            label: 'no label',
-            fontname: 'sans',
-            fontcolor: '#000',
-        
-            image: null
-        });
     }
 
     check_btn_for_list_app(){

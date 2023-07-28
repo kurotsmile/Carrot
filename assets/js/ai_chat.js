@@ -1,6 +1,6 @@
 class AI_Chat{
     carrot;
-    obj_chats;
+    obj_chats=null;
     icon="fa-solid fa-comments";
 
     orderBy_at="date_create";
@@ -15,6 +15,11 @@ class AI_Chat{
         var btn_list_chat=carrot.menu.create_menu("list_chat").set_label("List Chat").set_icon(this.icon).set_type("main").set_lang("chat");
         $(btn_list_chat).click(function(){carrot.ai.chat.show_all_chat(carrot.lang);});
         carrot.menu.create_menu("add_chat").set_label("Add Chat").set_icon(this.icon).set_act("carrot.ai.chat.show_add()").set_type("add");
+        if(localStorage.getItem("obj_chats")!=null) this.obj_chats=JSON.parse(localStorage.getItem("obj_chats"));
+    }
+
+    save_obj_chats(){
+        localStorage.setItem("obj_chats",JSON.stringify(this.obj_chats));
     }
 
     show_add(){
@@ -66,7 +71,12 @@ class AI_Chat{
         btn_add_key_fnc.set_icon("fa-solid fa-circle-plus");
         btn_add_key_fnc.set_class("btn-sm mt-1 btn-secondary fs-9");
         btn_add_key_fnc.set_act("carrot.ai.chat.add_key_fnc_for_msg_field()");
-        frm.create_field("msg").set_label("Msg").set_val(data["msg"]).set_tip("Câu trả lời của Ai khi được hỏi đúng với từ khóa").set_type("textarea").add_btn(btn_add_key_fnc);
+        var btn_translate=new Carrot_Btn();
+        btn_translate.set_icon("fa-solid fa-language");
+        btn_translate.set_class("btn-sm mt-1 btn-secondary fs-9");
+        btn_translate.set_label(" translate");
+        btn_translate.set_act("tr_inp('msg','vi','"+this.carrot.langs.lang_setting+"')");
+        frm.create_field("msg").set_label("Msg").set_val(data["msg"]).set_tip("Câu trả lời của Ai khi được hỏi đúng với từ khóa").set_type("textarea").add_btn(btn_add_key_fnc).add_btn(btn_translate);
         frm.create_field("status").set_label("Status").set_val(data["status"]).set_type("select").add_option("pending","Pending - Chờ Duyệt").add_option("passed","Passed - Sử dụng").add_option("reserve","Reserve - Sử dụng tạm thời");
         frm.create_field("sex_user").set_label("Sex User").set_val(data["sex_user"]).set_type("select").add_option("0","Boy").add_option("1","Girl");
         frm.create_field("sex_character").set_label("Sex Character").set_val(data["sex_character"]).set_type("select").add_option("0","Boy").add_option("1","Girl");
@@ -169,6 +179,7 @@ class AI_Chat{
                 this.obj_chats[doc.id]=JSON.stringify(item_data);
             });
             Swal.close();
+            this.save_obj_chats();
             this.act_done_show_all_chat(this.obj_chats,this.carrot);
         }).catch((error) => {
             this.carrot.msg(error.message,"error",12000);
@@ -241,7 +252,7 @@ class AI_Chat{
         carrot.ai.chat.check_event();
     }
 
-    box_chat_item(data){
+    box_chat_item(data,s_class="col-md-4 mb-3"){
         var item_list=new Carrot_List_Item(carrot);
         var s_body='';
         item_list.set_index(data.index);
@@ -264,7 +275,7 @@ class AI_Chat{
         if(data.sex_character=='0') s_body+='<i class="fa-solid fa-mars text-primary"></i>'; else s_body+='<i class="fa-solid fa-venus text-danger"></i>';
 
         s_body+='<i id="btn_add_father_chat" role="button" sex_user="'+data.sex_user+'" sex_character="'+data.sex_character+'" id_chat="'+data.id+'" onclick="carrot.ai.chat.add_chat_with_father(this);return false;" class="fa-solid fa-square-plus float-end fa-2x text-success"></i>';
-
+        item_list.set_class(s_class);
         item_list.set_body('<div class="col-12">'+s_body+'</div>');
         item_list.set_class_body("mt-2 col-11 fs-9");
         item_list.set_db("chat-"+carrot.langs.lang_setting);
@@ -379,10 +390,23 @@ class AI_Chat{
 
                     html+='</div>';
                 html+='</div>';
+
+                html+='<div class="col-md-4">';
+                html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-3 lang"  key_lang="related_chat">Related Chat</h4>';
+                var list_chat=carrot.convert_obj_to_list(carrot.ai.chat.obj_chats).map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
+                $(list_chat).each(function(index,chat){
+                    if(index<=12){
+                        chat.index=index;
+                        html+=carrot.ai.chat.box_chat_item(chat,"col-md-12 mb-3");
+                    }
+                });
+                html+='</div>';
+
             html+='</div>';
         html+='</div>';
         carrot.show(html);
         carrot.check_event();
+        carrot.ai.chat.check_event();
     }
 
     reload(carrot){

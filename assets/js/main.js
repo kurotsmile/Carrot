@@ -8,14 +8,14 @@ function copy_tag(name_tag) {
 function copy_txt_tag(name_tag) {
     var $temp = $("<input>");$("body").append($temp);
     var s_copy=$("#" + name_tag).html();
-    $("#"+name_tag).addClass("text-primary");
+    $("#"+name_tag).addClass("text-success");
     $temp.val(s_copy).select();
     document.execCommand("copy");$temp.remove();
 }
 
 function tr(name_tag,lang_change) {
     var s_txt=$("#" + name_tag).html();
-    $("#"+name_tag).addClass("text-primary");
+    $("#"+name_tag).addClass("text-success");
     if(lang_change=='zh') lang_change='zh-CN';
     var left  = ($(window).width()/2)-(900/2);
     top   = ($(window).height()/2)-(600/2);
@@ -24,7 +24,7 @@ function tr(name_tag,lang_change) {
 
 function tr_inp(name_tag,lang_tag,lang_change) {
     var s_txt=$("#" + name_tag).val();
-    $("#"+name_tag).addClass("text-primary");
+    $("#"+name_tag).addClass("text-success");
     if(lang_change=='zh') lang_change='zh-CN';
     if(lang_tag=='zh') lang_tag='zh-CN';
     var left  = ($(window).width()/2)-(900/2);

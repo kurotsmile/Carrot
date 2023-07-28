@@ -157,6 +157,7 @@ class Carrot_Ebook{
     delete_obj(){
         this.obj_ebooks=null;
         localStorage.removeItem("obj_ebooks");
+        this.carrot.delete_ver_cur("ebook");
     }
 
     delete_category_obj(){
@@ -166,7 +167,7 @@ class Carrot_Ebook{
 
     list(){
        this.type_list_show="list_ebook";
-       if(this.carrot.check_ver_cur("icon")){
+       if(this.carrot.check_ver_cur("ebook")){
             if(this.obj_ebooks==null){
                 this.get_list_ebook();
             }else{
@@ -534,6 +535,7 @@ class Carrot_Ebook{
             html+="</div>";
         html+="</div>";
         html+="</div>";
+        html+=carrot.ebook.list_for_home();
         carrot.show(html);
         carrot.check_event();
         carrot.ebook.check_event();
