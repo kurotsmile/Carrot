@@ -41,7 +41,7 @@ class AI_Chat{
         data_new_chat["func"]="";
         data_new_chat["mp3"]="";
         data_new_chat["link"]="";
-        data_new_chat["pater"]="0";
+        data_new_chat["pater"]="";
         data_new_chat["user"]=this.carrot.user.get_user_login_id();
         data_new_chat["limit"]="1";
         data_new_chat["date_create"]=new Date().toISOString();
