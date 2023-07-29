@@ -511,6 +511,7 @@ class Carrot_user{
                 }
 
                 html+=carrot.rate.box_comment(data_user);
+                html+=carrot.link_store.box_qrdoce();
 
             html+="</div>";
     

@@ -518,6 +518,9 @@ class Carrot_Ebook{
                     }
                 html+='</div>';
 
+                html+=carrot.rate.box_comment(data);
+                html+=carrot.link_store.box_qrdoce();
+
             html+="</div>";
 
             html+='<div class="col-md-4 ps-4 ps-lg-3">';

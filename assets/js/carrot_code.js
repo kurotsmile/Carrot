@@ -305,7 +305,8 @@ class Carrot_Code{
                     html+='<pre><code id="code_txt" class="'+data.code_type+'">'+data.code+'</code></pre>';
                 html+='</div>';
     
-                html+=carrot.rate.box_comment(data);   
+                html+=carrot.rate.box_comment(data);
+                html+=carrot.link_store.box_qrdoce();
 
             html+="</div>";
     

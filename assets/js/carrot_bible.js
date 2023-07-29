@@ -213,6 +213,7 @@ class Carrot_Bible{
                 html+='</div>';
 
                 html+=carrot.rate.box_comment(this.obj_bible_cur);
+                html+=carrot.link_store.box_qrdoce();
 
             html+='</div>';
 

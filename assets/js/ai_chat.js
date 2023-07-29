@@ -389,6 +389,10 @@ class AI_Chat{
                         html+='</div>';
 
                     html+='</div>';
+
+                    html+=carrot.rate.box_comment(data);
+                    html+=carrot.link_store.box_qrdoce();
+
                 html+='</div>';
 
                 html+='<div class="col-md-4">';

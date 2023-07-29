@@ -442,10 +442,10 @@ class Carrot_Icon{
                         html+='<li>&nbsp;&nbsp;<i class="fa-solid fa-caret-right"></i> <i class="fa-solid fa-file"></i> 16.png</li>';
                     html+='</ul>';
                 html+='</div>';
-
-                html+=carrot.link_store.box_qrdoce();
                 
             html+='</div>';
+
+            html+=carrot.link_store.box_qrdoce();
 
             html+='</div>';
 
