@@ -479,14 +479,23 @@ class Carrot_Ebook{
                             html+='</div>';
 
                             html+='<div class="col-md-4 col-6 text-center">';
-                            html+='<b><l class="lang" key_lang="file">File</l> <i class="fa-solid fa-file-arrow-down"></i></b>';
-                            html+='<p>'+data.title+'.epub</p>';
+                                html+='<b><l class="lang" key_lang="file">File</l> <i class="fa-solid fa-file-arrow-down"></i></b>';
+                                html+='<p>'+data.title+'.epub</p>';
                             html+='</div>';
 
-                            html+='<div class="col-md-4 col-6 text-center">';
-                                html+='<b><l class="lang" key_lang="author">Author</l> <i class="fa-solid fa-user-nurse"></i></b>';
-                                html+='<p>'+data.user.name+'</p>';
-                            html+='</div>';
+                            if(data.user!=null){
+                                html+='<div class="col-md-4 col-6 text-center">';
+                                    html+='<b><l class="lang" key_lang="author">Author</l> <i class="fa-solid fa-user-nurse"></i></b>';
+                                    html+='<p>'+data.user.name+'</p>';
+                                html+='</div>';
+                            }
+
+                            if(data.user.author!=""&&data.user.author!=undefined){
+                                html+='<div class="col-md-4 col-6 text-center">';
+                                    html+='<b><l class="lang" key_lang="public_at">Public At</l> <i class="fa-solid fa-user"></i></b>';
+                                    html+='<p>'+data.user.author+'</p>';
+                                html+='</div>';
+                            }
 
                             html+='<div class="col-md-4 col-6 text-center">';
                             html+='<b><l class="lang" key_lang="country">Country</l> <i class="fa-solid fa-language"></i></b>';
@@ -501,7 +510,9 @@ class Carrot_Ebook{
                             html+='<button id="btn_download" onclick="carrot.ebook.download()" class="btn d-inline btn-success m-1"><i class="fa-solid fa-download"></i> <l class="lang" key_lang="download">Download</l> </button>';
                             html+='<button id="btn_ebook_menu" onclick="carrot.ebook.table_of_contents()" class="btn d-inline btn-success m-1"><i class="fa-brands fa-elementor"></i> <l class="lang" key_lang="table_of_contents">Table of contents</l> </button>';
                             if(data.user.id==carrot.user.get_user_login_id()) html+='<button role="button" onclick="carrot.ebook.edit_info_book_cur()" type="button" class="btn d-inline btn-warning m-1"><i class="fa-solid fa-pen-to-square"></i> <l class="lang" key_lang="edit_info">Edit Info</l> </button>';
-                            if(carrot.user.get_user_login_role()=="admin") html+='<button role="button" onclick="carrot.ebook.change_mode_editor_content()" type="button" class="btn d-inline btn-info m-1"><i class="fa-solid fa-pen-ruler"></i> <l class="lang" key_lang="edit_content">Edit Content</l> </button>';
+                            if(carrot.user.get_user_login_role()=="admin"||carrot.user.get_user_login_id()==data.user.id){
+                                html+='<button id="btn_editor_mode" role="button" onclick="carrot.ebook.change_mode_editor_content()" type="button" class="btn d-inline btn-info m-1"><i class="fa-solid fa-pen-ruler"></i> <l class="lang" key_lang="edit_content">Edit Content</l> </button>';
+                            }
                             html+='</div>';
                         html+='</div>';
 
@@ -546,18 +557,34 @@ class Carrot_Ebook{
         $('.richText-editor,#chapter_title').change(function(){
             carrot.ebook.is_change_status=true;
         });
+        carrot.ebook.check_mode_editor_content();
     }
 
     change_mode_editor_content(){
-        if(this.type_content_show=="view")
+        if(this.type_content_show=="view"){
             this.type_content_show="editor";
-        else
+        }  
+        else{
             this.type_content_show="view";
-        
+        }
+
         if(this.type_content_show=="view")
             $("#body_content_book").html(this.show_body_view(this.obj_ebook_cur));
         else
             $("#body_content_book").html(this.show_body_editor(this.obj_ebook_cur));
+
+        this.check_mode_editor_content();
+    }
+
+    check_mode_editor_content(){
+        if($("#btn_editor_mode").length>0){
+            if(this.type_content_show=="view"){
+                $("#btn_editor_mode").html('<i class="fa-solid fa-pen-ruler"></i> <l class="lang" key_lang="edit_content">Edit Content</l> ');
+            }  
+            else{
+                $("#btn_editor_mode").html('<i class="fa-solid fa-eye"></i> <l class="lang" key_lang="view_content">View Content</l> ');
+            }
+        }
     }
 
     show_body_editor(data){
