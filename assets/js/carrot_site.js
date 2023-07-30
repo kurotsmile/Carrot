@@ -596,7 +596,6 @@ class Carrot_Site{
         $(".btn_app_del").click(function(){
             var db_collection=$(this).attr("db_collection");
             var db_document=$(this).attr("db_document");
-            var db_obj=$(this).attr("db_obj");
             var event_fun=$(this).attr("onclick");
             Swal.fire({
                 title: 'Are you sure?',
@@ -618,6 +617,11 @@ class Carrot_Site{
 
         $("#btn_share").click(function(){carrot.show_share();});
         $('#register_protocol_url').click(function(){carrot.register_protocol_url();});
+
+
+        
+        this.rate.check_event();
+        this.check_mode_site();
 
         $("#qr_cdoe").qrcode({
             render: 'canvas',
@@ -641,9 +645,7 @@ class Carrot_Site{
             fontcolor: '#000',
             image: null
         });
-        
-        this.rate.check_event();
-        this.check_mode_site();
+        $("#qr_cdoe").attr("id","qr_cdoe_done_success");
     }
 
     act_edit_by_page_register(data,carrot){
