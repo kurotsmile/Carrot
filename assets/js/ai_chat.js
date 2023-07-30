@@ -45,12 +45,12 @@ class AI_Chat{
         data_new_chat["user"]=this.carrot.user.get_user_login_id();
         data_new_chat["limit"]="1";
         data_new_chat["date_create"]=new Date().toISOString();
-        data_new_chat["lang"]=this.carrot.lang;
+        data_new_chat["lang"]=this.carrot.langs.lang_setting;
         return data_new_chat;
     }
 
     edit(data,carrot){
-        if(data["lang"]==null||data["lang"]=='') data["lang"]=carrot.lang.lang_setting;
+        if(data["lang"]==null||data["lang"]=='') data["lang"]=carrot.langs.lang_setting;
         carrot.ai_lover.chat.show_add_or_edit_chat(data).set_title("Update Chat").set_msg_done("Update Chat Success!").show();
     }
 
@@ -263,7 +263,7 @@ class AI_Chat{
             item_list.set_icon_font("fa-sharp fa-solid fa-comment mt-2 chat_icon");
             
         item_list.set_name(data.key);
-        item_list.set_tip('<i class="fa-solid fa-circle" style="color:'+data.color+'"></i> '+data.msg);
+        item_list.set_tip('<i class="fa-solid fa-circle" style="color:'+data.color+'"></i> '+' <span id="chat_msg_'+data.index+'">'+data.msg+'</span>');
 
         if(data.status=="pending") s_body+='<i class="fa-regular fa-circle"></i> ';
         if(data.status=="passed") s_body+='<i class="fa-solid fa-circle-check"></i> ';
@@ -274,7 +274,8 @@ class AI_Chat{
         s_body+=' <i class="fa-sharp fa-solid fa-right-left"></i> ';
         if(data.sex_character=='0') s_body+='<i class="fa-solid fa-mars text-primary"></i>'; else s_body+='<i class="fa-solid fa-venus text-danger"></i>';
 
-        s_body+='<i id="btn_add_father_chat" role="button" sex_user="'+data.sex_user+'" sex_character="'+data.sex_character+'" id_chat="'+data.id+'" onclick="carrot.ai.chat.add_chat_with_father(this);return false;" class="fa-solid fa-square-plus float-end fa-2x text-success"></i>';
+        s_body+='<i id="btn_add_father_chat" role="button" sex_user="'+data.sex_user+'" sex_character="'+data.sex_character+'" id_chat="'+data.id+'" onclick="carrot.ai.chat.add_chat_with_father(this);return false;" class="fa-solid fa-square-plus float-end fa-2x text-success m-1"></i>';
+        if(data.lang!="vi") s_body+='<i id="btn_translate_chat" role="button" onclick="tr_emp(\'chat_msg_'+data.index+'\',\''+carrot.langs.lang_setting+'\',\'vi\');return false;" class="fa-solid fa-language float-end fa-2x text-success m-1 dev"></i>';
         item_list.set_class(s_class);
         item_list.set_body('<div class="col-12">'+s_body+'</div>');
         item_list.set_class_body("mt-2 col-11 fs-9");
