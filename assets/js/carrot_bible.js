@@ -38,7 +38,7 @@ class Carrot_Bible{
                     data_book["id"]=doc.id;
                     this.obj_bibles[doc.id]=JSON.stringify(data_book);
                 });
-                this.save_obj();
+                //this.save_obj();
                 this.act_get_list_book_done(this.obj_bibles,this.carrot);
             }else{
                 this.act_get_list_book_done(null,this.carrot);
