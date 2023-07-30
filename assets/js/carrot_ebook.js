@@ -218,7 +218,7 @@ class Carrot_Ebook{
                     this.obj_ebooks[doc.id]=JSON.stringify(data_ebook);
                 });
                 this.carrot.update_new_ver_cur("ebook",true);
-                this.save_obj();
+                //this.save_obj();
                 this.show_list_ebook_by_data(this.obj_ebooks,carrot);
                 Swal.close();
             }else{

@@ -237,9 +237,13 @@ class Carrot_Link_Store{
                 html+='<h4 class="fw-semi fs-5 lang" key_lang="qr_code">QR Code</h4>';
                 html+='<small class="m-1">Use other devices capable of scanning and recognizing qr code barcodes to continue using the current link</small>';
                 html+='<div class="fs-9"><i class="fa-solid fa-link"></i> <b>Link</b> : <span id="link_qr" class="text-break">'+window.location.href+'</span></div>';
-                html+='<button class="btn btn-success mt-2" onclick="copy_txt_tag(\'link_qr\')"><i class="fa-solid fa-copy"></i> Copy</button>';
+                html+='<button class="btn btn-success mt-2" onclick="copy_txt_tag(\'link_qr\');carrot.link_store.copy_done();"><i class="fa-solid fa-copy"></i> Copy</button>';
             html+='</div>';
         html+='</div>';
         return html;
+    }
+
+    copy_done(){
+        this.carrot.msg("Copied!");
     }
 }
