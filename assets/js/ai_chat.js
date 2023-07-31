@@ -276,7 +276,7 @@ class AI_Chat{
 
         s_body+='<i id="btn_add_father_chat" role="button" sex_user="'+data.sex_user+'" sex_character="'+data.sex_character+'" id_chat="'+data.id+'" onclick="carrot.ai.chat.add_chat_with_father(this);return false;" class="fa-solid fa-square-plus float-end fa-2x text-success m-1"></i>';
         if(data.lang!="vi") s_body+='<i id="btn_translate_chat" role="button" onclick="tr_emp(\'chat_msg_'+data.index+'\',\''+carrot.langs.lang_setting+'\',\'vi\');return false;" class="fa-solid fa-language float-end fa-2x text-success m-1 dev"></i>';
-        s_body+='<i id="btn_check_same_chat" role="button" sex_user="'+data.sex_user+'" sex_character="'+data.sex_character+'" key_chat="'+data.id+'" onclick="carrot.ai.chat.show_check_same_key(this);return false;" class="fa-solid fa-rectangle-list float-end fa-2x text-success m-1"></i>';
+        s_body+='<i id="btn_check_same_chat" role="button" sex_user="'+data.sex_user+'" sex_character="'+data.sex_character+'" key_chat="'+data.key+'" onclick="carrot.ai.chat.show_check_same_key(this);return false;" class="fa-solid fa-rectangle-list float-end fa-2x text-success m-1"></i>';
         item_list.set_class(s_class);
         item_list.set_body('<div class="col-12">'+s_body+'</div>');
         item_list.set_class_body("mt-2 col-11 fs-9");
@@ -319,8 +319,28 @@ class AI_Chat{
     }
 
     show_check_same_key(emp){
-        Swal.fire({
-            html:'K'
+        var key_chat=$(emp).attr("key_chat");
+        Swal.showLoading();
+        this.carrot.db.collection("chat-"+this.carrot.langs.lang_setting).where("key","==",key_chat).limit(100).get().then((querySnapshot) => {
+            var html='';
+            var s_class_status='';
+            querySnapshot.forEach((doc) => {
+                var item_data=doc.data();
+                item_data["id"]=doc.id;
+                if(item_data["status"]=="passed") s_class_status='text-success'; else s_class_status='';
+                html+='<div class="fs-9 d-block text-justify">';
+                    html+='<i class="fa-solid fa-circle-dot '+s_class_status+'"></i> <b>'+item_data["key"]+'</b> : '+item_data["msg"];
+                    html+='<i role="button" class="float-end dev btn_app_del fs-9 fa-solid fa-trash" onclick="carrot.ai.chat.edit" db_collection="chat-'+this.carrot.langs.lang_setting+'" db_document="'+item_data.id+'" db_obj="carrot.ai.chat"></i>';
+                    html+='<i role="button" class="float-end dev btn_app_edit fs-9 fa-solid fa-pen-to-square" onclick="carrot.ai.chat.edit" db_collection="chat-'+this.carrot.langs.lang_setting+'" db_document="'+item_data.id+'" db_obj="carrot.ai.chat"></i>';
+                html+='</div>';
+            });
+            Swal.fire({
+                title:"Key Same",
+                html:html
+            });
+            this.carrot.check_event();
+        }).catch((error) => {
+            this.carrot.msg(error.message,"error",12000);
         });
     }
 
