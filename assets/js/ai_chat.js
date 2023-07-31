@@ -232,10 +232,17 @@ class AI_Chat{
             html_menu+='<div class="btn-group" role="group">';
             html_menu+='<button class="btn btn-success dropdown-toggle btn-sm" type="button" id="btn_list_msg" data-bs-toggle="dropdown" aria-expanded="true" >';
                 html_menu+='<i class="fa-solid fa-comment-dots"></i> Msg';
+                if(carrot.ai.chat.where_a=='key'&&carrot.ai.chat.where_c!='') html_menu+=' ('+carrot.ai.chat.where_c+')';
             html_menu+='</button>';
 
             html_menu+='<div class="dropdown-menu" aria-labelledby="btn_list_msg">';
-                for(var i=0;i<24;i++) html_menu+='<button onclick="carrot.ai.chat.get_list_by_key(\'key\',\'hi_'+i+'\');return false;" type="button" class="dropdown-item"><i class="fa-solid fa-comments"></i> hi_'+i+'</button>';
+                var s_class_active='';
+                for(var i=0;i<24;i++){
+                    if(carrot.ai.chat.where_a=='key'){
+                        if(carrot.ai.chat.where_c=='hi_'+i) s_class_active="active"; else s_class_active="";
+                    }
+                    html_menu+='<button onclick="carrot.ai.chat.get_list_by_key(\'key\',\'hi_'+i+'\');return false;" type="button" class="dropdown-item '+s_class_active+'"><i class="fa-solid fa-comments"></i> hi_'+i+'</button>';
+                }
                 html_menu+='<button onclick="carrot.ai.chat.get_list_by_key(\'key\',\'hit\');return false;" type="button" class="dropdown-item"><i class="fa-solid fa-hand-back-fist"></i> hit</button>';
             html_menu+='</div>';
         html_menu+='</div>';
