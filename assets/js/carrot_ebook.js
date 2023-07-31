@@ -522,7 +522,7 @@ class Carrot_Ebook{
 
                             if(data.user!=null){
                                 html+='<div class="col-md-4 col-6 text-center">';
-                                    html+='<b><l class="lang" key_lang="public_at">Public At</l> <i class="fa-solid fa-user-nurse"></i></b>';
+                                    html+='<b><l class="lang" key_lang="posted_by">Posted By</l> <i class="fa-solid fa-user-nurse"></i></b>';
                                     html+='<p>'+data.user.name+'</p>';
                                 html+='</div>';
                             }
@@ -544,7 +544,15 @@ class Carrot_Ebook{
                         html+='<div class="row pt-2">';
                             html+='<div class="col-12">';
                             html+='<button id="btn_share" role="button" type="button" class="btn d-inline btn-success m-1"><i class="fa-solid fa-share-nodes"></i> <l class="lang" key_lang="share">Share</l> </button>';
-                            html+='<button id="btn_download" onclick="carrot.ebook.download()" class="btn d-inline btn-success m-1"><i class="fa-solid fa-download"></i> <l class="lang" key_lang="download">Download</l> </button>';
+                            if(carrot.user.get_user_login_role()=="admin"||carrot.user.get_user_login_id()==data.user.id){
+                                html+='<button id="btn_download" onclick="carrot.ebook.download()" class="btn d-inline btn-success m-1"><i class="fa-solid fa-download"></i> <l class="lang" key_lang="download">Download</l> </button>';
+                            }else{
+                                if(carrot.ebook.check_pay(data.id))
+                                    html+='<button id="btn_download" onclick="carrot.ebook.download()" class="btn d-inline btn-success m-1"><i class="fa-solid fa-download"></i> <l class="lang" key_lang="download">Download</l> </button>';
+                                else
+                                    html+='<button id="btn_download" onclick="carrot.ebook.pay()" class="btn d-inline btn-info m-1"><i class="fa-brands fa-paypal"></i> <l class="lang" key_lang="download">Download</l> </button>';
+                            }
+
                             html+='<button id="btn_ebook_menu" onclick="carrot.ebook.table_of_contents()" class="btn d-inline btn-success m-1"><i class="fa-brands fa-elementor"></i> <l class="lang" key_lang="table_of_contents">Table of contents</l> </button>';
                             if(data.user.id==carrot.user.get_user_login_id()) html+='<button role="button" onclick="carrot.ebook.edit_info_book_cur()" type="button" class="btn d-inline btn-warning m-1"><i class="fa-solid fa-pen-to-square"></i> <l class="lang" key_lang="edit_info">Edit Info</l> </button>';
                             if(carrot.user.get_user_login_role()=="admin"||carrot.user.get_user_login_id()==data.user.id){
@@ -792,6 +800,16 @@ class Carrot_Ebook{
         this.carrot.msg("Delete all data success!");
     }
 
+    pay(){
+        carrot.show_pay("ebook","Download ebook ("+carrot.ebook.obj_ebook_cur.title+")","Get file epub thi ebook from Carrot Ebook","1.99",carrot.ebook.pay_success);
+    }
+
+    pay_success(){
+        $("#btn_download").removeClass("btn-info").addClass("btn-success").html('<i class="fa-solid fa-download"></i> <l class="lang" key_lang="download">Download</l>');
+        localStorage.setItem("buy_ebook_"+carrot.ebook.obj_ebook_cur.id,"1");
+        carrot.ebook.download();
+    }
+
     download(){
         var ebook_file=new Carrot_Ebook_File();
         ebook_file.set_title(this.obj_ebook_cur.title);
@@ -800,6 +818,13 @@ class Carrot_Ebook{
             ebook_file.add_chapter(content.title,content.content);
         });
         ebook_file.download();
+    }
+
+    check_pay(id_ebook){
+        if(localStorage.getItem("buy_ebook_"+id_ebook)!=null)
+            return true;
+        else
+            return false;
     }
 
     list_for_home(){
