@@ -324,16 +324,25 @@ class AI_Chat{
         this.carrot.db.collection("chat-"+this.carrot.langs.lang_setting).where("key","==",key_chat).limit(100).get().then((querySnapshot) => {
             var html='';
             var s_class_status='';
+            html+='<table class="table table-sm table-hover">';
+            html+='<tbody>';
             querySnapshot.forEach((doc) => {
                 var item_data=doc.data();
                 item_data["id"]=doc.id;
                 if(item_data["status"]=="passed") s_class_status='text-success'; else s_class_status='';
-                html+='<div class="fs-9 d-block text-justify">';
-                    html+='<i class="fa-solid fa-circle-dot '+s_class_status+'"></i> <b>'+item_data["key"]+'</b> : '+item_data["msg"];
-                    html+='<i role="button" class="float-end dev btn_app_del fs-9 fa-solid fa-trash text-danger" db_collection="chat-'+this.carrot.langs.lang_setting+'" db_document="'+item_data.id+'" db_obj="carrot.ai.chat"></i>';
-                    html+='<i role="button" class="float-end dev btn_app_edit fs-9 fa-solid fa-pen-to-square" onclick="carrot.ai.chat.edit" db_collection="chat-'+this.carrot.langs.lang_setting+'" db_document="'+item_data.id+'" db_obj="carrot.ai.chat"></i>';
-                html+='</div>';
+                html+='<tr>';
+                    html+='<td class="fs-9 d-block text-justify">';
+                        html+='<i class="fa-solid fa-circle-dot '+s_class_status+'"></i> <b>'+item_data["key"]+'</b> : '+item_data["msg"];
+                    html+='</td>';
+                    html+='<td class="w-10">';
+                        html+='<i role="button" class="float-end dev btn_app_del fs-9 fa-solid fa-trash text-danger m-1" db_collection="chat-'+this.carrot.langs.lang_setting+'" db_document="'+item_data.id+'" db_obj="carrot.ai.chat"></i>';
+                        html+='<i role="button" class="float-end dev btn_app_edit fs-9 fa-solid fa-pen-to-square m-1" onclick="carrot.ai.chat.edit" db_collection="chat-'+this.carrot.langs.lang_setting+'" db_document="'+item_data.id+'" db_obj="carrot.ai.chat"></i>';
+                    html+='</td>';
+                html+='</tr>';
             });
+
+            html+='</tbody>';
+            html+='</table>';
             Swal.fire({
                 title:"Key Same",
                 html:html
