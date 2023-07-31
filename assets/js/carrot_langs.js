@@ -9,6 +9,8 @@ class Carrot_Langs{
     obj_lang_web=Object();//List obj save
     arr_lang_setting_db=Array();
 
+    obj_lang_setting_category=null;
+    
     constructor(carrot){
         this.carrot=carrot;
 
@@ -44,6 +46,10 @@ class Carrot_Langs{
 
     save_obj_lang_web(){
         localStorage.setItem("obj_lang_web",JSON.stringify(this.obj_lang_web));
+    }
+
+    save_obj_lang_setting_category(){
+        localStorage.setItem("obj_lang_setting_category",JSON.stringify(this.obj_lang_setting_category));
     }
 
     delete_list_lang(){
@@ -462,7 +468,7 @@ class Carrot_Langs{
         var frm=new Carrot_Form("frm",carrot);
         frm.set_title("Add setting lang");
         frm.set_icon("fa-solid fa-square-plus");
-        frm.create_field("db_lang").set_label("DB lang name(slug_name)");
+        frm.create_field("db_lang").set_label("DB lang name(slug_name)").set_tip("The database identifier name field should be prefixed with <span class='bg-success rounded p-1 text-white fs-9'>lang_{name_data}</span> , you should create the database name corresponding to the application name");
         frm.off_btn_done();
         var btn_add_lang_setting=frm.create_btn();
         btn_add_lang_setting.set_icon("fa-add");

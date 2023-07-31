@@ -139,7 +139,7 @@ class Carrot_Ebook{
         carrot.register_page("ebook","carrot.ebook.list()","carrot.ebook.edit","carrot.ebook.show_ebook_by_id","carrot.ebook.reload");
         carrot.register_page("ebook_category","carrot.ebook.list_category()","carrot.ebook.edit_category","carrot.ebook.show_category","carrot.ebook.reload_category");
         
-        carrot.menu.create("ebook").set_label("Ebook").set_icon(this.icon).set_type("main").set_act("carrot.ebook.list()");
+        carrot.menu.create("ebook").set_label("Ebook").set_lang("ebook").set_icon(this.icon).set_type("main").set_act("carrot.ebook.list()");
         carrot.menu.create("add_ebook").set_label("Add Ebook").set_icon(this.icon).set_type("add").set_act("carrot.ebook.add()");
 
         if(localStorage.getItem("obj_ebooks")!=null) this.obj_ebooks=JSON.parse(localStorage.getItem("obj_ebooks"));
