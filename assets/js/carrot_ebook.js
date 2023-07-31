@@ -244,10 +244,16 @@ class Carrot_Ebook{
         });
         html+='</div>';
 
-        this.carrot.show(html);
-        this.carrot.check_event();
-        if(this.carrot.ebook.obj_categorys==null) this.carrot.ebook.get_data_category();
-        this.check_event();
+        carrot.show(html);
+        carrot.check_event();
+        if(this.carrot.ebook.obj_categorys==null) carrot.ebook.get_data_category();
+        carrot.ebook.check_event();
+
+        $(".btn-setting-lang-change").click(function(){
+            var key_change=$(this).attr("key_change");
+            carrot.langs.lang_setting=key_change;
+            carrot.ebook.get_list_ebook();
+        });
     }
 
     check_event(){
@@ -516,15 +522,15 @@ class Carrot_Ebook{
 
                             if(data.user!=null){
                                 html+='<div class="col-md-4 col-6 text-center">';
-                                    html+='<b><l class="lang" key_lang="author">Author</l> <i class="fa-solid fa-user-nurse"></i></b>';
+                                    html+='<b><l class="lang" key_lang="public_at">Public At</l> <i class="fa-solid fa-user-nurse"></i></b>';
                                     html+='<p>'+data.user.name+'</p>';
                                 html+='</div>';
                             }
 
-                            if(data.user.author!=""&&data.user.author!=undefined){
+                            if(data.author!=null){
                                 html+='<div class="col-md-4 col-6 text-center">';
-                                    html+='<b><l class="lang" key_lang="public_at">Public At</l> <i class="fa-solid fa-user"></i></b>';
-                                    html+='<p>'+data.user.author+'</p>';
+                                    html+='<b><l class="lang" key_lang="author">Author</l> <i class="fa-solid fa-user"></i></b>';
+                                    html+='<p>'+data.author+'</p>';
                                 html+='</div>';
                             }
 

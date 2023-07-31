@@ -332,7 +332,11 @@ class AI_Chat{
                 if(item_data["status"]=="passed") s_class_status='text-success'; else s_class_status='';
                 html+='<tr>';
                     html+='<td class="fs-9 d-block text-justify">';
-                        html+='<i class="fa-solid fa-circle-dot '+s_class_status+'"></i> <b>'+item_data["key"]+'</b> : '+item_data["msg"];
+                        html+='<i class="fa-solid fa-circle-dot '+s_class_status+'"></i> ';
+                        if(item_data.sex_user=='0') html+='<i class="fa-solid fa-mars text-primary"></i>'; else html+='<i class="fa-solid fa-venus text-danger"></i>';
+                        html+=' <i class="fa-sharp fa-solid fa-right-left"></i> ';
+                        if(item_data.sex_character=='0') html+='<i class="fa-solid fa-mars text-primary"></i>'; else html+='<i class="fa-solid fa-venus text-danger"></i>';
+                        html+=' <b>'+item_data["key"]+'</b> : '+item_data["msg"];
                     html+='</td>';
                     html+='<td class="w-10">';
                         html+='<i role="button" class="float-end dev btn_app_del fs-9 fa-solid fa-trash text-danger m-1" db_collection="chat-'+this.carrot.langs.lang_setting+'" db_document="'+item_data.id+'" db_obj="carrot.ai.chat"></i>';
