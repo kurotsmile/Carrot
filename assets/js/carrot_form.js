@@ -116,6 +116,10 @@ class Carrot_Field{
         return this;
     }
 
+    is_dev(){
+        return this.set_dev();
+    }
+
     set_type_file(s_type){
         this.type_file=s_type;
         return this;

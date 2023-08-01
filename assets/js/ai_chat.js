@@ -77,7 +77,7 @@ class AI_Chat{
         btn_translate.set_label(" translate");
         btn_translate.set_act("tr_inp('msg','vi','"+this.carrot.langs.lang_setting+"')");
         frm.create_field("msg").set_label("Msg").set_val(data["msg"]).set_tip("Câu trả lời của Ai khi được hỏi đúng với từ khóa").set_type("textarea").add_btn(btn_add_key_fnc).add_btn(btn_translate);
-        frm.create_field("status").set_label("Status").set_val(data["status"]).set_type("select").add_option("pending","Pending - Chờ Duyệt").add_option("passed","Passed - Sử dụng").add_option("reserve","Reserve - Sử dụng tạm thời");
+        frm.create_field("status").set_label("Status").set_val(data["status"]).set_type("select").add_option("pending","Pending - Chờ Duyệt").set_dev().add_option("passed","Passed - Sử dụng").add_option("reserve","Reserve - Sử dụng tạm thời");
         frm.create_field("sex_user").set_label("Sex User").set_val(data["sex_user"]).set_type("select").add_option("0","Boy").add_option("1","Girl");
         frm.create_field("sex_character").set_label("Sex Character").set_val(data["sex_character"]).set_type("select").add_option("0","Boy").add_option("1","Girl");
         frm.create_field("color").set_label("Color").set_val(data["color"]).set_type("color");
@@ -198,8 +198,7 @@ class AI_Chat{
         carrot.ai.chat.show_all_chat();
     }
 
-    act_done_show_all_chat(datas,carrot){
-        var html='';
+    menu(){
         var html_menu='';
         carrot.change_title_page("Ai Lover", "?p=chat","chat");
         html_menu+='<button onclick="carrot.ai.chat.show_add()" type="button" class="btn btn-info btn-sm"><i class="fa-solid fa-circle-plus"></i> Add New Chat</button>';
@@ -207,8 +206,8 @@ class AI_Chat{
         html_menu+='<div class="btn-group" role="group">';
             html_menu+='<button class="btn btn-success dropdown-toggle btn-sm" type="button" id="btn_status_chat" data-bs-toggle="dropdown" aria-expanded="true" >';
                 html_menu+='<i class="fa-solid fa-cat"></i> Status';
+                if(carrot.ai.chat.where_a=="status") html_menu+=" ("+carrot.ai.chat.where_c+")";
             html_menu+='</button>';
-
             html_menu+='<div class="dropdown-menu" aria-labelledby="btn_status_chat">';
                 html_menu+='<button onclick="carrot.ai.chat.get_list_by_key(\'status\',\'pending\');return false;" type="button" class="dropdown-item"><i class="fa-regular fa-circle"></i> Pending - Chờ kiểm duyệt</button>';
                 html_menu+='<button onclick="carrot.ai.chat.get_list_by_key(\'status\',\'passed\');return false;"  type="button" class="dropdown-item"><i class="fa-solid fa-circle-check"></i> Passed - Sử dụng</button>';
@@ -218,23 +217,23 @@ class AI_Chat{
         html_menu+='</div>';
 
         html_menu+='<div class="btn-group" role="group">';
-                html_menu+='<button class="btn btn-success dropdown-toggle btn-sm" type="button" id="btn_order" data-bs-toggle="dropdown" aria-expanded="true" >';
-                    html_menu+='<i class="fa-solid fa-filter"></i> Order By';
-                html_menu+='</button>';
-                html_menu+='<div class="dropdown-menu" aria-labelledby="btn_order">';
-                    html_menu+='<button onclick="carrot.ai.chat.get_list_orderBy(\'date_create\',\'desc\');return false;" type="button" class="dropdown-item"><i class="fa-solid fa-arrow-up-short-wide"></i> Date</button>';
-                    html_menu+='<button onclick="carrot.ai.chat.get_list_orderBy(\'date_create\',\'asc\');return false;"  type="button" class="dropdown-item"><i class="fa-solid fa-arrow-down-short-wide"></i> Date</button>';
-                    html_menu+='<button onclick="carrot.ai.chat.get_list_orderBy(\'key\',\'desc\');return false;" type="button" class="dropdown-item"><i class="fa-solid fa-arrow-up-short-wide"></i> Key</button>';
-                    html_menu+='<button onclick="carrot.ai.chat.get_list_orderBy(\'key\',\'asc\');return false;" type="button" class="dropdown-item"><i class="fa-solid fa-arrow-down-short-wide"></i> Key</button>';
-                html_menu+='</div>';
+            html_menu+='<button class="btn btn-success dropdown-toggle btn-sm" type="button" id="btn_order" data-bs-toggle="dropdown" aria-expanded="true" >';
+                html_menu+='<i class="fa-solid fa-filter"></i> Order By';
+                html_menu+=' ('+carrot.ai.chat.orderBy_at+')';
+            html_menu+='</button>';
+            html_menu+='<div class="dropdown-menu" aria-labelledby="btn_order">';
+                html_menu+='<button onclick="carrot.ai.chat.get_list_orderBy(\'date_create\',\'desc\');return false;" type="button" class="dropdown-item"><i class="fa-solid fa-arrow-up-short-wide"></i> Date</button>';
+                html_menu+='<button onclick="carrot.ai.chat.get_list_orderBy(\'date_create\',\'asc\');return false;"  type="button" class="dropdown-item"><i class="fa-solid fa-arrow-down-short-wide"></i> Date</button>';
+                html_menu+='<button onclick="carrot.ai.chat.get_list_orderBy(\'key\',\'desc\');return false;" type="button" class="dropdown-item"><i class="fa-solid fa-arrow-up-short-wide"></i> Key</button>';
+                html_menu+='<button onclick="carrot.ai.chat.get_list_orderBy(\'key\',\'asc\');return false;" type="button" class="dropdown-item"><i class="fa-solid fa-arrow-down-short-wide"></i> Key</button>';
             html_menu+='</div>';
+        html_menu+='</div>';
 
-            html_menu+='<div class="btn-group" role="group">';
+        html_menu+='<div class="btn-group" role="group">';
             html_menu+='<button class="btn btn-success dropdown-toggle btn-sm" type="button" id="btn_list_msg" data-bs-toggle="dropdown" aria-expanded="true" >';
                 html_menu+='<i class="fa-solid fa-comment-dots"></i> Msg';
                 if(carrot.ai.chat.where_a=='key'&&carrot.ai.chat.where_c!='') html_menu+=' ('+carrot.ai.chat.where_c+')';
             html_menu+='</button>';
-
             html_menu+='<div class="dropdown-menu" aria-labelledby="btn_list_msg">';
                 var s_class_active='';
                 for(var i=0;i<24;i++){
@@ -247,7 +246,14 @@ class AI_Chat{
             html_menu+='</div>';
         html_menu+='</div>';
 
-        html+=carrot.ai.menu(html_menu);
+        html_menu+='<button class="btn dev btn-success btn-sm" onclick="carrot.ai.chat.show_compare_msg();return false;"><i class="fa-solid fa-table-columns"></i></button>';
+
+        return carrot.ai.menu(html_menu);
+    }
+
+    act_done_show_all_chat(datas,carrot){
+        var html='';
+        html+=carrot.ai.chat.menu();
         html+='<div class="row m-0">';
         var list_data=carrot.convert_obj_to_list(datas);
         $(list_data).each(function(index,data){
@@ -291,6 +297,80 @@ class AI_Chat{
         item_list.set_obj_js("carrot.ai.chat");
         item_list.set_act_edit("carrot.ai.chat.edit");
         return item_list.html();
+    }
+
+    show_compare_msg(){
+        var html='';
+        html+=this.menu();
+
+        html+='<div class="row">';
+            html+='<div class="col-md-6" >';
+                html+='<div class="row" id="all_items_msg_tag"></div>';
+            html+='</div>';
+
+            html+='<div class="col-md-6" >';
+                html+='<div class="row" id="all_items_msg_change"></div>';
+            html+='</div>';
+        html+='</div>';
+        this.carrot.show(html);
+
+        this.carrot.db.collection("chat-vi").where("key","==",this.where_c).get().then((querySnapshot) => {
+            if(querySnapshot.docs.length>0){
+                querySnapshot.forEach((doc) => {
+                    var data_chat=doc.data();
+                    data_chat["id"]=doc.id;
+                    $("#all_items_msg_tag").append(carrot.ai.chat.box_chat_item(data_chat,"col-12 col-md-12 mb-1"));
+                });
+                $("#all_items_msg_tag").append(this.box_compare_msg_add('vi'));
+
+                this.carrot.db.collection("chat-"+this.carrot.langs.lang_setting).where("key","==",this.where_c).get().then((querySnapshot) => {
+                    if(querySnapshot.docs.length>0){
+                        var chats=new Object();
+                        querySnapshot.forEach((doc) => {
+                            var data_chat=doc.data();
+                            data_chat["id"]=doc.id;
+                            chats[doc.id]=JSON.stringify(data_chat);
+                            $("#all_items_msg_change").append(carrot.ai.chat.box_chat_item(data_chat,"col-12 col-md-12 mb-1"));
+                        });
+                        $("#all_items_msg_change").append(this.box_compare_msg_add(this.carrot.langs.lang_setting));
+                        this.carrot.check_event();
+                        this.check_event();
+                    }else{
+                        $("#all_items_msg_change").append(this.box_compare_msg_add(this.carrot.langs.lang_setting));
+                        this.carrot.check_event();
+                        this.check_event();
+                    }
+                }).catch((error) => {
+                    console.log(error);
+                    this.carrot.msg(error.message,"error");
+                });
+
+            }else{
+                $("#all_items_msg_tag").append(this.box_compare_msg_add('vi'));
+            }
+        }).catch((error) => {
+            console.log(error);
+            this.carrot.msg(error.message,"error");
+        });
+    }
+
+    add_compare_msg(key_msg,lang){
+        var data_new=this.data_new_chat();
+        data_new["key"]=key_msg;
+        data_new["lang"]=lang;
+        this.show_add_or_edit_chat(data_new).set_title("Add Msg "+key_msg+" ("+lang+")").set_msg_done("Add chat success!").show();
+    }
+
+    box_compare_msg_add(lang){
+        var html='';
+        html+='<div class="col-12 col-md-12 mb-1" role="button" onclick="carrot.ai.chat.add_compare_msg(\''+carrot.ai.chat.where_c+'\',\''+lang+'\')">';
+            html+='<div class="app-cover p-2 shadow-md bg-success text-white">';
+                html+='<div class="row">';
+                    html+='<div class="col-12 col-md-12"><i class="fa-solid fa-circle-plus"></i> Add Chat</div>';
+                html+='</div>';
+            html+='</div>';
+        html+='</div>';
+        return html;
     }
 
     check_event(){
