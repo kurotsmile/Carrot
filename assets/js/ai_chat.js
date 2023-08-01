@@ -9,6 +9,8 @@ class AI_Chat{
     where_b="==";
     where_c="pending";
 
+    show_type="msg";
+
     constructor(carrot){
         this.carrot=carrot;
         carrot.register_page("chat","carrot.ai.chat.list()","carrot.ai.chat.edit","carrot.ai.chat.show","carrot.ai.chat.reload");
@@ -42,7 +44,7 @@ class AI_Chat{
         data_new_chat["mp3"]="";
         data_new_chat["link"]="";
         data_new_chat["pater"]="";
-        data_new_chat["user"]=this.carrot.user.get_user_login_id();
+        data_new_chat["user"]=this.carrot.user.get_user_login();
         data_new_chat["limit"]="1";
         data_new_chat["date_create"]=new Date().toISOString();
         data_new_chat["lang"]=this.carrot.langs.lang_setting;
@@ -69,11 +71,11 @@ class AI_Chat{
         var btn_add_key_fnc=new Carrot_Btn();
         btn_add_key_fnc.set_label(" Add Key func");
         btn_add_key_fnc.set_icon("fa-solid fa-circle-plus");
-        btn_add_key_fnc.set_class("btn-sm mt-1 btn-secondary fs-9");
+        btn_add_key_fnc.set_class("btn-sm mt-1 btn-light fs-9");
         btn_add_key_fnc.set_act("carrot.ai.chat.add_key_fnc_for_msg_field()");
         var btn_translate=new Carrot_Btn();
         btn_translate.set_icon("fa-solid fa-language");
-        btn_translate.set_class("btn-sm mt-1 btn-secondary fs-9");
+        btn_translate.set_class("btn-sm mt-1 btn-light fs-9");
         btn_translate.set_label(" translate");
         btn_translate.set_act("tr_inp('msg','vi','"+this.carrot.langs.lang_setting+"')");
         frm.create_field("msg").set_label("Msg").set_val(data["msg"]).set_tip("Câu trả lời của Ai khi được hỏi đúng với từ khóa").set_type("textarea").add_btn(btn_add_key_fnc).add_btn(btn_translate);
@@ -300,9 +302,13 @@ class AI_Chat{
     }
 
     show_compare_msg(){
+        this.show_type="compare";
+        this.show_compare_msg_list();
+    }
+
+    show_compare_msg_list(){
         var html='';
         html+=this.menu();
-
         html+='<div class="row">';
             html+='<div class="col-md-6" >';
                 html+='<div class="row" id="all_items_msg_tag"></div>';
@@ -333,11 +339,9 @@ class AI_Chat{
                             $("#all_items_msg_change").append(carrot.ai.chat.box_chat_item(data_chat,"col-12 col-md-12 mb-1"));
                         });
                         $("#all_items_msg_change").append(this.box_compare_msg_add(this.carrot.langs.lang_setting));
-                        this.carrot.check_event();
                         this.check_event();
                     }else{
                         $("#all_items_msg_change").append(this.box_compare_msg_add(this.carrot.langs.lang_setting));
-                        this.carrot.check_event();
                         this.check_event();
                     }
                 }).catch((error) => {
@@ -379,13 +383,18 @@ class AI_Chat{
         var chat=this;
         $(".btn-setting-lang-change").click(function(){
             var key_change=$(this).attr("key_change");
-            chat.show_all_chat(key_change);
+            if(carrot.ai.chat.show_type=="msg"){
+                chat.show_all_chat(key_change);
+            }
+            else{
+                carrot.langs.lang_setting=key_change;
+                chat.show_compare_msg_list();
+            }  
         });
 
         $("#box_input_search").change(function(){
             var key_search=$("#box_input_search").val();
-            alert("key search:"+key_search);
-            this.carrot.db.collection("chat-"+this.carrot.langs.lang_setting).where("key","==",key_search).orderBy(this.orderBy_at,this.orderBy_type).limit(100).get().then((querySnapshot) => {
+            carrot.db.collection("chat-"+carrot.langs.lang_setting).where("key","==",key_search).orderBy(carrot.ai.chat.orderBy_at,carrot.ai.chat.orderBy_type).limit(100).get().then((querySnapshot) => {
                 var obj_data=Object();
                 querySnapshot.forEach((doc) => {
                     var item_data=doc.data();
@@ -393,9 +402,9 @@ class AI_Chat{
                     obj_data[doc.id]=JSON.stringify(item_data);
                 });
                 Swal.close();
-                this.act_done_show_all_chat(obj_data,this.carrot);
+                carrot.ai.chat.act_done_show_all_chat(obj_data,carrot);
             }).catch((error) => {
-                this.carrot.msg(error.message,"error",12000);
+                carrot.msg(error.message,"error",12000);
             });
         });
 
