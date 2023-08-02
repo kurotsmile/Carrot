@@ -284,6 +284,7 @@ class Carrot_Ebook{
         new_data["id"]="ebook"+this.carrot.create_id();
         new_data["icon"]="";
         new_data["title"]="";
+        new_data["describe"]="";
         new_data["category"]="";
         new_data["date"]=$.datepicker.formatDate('yy-mm-dd', new Date());
         new_data["lang"]=this.carrot.lang;
@@ -305,7 +306,7 @@ class Carrot_Ebook{
         var frm=new Carrot_Form("frm_ebook",this.carrot);
         frm.set_icon(this.icon);
         frm.set_db("ebook","id");
-        frm.create_field("id").set_label("ID Ebook").set_val(data["id"]).set_type("id");
+        frm.create_field("id").set_label("ID Ebook").set_val(data["id"]).set_type("id").set_tip('<i class="fa-solid fa-book-open-reader"></i> First you need to fill in the necessary information of the book you are about to write, The content in the chapter you can add later');
         frm.create_field("icon").set_label("Icon (File image 740 x 1186)").set_val(data["icon"]).set_type("file").set_type_file("image/*");
         frm.create_field("title").set_label("Title Ebook").set_val(data["title"]);
         var field_cat=frm.create_field("category").set_label("Category").set_val(data["category"]).set_type("select");
@@ -313,6 +314,7 @@ class Carrot_Ebook{
         $(list_category).each(function(index,cat){
             field_cat.add_option(cat.name,cat.name);
         });
+        frm.create_field("describe").set_label("Describe Ebook").set_val(data["describe"]).set_type("editor");
         frm.create_field("date").set_label("Public Date").set_val(data["date"]).set_type("date");
         frm.create_field("lang").set_label("Lang eBook").set_val(data["lang"]).set_type("lang");
         var field_status=frm.create_field("status").set_label("Status").set_value(data.status).set_type("select");
@@ -563,6 +565,13 @@ class Carrot_Ebook{
 
                     html+="</div>";
                 html+="</div>";
+
+                if(data.describe!=null){
+                    html+='<div class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
+                    html+='<h4 class="fw-semi fs-5 lang" key_lang="describe">About this Game</h4>';
+                    html+='<p class="fs-8 text-justify">'+data["describe"]+'</p>';
+                    html+='</div>';
+                }
 
                 html+='<div class="about row p-2 py-3 bg-white mt-4 shadow-sm" id="body_content_book">';
                     if(data.user.id==carrot.user.get_user_login_id()){

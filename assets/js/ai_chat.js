@@ -67,7 +67,10 @@ class AI_Chat{
         var btn_add_msg=new Carrot_Btn();
         btn_add_msg.set_icon("fa-solid fa-comment-dots");
         btn_add_msg.set_act("carrot.ai.chat.add_msg_for_key()");
-        frm.create_field("key").set_label("Key").set_val(data["key"]).set_tip("Câu hỏi người dùng đối với Ai").add_btn(btn_add_msg);
+        var btn_translate_key=new Carrot_Btn();
+        btn_translate_key.set_icon("fa-solid fa-language");
+        btn_translate_key.set_act("tr_inp('key','vi','"+this.carrot.langs.lang_setting+"')");
+        frm.create_field("key").set_label("Key").set_val(data["key"]).set_tip("Câu hỏi người dùng đối với Ai").add_btn(btn_translate_key).add_btn(btn_add_msg);
         var btn_add_key_fnc=new Carrot_Btn();
         btn_add_key_fnc.set_label(" Add Key func");
         btn_add_key_fnc.set_icon("fa-solid fa-circle-plus");
