@@ -162,7 +162,7 @@ class AI_Chat{
         var html='';
         html+='<div class="row">';
         html+='<div class="col-12">';
-        for(var i=0;i<=24;i++){
+        for(var i=0;i<=23;i++){
             html+='<span role="button" onclick="carrot.ai.chat.select_key_msg(\'hi_'+i+'\')" class="btn btn-info btn-sm m-1"><i class="fa-solid fa-comment-dots"></i> hi_'+i+'</span>';
         }
         html+='<span role="button" onclick="carrot.ai.chat.select_key_msg(\'hit\')" class="btn btn-info btn-sm m-1"><i class="fa-solid fa-hand-back-fist"></i> Hit</span>';
