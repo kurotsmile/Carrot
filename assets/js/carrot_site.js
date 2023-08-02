@@ -618,8 +618,6 @@ class Carrot_Site{
         $("#btn_share").click(function(){carrot.show_share();});
         $('#register_protocol_url').click(function(){carrot.register_protocol_url();});
 
-
-        
         this.rate.check_event();
         this.check_mode_site();
 
@@ -693,6 +691,7 @@ class Carrot_Site{
     }
 
     done_get_file_json(data_json,carrot){
+        data_json["collection"]=carrot.name_collection_cur;
         var fileName = carrot.name_collection_cur+"-"+carrot.name_document_cur+ ".json";
         carrot.act_download_file_json(data_json,fileName);
     }
@@ -765,7 +764,9 @@ class Carrot_Site{
                 html+='<div class="form-row">';
                         html+='<div class="custom-file">';
                             html+='<label for="input-file-import"><i class="fa-solid fa-file-arrow-down"></i> Download file json database </label>';
-                            html+='<br/><div class="btn btn-success" role="button" onclick="carrot.download_json();return false;"><i class="fa-solid fa-file-arrow-down"></i> Download</div><br/>';
+                            html+='<br/><div class="btn btn-success mr-1" role="button" onclick="carrot.download_json();return false;"><i class="fa-solid fa-download"></i> Download Collection</div> ';
+                            html+='<div class="btn btn-success" role="button" onclick="carrot.download_json_doc();return false;"><i class="fa-solid fa-file-arrow-down"></i> Download Doc</div>';
+                            html+='<br/>';
                             html+='<small id="emailHelp" class="form-text text-muted">Download <b>json</b> data file to backup data into the system</small>';
                         html+='</div>';
                 html+='</div>';
@@ -786,17 +787,30 @@ class Carrot_Site{
             reader.addEventListener("load", function(e) {
                 var textFromFileLoaded = e.target.result;
                 var obj_json=JSON.parse(textFromFileLoaded);
-                var name_collection = obj_json.collection;
-                var all_item = obj_json.all_item;
-                var jsonPretty = JSON.stringify(obj_json, null, '\t');
 
-                $.each(all_item, function (index, d) {
-                    var doc_id = d["id_import"];
-                    delete d["id_import"];
-                    carrot.db.collection(name_collection).doc(doc_id).set(d);
-                });
-                
-                carrot.msg("Import Data Success!");
+                if(obj_json.collection==null){
+                    carrot.msg("Collection not found in File json","error");
+                    return false;
+                }
+
+                var name_collection = obj_json.collection;
+                if(obj_json.all_item==null){
+                    delete obj_json["collection"];
+                    carrot.db.collection(name_collection).doc(obj_json.id).set(obj_json);
+                    carrot.msg("Import Document Data Success!");
+                }else{
+                    var all_item = obj_json.all_item;
+                    
+    
+                    $.each(all_item, function (index, d) {
+                        var doc_id = d["id_import"];
+                        delete d["id_import"];
+                        carrot.db.collection(name_collection).doc(doc_id).set(d);
+                    });
+
+                    carrot.msg("Import Collection Data Success!");
+                }
+                var jsonPretty = JSON.stringify(obj_json, null, '\t');
                 $("#file_contain").html(jsonPretty);
                 hljs.highlightAll();
             })

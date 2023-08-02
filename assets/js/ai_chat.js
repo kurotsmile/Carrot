@@ -78,7 +78,12 @@ class AI_Chat{
         btn_translate.set_class("btn-sm mt-1 btn-light fs-9");
         btn_translate.set_label(" translate");
         btn_translate.set_act("tr_inp('msg','vi','"+this.carrot.langs.lang_setting+"')");
-        frm.create_field("msg").set_label("Msg").set_val(data["msg"]).set_tip("Câu trả lời của Ai khi được hỏi đúng với từ khóa").set_type("textarea").add_btn(btn_add_key_fnc).add_btn(btn_translate);
+        var btn_paste=new Carrot_Btn();
+        btn_paste.set_label(" paste");
+        btn_paste.set_icon("fa-solid fa-paste");
+        btn_paste.set_class("btn-sm mt-1 btn-light fs-9");
+        btn_paste.set_act("paste_tag('msg')");
+        frm.create_field("msg").set_label("Msg").set_val(data["msg"]).set_tip("Câu trả lời của Ai khi được hỏi đúng với từ khóa").set_type("textarea").add_btn(btn_add_key_fnc).add_btn(btn_translate).add_btn(btn_paste);
         frm.create_field("status").set_label("Status").set_val(data["status"]).set_type("select").add_option("pending","Pending - Chờ Duyệt").set_dev().add_option("passed","Passed - Sử dụng").add_option("reserve","Reserve - Sử dụng tạm thời");
         frm.create_field("sex_user").set_label("Sex User").set_val(data["sex_user"]).set_type("select").add_option("0","Boy").add_option("1","Girl");
         frm.create_field("sex_character").set_label("Sex Character").set_val(data["sex_character"]).set_type("select").add_option("0","Boy").add_option("1","Girl");
