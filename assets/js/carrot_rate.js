@@ -89,6 +89,28 @@ class Carrot_Rate{
         }
     }
 
+    box_report(data){
+        if (data.reports!=null) {
+            var html='';
+            html+='<div id="all_report" class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
+            html+='<h4 class="fw-semi fs-5"><i class="fa-solid fa-bug"></i> <l class="lang" key_lang="report">Report</l></h4>';
+            html+='<table class="table table-striped table-hover">';
+            html+='<tbody>';
+                var list_report= data.reports;
+                $(list_report).each(function (index,report) {
+                    report["index"] = index;
+                    html+=carrot.rate.box_report_item(report);
+                });
+            html+='</tbody>';
+            html+='</table>';
+            html+='</div>';
+            return html;
+        } else {
+            data.reports = Array();
+            return "";
+        }
+    }
+
     check_status_user_login(){
         var data_user_login = carrot.user.obj_login;
         var name_user_rate='Incognito';
@@ -159,6 +181,24 @@ class Carrot_Rate{
             html+='<td class="w-20 col-4">'+rank.scores+'</td>';
             html+='<td class="w-20 col-1">'+rank.type+'</td>';
             html+='<td class="w-20 col-4">'+date_rank.toLocaleDateString()+'</td>';
+        html+='</tr>';
+        return html;
+    }
+
+    box_report_item(report){
+        var html='';
+        var date_report=new Date(report.date);
+        var url_avatar_user_field='images/avatar_default.png';
+        var name_user_field="Incognito";
+        if(report.user!=null){
+            if(report.user.avatar!=null) url_avatar_user_field=report.user.avatar;
+            if(report.user.name!=null) name_user_field=report.user.name;
+        }
+        html+='<tr>';
+            html+='<td class="w-20 col-1"><img class="rounder" style="width:24px" src="'+url_avatar_user_field+'"/></td>';
+            html+='<td class="w-20 col-2">'+name_user_field+'</td>';
+            html+='<td class="w-20 col-5">'+report.comment+'</td>';
+            html+='<td class="w-20 col-4">'+date_report.toLocaleDateString()+'</td>';
         html+='</tr>';
         return html;
     }

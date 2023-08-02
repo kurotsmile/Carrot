@@ -558,6 +558,7 @@ class AI_Chat{
 
                     html+='</div>';
 
+                    html+=carrot.rate.box_report(data);
                     html+=carrot.rate.box_comment(data);
                     html+=carrot.link_store.box_qrdoce();
 
