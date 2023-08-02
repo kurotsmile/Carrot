@@ -304,9 +304,11 @@ class AI_Chat{
         item_list.set_name(data.key);
         item_list.set_tip('<i class="fa-solid fa-circle" style="color:'+data.color+'"></i> '+' <span id="chat_msg_'+data.index+'">'+data.msg+'</span>');
 
+        if(data.reports!=null) s_body+='<i class="fa-solid fa-bug text-danger fa-fade"></i> ';
         if(data.status=="pending") s_body+='<i class="fa-regular fa-circle"></i> ';
         if(data.status=="passed") s_body+='<i class="fa-solid fa-circle-check"></i> ';
         if(data.status=="reserve") s_body+='<i class="fa-solid fa-circle-half-stroke"></i> ';
+
         s_body+="<b>Status:</b> "+data.status+" ";
 
         if(data.sex_user=='0') s_body+='<i class="fa-solid fa-mars text-primary"></i>'; else s_body+='<i class="fa-solid fa-venus text-danger"></i>';
