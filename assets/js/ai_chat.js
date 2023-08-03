@@ -210,7 +210,7 @@ class AI_Chat{
             this.save_obj_chats();
             this.act_done_show_all_chat(this.obj_chats,this.carrot);
         }).catch((error) => {
-            this.carrot.msg(error.message,"error",12000);
+            this.carrot.log_error(error);
         });
     }
 
@@ -384,8 +384,7 @@ class AI_Chat{
                         this.check_event();
                     }
                 }).catch((error) => {
-                    console.log(error);
-                    this.carrot.msg(error.message,"error");
+                    this.carrot.log_error(error);
                 });
 
             }else{
@@ -393,8 +392,7 @@ class AI_Chat{
                 this.check_event();
             }
         }).catch((error) => {
-            console.log(error);
-            this.carrot.msg(error.message,"error");
+            this.carrot.log_error(error);
         });
     }
 
@@ -473,7 +471,7 @@ class AI_Chat{
                         html+='<i class="fa-solid fa-circle-dot '+s_class_status+'"></i> ';
                         if(item_data.sex_user=='0') html+='<i class="fa-solid fa-mars text-primary"></i>'; else html+='<i class="fa-solid fa-venus text-danger"></i>';
                         html+=' <i class="fa-sharp fa-solid fa-right-left"></i> ';
-                        if(item_data.sex_character=='0') html+='<i class="fa-solid fa-mars text-primary"></i>'; else html+='<i class="fa-solid fa-venus text-danger"></i>';
+                        if(item_data.sex_character=='0') html+='<i class="fa-solid fa-person text-primary"></i>'; else html+='<i class="fa-solid fa-person-dress text-danger"></i>';
                         html+=' <b>'+item_data["key"]+'</b> : '+item_data["msg"];
                     html+='</td>';
                     html+='<td class="w-10">';
@@ -491,7 +489,7 @@ class AI_Chat{
             });
             this.carrot.check_event();
         }).catch((error) => {
-            this.carrot.msg(error.message,"error",12000);
+            this.carrot.log_error(error);
         });
     }
 
