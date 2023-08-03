@@ -520,12 +520,18 @@ class AI_Chat{
 
                                 html+='<div class="col-md-4 col-6 text-center">';
                                     html+='<b><l class="lang" key_lang="sex_character">Sex Character</l> <i class="fa-solid fa-people-arrows"></i></b>';
-                                    html+='<p>'+data.sex_character+'</p>';
+                                    if(data.sex_character=="0")
+                                        html+='<p class="lang" key_lang="boy">'+data.sex_character+'</p>';
+                                    else
+                                        html+='<p class="lang" key_lang="girl">'+data.sex_character+'</p>';
                                 html+='</div>';
 
                                 html+='<div class="col-md-4 col-6 text-center">';
                                     html+='<b><l class="lang" key_lang="sex_user">Sex User</l> <i class="fa-solid fa-restroom"></i></b>';
-                                    html+='<p>'+data.sex_user+'</p>';
+                                    if(data.sex_user=="0")
+                                        html+='<p class="lang" key_lang="boy">'+data.sex_user+'</p>';
+                                    else
+                                        html+='<p class="lang" key_lang="girl">'+data.sex_user+'</p>';
                                 html+='</div>';
 
                                 html+='<div class="col-md-4 col-6 text-center">';
