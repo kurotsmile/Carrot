@@ -429,6 +429,7 @@ class AI_Chat{
         });
 
         $("#box_input_search").change(function(){
+            carrot.show_loading_search();
             var key_search=$("#box_input_search").val();
             carrot.db.collection("chat-"+carrot.langs.lang_setting).where("key","==",key_search).orderBy(carrot.ai.chat.orderBy_at,carrot.ai.chat.orderBy_type).limit(100).get().then((querySnapshot) => {
                 var obj_data=Object();
@@ -439,6 +440,7 @@ class AI_Chat{
                 });
                 Swal.close();
                 carrot.ai.chat.act_done_show_all_chat(obj_data,carrot);
+                carrot.hide_loading_search();
             }).catch((error) => {
                 carrot.msg(error.message,"error",12000);
             });

@@ -1102,4 +1102,13 @@ class Carrot_Site{
         html+='</urlset>';
         this.show(html);
     }
+
+    show_loading_search(){
+        $("#search_status_icon").attr("class","fa-solid fa-spinner fa-spin-pulse");
+    }
+
+    hide_loading_search(){
+        $("#search_status_icon").attr("class","fa-sharp fa-solid fa-magnifying-glass");
+        $("#box_input_search").val("");
+    }
 }
