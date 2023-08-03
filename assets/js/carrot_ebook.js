@@ -191,7 +191,7 @@ class Carrot_Ebook{
                 html+='<button onclick="carrot.ebook.delete_all_data();return false;" class="btn btn-danger dev btn-sm m-1"><i class="fa-solid fa-dumpster-fire"></i> Delete All data</button>';
 
                 html+='<div class="btn-group" role="group">';
-                html+='<button class="btn btn-secondary dropdown-toggle btn-sm" type="button" id="btn_list_ebook_category" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-rectangle-list"></i> Category ('+carrot.ebook.type_category_show+')</button>';
+                html+='<button class="btn btn-secondary dropdown-toggle btn-sm" type="button" id="btn_list_ebook_category" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-rectangle-list"></i> <l class="lang" key_lang="genre">Category</l> ('+carrot.ebook.type_category_show+')</button>';
                 html+='<div class="dropdown-menu" aria-labelledby="btn_list_ebook_category" id="list_ebook_category"></div>';
                 html+='</div>';
             html+='</div>';
@@ -309,7 +309,7 @@ class Carrot_Ebook{
         frm.create_field("id").set_label("ID Ebook").set_val(data["id"]).set_type("id").set_tip('<i class="fa-solid fa-book-open-reader"></i> First you need to fill in the necessary information of the book you are about to write, The content in the chapter you can add later');
         frm.create_field("icon").set_label("Icon (File image 740 x 1186)").set_val(data["icon"]).set_type("file").set_type_file("image/*");
         frm.create_field("title").set_label("Title Ebook").set_val(data["title"]);
-        var field_cat=frm.create_field("category").set_label("Category").set_val(data["category"]).set_type("select");
+        var field_cat=frm.create_field("category").set_label(this.carrot.l("genre","category")).set_val(data["category"]).set_type("select");
         var list_category=this.carrot.obj_to_array(this.obj_categorys);
         $(list_category).each(function(index,cat){
             field_cat.add_option(cat.name,cat.name);
@@ -329,6 +329,7 @@ class Carrot_Ebook{
         var new_data=new Object();
         new_data["name"]="";
         new_data["icon"]="";
+        new_data["image"]="";
         $(this.carrot.langs.list_lang).each(function(index,lang){
             new_data["name_"+lang.key]="";
         });
@@ -344,7 +345,8 @@ class Carrot_Ebook{
         frm.set_icon("fa-solid fa-hurricane");
         frm.set_db("ebook_category","name");
         frm.create_field("name").set_label("Name Category").set_val(data["name"]).set_main();
-        frm.create_field("icon").set_label("Icon Category").set_val(data["icon"]);
+        frm.create_field("icon").set_label("Icon Category (Font)").set_val(data["icon"]);
+        frm.create_field("image").set_label("Cover Ebook Category Image (300x300)").set_val(data["image"]).set_type("file").set_type_file("image/*");
         $(this.carrot.langs.list_lang).each(function(index,lang){
             frm.create_field("name_"+lang.key).set_label("Name "+lang.name+" <img style='width:20px;' src='"+lang.icon+"'>").set_val(data["name_"+lang.key]);
         });
@@ -508,7 +510,7 @@ class Carrot_Ebook{
                         html+=carrot.btn_dev("ebook",data.id);
                         html+='<div class="row pt-4">';
                             html+='<div class="col-md-4 col-6 text-center">';
-                                html+='<b><l class="lang" key_lang="category">Category</l> <i class="fa-solid fa-hurricane"></i></b>';
+                                html+='<b><l class="lang" key_lang="genre">Category</l> <i class="fa-solid fa-hurricane"></i></b>';
                                 html+='<p>'+data.category+'</p>';
                             html+='</div>';
 
