@@ -97,7 +97,6 @@ $(document).ready(function () {
     }
     carrot.check_version_data();
 
-
     var myMenu = [{
         icon: 'fa fa-home',
         label: 'Home Page',

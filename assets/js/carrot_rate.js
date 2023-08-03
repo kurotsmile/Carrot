@@ -33,14 +33,12 @@ class Carrot_Rate{
         html += '</div>';
 
         html += '<div id="rate_star" value="0" class="form-group mt-3 mb-3">';
-        html += '<i role="button" class="fa-regular fa-star fa-2xl rate_star" value="1" value_txt="'+carrot.l("rate_star_1", "Badvery bad") + '" id="rate_star_1"></i>';
-        html += '<i role="button" class="fa-regular fa-star fa-2xl rate_star" value="2" value_txt="'+carrot.l("rate_star_2", "Bad") + '" id="rate_star_2"></i>';
-        html += '<i role="button" class="fa-regular fa-star fa-2xl rate_star" value="3" value_txt="'+carrot.l("rate_star_3", "Normal") + '" id="rate_star_3"></i>';
-        html += '<i role="button" class="fa-regular fa-star fa-2xl rate_star" value="4" value_txt="'+carrot.l("rate_star_4", "Good") + '" id="rate_star_4"></i>';
-        html += '<i role="button" class="fa-regular fa-star fa-2xl rate_star" value="5" value_txt="'+carrot.l("rate_star_5", "Very good") + '" id="rate_star_5"></i>';
+        html += '<i role="button" class="fa-regular fa-star fa-2xl rate_star" value="1" data-toggle="tooltip" title="'+carrot.l("rate_star_1", "Badvery bad")+'" value_txt="'+carrot.l("rate_star_1", "Badvery bad")+'" id="rate_star_1"></i>';
+        html += '<i role="button" class="fa-regular fa-star fa-2xl rate_star" value="2" data-toggle="tooltip" title="'+carrot.l("rate_star_2", "Bad")+'" value_txt="'+carrot.l("rate_star_2", "Bad")+'" id="rate_star_2"></i>';
+        html += '<i role="button" class="fa-regular fa-star fa-2xl rate_star" value="3" data-toggle="tooltip" title="'+carrot.l("rate_star_3", "Normal")+'" value_txt="'+carrot.l("rate_star_3", "Normal")+'" id="rate_star_3"></i>';
+        html += '<i role="button" class="fa-regular fa-star fa-2xl rate_star" value="4" data-toggle="tooltip" title="'+carrot.l("rate_star_4", "Good")+'" value_txt="'+carrot.l("rate_star_4", "Good")+'" id="rate_star_4"></i>';
+        html += '<i role="button" class="fa-regular fa-star fa-2xl rate_star" value="5" data-toggle="tooltip" title="'+carrot.l("rate_star_5", "Very good")+'" value_txt="'+carrot.l("rate_star_5", "Very good")+'" id="rate_star_5"></i>';
         html += '</div>';
-
-        html += '<div id="star_val_show" class="form-group text-primary"></div>';
 
         html += '<div class="form-group">';
         html += '<label for="rate_comment">You Comment</label>';
@@ -150,8 +148,8 @@ class Carrot_Rate{
                     html+='</li>';
                 html+='</div>';
 
-                html+='<h3 class="fs-6 fw-semi mt-2">'+comment.user.name + '<small class="float-end fw-normal"> '+date_comment.toLocaleDateString()+ ' </small></h3>';
-                html+='<div class="review-text">'+comment.comment + '</div>';
+                html+='<h3 class="fs-6 fw-semi mt-2">'+comment.user.name+'<small class="float-end fw-normal"> '+date_comment.toLocaleDateString()+ ' </small></h3>';
+                html+='<div class="review-text">'+comment.comment+'</div>';
                 
                 if(carrot.user.obj_login!=null){
                     if(comment.user.id==carrot.user.obj_login.id){
@@ -207,10 +205,8 @@ class Carrot_Rate{
         var carrot=this.carrot;
         $(".rate_star").on("mouseover",function(){
             var val=$(this).attr("value");
-            var val_txt=$(this).attr("value_txt");
             $(".rate_star").removeClass("text-primary");
             $(".rate_star").removeClass("text-warning");
-            $("#star_val_show").html(val_txt).show();
             for(var i=0;i<=val;i++){
                 $("#rate_star_"+i).addClass("text-primary");
             }  
@@ -228,7 +224,6 @@ class Carrot_Rate{
             var val=$("#rate_star").attr("value");
             $(".rate_star").removeClass("text-primary");
             $(".rate_star").removeClass("text-warning");
-            $("#star_val_show").hide();
             for(var i=0;i<=val;i++){
                 $("#rate_star_"+i).addClass("text-warning");
             }  

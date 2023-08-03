@@ -644,6 +644,8 @@ class Carrot_Site{
             image: null
         });
         $("#qr_cdoe").attr("id","qr_cdoe_done_success");
+
+        $('[data-toggle="tooltip"]').tooltip();
     }
 
     act_edit_by_page_register(data,carrot){

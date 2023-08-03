@@ -689,9 +689,9 @@ class Carrot_Ebook{
         var html='';
         html+='<h4 class="fw-semi fs-5 lang" key_lang="content">Content</h4>';
         html+=this.nav_chapter(data);
-        html+='<div class="fs-6 text-justify">';
+        html+='<div class="fs-6 text-justify mt-2 mb-2">';
         html+='<h6 id="chapter_title">'+data.contents[carrot.ebook.index_chapter_edit].title+'</h6>';
-        html+='<div id="chapter_body">'+data.contents[carrot.ebook.index_chapter_edit].content+'</div>';
+        html+='<div id="chapter_body text-dark">'+data.contents[carrot.ebook.index_chapter_edit].content+'</div>';
         html+='</div>';
         html+=this.nav_chapter(data);
         return html;
@@ -699,20 +699,23 @@ class Carrot_Ebook{
 
     nav_chapter(data){
         var html='';
-        html+='<div class="text-center">';
-            html+='<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">';
-                html+='<div class="btn-group m-2 d-inline" role="group" aria-label="Mind Button Group Chapter" id="list_chapter_content">';
-                    html+='<button onclick="carrot.ebook.prev_read_chapter_content()"  type="button" class="btn btn-success btn-sm fs-5"><i class="fa-solid fa-backward-step"></i> </button>';
-                    var s_class='';
-                    for(var i=0;i<data.contents.length;i++){
-                        if(carrot.ebook.index_chapter_edit==i) s_class="active";
-                        else s_class='';
-                        html+='<button type="button" data-index="'+i+'" onclick="carrot.ebook.select_chapter_for_content_edit(this)" class="btn btn-success btn-sm '+s_class+' btn_chapter fs-9 nav_item_chapter_'+i+'">'+(i+1)+'</button>';
-                    }
-                    html+='<button onclick="carrot.ebook.next_read_chapter_content()"  type="button" class="btn btn-success btn-sm fs-5"><i class="fa-solid fa-forward-step"></i> </button>';
-                html+='</div>';
-            html+='</div>';
-        html+='</div>';
+        html+='<nav aria-label="Page navigation nav-ebook mt-1 mb-1">';
+            html+='<ul class="pagination pagination-sm flex-wrap">';
+            html+='<li class="page-item" onclick="carrot.ebook.prev_read_chapter_content()" type="button">';
+                html+='<a class="page-link text-secondary" href="#" aria-label="Previous"><i class="fa-solid fa-backward-step"></i> Prev</a>';
+            html+='</li>';
+            var s_class='';
+            for(var i=0;i<data.contents.length;i++){
+                if(carrot.ebook.index_chapter_edit==i) s_class="active";
+                else s_class='';
+                html+='<li type="button" data-index="'+i+'" onclick="carrot.ebook.select_chapter_for_content_edit(this)" class="page-item '+s_class+' btn_chapter fs-9 nav_item_chapter_'+i+'"><span class="page-link text-secondary" tabindex="'+i+'">'+(i+1)+'</span></li>';
+            }
+
+            html+='<li class="page-item" onclick="carrot.ebook.next_read_chapter_content()" type="button">';
+                html+='<a class="page-link text-secondary" href="#" aria-label="Next"><i class="fa-solid fa-forward-step"></i> Next</a>';
+            html+='</li>';
+            html+='</ul>';
+        html+='</nav>';
         return html;
     }
 

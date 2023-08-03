@@ -31,7 +31,10 @@ class AI_Chat{
     data_new_chat(){
         var data_new_chat=Object();
         data_new_chat["id"]="chat"+this.carrot.create_id();
-        data_new_chat["key"]="";
+        if(this.carrot.ai.chat.where_a=='key'&&this.carrot.ai.chat.where_c!='')
+            data_new_chat["key"]=this.carrot.ai.chat.where_c;
+        else
+            data_new_chat["key"]="";
         data_new_chat["msg"]="";
         data_new_chat["status"]="pending";
         data_new_chat["sex_user"]="0";
@@ -310,14 +313,14 @@ class AI_Chat{
 
         if(data.reports!=null) s_body+='<i class="fa-solid fa-bug text-danger fa-fade"></i> ';
         if(data.status=="pending") s_body+='<i class="fa-regular fa-circle"></i> ';
-        if(data.status=="passed") s_body+='<i class="fa-solid fa-circle-check"></i> ';
+        if(data.status=="passed") s_body+='<i class="fa-solid fa-circle-check text-success"></i> ';
         if(data.status=="reserve") s_body+='<i class="fa-solid fa-circle-half-stroke"></i> ';
 
         s_body+="<b>Status:</b> "+data.status+" ";
 
         if(data.sex_user=='0') s_body+='<i class="fa-solid fa-mars text-primary"></i>'; else s_body+='<i class="fa-solid fa-venus text-danger"></i>';
         s_body+=' <i class="fa-sharp fa-solid fa-right-left"></i> ';
-        if(data.sex_character=='0') s_body+='<i class="fa-solid fa-mars text-primary"></i>'; else s_body+='<i class="fa-solid fa-venus text-danger"></i>';
+        if(data.sex_character=='0') s_body+='<i class="fa-solid fa-person text-primary"></i>'; else s_body+='<i class="fa-solid fa-person-dress text-danger"></i>';
 
         if(carrot.ai.chat.show_type=="compare"&&data.lang=="vi"){
             s_body+='<i id="btn_clone_chat" role="button" data-json="'+encodeURIComponent(JSON.stringify(data))+'" sex_user="'+data.sex_user+'" sex_character="'+data.sex_character+'" id_chat="'+data.id+'" onclick="carrot.ai.chat.clone_chat(this);return false;" class="fa-solid fa-clone dev float-end fa-2x text-success m-1"></i>';
@@ -521,17 +524,17 @@ class AI_Chat{
                                 html+='<div class="col-md-4 col-6 text-center">';
                                     html+='<b><l class="lang" key_lang="sex_character">Sex Character</l> <i class="fa-solid fa-people-arrows"></i></b>';
                                     if(data.sex_character=="0")
-                                        html+='<p class="lang" key_lang="boy">'+data.sex_character+'</p>';
+                                        html+='<p><i class="fa-solid fa-person text-primary"></i> <l class="lang" key_lang="boy">'+data.sex_character+'</l></p>';
                                     else
-                                        html+='<p class="lang" key_lang="girl">'+data.sex_character+'</p>';
+                                        html+='<p><i class="fa-solid fa-person-dress text-danger"></i> <l class="lang" key_lang="girl">'+data.sex_character+'</l></p>';
                                 html+='</div>';
 
                                 html+='<div class="col-md-4 col-6 text-center">';
                                     html+='<b><l class="lang" key_lang="sex_user">Sex User</l> <i class="fa-solid fa-restroom"></i></b>';
                                     if(data.sex_user=="0")
-                                        html+='<p class="lang" key_lang="boy">'+data.sex_user+'</p>';
+                                        html+='<p><i class="fa-solid fa-mars text-primary"></i> <l class="lang" key_lang="boy">'+data.sex_user+'</l></p>';
                                     else
-                                        html+='<p class="lang" key_lang="girl">'+data.sex_user+'</p>';
+                                        html+='<p><i class="fa-solid fa-venus text-danger"></i> <l class="lang" key_lang="girl">'+data.sex_user+'</l></p>';
                                 html+='</div>';
 
                                 html+='<div class="col-md-4 col-6 text-center">';
@@ -539,10 +542,12 @@ class AI_Chat{
                                     html+='<p>'+data.status+'</p>';
                                 html+='</div>';
 
-                                html+='<div class="col-md-4 col-6 text-center">';
-                                    html+='<b><l class="lang" key_lang="color">Color</l> <i class="fa-solid fa-palette"></i></b>';
-                                    html+='<p style="color:'+data.color+'">'+data.color+'</p>';
-                                html+='</div>';
+                                if(data.color!=null&&data.color!="#FFFFFF"){
+                                    html+='<div class="col-md-4 col-6 text-center">';
+                                        html+='<b><l class="lang" key_lang="color">Color</l> <i class="fa-solid fa-palette"></i></b>';
+                                        html+='<p style="color:'+data.color+'">'+data.color+'</p>';
+                                    html+='</div>';
+                                }
 
                                 if(data.icon!=null&&carrot.icon.obj_icon!=null){
                                     var icon=carrot.icon.obj_icon[data.icon];
