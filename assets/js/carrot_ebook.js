@@ -652,7 +652,12 @@ class Carrot_Ebook{
         html+='<form class="fs-6 text-justify">';
             html+='<div class="form-group">';
                 html+='<label for="chapter_title">Chapter Title</label>';
-                html+='<input type="email" class="form-control m-0" id="chapter_title" value="'+data.contents[carrot.ebook.index_chapter_edit].title+'" aria-describedby="ChapterTitle" placeholder="Enter Chapter Title">';
+                html+='<div class="input-group mb-3">';
+                    html+='<input type="email" class="form-control m-0 form-control-sm" id="chapter_title" value="'+data.contents[carrot.ebook.index_chapter_edit].title+'" aria-describedby="ChapterTitle" placeholder="Enter Chapter Title">';
+                    html+='<div class="input-group-append dev">';
+                    html+='<span class="input-group-text btn-ms" role="button" onclick="paste_tag(\'chapter_title\')"><i class="fa-solid fa-paste"></i></span>';
+                    html+='</div>';
+                html+='</div>';
                 html+='<small id="emailHelp" class="form-text text-muted">Nhập tiêu đề cho chương</small>';
             html+='</div>';
 
@@ -691,7 +696,7 @@ class Carrot_Ebook{
         html+=this.nav_chapter(data);
         html+='<div class="fs-6 text-justify mt-2 mb-2">';
         html+='<h6 id="chapter_title">'+data.contents[carrot.ebook.index_chapter_edit].title+'</h6>';
-        html+='<div id="chapter_body text-dark">'+data.contents[carrot.ebook.index_chapter_edit].content+'</div>';
+        html+='<div id="chapter_body"  class="text-dark">'+data.contents[carrot.ebook.index_chapter_edit].content+'</div>';
         html+='</div>';
         html+=this.nav_chapter(data);
         return html;
@@ -708,7 +713,7 @@ class Carrot_Ebook{
             for(var i=0;i<data.contents.length;i++){
                 if(carrot.ebook.index_chapter_edit==i) s_class="active";
                 else s_class='';
-                html+='<li type="button" data-index="'+i+'" onclick="carrot.ebook.select_chapter_for_content_edit(this)" class="page-item '+s_class+' btn_chapter fs-9 nav_item_chapter_'+i+'"><span class="page-link text-secondary" tabindex="'+i+'">'+(i+1)+'</span></li>';
+                html+='<li type="button" data-index="'+i+'" onclick="carrot.ebook.select_chapter_for_content_edit(this)" class="page-item '+s_class+' btn_chapter fs-9 nav_item_chapter_'+i+'"><span class="page-link text-secondary bg-white" tabindex="'+i+'">'+(i+1)+'</span></li>';
             }
 
             html+='<li class="page-item" onclick="carrot.ebook.next_read_chapter_content()" type="button">';
