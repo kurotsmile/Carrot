@@ -799,7 +799,7 @@ class Carrot_Ebook{
         });
         html+='</div>';
         Swal.fire({
-            title:"Table Of Contents",
+            title:carrot.l("table_of_contents","Table of contents"),
             html:html
         });
     }
