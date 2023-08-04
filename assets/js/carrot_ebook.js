@@ -3,6 +3,9 @@ class Carrot_Ebook_File{
     //Meta Info
     title='Undefined';
     lang='en';
+    description='';
+    author='';
+    type='';
 
     container_xml='';
     content_opf='';
@@ -31,6 +34,21 @@ class Carrot_Ebook_File{
 
     set_lang(lang){
         this.lang=lang;
+        return this;
+    }
+
+    set_author(name){
+        this.author=name;
+        return this;
+    }
+
+    set_description(description){
+        this.description=description;
+        return this;
+    }
+
+    set_type(type){
+        this.type=type;
         return this;
     }
 
@@ -68,8 +86,16 @@ class Carrot_Ebook_File{
             this.toc_ncx+='</docTitle>';
 
             this.toc_ncx+='<navMap>';
+                
+                if(this.data_img_cover!=null){
+                    this.toc_ncx+='<navPoint id="navPoint-0" playOrder="0">';
+                    this.toc_ncx+='<navLabel><text>Cover</text></navLabel>';
+                    this.toc_ncx+='<content src="Text/cover.xhtml"/>';
+                    this.toc_ncx+='</navPoint>';
+                }
+
                 for(var i=0;i<this.chapters.length;i++){
-                    this.toc_ncx+='<navPoint id="navPoint-'+i+'" playOrder="1">';
+                    this.toc_ncx+='<navPoint id="navPoint-'+(i+1)+'" playOrder="'+(i+1)+'">';
                     this.toc_ncx+='<navLabel><text>'+this.chapters[i].title+'</text></navLabel>';
                     this.toc_ncx+='<content src="Text/chapter_'+i+'.xhtml"/>';
                     this.toc_ncx+='</navPoint>';
@@ -85,11 +111,18 @@ class Carrot_Ebook_File{
                 this.content_opf+='<dc:identifier opf:scheme="UUID" id="BookId">urn:uuid:7a8a677c-ed6b-4ea1-a2dd-d46f4c886a73</dc:identifier>';
                 this.content_opf+='<dc:language>'+this.lang+'</dc:language>';
                 this.content_opf+='<dc:title>'+this.title+'</dc:title>';
+                if(this.description!='') this.content_opf+='<dc:description>'+this.description+'</dc:description>';
+                if(this.author!='') this.content_opf+='<dc:creator opf:role="aut">'+this.author+'</dc:creator>';
+                if(this.type!='') this.content_opf+='<dc:type>'+this.type+'</dc:type>';
                 this.content_opf+='<meta name="Carrot Ebook version" content="1.9.30"/>';
                 this.content_opf+='<dc:date opf:event="modification" xmlns:opf="http://www.idpf.org/2007/opf">2023-07-16</dc:date>';
             this.content_opf+='</metadata>';
 
             this.content_opf+='<manifest>';
+                if(this.data_img_cover!=null){
+                    this.content_opf+='<item id="cover" href="images/cover.jpeg" media-type="image/jpeg"/>';
+                    this.content_opf+='<item id="coverxml" href="Text/cover.xhtml" media-type="application/xhtml+xml"/>';
+                }
                 this.content_opf+='<item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml"/>';
                 for(var i=0;i<this.chapters.length;i++){
                     this.content_opf+='<item id="chapter_'+i+'" href="Text/chapter_'+i+'.xhtml" media-type="application/xhtml+xml"/>';
@@ -97,6 +130,7 @@ class Carrot_Ebook_File{
             this.content_opf+='</manifest>';
 
             this.content_opf+='<spine toc="ncx">';
+                if(this.data_img_cover!=null)this.content_opf+='<itemref idref="coverxml"/>';
                 for(var i=0;i<this.chapters.length;i++){
                     this.content_opf+='<itemref idref="chapter_'+i+'"/>';
                 };
@@ -135,7 +169,7 @@ class Carrot_Ebook_File{
                 xhtml_cover+='</head>';
                 xhtml_cover+='<body>';
                 xhtml_cover+='<div class="body">';
-                    xhtml_cover+='<img class="cover" alt="cover" style="max-width: 100%;max-height: 100%;height: auto;width: auto;" src="images/cover.jpeg"/>';
+                    xhtml_cover+='<img alt="cover" style="max-width: 100%;max-height: 100%;height: auto;width: auto;" src="../images/cover.jpeg"/>';
                 xhtml_cover+='</div>';
                 xhtml_cover+='</body>';
             xhtml_cover+='</html>';
@@ -866,7 +900,11 @@ class Carrot_Ebook{
         var carrot=this.carrot;
         if(carrot.ebook.obj_ebook_cur!=null){
             if(carrot.ebook.obj_ebook_cur.icon!=null){
-                carrot.file.get_base64data_file(carrot.ebook.obj_ebook_cur.icon).then((data)=>{carrot.ebook.data_img_cover=data;});
+                carrot.file.get_base64data_file(carrot.ebook.obj_ebook_cur.icon).then((data)=>{
+                    carrot.icon.resizeImage(data, 740, 1186).then((result) => {
+                        carrot.ebook.data_img_cover=carrot.icon.makeblob(result);
+                    });
+                });
             }
         }
     }
@@ -875,7 +913,9 @@ class Carrot_Ebook{
         var ebook_file=new Carrot_Ebook_File();
         ebook_file.set_title(this.obj_ebook_cur.title);
         ebook_file.set_lang(this.obj_ebook_cur.lang);
-        if(this.data_img_cover!=null) ebook_file.set_cover(this.data_img_cover);
+        if(this.obj_ebook_cur.author!=null) ebook_file.set_author(this.obj_ebook_cur.author);
+        if(this.obj_ebook_cur.category!=null) ebook_file.set_type(this.obj_ebook_cur.category);
+        if(this.data_img_cover!=null) ebook_file.set_data_image_cover(this.data_img_cover);
         $(this.obj_ebook_cur.contents).each(function(index,content){
             ebook_file.add_chapter(content.title,content.content);
         });

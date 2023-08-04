@@ -217,6 +217,7 @@ class Carrot_File{
             var path_file=path_files.split('?');
             path_file=path_file[0];
             path_file=path_file.replaceAll("%2F","/");
+            path_file=path_file.replaceAll("%20"," ");
             storageRef.child(path_file).getDownloadURL().then((url) => {
                 var xhr = new XMLHttpRequest();
                 xhr.responseType = 'blob';
