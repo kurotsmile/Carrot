@@ -6,8 +6,10 @@ class Carrot_Ebook_File{
 
     container_xml='';
     content_opf='';
+
     toc_ncx='';
     chapters=Array();
+    data_img_cover=null;
 
     constructor(){
         this.container_xml+='<?xml version="1.0" encoding="UTF-8"?>';
@@ -35,6 +37,15 @@ class Carrot_Ebook_File{
     add_chapter(s_chapter_title,s_chapter_content){
         this.chapters.push({title:s_chapter_title,content:s_chapter_content});
         return this;
+    }
+
+    set_data_image_cover(data){
+        this.data_img_cover=data;
+        return this;
+    }
+
+    set_cover(data){
+        return this.set_data_image_cover(data);
     }
 
     download(){
@@ -67,7 +78,6 @@ class Carrot_Ebook_File{
 
         this.toc_ncx+='</ncx>';
 
-        
         this.content_opf+='<?xml version="1.0" encoding="utf-8"?>';
         this.content_opf+='<package version="2.0" unique-identifier="BookId" xmlns="http://www.idpf.org/2007/opf">';
 
@@ -94,6 +104,7 @@ class Carrot_Ebook_File{
 
         this.content_opf+='</package>';
 
+        
         zip.file("mimetype","application/epub+zip");
         zip.file("META-INF/container.xml",this.container_xml);
         zip.file("OEBPS/toc.ncx",this.toc_ncx);
@@ -112,6 +123,25 @@ class Carrot_Ebook_File{
             xhtml+='</html>';
             zip.file("OEBPS/Text/chapter_"+i+".xhtml",xhtml);
         };
+
+        if(this.data_img_cover!=null){
+            var xhtml_cover='';
+            xhtml_cover+='<?xml version="1.0" encoding="utf-8"?>';
+            xhtml_cover+='<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">';
+            xhtml_cover+='<html xmlns="http://www.w3.org/1999/xhtml">';
+                xhtml_cover+='<head>';
+                    xhtml_cover+='<title>Cover Image</title>';
+                    xhtml_cover+='<meta content="http://www.w3.org/1999/xhtml; charset=utf-8" http-equiv="Content-Type"/>';
+                xhtml_cover+='</head>';
+                xhtml_cover+='<body>';
+                xhtml_cover+='<div class="body">';
+                    xhtml_cover+='<img class="cover" alt="cover" style="max-width: 100%;max-height: 100%;height: auto;width: auto;" src="images/cover.jpeg"/>';
+                xhtml_cover+='</div>';
+                xhtml_cover+='</body>';
+            xhtml_cover+='</html>';
+            zip.file("OEBPS/Text/cover.xhtml",xhtml_cover);
+            zip.file("OEBPS/images/cover.jpeg",this.data_img_cover);
+        }
 
         zip.generateAsync({type:"blob"}).then(function(content) {
             saveAs(content,ebook_file.title+".epub");
@@ -133,6 +163,8 @@ class Carrot_Ebook{
     type_category_show='all';
     type_list_show='list_ebook';
     type_content_show='view';
+
+    data_img_cover=null;
 
     constructor(carrot){
         this.carrot=carrot;
@@ -614,6 +646,7 @@ class Carrot_Ebook{
             carrot.ebook.is_change_status=true;
         });
         carrot.ebook.check_mode_editor_content();
+        carrot.ebook.reader_cover_image_data();
     }
 
     change_mode_editor_content(){
@@ -829,10 +862,20 @@ class Carrot_Ebook{
         carrot.ebook.download();
     }
 
+    reader_cover_image_data(){
+        var carrot=this.carrot;
+        if(carrot.ebook.obj_ebook_cur!=null){
+            if(carrot.ebook.obj_ebook_cur.icon!=null){
+                carrot.file.get_base64data_file(carrot.ebook.obj_ebook_cur.icon).then((data)=>{carrot.ebook.data_img_cover=data;});
+            }
+        }
+    }
+
     download(){
         var ebook_file=new Carrot_Ebook_File();
         ebook_file.set_title(this.obj_ebook_cur.title);
         ebook_file.set_lang(this.obj_ebook_cur.lang);
+        if(this.data_img_cover!=null) ebook_file.set_cover(this.data_img_cover);
         $(this.obj_ebook_cur.contents).each(function(index,content){
             ebook_file.add_chapter(content.title,content.content);
         });
