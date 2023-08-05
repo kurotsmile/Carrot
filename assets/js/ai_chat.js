@@ -58,6 +58,7 @@ class AI_Chat{
         if(data["lang"]==null||data["lang"]=='') data["lang"]=carrot.langs.lang_setting;
         if(data["date_create"]==null||data["date_create"]=='') data["date_create"]=new Date().toISOString();
         carrot.ai_lover.chat.show_add_or_edit_chat(data).set_title("Update Chat").set_msg_done("Update Chat Success!").show();
+        carrot.ai_lover.chat.show_chat_father_in_form();
     }
 
     show_add_or_edit_chat(data){
@@ -100,15 +101,40 @@ class AI_Chat{
         for(var i=0;i<=40;i++) field_action.add_option(i,"Action "+i);
         var field_face=frm.create_field("face").set_label("Face").set_val(data["face"]).set_type("select");
         for(var i=0;i<=18;i++) field_face.add_option(i,"Face "+i);
-        frm.create_field("func").set_label("Function App").set_val(data["func"]);
+        var field_func=frm.create_field("func").set_label("Function App").set_val(data["func"]).set_type("select");
+        field_func.add_option("0","None");
+        field_func.add_option("1","Open Music");
+        field_func.add_option("2","Open Weather");
+        field_func.add_option("3","Open Fashion Shop");
+        field_func.add_option("4","Open Brain");
+
         frm.create_field("mp3").set_label("Mp3 (Url audio)").set_val(data["mp3"]);
         frm.create_field("link").set_label("Link (url Web or  URL scheme App)").set_val(data["link"]);
-        frm.create_field("pater").set_label("Pater").set_val(data["pater"]);
+        frm.create_field("pater").set_label("Pater").set_val(data["pater"]).set_tip("Father chat details");
+        frm.create_field("pater_details").set_label("Pater Details").set_val("Preview Pater Details").set_type("msg");
         frm.create_field("user").set_label("User").set_val(data["user"]).set_type("user");
         frm.create_field("limit").set_label("Limit Chat").set_val(data["limit"]).set_type("slider");
         frm.create_field("date_create").set_label("Date Create").set_val(data["date_create"]);
         frm.create_field("lang").set_label("Lang").set_type("lang").set_val(data["lang"]);
         return frm;
+    }
+
+    show_chat_father_in_form(){
+        var val_pater_id=$("#pater").val();
+        carrot.db.collection("chat-"+carrot.langs.lang_setting).doc(val_pater_id).get().then((doc) => {
+            if (doc.exists) {
+                var data_obj = doc.data();
+                data_obj["id"]=doc.id;
+                $("#pater_details").html(carrot.ai.chat.box_chat_item(data_obj,"col-md-12"));
+                Swal.close();
+                carrot.check_event();
+            } else {
+                $("#pater_details").html('<span class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i> No Found Chat</span>');
+                Swal.close();
+            }
+        }).catch((error) => {
+            carrot.log_error(error);
+        });
     }
 
     add_key_fnc_for_msg_field(){
