@@ -828,10 +828,8 @@ class Carrot_Site{
     log_error(error) {
         if(this.mode_site=="dev"){
             console.log(error);
-            const [, lineno, colno] = error.stack.match(/(\d+):(\d+)/);
             var html='';
             html+='<p>'+error.toString()+'</p>';
-            html+='<p>File:<b>'+error.fileName+'</b> Line:<b class="text-danger">'+lineno+'</b></p>';
             if(error.stack!=null) html+='<p class="fs-9">'+error.stack+'</p>';
             Swal.fire({
                 title: error.name,

@@ -342,7 +342,7 @@ class AI_Chat{
         if(data.status=="passed") s_body+='<i class="fa-solid fa-circle-check text-success"></i> ';
         if(data.status=="reserve") s_body+='<i class="fa-solid fa-circle-half-stroke"></i> ';
 
-        s_body+="<b>Status:</b> "+data.status+" ";
+        s_body+='<b>Status:</b> '+data.status+' ';
 
         if(data.sex_user=='0') s_body+='<i class="fa-solid fa-mars text-primary"></i>'; else s_body+='<i class="fa-solid fa-venus text-danger"></i>';
         s_body+=' <i class="fa-sharp fa-solid fa-right-left"></i> ';
