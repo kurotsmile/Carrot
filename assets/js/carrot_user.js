@@ -88,7 +88,9 @@ class Carrot_user{
         data_user_login.email=user.email;
         data_user_login.name=user.displayName;
         data_user_login.phone=user.phoneNumber;
-        data_user_login.avatar=user.photoURL;
+        let url_avatar = user.photoURL;
+        url_avatar = url_avatar.replace("s96-c", "s512-c");
+        data_user_login.avatar=url_avatar;
         data_user_login.id=user.uid;
         data_user_login.sex="0";
         data_user_login.lang=this.carrot.lang;

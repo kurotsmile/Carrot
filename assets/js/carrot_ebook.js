@@ -205,7 +205,7 @@ class Carrot_Ebook{
         carrot.register_page("ebook","carrot.ebook.list()","carrot.ebook.edit","carrot.ebook.show_ebook_by_id","carrot.ebook.reload");
         carrot.register_page("ebook_category","carrot.ebook.list_category()","carrot.ebook.edit_category","carrot.ebook.show_category","carrot.ebook.reload_category");
         
-        carrot.menu.create("ebook").set_label("Ebook").set_lang("ebook").set_icon(this.icon).set_type("main").set_act("carrot.ebook.list()");
+        carrot.menu.create("ebook_list").set_label("Ebook").set_lang("ebook").set_icon(this.icon).set_type("main").set_act("carrot.ebook.list()");
         carrot.menu.create("add_ebook").set_label("Add Ebook").set_icon(this.icon).set_type("add").set_act("carrot.ebook.add()");
 
         if(localStorage.getItem("obj_ebooks")!=null) this.obj_ebooks=JSON.parse(localStorage.getItem("obj_ebooks"));
@@ -281,10 +281,11 @@ class Carrot_Ebook{
                 querySnapshot.forEach((doc) => {
                     var data_ebook=doc.data();
                     data_ebook["id"]=doc.id;
+                    if(data_ebook["contents"]!=null) delete data_ebook.contents;
                     this.obj_ebooks[doc.id]=JSON.stringify(data_ebook);
                 });
                 this.carrot.update_new_ver_cur("ebook",true);
-                //this.save_obj();
+                this.save_obj();
                 this.show_list_ebook_by_data(this.obj_ebooks,carrot);
                 Swal.close();
             }else{
@@ -333,12 +334,25 @@ class Carrot_Ebook{
 
     box_ebook_item(ebook,s_class='col-md-4 mb-3'){
         var item_ebook=new Carrot_List_Item(carrot);
+        var url_cover_ebook_img='';
+        if(ebook.icon!=null){
+            if(ebook.icon!='') url_cover_ebook_img=ebook.icon;  
+        }
+
         item_ebook.set_index(ebook.index);
         item_ebook.set_db("ebook");
         item_ebook.set_id(ebook.id);
         item_ebook.set_title(ebook.title);
         item_ebook.set_tip(ebook.category);
-        item_ebook.set_icon_font(carrot.ebook.icon+" ebook_icon");
+        if(url_cover_ebook_img!='')
+            item_ebook.set_icon(url_cover_ebook_img);
+        else
+            item_ebook.set_icon_font(carrot.ebook.icon+" ebook_icon");
+
+        var html_body='';
+        if(ebook.author!=null) html_body+='<div class="d-block"><i class="fa-solid fa-user"></i> '+ebook.author+'</div>';
+        if(ebook.date!=null) html_body+='<div class="d-block"><i class="fa-solid fa-calendar-days"></i> '+ebook.date+'</div>';
+        item_ebook.set_body(html_body);
         item_ebook.set_class(s_class); 
         item_ebook.set_class_icon("col-md-2");
         item_ebook.set_class_body("col-md-10");
@@ -635,8 +649,8 @@ class Carrot_Ebook{
                 html+="</div>";
 
                 if(data.describe!=null){
-                    html+='<div class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
-                    html+='<h4 class="fw-semi fs-5 lang" key_lang="describe">About this Game</h4>';
+                    html+='<div id="about-ebook" class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
+                    html+='<h4 class="fw-semi fs-5"><l class="lang" key_lang="describe">Describe</l> <i role="button" onclick="$(\'#about-ebook\').hide();" class="btn fa-solid fa-circle-xmark float-end"></i></h4>';
                     html+='<p class="fs-8 text-justify">'+data["describe"]+'</p>';
                     html+='</div>';
                 }
@@ -656,7 +670,7 @@ class Carrot_Ebook{
 
             html+="</div>";
 
-            html+='<div class="col-md-4 ps-4 ps-lg-3">';
+            html+='<div class="col-md-4 ps-4 ps-lg-3" id="box_related_ebooks">';
                 html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-3 lang"  key_lang="related_ebooks">Related EBook</h4>';
                 var list_ebook_other=carrot.convert_obj_to_list(carrot.ebook.obj_ebooks).map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
                 var count_ebook=0;
@@ -681,6 +695,21 @@ class Carrot_Ebook{
         });
         carrot.ebook.check_mode_editor_content();
         carrot.ebook.reader_cover_image_data();
+        if(carrot.ebook.obj_ebooks==null) carrot.ebook.get_list_related_ebooks();
+    }
+
+    get_list_related_ebooks(){
+        this.carrot.db.collection("ebook").where("lang","==",this.carrot.langs.lang_setting).where("category","==",this.carrot.ebook.obj_ebook_cur.category).limit(200).get().then((querySnapshot) => {
+            if(querySnapshot.docs.length>0){
+                querySnapshot.forEach((doc) => {
+                    var data_ebook=doc.data();
+                    data_ebook["id"]=doc.id;
+                    if(data_ebook["contents"]!=null) delete data_ebook.contents;
+                    $("#box_related_ebooks").append(carrot.ebook.box_ebook_item(data_ebook,'col-md-12 mb-3'));
+                }); 
+                this.check_event(); 
+            }
+        });
     }
 
     change_mode_editor_content(){
