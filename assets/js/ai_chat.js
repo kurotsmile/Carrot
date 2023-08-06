@@ -55,10 +55,14 @@ class AI_Chat{
     }
 
     edit(data,carrot){
-        if(data["lang"]==null||data["lang"]=='') data["lang"]=carrot.langs.lang_setting;
+        if(data["lang"]==null){
+            data["lang"]=carrot.langs.lang_setting;
+        }else{
+            if(data["lang"]=="") data["lang"]=carrot.langs.lang_setting;
+        }
         if(data["date_create"]==null||data["date_create"]=='') data["date_create"]=new Date().toISOString();
         carrot.ai_lover.chat.show_add_or_edit_chat(data).set_title("Update Chat").set_msg_done("Update Chat Success!").show();
-        carrot.ai_lover.chat.show_chat_father_in_form();
+        if(data["pater"]!="") carrot.ai_lover.chat.show_chat_father_in_form();
     }
 
     show_add_or_edit_chat(data){
