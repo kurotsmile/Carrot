@@ -225,6 +225,7 @@ class Carrot_Icon{
             item_cat_icon.set_class("col-md-4 mb-3");
             item_cat_icon.set_class_icon("col-2");
             item_cat_icon.set_class_body("col-10");
+            if(category.buy=="buy") item_cat_icon.set_body('<i class="fa-solid fa-cart-shopping text-success text-end"></i>');
             html+=item_cat_icon.html();
         });
         html+='</div>';
@@ -325,6 +326,7 @@ class Carrot_Icon{
         var data_new=new Object();
         data_new["key"]="";
         data_new["icon"]="";
+        data_new["buy"]="free";
         this.add_or_edit_category(data_new).set_title("Add Category").set_msg_done("Add Icon Category Success!!!").show();
     }
 
@@ -338,6 +340,9 @@ class Carrot_Icon{
         frm.set_icon_font("fa-solid fa-rectangle-list");
         frm.create_field("key").set_label("Name Key").set_val(data["key"]).set_main();
         frm.create_field("icon").set_label("Icon (Font)").set_val(data["icon"]);
+        var field_buy=frm.create_field("buy").set_label("Status Buy").set_val(data["buy"]).set_type("select");
+        field_buy.add_option("free","Free");
+        field_buy.add_option("buy","buy");
         return frm;
     }
 
