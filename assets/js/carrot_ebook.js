@@ -680,7 +680,6 @@ class Carrot_Ebook{
                         html+=carrot.ebook.box_ebook_item(ebook,'col-md-12 mb-3');
                         count_ebook++;
                         if(count_ebook>12)break;
-                        
                     }
                 };
             html+="</div>";
