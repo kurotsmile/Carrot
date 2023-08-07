@@ -116,6 +116,7 @@ class Carrot_Ebook_File{
                 if(this.type!='') this.content_opf+='<dc:type>'+this.type+'</dc:type>';
                 this.content_opf+='<meta name="Carrot Ebook version" content="1.9.30"/>';
                 this.content_opf+='<dc:date opf:event="modification" xmlns:opf="http://www.idpf.org/2007/opf">2023-07-16</dc:date>';
+                if(this.data_img_cover!=null) this.content_opf+='<meta name="cover" content="cover" />';
             this.content_opf+='</metadata>';
 
             this.content_opf+='<manifest>';
