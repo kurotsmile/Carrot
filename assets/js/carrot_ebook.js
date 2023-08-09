@@ -429,7 +429,7 @@ class Carrot_Ebook{
         frm.create_field("icon").set_label("Icon Category (Font)").set_val(data["icon"]);
         frm.create_field("image").set_label("Cover Ebook Category Image (300x300)").set_val(data["image"]).set_type("file").set_type_file("image/*");
         $(this.carrot.langs.list_lang).each(function(index,lang){
-            frm.create_field("name_"+lang.key).set_label("Name "+lang.name+" <img style='width:20px;' src='"+lang.icon+"'>").set_val(data["name_"+lang.key]);
+            frm.create_field("name_"+lang.key).set_label("Name "+lang.name+" ("+lang.key+") <img style='width:20px;' src='"+lang.icon+"'>").set_val(data["name_"+lang.key]);
         });
         return frm;
     }
