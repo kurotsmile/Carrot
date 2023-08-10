@@ -17,13 +17,17 @@ class Carrot_user{
     }
 
     get_all_data_phone_book(){
+        Swal.showLoading();
         this.carrot.log("get_all_data_phone_book from sever");
         this.carrot.db.collection("user-"+this.carrot.lang).where("status_share", "==", "0").where("phone", "!=", "").limit(200).get().then((querySnapshot) => {
             if(querySnapshot.docs.length>0){
+                Swal.close();
                 this.obj_phone_book=Object();
                 querySnapshot.forEach((doc) => {
                     var data_phone=doc.data();
                     data_phone["id"]=doc.id;
+                    if(data_phone.rates!=null) delete data_phone.rates;
+                    if(data_phone.backup_contact!=null) delete data_phone.backup_contact;
                     this.obj_phone_book[doc.id]=JSON.stringify(data_phone);
                 });
                 this.save_obj_phone_book();
@@ -179,6 +183,8 @@ class Carrot_user{
 
     set_user_login(data_user){
         this.obj_login=data_user;
+        if(this.obj_login.rates!=null) delete this.obj_login.rates;
+        if(this.obj_login.backup_contact!=null) delete this.obj_login.backup_contact;
         localStorage.setItem("obj_login",JSON.stringify(this.obj_login));
         this.show_info_user_login_in_header();
     }
@@ -510,6 +516,24 @@ class Carrot_user{
                         if(user_address.lot!=null) html+='<iframe src="https://maps.google.com/maps?q='+user_address.lat+','+user_address.lot+'&hl='+carrot.lang+'&z=14&amp;output=embed" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>';
                         html+='</div>';
                     }
+                }
+
+                if(data_user.backup_contact!=null){
+                    html+='<div class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
+                    html+='<h4 class="fw-semi fs-5"><i class="fa-solid fa-address-book"></i> Contact backup list</h4>';
+                    html+='<small class="fw-semi fs-8">Contact backup list by account</small>';
+                    html+='<table class="table table-striped table-hover">';
+                    html+='<tbody>';
+                        $(data_user.backup_contact).each(function(index,contact){
+                            contact.index=index;
+                            html+='<tr>';
+                                html+='<td><i class="fa-solid fa-database"></i> '+contact.date+'</td>';
+                                html+='<td><i class="fa-solid fa-blender-phone"></i> '+contact.length+' contact</td>';
+                            html+='</tr>';
+                        });
+                    html+='</tbody>';
+                    html+='</table>';
+                    html+='</div>';
                 }
 
                 html+=carrot.rate.box_comment(data_user);
