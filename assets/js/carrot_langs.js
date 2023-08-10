@@ -437,6 +437,7 @@ class Carrot_Langs{
     }
 
     done_list_category_setting_lang(data,carrot){
+        carrot.change_title_page("lang_category","?p=lang_category","langs");
         carrot.langs.arr_lang_setting_db=data.lang_setting;
         var array_setting_lang=data.lang_setting;
         var html='';
@@ -449,9 +450,10 @@ class Carrot_Langs{
             item_lang_setting.set_index(index);
             item_lang_setting.set_id(langs);
             item_lang_setting.set_icon_font(carrot.langs.icon+" icon_lang_setting_db");
-            item_lang_setting.set_class_icon("col-2");
-            item_lang_setting.set_class_body("col-10");
+            item_lang_setting.set_class_icon("col-md-3 col-3");
+            item_lang_setting.set_class_body("col-md-9 col-9");
             item_lang_setting.set_title(langs);
+            item_lang_setting.set_tip(langs);
             html+=item_lang_setting.html();
         });
         html+='</div>';
