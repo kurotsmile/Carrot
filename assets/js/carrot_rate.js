@@ -68,7 +68,7 @@ class Carrot_Rate{
             var html='';
             html+='<div id="all_comment" class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
             html+='<h4 class="fw-semi fs-5"><i class="fa-solid fa-ranking-star"></i> <l class="lang" key_lang="player_rankings">Player rankings</l></h4>';
-            html+='<table class="table table-striped table-hover">';
+            html+='<table class="table table-responsive table-striped table-hover">';
             html+='<tbody>';
 
                 var list_rank= data.rank;
@@ -92,7 +92,7 @@ class Carrot_Rate{
             var html='';
             html+='<div id="all_report" class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
             html+='<h4 class="fw-semi fs-5"><i class="fa-solid fa-bug"></i> <l class="lang" key_lang="report">Report</l></h4>';
-            html+='<table class="table table-striped table-hover">';
+            html+='<table class="table table-responsive table-striped table-hover">';
             html+='<tbody>';
                 var list_report= data.reports;
                 $(list_report).each(function (index,report) {

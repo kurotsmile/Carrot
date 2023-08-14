@@ -377,7 +377,7 @@ class Carrot_App{
                     html+='<div class="col-md-8">';
                         html+='<h4 class="fw-semi fs-5" key_lang="qr_code">Other Link</h4>';
                         if(carrot.link_store.list_link_store!=null){
-                            html+='<table class="table table-striped">';
+                            html+='<table class="table table-responsive table-striped">';
                             $(carrot.link_store.list_link_store).each(function(index,store){
                                 if(data[store.key]!=null){
                                     var link_store_app=data[store.key];
