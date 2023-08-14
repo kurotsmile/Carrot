@@ -333,10 +333,15 @@ class AI_Chat{
         var s_body='';
         item_list.set_index(data.index);
         item_list.set_id(data.id);
-        if(data.pater!=''&&data.pater!='0')
+
+        if(data.pater!=''&&data.pater!='0'){
             item_list.set_icon_font("fa-solid fa-comments mt-2 chat_icon");
-        else
-            item_list.set_icon_font("fa-sharp fa-solid fa-comment mt-2 chat_icon");
+        }else{
+            if(data.link!="")
+                item_list.set_icon_font("fa-sharp fa-solid fa-link mt-2 chat_icon");
+            else
+                item_list.set_icon_font("fa-sharp fa-solid fa-comment mt-2 chat_icon");
+        }
             
         item_list.set_name(data.key);
         item_list.set_tip('<i class="fa-solid fa-circle" style="color:'+data.color+'"></i> '+' <span id="chat_msg_'+data.index+'">'+data.msg+'</span>');
