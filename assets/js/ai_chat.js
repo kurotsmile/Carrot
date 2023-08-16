@@ -263,6 +263,7 @@ class AI_Chat{
 
         carrot.change_title_page("Ai Lover", "?p=chat","chat");
         html_menu+='<button onclick="carrot.ai.chat.show_add()" type="button" class="btn btn-info btn-sm"><i class="fa-solid fa-circle-plus"></i> Add New Chat</button>';
+        html_menu+='<button onclick="carrot.ai.chat.del_multiple()" type="button" class="btn btn-danger btn-sm"><i class="fa-solid fa-eraser"></i></button>';
 
         html_menu+='<div class="btn-group" role="group">';
             html_menu+='<button class="btn btn-success dropdown-toggle btn-sm" type="button" id="btn_status_chat" data-bs-toggle="dropdown" aria-expanded="true" >';
@@ -346,6 +347,7 @@ class AI_Chat{
         item_list.set_name(data.key);
         item_list.set_tip('<i class="fa-solid fa-circle" style="color:'+data.color+'"></i> '+' <span id="chat_msg_'+data.index+'">'+data.msg+'</span>');
 
+        s_body+='<input type="checkbox" class="form-check-input chat_checkbox dev"/> ';
         if(data.reports!=null) s_body+='<i class="fa-solid fa-bug text-danger fa-fade"></i> ';
         if(data.status=="pending") s_body+='<i class="fa-regular fa-circle"></i> ';
         if(data.status=="passed") s_body+='<i class="fa-solid fa-circle-check text-success"></i> ';
@@ -486,6 +488,15 @@ class AI_Chat{
         $(".chat_icon").click(function(){
             var obj_id=$(this).attr("obj_id");
             carrot.ai.chat.show(obj_id,carrot);
+        });
+    }
+
+    del_multiple(){
+        $(".chat_checkbox").each(function(index,emp){
+            var ckb=$(emp).is(':checked');
+            if(ckb){
+                alert("sdsd");
+            }
         });
     }
 
