@@ -171,6 +171,11 @@ class Carrot_Music{
             carrot.music.get_data_from_server();
         });
 
+        $("#btn_open_app").click(function(){
+            var url_app="music://show/"+carrot.music.info_song_cur.id+"/"+carrot.music.info_song_cur.lang;
+            window.open(url_app, "_blank");
+        });
+
         carrot.check_event();
     }
 
@@ -267,14 +272,14 @@ class Carrot_Music{
                         html+='<div class="row pt-4">';
                             html+='<div class="col-12 text-center">';
                                 html+='<button id="btn_share" type="button" class="btn d-inline btn-success"><i class="fa-solid fa-share-nodes"></i> <l class="lang" key_lang="share">Share</l> </button> ';
-                                html+='<button id="register_protocol_url" type="button"  class="btn d-inline btn-success" ><i class="fa-solid fa-rocket"></i> <l class="lang" key_lang="open_with">Open with..</l> </button> ';
+                                html+='<button id="register_protocol_url" type="button" class="btn d-inline btn-success" ><i class="fa-solid fa-registered"></i> <l class="lang" key_lang="register_protocol_url">Check Open with..</l> </button> ';
+                                html+='<button id="btn_open_app" type="button" class="btn d-inline btn-success" ><i class="fa-solid fa-rocket"></i> <l class="lang" key_lang="open_with">Open with..</l> </button> ';
                                 if(data.mp3!=""){
                                     if(this.check_pay(data.name))
                                         html+='<button id="btn_download" type="button" class="btn d-inline btn-success"><i class="fa-solid fa-download"></i> <l class="lang" key_lang="download">Download</l> </button> ';
                                     else
                                         html+='<button id="btn_download" type="button" class="btn d-inline btn-info"><i class="fa-brands fa-paypal"></i> <l class="lang" key_lang="download">Download</l> </button> ';
                                 }
-                                    
                             html+='</div>';
                         html+='</div>';
 
