@@ -347,7 +347,7 @@ class AI_Chat{
         item_list.set_name(data.key);
         item_list.set_tip('<i class="fa-solid fa-circle" style="color:'+data.color+'"></i> '+' <span id="chat_msg_'+data.index+'">'+data.msg+'</span>');
 
-        s_body+='<input type="checkbox" class="form-check-input chat_checkbox dev"/> ';
+        s_body+='<input type="checkbox" class="form-check-input chat_checkbox dev" role="button" data-chat-id="'+data.id+'"/> ';
         if(data.reports!=null) s_body+='<i class="fa-solid fa-bug text-danger fa-fade"></i> ';
         if(data.status=="pending") s_body+='<i class="fa-regular fa-circle"></i> ';
         if(data.status=="passed") s_body+='<i class="fa-solid fa-circle-check text-success"></i> ';
@@ -492,12 +492,20 @@ class AI_Chat{
     }
 
     del_multiple(){
+        var count_del=0;
         $(".chat_checkbox").each(function(index,emp){
             var ckb=$(emp).is(':checked');
             if(ckb){
-                alert("sdsd");
+                var chat_id=$(emp).data("chat-id");
+                carrot.db.collection("chat-"+carrot.langs.lang_setting).doc(chat_id).delete().then(() => {
+                    $(emp).parent().parent().parent().parent().parent().parent().remove();
+                }).catch((error) => {
+                    carrot.log_error(error);
+                });
+                count_del++;           
             }
         });
+        carrot.msg("Delete "+count_del+" chat success!");
     }
 
     show_check_same_key(emp){
