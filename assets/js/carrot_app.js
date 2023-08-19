@@ -4,6 +4,7 @@ class Carrot_App{
     type_show;
     status_view='publish';
     icon="fa-solid fa-gamepad";
+    obj_app_cur=null;
 
     constructor(carrot){
         this.type_show="all";
@@ -248,10 +249,10 @@ class Carrot_App{
     show_app_by_id(id_box_app,carrot){
         if(carrot.check_ver_cur("app")){
             if(carrot.app.obj_app==null){
-                carrot.log("Load info app "+id_box_app+" from sever","warning");
+                carrot.log("No data cache - Load info app "+id_box_app+" from sever","warning");
                 carrot.get_doc("app",id_box_app,carrot.app.show_app_info);
             }else{
-                if(carrot.app.obj_app[id_box_app]==null){
+                if(carrot.app.obj_app[id_box_app]==undefined||carrot.app.obj_app[id_box_app]==null){
                     carrot.log("Load info app "+id_box_app+" from sever","warning");
                     carrot.get_doc("app",id_box_app,carrot.app.show_app_info);
                 }else{
@@ -267,6 +268,7 @@ class Carrot_App{
     }
 
     show_app_info(data,carrot){
+        carrot.app.obj_app_cur=data;
         if(data==null) $.MessageBox(carrot.l("no_obj"));
         carrot.change_title_page(data.name_en,"?p=app&id="+data.id,"app");
         var html='<div class="section-container p-2 p-xl-4">';
@@ -406,7 +408,7 @@ class Carrot_App{
 
             html+="</div>";
     
-            html+='<div class="col-md-4">';
+            html+='<div class="col-md-4" id="box_related_app">';
                 html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-3 lang"  key_lang="related_apps">Related Apps</h4>';
                 var list_app=carrot.convert_obj_to_list(carrot.app.obj_app);
                 list_app= list_app.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
@@ -422,6 +424,28 @@ class Carrot_App{
         carrot.app.type_show="all";
         carrot.show(html);
         carrot.app.check_btn_for_list_app();
+        if(carrot.app.obj_app==null) carrot.app.get_list_related_apps();
+    }
+
+    get_list_related_apps(){
+        this.carrot.db.collection("app").where("status","==","publish").limit(200).get().then((querySnapshot) => {
+            if(querySnapshot.docs.length>0){
+                var count_app=0;
+                carrot.app.obj_app=new Object();
+                querySnapshot.forEach((doc) => {
+                    var data_app=doc.data();
+                    data_app["id"]=doc.id;
+                    if(carrot.app.obj_app_cur.type==data_app.type&&this.carrot.app.obj_app_cur.id!=doc.id){
+                        $("#box_related_app").append(carrot.app.box_app_item(data_app,'col-md-12 mb-3'));
+                        count_app++;
+                    }
+                    carrot.app.obj_app[doc.id]=JSON.stringify(data_app);
+                    carrot.app.save_obj();
+                    if(count_app>=12) return false;
+                }); 
+                carrot.app.check_btn_for_list_app(); 
+            }
+        });
     }
 
     check_btn_for_list_app(){
