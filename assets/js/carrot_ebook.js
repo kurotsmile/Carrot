@@ -849,7 +849,7 @@ class Carrot_Ebook{
         count_chapter++;
         this.index_chapter_edit=(count_chapter-1);
         $('.richText-editor').html('');
-        $("#chapter_title").val("Chương "+count_chapter);
+        $("#chapter_title").val(carrot.l("chapter","Chapter")+" "+count_chapter);
         $(".btn_chapter").removeClass("active");
         var html='<button type="button"  data-index="'+(count_chapter-1)+'" onclick="carrot.ebook.select_chapter_for_content_edit(this)" class="btn btn-secondary active btn-sm btn_chapter nav_item_chapter_'+(count_chapter-1)+'">'+count_chapter+'</button>';
         $("#list_chapter_content").append(html);
