@@ -916,7 +916,7 @@ class Carrot_Site{
         $("#head_nav").show();
     }
 
-    btn_dev(db_collection,db_document,obj_js=null,func_edit=null,func_del=null){
+    btn_dev(db_collection,db_document,obj_js=null,func_edit=null,func_del=null,extra_content=''){
         var html='';
         if(obj_js==null) obj_js=db_collection;
         html+="<div class='row dev d-flex mt-2'>";
@@ -931,6 +931,7 @@ class Carrot_Site{
                 else
                     html+="<div role='button' class='dev btn btn_app_del btn-danger btn-sm mr-2'  db_collection='"+db_collection+"' db_document='"+db_document+"' db_obj='"+obj_js+"'><i class=\"fa-solid fa-trash\"></i></div> ";
 
+                html+=extra_content;
                 html+="<div role='button' class='dev btn btn_app_export btn-dark btn-sm mr-2'  db_collection='"+db_collection+"' db_document='"+db_document+"' db_obj='"+obj_js+"'><i class=\"fa-solid fa-download\"></i></div> ";
                 html+="<div role='button' class='dev btn btn_app_import btn-info btn-sm mr-2'  db_collection='"+db_collection+"' db_document='"+db_document+"' db_obj='"+obj_js+"'><i class=\"fa-solid fa-upload\"></i></div>";
             html+="</div>";

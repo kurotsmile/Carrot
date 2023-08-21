@@ -15,6 +15,7 @@ class Carrot_List_Item{
 
     s_act_edit;
     s_act_del;
+    s_btn_dev_extra='';
 
     constructor(carrot){
         this.carrot=carrot;
@@ -89,6 +90,10 @@ class Carrot_List_Item{
         this.s_act_del=s_fnc_del;
     }
 
+    set_btn_dev_extra(html_extra){
+        this.s_btn_dev_extra=html_extra;
+    }
+
     html(){
         var html='';
         var html="<div class='box_app "+this.class+"' id=\""+this.id+"\" key_search=\""+this.name+"\" data-sort='"+this.index+"'>";
@@ -104,7 +109,7 @@ class Carrot_List_Item{
                             html+=this.body;
                             html+="</div>";
                         }
-                        if(this.db_collection!=null)html+=this.carrot.btn_dev(this.db_collection,this.id,this.obj_js,this.s_act_edit,this.s_act_del);
+                        if(this.db_collection!=null)html+=this.carrot.btn_dev(this.db_collection,this.id,this.obj_js,this.s_act_edit,this.s_act_del,this.s_btn_dev_extra);
                         html+="</div>";
                     html+="</div>";
                 html+="</div>";

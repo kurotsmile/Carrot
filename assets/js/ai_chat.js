@@ -332,8 +332,10 @@ class AI_Chat{
     box_chat_item(data,s_class="col-md-4 mb-3"){
         var item_list=new Carrot_List_Item(carrot);
         var s_body='';
+        var s_key=data.key;
         item_list.set_index(data.index);
         item_list.set_id(data.id);
+        item_list.set_btn_dev_extra('<div role="button" class="dev btn btn-success btn-sm mr-2" onclick="carrot.ai.chat.get_list_by_key(\'key\',\''+s_key+'\');return false;"><i class="fa-solid fa-comment-dots"></i></div>');
 
         if(data.pater!=''&&data.pater!='0'){
             item_list.set_icon_font("fa-solid fa-comments mt-2 chat_icon");
