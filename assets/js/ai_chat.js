@@ -263,7 +263,7 @@ class AI_Chat{
 
         carrot.change_title_page("Ai Lover", "?p=chat","chat");
         html_menu+='<button onclick="carrot.ai.chat.show_add()" type="button" class="btn btn-info btn-sm"><i class="fa-solid fa-circle-plus"></i> Add New Chat</button>';
-        html_menu+='<button onclick="carrot.ai.chat.del_multiple()" type="button" class="btn btn-danger btn-sm"><i class="fa-solid fa-eraser"></i></button>';
+        html_menu+='<button onclick="carrot.ai.chat.del_multiple()" type="button" class="btn dev btn-danger btn-sm"><i class="fa-solid fa-eraser"></i></button>';
 
         html_menu+='<div class="btn-group" role="group">';
             html_menu+='<button class="btn btn-success dropdown-toggle btn-sm" type="button" id="btn_status_chat" data-bs-toggle="dropdown" aria-expanded="true" >';
@@ -333,17 +333,22 @@ class AI_Chat{
         var item_list=new Carrot_List_Item(carrot);
         var s_body='';
         var s_key=data.key;
+        var s_color_icon='';
+
         item_list.set_index(data.index);
         item_list.set_id(data.id);
         item_list.set_btn_dev_extra('<div role="button" class="dev btn btn-success btn-sm mr-2" onclick="carrot.ai.chat.get_list_by_key(\'key\',\''+s_key+'\');return false;"><i class="fa-solid fa-comment-dots"></i></div>');
 
+        if(data.status=="passed") s_color_icon=" text-success ";
+        if(data.status=="reserve") s_color_icon=" text-warning ";
+
         if(data.pater!=''&&data.pater!='0'){
-            item_list.set_icon_font("fa-solid fa-comments mt-2 chat_icon");
+            item_list.set_icon_font("fa-solid fa-comments mt-2 "+s_color_icon+" chat_icon");
         }else{
             if(data.link!="")
-                item_list.set_icon_font("fa-sharp fa-solid fa-link mt-2 chat_icon");
+                item_list.set_icon_font("fa-sharp fa-solid fa-link mt-2 "+s_color_icon+" chat_icon");
             else
-                item_list.set_icon_font("fa-sharp fa-solid fa-comment mt-2 chat_icon");
+                item_list.set_icon_font("fa-sharp fa-solid fa-comment mt-2 "+s_color_icon+" chat_icon");
         }
             
         item_list.set_name(data.key);
