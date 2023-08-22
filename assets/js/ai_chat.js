@@ -354,7 +354,7 @@ class AI_Chat{
         item_list.set_name(data.key);
         item_list.set_tip('<i class="fa-solid fa-circle" style="color:'+data.color+'"></i> '+' <span id="chat_msg_'+data.index+'">'+data.msg+'</span>');
 
-        s_body+='<input type="checkbox" class="form-check-input chat_checkbox dev" role="button" data-chat-id="'+data.id+'"/> ';
+        s_body+='<input type="checkbox" class="form-check-input chat_checkbox dev" role="button" data-chat-id="'+data.id+'" emp_type="box"/> ';
         if(data.reports!=null) s_body+='<i class="fa-solid fa-bug text-danger fa-fade"></i> ';
         if(data.status=="pending") s_body+='<i class="fa-regular fa-circle"></i> ';
         if(data.status=="passed") s_body+='<i class="fa-solid fa-circle-check text-success"></i> ';
@@ -502,10 +502,17 @@ class AI_Chat{
         var count_del=0;
         $(".chat_checkbox").each(function(index,emp){
             var ckb=$(emp).is(':checked');
+            var emp_type=$(emp).attr("emp_type");
+
             if(ckb){
                 var chat_id=$(emp).data("chat-id");
                 carrot.db.collection("chat-"+carrot.langs.lang_setting).doc(chat_id).delete().then(() => {
-                    $(emp).parent().parent().parent().parent().parent().parent().remove();
+                    if(emp_type=="box"){
+                        $(emp).parent().parent().parent().parent().parent().parent().remove();
+                    }
+                    else{
+                        $(emp).parent().parent().remove();
+                    } 
                 }).catch((error) => {
                     carrot.log_error(error);
                 });
@@ -529,6 +536,7 @@ class AI_Chat{
                 if(item_data["status"]=="passed") s_class_status='text-success'; else s_class_status='';
                 html+='<tr>';
                     html+='<td class="fs-9 d-block text-justify">';
+                        html+=' <input class="form-check-input chat_checkbox" type="checkbox" role="button" data-chat-id="'+item_data.id+'" emp_type="msg"/> ';
                         html+='<i class="fa-solid fa-circle-dot '+s_class_status+'"></i> ';
                         if(item_data.sex_user=='0') html+='<i class="fa-solid fa-mars text-primary"></i>'; else html+='<i class="fa-solid fa-venus text-danger"></i>';
                         html+=' <i class="fa-sharp fa-solid fa-right-left"></i> ';
@@ -536,7 +544,7 @@ class AI_Chat{
                         html+=' <b>'+item_data["key"]+'</b> : '+item_data["msg"];
                     html+='</td>';
                     html+='<td class="w-10">';
-                        html+='<i role="button" class="float-end dev btn_app_del fs-9 fa-solid fa-trash text-danger m-1" db_collection="chat-'+this.carrot.langs.lang_setting+'" db_document="'+item_data.id+'" db_obj="carrot.ai.chat"></i>';
+                        html+='<i role="button" onclick="carrot.ai.chat.delete_chat_in_msg(this);" class="float-end dev fs-9 fa-solid fa-trash text-danger m-1" db_collection="chat-'+this.carrot.langs.lang_setting+'" db_document="'+item_data.id+'" db_obj="carrot.ai.chat"></i>';
                         html+='<i role="button" class="float-end dev btn_app_edit fs-9 fa-solid fa-pen-to-square m-1" onclick="carrot.ai.chat.edit" db_collection="chat-'+this.carrot.langs.lang_setting+'" db_document="'+item_data.id+'" db_obj="carrot.ai.chat"></i>';
                     html+='</td>';
                 html+='</tr>';
@@ -544,10 +552,24 @@ class AI_Chat{
 
             html+='</tbody>';
             html+='</table>';
-            Swal.fire({
-                title:"Key Same",
-                html:html
-            });
+
+            Swal.close();
+
+            var frm=new Carrot_Form('ai_same_key',carrot);
+            frm.set_title("Key Same");
+
+            var table_list=frm.create_field("table_list");
+            table_list.set_type("msg");
+            table_list.set_val(html);
+
+            var btn_del_item=frm.create_btn();
+            btn_del_item.set_icon('fa-solid fa-trash-can');
+            btn_del_item.set_label("Delete items");
+            btn_del_item.set_act("carrot.ai.chat.del_multiple()");
+
+            frm.off_btn_done();
+            frm.show();
+
             this.carrot.check_event();
         }).catch((error) => {
             this.carrot.log_error(error);
@@ -658,6 +680,17 @@ class AI_Chat{
         carrot.show(html);
         carrot.check_event();
         carrot.ai.chat.check_event();
+    }
+
+    delete_chat_in_msg(emp){
+        var db_collection=$(emp).attr("db_collection");
+        var db_document=$(emp).attr("db_document");
+        carrot.db.collection(db_collection).doc(db_document).delete().then(() => {
+            $(emp).parent().parent().remove();
+            $("#"+db_document).remove();
+        }).catch((error) => {
+            carrot.log_error(error);
+        });
     }
 
     reload(carrot){
