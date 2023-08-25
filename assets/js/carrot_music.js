@@ -455,17 +455,17 @@ class Carrot_Music{
             html_thumb+='</div>';
             $("#link_ytb_tip").html(html_thumb);
 
-            this.carrot.db.collection("song").where("link_ytb","==",link_ytb).get().then((querySnapshot) => {
+            var link_ytb_check="https://www.youtube.com/watch?v="+id_ytb;
+            carrot.db.collection("song").where("link_ytb","==",link_ytb_check).get().then((querySnapshot) => {
                 $("#song_check").html("");
                 querySnapshot.forEach((doc) => {
                     $("#song_check").html('<i class="fa-solid fa-triangle-exclamation text-danger"></i> Có rồi mà đừng thêm vào!');
                 });
-            })
-            .catch((error) => {
+            }).catch((error) => {
                 this.carrot.log_error(error);
                 $("#song_check").html(error);
             });
-            
+
         })
     }
 
