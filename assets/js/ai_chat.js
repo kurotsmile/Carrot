@@ -536,7 +536,7 @@ class AI_Chat{
                 if(item_data["status"]=="passed") s_class_status='text-success'; else s_class_status='';
                 html+='<tr>';
                     html+='<td class="fs-9 d-block text-justify">';
-                        html+=' <input class="form-check-input chat_checkbox" type="checkbox" role="button" data-chat-id="'+item_data.id+'" emp_type="msg"/> ';
+                        html+=' <input class="form-check-input chat_checkbox dev" type="checkbox" role="button" data-chat-id="'+item_data.id+'" emp_type="msg"/> ';
                         html+='<i class="fa-solid fa-circle-dot '+s_class_status+'"></i> ';
                         if(item_data.sex_user=='0') html+='<i class="fa-solid fa-mars text-primary"></i>'; else html+='<i class="fa-solid fa-venus text-danger"></i>';
                         html+=' <i class="fa-sharp fa-solid fa-right-left"></i> ';
@@ -565,6 +565,7 @@ class AI_Chat{
             var btn_del_item=frm.create_btn();
             btn_del_item.set_icon('fa-solid fa-trash-can');
             btn_del_item.set_label("Delete items");
+            btn_del_item.set_class("btn dev btn-primary");
             btn_del_item.set_act("carrot.ai.chat.del_multiple()");
 
             frm.off_btn_done();
