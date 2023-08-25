@@ -454,18 +454,19 @@ class Carrot_Music{
             html_thumb+='<a href="'+thumbnails_ytb.medium.url+'" target="_blank"><img class="rounded" src="'+thumbnails_ytb.medium.url+'"></a>';
             html_thumb+='</div>';
             $("#link_ytb_tip").html(html_thumb);
-        });
 
-        this.carrot.db.collection("song").where("link_ytb","==",link_ytb).get().then((querySnapshot) => {
-            $("#song_check").html("");
-            querySnapshot.forEach((doc) => {
-                $("#song_check").html('<i class="fa-solid fa-triangle-exclamation text-danger"></i> Có rồi mà đừng thêm vào!');
+            this.carrot.db.collection("song").where("link_ytb","==",link_ytb).get().then((querySnapshot) => {
+                $("#song_check").html("");
+                querySnapshot.forEach((doc) => {
+                    $("#song_check").html('<i class="fa-solid fa-triangle-exclamation text-danger"></i> Có rồi mà đừng thêm vào!');
+                });
+            })
+            .catch((error) => {
+                this.carrot.log_error(error);
+                $("#song_check").html(error);
             });
+            
         })
-        .catch((error) => {
-            this.carrot.log_error(error);
-            $("#song_check").html(error);
-        });
     }
 
     reload(carrot){
