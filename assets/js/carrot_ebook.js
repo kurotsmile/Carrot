@@ -708,7 +708,7 @@ class Carrot_Ebook{
                     if(data_ebook["contents"]!=null) delete data_ebook.contents;
                     $("#box_related_ebooks").append(carrot.ebook.box_ebook_item(data_ebook,'col-md-12 mb-3'));
                 }); 
-                this.check_event(); 
+                carrot.ebook.check_event(); 
             }
         });
     }
