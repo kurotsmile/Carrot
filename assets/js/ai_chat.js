@@ -264,6 +264,7 @@ class AI_Chat{
         carrot.change_title_page("Ai Lover", "?p=chat","chat");
         html_menu+='<button onclick="carrot.ai.chat.show_add()" type="button" class="btn btn-info btn-sm"><i class="fa-solid fa-circle-plus"></i> Add New Chat</button>';
         html_menu+='<button onclick="carrot.ai.chat.del_multiple()" type="button" class="btn dev btn-danger btn-sm"><i class="fa-solid fa-eraser"></i></button>';
+        html_menu+='<button onclick="carrot.ai.chat.select_all()" type="button" class="btn dev btn-dark btn-sm"><i class="fa-solid fa-check-to-slot"></i></button>';
 
         html_menu+='<div class="btn-group" role="group">';
             html_menu+='<button class="btn btn-success dropdown-toggle btn-sm" type="button" id="btn_status_chat" data-bs-toggle="dropdown" aria-expanded="true" >';
@@ -691,6 +692,12 @@ class AI_Chat{
             $("#"+db_document).remove();
         }).catch((error) => {
             carrot.log_error(error);
+        });
+    }
+
+    select_all(){
+        $(".chat_checkbox").each(function(index,emp){
+            $(emp).prop('checked', true);
         });
     }
 
