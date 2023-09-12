@@ -660,6 +660,7 @@ class AI_Chat{
 
                     html+='</div>';
 
+                    data["collection"]="chat-"+carrot.langs.lang_setting;
                     html+=carrot.rate.box_report(data);
                     html+=carrot.rate.box_comment(data);
                     html+=carrot.link_store.box_qrdoce();

@@ -90,8 +90,12 @@ class Carrot_Rate{
     box_report(data){
         if (data.reports!=null) {
             var html='';
+            carrot.rate.data_obj=data;
             html+='<div id="all_report" class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
-            html+='<h4 class="fw-semi fs-5"><i class="fa-solid fa-bug"></i> <l class="lang" key_lang="report">Report</l></h4>';
+            html+='<h4 class="fw-semi fs-5">';
+                html+='<i class="fa-solid fa-bug"></i> <l class="lang" key_lang="report">Report</l>';
+                html+='<span role="button" onclick="carrot.rate.delete_all_report();" class="dev btn btn-danger float-end"><i class="fa-solid fa-trash-can"></i> Delete All</span>';
+            html+='</h4>';
             html+='<table class="table table-responsive table-striped table-hover">';
             html+='<tbody>';
                 var list_report= data.reports;
@@ -107,6 +111,17 @@ class Carrot_Rate{
             data.reports = Array();
             return "";
         }
+    }
+
+    delete_all_report(){
+        var id_obj_report=carrot.rate.data_obj.id;
+        var collection_obj_report=carrot.rate.data_obj.collection;
+        var reportRef = carrot.db.collection(collection_obj_report).doc(id_obj_report);
+        reportRef.update({
+            reports: firebase.firestore.FieldValue.delete()
+        });
+        carrot.msg("Delete All Report Success!");
+        $("#all_report").remove();
     }
 
     check_status_user_login(){
