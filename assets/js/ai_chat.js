@@ -116,6 +116,8 @@ class AI_Chat{
         field_func.add_option("7","Offline music playlist");
         field_func.add_option("8","Online music playlist");
         field_func.add_option("9","List of radio stations");
+        field_func.add_option("10","Rate");
+        field_func.add_option("11","Share");
 
         frm.create_field("mp3").set_label("Mp3 (Url audio)").set_val(data["mp3"]);
         frm.create_field("link").set_label("Link (url Web or  URL scheme App)").set_val(data["link"]);
