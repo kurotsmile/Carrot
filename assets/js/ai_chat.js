@@ -586,8 +586,18 @@ class AI_Chat{
     }
 
     show(id,carrot){
-        id=decodeURI(id);
-        carrot.get_doc("chat-"+carrot.langs.lang_setting,id,carrot.ai.chat.show_info);
+        var id_chat=carrot.get_param_url("id");
+        var lang_chat=carrot.get_param_url("lang_chat");
+        if(id=="undefined"){
+            carrot.get_doc("chat-"+lang_chat,id_chat,carrot.ai.chat.show_info);
+        }
+        else{
+            if(lang_chat==undefined){
+                carrot.get_doc("chat-"+carrot.langs.lang_setting,id,carrot.ai.chat.show_info);
+            }else{
+                carrot.get_doc("chat-"+lang_chat,id,carrot.ai.chat.show_info);
+            }
+        }
     }
 
     show_info(data,carrot){
