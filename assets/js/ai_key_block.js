@@ -10,7 +10,7 @@ class AI_Key_Block{
     }
 
     list(){
-        this.carrot.change_title_page("Block kye","?p=block","block");
+        this.carrot.change_title_page("Block Key","?p=block","block");
         this.show_list_by_key_lang(this.carrot.langs.lang_setting);
     }
 
