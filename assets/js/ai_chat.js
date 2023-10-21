@@ -48,7 +48,6 @@ class AI_Chat{
         data_new_chat["link"]="";
         data_new_chat["pater"]="";
         data_new_chat["user"]=this.carrot.user.get_user_login();
-        data_new_chat["limit"]="1";
         data_new_chat["date_create"]=new Date().toISOString();
         data_new_chat["lang"]=this.carrot.langs.lang_setting;
         return data_new_chat;
@@ -118,13 +117,13 @@ class AI_Chat{
         field_func.add_option("9","List of radio stations");
         field_func.add_option("10","Rate");
         field_func.add_option("11","Share");
+        field_func.add_option("12","Exit");
 
         frm.create_field("mp3").set_label("Mp3 (Url audio)").set_val(data["mp3"]);
         frm.create_field("link").set_label("Link (url Web or  URL scheme App)").set_val(data["link"]);
         frm.create_field("pater").set_label("Pater").set_val(data["pater"]).set_tip("Father chat details");
         frm.create_field("pater_details").set_label("Pater Details").set_val("Preview Pater Details").set_type("msg");
         frm.create_field("user").set_label("User").set_val(data["user"]).set_type("user");
-        frm.create_field("limit").set_label("Limit Chat").set_val(data["limit"]).set_type("slider");
         frm.create_field("date_create").set_label("Date Create").set_val(data["date_create"]);
         frm.create_field("lang").set_label("Lang").set_type("lang").set_val(data["lang"]);
         return frm;
