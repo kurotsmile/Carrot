@@ -14,6 +14,7 @@ class Carrot_Site{
     langs;
     lang_url="";
     recognition=null;
+    style_mode="sun";
 
     obj_version_new=null;
     obj_version_cur=null;
@@ -994,28 +995,28 @@ class Carrot_Site{
         });
         paypal.Buttons({
             createOrder: function(data, actions) {
-            return actions.order.create({
-                purchase_units: [{
-                    amount: {
-                        currency_code:'USD',
-                        value: price,
-                        breakdown: {item_total: {value: price, currency_code: 'USD'}}
-                    },
-                    items: [
-                        {
-                            name: name_product,
-                            quantity: "1",
-                            description: tip_product,
-                            sku: id_product,
-                            category: "DIGITAL_GOODS",
-                            unit_amount:{
-                                currency_code: "USD",
-                                value:price
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            currency_code:'USD',
+                            value: price,
+                            breakdown: {item_total: {value: price, currency_code: 'USD'}}
+                        },
+                        items: [
+                            {
+                                name: name_product,
+                                quantity: "1",
+                                description: tip_product,
+                                sku: id_product,
+                                category: "DIGITAL_GOODS",
+                                unit_amount:{
+                                    currency_code: "USD",
+                                    value:price
+                                }
                             }
-                        }
-                    ],
-                }]
-            });
+                        ],
+                    }]
+                });
             },
             onApprove: function(data, actions) {
             return actions.order.capture().then(function(details) {
@@ -1116,5 +1117,16 @@ class Carrot_Site{
     hide_loading_search(){
         $("#search_status_icon").attr("class","fa-sharp fa-solid fa-magnifying-glass");
         $("#box_input_search").val("");
+    }
+
+    change_style_mode(){
+        if(style_mode=="sun"){
+            this.style_mode="moon";
+            $("#btn_model_style_icon").html("fa-moon");
+        }
+        else{
+            this.style_mode="sun";
+            $("#btn_model_style_icon").html("fa-sun");
+        }
     }
 }
