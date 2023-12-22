@@ -310,6 +310,34 @@ class Carrot_Bible{
         Swal.close();
     }
 
+    delete_chapter(emp){
+        var index_chapter=$(emp).attr("index");
+        var name_book=$(this.emp_book_cur_edit).attr("book_name");
+        var data_book=JSON.parse(this.obj_bibles[name_book]);
+        var name_chapter=$(emp).attr("name_chapter");
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Delete Chapter ("+name_book+")-> "+name_chapter+" ?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed){
+                var contents=data_book["contents"];
+                this.emp_book_cur_edit["index_chapter"]=index_chapter;
+                this.model_chapter_to_book="delete_chapter";
+                contents.splice(index_chapter,1);
+                data_book["contents"]=contents;
+                Swal.close();
+                this.obj_bibles[name_book]=JSON.stringify(data_book);
+                this.carrot.set_doc("bible",name_book,data_book);
+            }
+        })
+    }
+
     add_book_old_testament(){
         var data_new=this.data_bible_new();
         data_new["type"]="old_testament";
@@ -352,7 +380,7 @@ class Carrot_Bible{
         $(data.contents).each(function(index,chapter){
             html+='<div role="button" class="d-block m-1 text-justify bg-light">';
             html+='<i class="fa-solid fa-note-sticky"></i> '+chapter.name+' ('+chapter.paragraphs.length+')';
-            html+='<button index="'+index+'" onclick="carrot.bible.edit_chapter(this);return false;" class="btn btn-sm btn-danger float-end"><i class="fa-solid fa-trash-can"></i></button>';
+            html+='<button index="'+index+'" name_chapter="'+chapter.name+'" onclick="carrot.bible.delete_chapter(this);return false;" class="btn btn-sm btn-danger float-end"><i class="fa-solid fa-trash-can"></i></button>';
             html+='<button index="'+index+'" onclick="carrot.bible.edit_chapter(this);return false;" class="btn btn-sm btn-secondary float-end"><i class="fa-solid fa-file-pen"></i></button>';
             html+='</div>';
         });
@@ -423,14 +451,14 @@ class Carrot_Bible{
                 contents: firebase.firestore.FieldValue.arrayUnion(chap_data)
             });
             data_book.contents.push(chap_data);
-            this.obj_bibles[book_name]=data_book;
+            this.obj_bibles[book_name]=JSON.stringify(data_book);
             carrot.msg("Add chapter to book bible successfully!");
         }
         else{
             var index_chapter=this.emp_book_cur_edit["index_chapter"];
             contents[index_chapter]=chap_data;
             data_book["contents"]=contents;
-            this.obj_bibles[book_name]=data_book;
+            this.obj_bibles[book_name]=JSON.stringify(data_book);
             this.carrot.set_doc("bible",book_name,data_book);
             carrot.msg("Update chapter to book bible successfully!");
         }

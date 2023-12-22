@@ -334,6 +334,7 @@ class Carrot_Site{
         if (this.count_act_dev >= 3) {
             this.is_dev = true;
             localStorage.setItem("is_dev", this.is_dev);
+            $("#btn_model_site").removeClass("d-none");
             $("#btn_model_site").show();
             this.count_act_dev = 0;
             $.MessageBox("Active Model Dev!");
