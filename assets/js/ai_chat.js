@@ -100,9 +100,16 @@ class AI_Chat{
         frm.create_field("sex_character").set_label("Sex Character").set_val(data["sex_character"]).set_type("select").add_option("0","Boy").add_option("1","Girl");
         frm.create_field("color").set_label("Color").set_val(data["color"]).set_type("color");
         frm.create_field("icon").set_label("Icon").set_val(data["icon"]).set_type("icon");
-        var field_action=frm.create_field("action").set_label("Action").set_val(data["action"]).set_type("select");
+        var btn_random_action=new Carrot_Btn();
+        btn_random_action.set_icon("fa-solid fa-shuffle");
+        btn_random_action.set_act("carrot.ai.chat.sel_random_action()");
+        var field_action=frm.create_field("action").set_label("Action").set_val(data["action"]).set_type("select").add_btn(btn_random_action);
         for(var i=0;i<=40;i++) field_action.add_option(i,"Action "+i);
-        var field_face=frm.create_field("face").set_label("Face").set_val(data["face"]).set_type("select");
+
+        var btn_random_face=new Carrot_Btn();
+        btn_random_face.set_icon("fa-solid fa-shuffle");
+        btn_random_face.set_act("carrot.ai.chat.sel_random_face()");
+        var field_face=frm.create_field("face").set_label("Face").set_val(data["face"]).set_type("select").add_btn(btn_random_face);
         for(var i=0;i<=18;i++) field_face.add_option(i,"Face "+i);
         var field_func=frm.create_field("func").set_label("Function App").set_val(data["func"]).set_type("select");
         field_func.add_option("0","None");
@@ -127,6 +134,18 @@ class AI_Chat{
         frm.create_field("date_create").set_label("Date Create").set_val(data["date_create"]);
         frm.create_field("lang").set_label("Lang").set_type("lang").set_val(data["lang"]);
         return frm;
+    }
+
+    sel_random_action(){
+        var length_action=$('#action').children('option').length;
+        var random_action=Math. floor(Math. random() * length_action) + 1;
+        $('#action').val(random_action);
+    }
+
+    sel_random_face(){
+        var length_face=$('#face').children('option').length;
+        var random_face=Math. floor(Math. random() * length_face) + 1;
+        $('#face').val(random_face);
     }
 
     show_chat_father_in_form(){

@@ -211,6 +211,7 @@ class Carrot_Field{
             html+='</div>';
         }
         else if(this.type=='select'){
+            html+='<div class="input-group mb-3">';
             html+='<select id="'+this.name+'" type="select" class="cr_field form-select form-select-sm">';
             for(var i=0;i<this.options.length;i++){
                 var item_option=this.options[i];
@@ -220,6 +221,8 @@ class Carrot_Field{
                     html+='<option value="'+item_option.key+'">'+item_option.val+'</option>';
             }
             html+='</select>';
+            html+=this.htm_btn_extension();
+            html+='</div>';
         }
         else if(this.type=='color'){
             html+='<input type="color" class="form-control form-control-color cr_field m-0"  id="'+this.name+'" value="'+this.value+'" title="Choose your color"></input>';
