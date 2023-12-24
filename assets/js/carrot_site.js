@@ -167,6 +167,10 @@ class Carrot_Site{
             $(this).addClass("active");
             $(this).find("i").addClass("fa-bounce");
         });
+
+        var TodayDate = new Date();
+        var m = TodayDate.getMonth();
+        $("#logo_carrot").attr("src","images/logo/logo_"+m+".png");
     }
 
     setup_sever_db(){
@@ -1121,13 +1125,18 @@ class Carrot_Site{
     }
 
     change_style_mode(){
-        if(style_mode=="sun"){
+        $("#btn_model_style_icon").removeClass("fa-moon");
+        $("#btn_model_style_icon").removeClass("fa-sun");
+        if(this.style_mode=="sun"){
             this.style_mode="moon";
-            $("#btn_model_style_icon").html("fa-moon");
+            $("#btn_model_style_icon").addClass("fa-sun");
+            $("#style_obj").attr("href","assets/css/style2.css?ver="+this.get_ver_cur("js"));
         }
         else{
             this.style_mode="sun";
-            $("#btn_model_style_icon").html("fa-sun");
+            $("#btn_model_style_icon").addClass("fa-moon");
+            $("#style_obj").attr("href","assets/css/style.css?ver="+this.get_ver_cur("js"));
         }
+        
     }
 }

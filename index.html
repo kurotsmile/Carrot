@@ -12,9 +12,9 @@
     <meta http-equiv="Expires" content="0"/>
 
     <link href="images/favicon.ico" rel="shortcut icon"  type="images/x-icon"/>
-    <link href="assets/plugins/bootstrap/bootstrap.min.css" rel="stylesheet"/>
-    <link href="assets/css/style.css" rel="stylesheet" type="text/css"/>
-    <link href="assets/css/all.min.css" rel="stylesheet" type="text/css"/>
+    <link href="assets/plugins/bootstrap/bootstrap.min.css?ver=1.10" rel="stylesheet"/>
+    <link id="style_obj" href="assets/css/style.css?ver=1.10" rel="stylesheet" type="text/css"/>
+
     <link href="fontawesome6.4.0/css/fontawesome.css" rel="stylesheet"/>
     <link href="fontawesome6.4.0/css/brands.css" rel="stylesheet"/>
     <link href="fontawesome6.4.0/css/solid.css" rel="stylesheet"/>
@@ -64,7 +64,7 @@
 <body style="padding: 0px !important;">
     <header class="head" id="head">
         <div class="logo border-bottom">
-            <img role="button" id="logo_carrot" class="w-100" src="images/logo.jpg" alt="Carrot Store" onclick="carrot.home()" />
+            <img role="button" id="logo_carrot" class="w-100" src="images/logo.png" onmouseout="this.src='images/logo.png'" onmouseover="this.src='images/logo_inner_shadow.png'" alt="Carrot Store" onclick="carrot.home()" />
             <a class="navbar-toggler d-block d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"><i class="bi fa-solid fa-bars"></i></a>
         </div>
         <div id="navbarNav" class="navcol pt-0 d-none d-lg-block overflow-auto">
@@ -96,7 +96,7 @@
                     </div>
 
                     <div id="btn_model_site" class="btn-menu btn btn-small btn-light cpfs-8 d-none" ><i class="fa-solid fa-window-maximize"></i></div>
-                    <div id="btn_model_style" onclick="carrot.change_style_mode()" class="btn-menu btn btn-small btn-light cpfs-8"><i id="btn_model_style_icon" class="fa-solid fa-moon"></i></div>
+                    <div id="btn_model_style" onclick="carrot.change_style_mode();return false;" class="btn-menu btn btn-small btn-light cpfs-8"><i id="btn_model_style_icon" class="fa-solid fa-moon"></i></div>
                     <div id="btn_pay_product" onclick="carrot.pay.list_product()" class="btn-menu btn btn-small btn-light cpfs-8" ><i class="fa-solid fa-bag-shopping"></i></div>
 
                     <div class="dropdown pt-2 d-inline">
