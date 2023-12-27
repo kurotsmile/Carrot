@@ -1082,7 +1082,7 @@ class Carrot_Site{
         });
     }
 
-    show_404(list_btn=null){
+    html_404(list_btn=null){
         var html='';
         html+='<div class="d-flex align-items-center justify-content-center vh-100">';
         html+='<div class="text-center row">';
@@ -1103,6 +1103,11 @@ class Carrot_Site{
         html+='</div>';
         html+='</div>';
         html+='</div>';
+        return html;
+    }
+
+    show_404(list_btn=null){
+        var html=this.html_404(list_btn);
         this.show(html);
         this.check_event();
     }

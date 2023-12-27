@@ -346,10 +346,16 @@ class AI_Chat{
         html+=carrot.ai.chat.menu();
         html+='<div class="row m-0">';
         var list_data=carrot.convert_obj_to_list(datas);
-        $(list_data).each(function(index,data){
-            data["index"]=index;
-            html+=carrot.ai.chat.box_chat_item(data);
-        });
+
+        if(list_data.length>0){
+            $(list_data).each(function(index,data){
+                data["index"]=index;
+                html+=carrot.ai.chat.box_chat_item(data);
+            });
+        }else{
+            html+=carrot.html_404();
+        }
+
         html+='</div>';
         carrot.show(html);
         carrot.ai.chat.check_event();

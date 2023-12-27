@@ -9,6 +9,9 @@ class Carrot_Icon{
     id_page="icon";
 
     type_show="list_icon";
+    orderBy_at="date_create";
+    orderBy_type="desc";
+    category_key="all";
 
     data_icon_64=null;
     data_icon_32=null;
@@ -597,8 +600,8 @@ class Carrot_Icon{
 
     msg_list_select(emp){
         this.emp_msg_field=emp;
-        var category_key=$(emp).data("category-key");
-        if(category_key=="all"){
+        this.category_key=$(emp).data("category-key");
+        if(this.category_key=="all"){
             if(this.obj_icon==null){
                 this.carrot.db.collection("icon").limit(28).get().then((querySnapshot) => {
                     if(querySnapshot.docs.length>0){
@@ -621,7 +624,7 @@ class Carrot_Icon{
                 this.done_msg_list_select(this.obj_icon,this.carrot);
             }
         }else{
-            this.carrot.db.collection("icon").where("category","==",category_key).limit(28).get().then((querySnapshot) => {
+            this.carrot.db.collection("icon").where("category","==",this.category_key).orderBy(this.orderBy_at,this.orderBy_type).limit(28).get().then((querySnapshot) => {
                 if(querySnapshot.docs.length>0){
                     this.obj_icon=new Object();
                     querySnapshot.forEach((doc) => {
@@ -652,17 +655,58 @@ class Carrot_Icon{
         var color_bg='';
         var emp_id=$(carrot.icon.emp_msg_field).data("emp-id");
         var id_icon=$("#"+emp_id).attr("value");
+
+        var style_date_create_desc='btn-secondary';
+        var style_date_create_asc='btn-secondary';
+        var style_name_desc='btn-secondary';
+        var style_name_asc='btn-secondary';
+
+        html+='<div class="btn-group d-block mt-3 mb-3" role="group" aria-label="Basic example">';
+            if(this.orderBy_at=="date_create"&&this.orderBy_type=="desc") style_date_create_desc='btn-success';
+            if(this.orderBy_at=="date_create"&&this.orderBy_type=="asc") style_date_create_asc='btn-success';
+            if(this.orderBy_at=="name"&&this.orderBy_type=="desc") style_name_desc='btn-success';
+            if(this.orderBy_at=="name"&&this.orderBy_type=="asc") style_name_asc='btn-success';
+
+            html+='<button onClick="carrot.icon.change_box_list_icon_by_order(\'date_create\',\'desc\');" type="button" class="btn '+style_date_create_desc+' btn-sm"><i class="fa-solid fa-arrow-up-short-wide"></i> Date</button>';
+            html+='<button onClick="carrot.icon.change_box_list_icon_by_order(\'date_create\',\'asc\');" type="button" class="btn  '+style_date_create_asc+' btn-sm"><i class="fa-solid fa-arrow-down-short-wide"></i> Date</button>';
+            html+='<button onClick="carrot.icon.change_box_list_icon_by_order(\'name\',\'desc\');" type="button" class="btn '+style_name_desc+' btn-sm"><i class="fa-solid fa-arrow-up-short-wide"></i> Key</button>';
+            html+='<button onClick="carrot.icon.change_box_list_icon_by_order(\'name\',\'asc\');" type="button" class="btn '+style_name_asc+'  btn-sm"><i class="fa-solid fa-arrow-down-short-wide"></i> Key</button>';
+        html+='</div>';
+
         $(list_icon).each(function(index,icon){
             icon.index=index;
             if(id_icon==icon.id) color_bg='bg-info'; else color_bg='';
             html+="<img role='button' title='"+icon.name+"' data-id-icon='"+icon.id+"' data-color='"+icon.color+"' file_url='"+icon.icon+"' onclick='carrot.icon.select_icon_for_msg(this);return false;' style='width:50px' class='rounded m-1 "+color_bg+"' src='"+icon.icon+"'/>";
             if(index>19) return false;
         });
-        
+
         Swal.fire({
             title: 'Select Icon',
             html:html,
             showCancelButton: false
+        });
+    }
+
+    change_box_list_icon_by_order(orderBy_at,orderBy_type){
+        this.orderBy_at=orderBy_at;
+        this.orderBy_type=orderBy_type;
+
+        this.carrot.db.collection("icon").where("category","==",this.category_key).orderBy(this.orderBy_at,this.orderBy_type).limit(28).get().then((querySnapshot) => {
+            if(querySnapshot.docs.length>0){
+                this.obj_icon=new Object();
+                querySnapshot.forEach((doc) => {
+                    var data_icon=doc.data();
+                    data_icon["id"]=doc.id;
+                    this.obj_icon[doc.id]=JSON.stringify(data_icon);
+                });
+                this.save_obj_icon();
+                this.done_msg_list_select(this.obj_icon,this.carrot);
+            }else{
+                this.done_msg_list_select(null,this.carrot);
+            }
+        }).catch((error) => {
+            console.log(error);
+            this.carrot.msg(error.message,"error");
         });
     }
 
