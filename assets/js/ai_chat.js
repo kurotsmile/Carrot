@@ -560,16 +560,28 @@ class AI_Chat{
         this.carrot.db.collection("chat-"+this.carrot.langs.lang_setting).where("key","==",key_chat).limit(100).get().then((querySnapshot) => {
             var html='';
             var s_class_status='';
+            var s_class_chat_type='fa-solid fa-comments';
+
             html+='<table class="table table-sm table-hover">';
             html+='<tbody>';
             querySnapshot.forEach((doc) => {
                 var item_data=doc.data();
                 item_data["id"]=doc.id;
                 if(item_data["status"]=="passed") s_class_status='text-success'; else s_class_status='';
+
+                if(item_data["pater"]!=''&&item_data["pater"]!='0'){
+                    s_class_chat_type='fa-solid fa-comments';
+                }else{
+                    if(item_data["link"]!="")
+                        s_class_chat_type='fa-sharp fa-solid fa-link';
+                    else
+                        s_class_chat_type='fa-sharp fa-solid fa-comment';
+                }
+
                 html+='<tr>';
                     html+='<td class="fs-9 d-block text-justify">';
                         html+=' <input class="form-check-input chat_checkbox dev" type="checkbox" role="button" data-chat-id="'+item_data.id+'" emp_type="msg"/> ';
-                        html+='<i class="fa-solid fa-circle-dot '+s_class_status+'"></i> ';
+                        html+='<i class="'+s_class_chat_type+' '+s_class_status+'"></i> ';
                         if(item_data.sex_user=='0') html+='<i class="fa-solid fa-mars text-primary"></i>'; else html+='<i class="fa-solid fa-venus text-danger"></i>';
                         html+=' <i class="fa-sharp fa-solid fa-right-left"></i> ';
                         if(item_data.sex_character=='0') html+='<i class="fa-solid fa-person text-primary"></i>'; else html+='<i class="fa-solid fa-person-dress text-danger"></i>';
