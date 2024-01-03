@@ -719,4 +719,13 @@ class Carrot_Icon{
         if($('#color').length) $("#color").val(color_icon);
         Swal.close();
     }
+
+    msg_list_select_random(){
+        this.load_obj_icon();
+        var arr_ico=this.carrot.obj_to_array(this.obj_icon);
+        var index_ico_rand=Math.floor(Math.random() * arr_ico.length);
+        var obj_ico_sel=arr_ico[index_ico_rand];
+        $("#icon").attr("value",obj_ico_sel.id).attr("src",obj_ico_sel.icon);
+        if($('#color').length) $("#color").val(obj_ico_sel.color);
+    }
 }

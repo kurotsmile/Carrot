@@ -772,3 +772,12 @@ Description: This Template is created for Youtubers
   background-color: #535353 !important;
   border-color: #535353 !important;
 }
+
+.text-dark {
+  color: #e9e7e5 !important;
+}
+
+div:where(.swal2-container) div:where(.swal2-popup) {
+  background: #555555 !important;
+  color: white !important;
+}
