@@ -1113,11 +1113,57 @@ class Carrot_Site{
     }
 
     show_site_map(){
-        var html='<?xml version="1.0" encoding="utf-8"?>';
-        html+='<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" >';
-        html+=this.app.site_map();
-        html+='</urlset>';
+        let today = new Date().toISOString();
+        var s_xml_app='';
+        var s_xml_song='';
+        var s_xml='';
+
+        var html='';
+        html+='<textarea id="data_xml_site_map" name="data_xml_site_map" class="language-xml hljs" rows="4" cols="50" style="width:100%;height:100%"></textarea>';
         this.show(html);
+
+        this.db.collection("app").get().then((querySnapshot) => {
+            var s_val_app='';
+            querySnapshot.forEach((doc) => {
+                var xml_txt="";
+                var url_web="https://carrotstore.web.app/?p=app&id="+doc.id;
+                xml_txt+="<url>\n";
+                xml_txt+="\t<loc>"+url_web+"</loc>\n";
+                xml_txt+="\t<lastmod>"+today+"</lastmod>\n";
+                xml_txt+="\t<changefreq>Daily</changefreq>\n";
+                xml_txt+="\t<priority>1</priority>\n";
+                xml_txt+="</url>\n";
+                s_val_app=s_val_app+xml_txt;
+            });
+            s_xml_app=s_val_app;
+
+            this.db.collection("song").get().then((querySnapshot2) => {
+                var s_val2='';
+                querySnapshot2.forEach((doc) => {
+                    var xml_txt="";
+                    var url_web="https://carrotstore.web.app/?p=song&id="+doc.id;
+                    xml_txt+="<url>\n";
+                    xml_txt+="\t<loc>"+url_web+"</loc>\n";
+                    xml_txt+="\t<lastmod>"+today+"</lastmod>\n";
+                    xml_txt+="\t<changefreq>Daily</changefreq>\n";
+                    xml_txt+="\t<priority>1</priority>\n";  
+                    xml_txt+="</url>\n";
+                    s_val2=s_val2+xml_txt;  
+                });
+                s_xml_song=s_val2;
+                s_xml+='<?xml version="1.0" encoding="UTF-8"?>\n';
+                s_xml+='<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
+                s_xml+=s_xml_app+"\n"+s_xml_song+"\n";
+                s_xml+='</urlset>';
+                $("#data_xml_site_map").val(s_xml);
+                hljs.highlightAll();
+            }).catch((error) => {
+                this.log_error(error);
+            });
+
+        }).catch((error) => {
+            this.log_error(error);
+        });
     }
 
     show_loading_search(){
@@ -1142,6 +1188,5 @@ class Carrot_Site{
             $("#btn_model_style_icon").addClass("fa-moon");
             $("#style_obj").attr("href","assets/css/style.css?ver="+this.get_ver_cur("js"));
         }
-        
     }
 }
