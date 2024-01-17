@@ -7,7 +7,7 @@ class AI_Chat{
     orderBy_type="desc";
     where_a="status";
     where_b="==";
-    where_c="pending";
+    where_c="passed";
 
     show_type="msg";
 
@@ -125,6 +125,7 @@ class AI_Chat{
         field_func.add_option("10","Rate");
         field_func.add_option("11","Share");
         field_func.add_option("12","Exit");
+        field_func.add_option("13","List Background");
 
         frm.create_field("mp3").set_label("Mp3 (Url audio)").set_val(data["mp3"]);
         frm.create_field("link").set_label("Link (url Web or  URL scheme App)").set_val(data["link"]);
@@ -379,8 +380,14 @@ class AI_Chat{
         }else{
             if(data.link!="")
                 item_list.set_icon_font("fa-sharp fa-solid fa-link mt-2 "+s_color_icon+" chat_icon");
-            else
-                item_list.set_icon_font("fa-sharp fa-solid fa-comment mt-2 "+s_color_icon+" chat_icon");
+            else{
+                if(data.func!="0"){
+                    item_list.set_icon_font("fa-solid fa-comment-dots mt-2 "+s_color_icon+" chat_icon");
+                } 
+                else{
+                    item_list.set_icon_font("fa-solid fa-comment mt-2 "+s_color_icon+" chat_icon");
+                }
+            }
         }
             
         item_list.set_name(data.key);
@@ -574,8 +581,13 @@ class AI_Chat{
                 }else{
                     if(item_data["link"]!="")
                         s_class_chat_type='fa-sharp fa-solid fa-link';
-                    else
-                        s_class_chat_type='fa-sharp fa-solid fa-comment';
+                    else{
+                        if(item_data["func"]=="0"){
+                            s_class_chat_type='fa-sharp fa-solid fa-comment';
+                        }else{
+                            s_class_chat_type='fa-solid fa-comment-dots';
+                        }
+                    }
                 }
 
                 html+='<tr>';

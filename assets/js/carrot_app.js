@@ -392,7 +392,7 @@ class Carrot_App{
                                                 html+=store.name;
                                             html+='</td>';
                                             html+='<td class="fs-6">';
-                                                html+='<a class="link_app" title="'+store.name+'" target="_blank" href="'+link_store_app+'">'+link_store_app+'</a>';
+                                                html+='<a class="link_app text-break" title="'+store.name+'" target="_blank" href="'+link_store_app+'">'+link_store_app+'</a>';
                                             html+='</td>';
                                         html+='</tr>';
                                     }
