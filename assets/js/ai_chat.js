@@ -126,6 +126,9 @@ class AI_Chat{
         field_func.add_option("11","Share");
         field_func.add_option("12","Exit");
         field_func.add_option("13","List Background");
+        field_func.add_option("14","Next Music");
+        field_func.add_option("15","Pause Music");
+        field_func.add_option("16","Open a system settings by link");
 
         frm.create_field("mp3").set_label("Mp3 (Url audio)").set_val(data["mp3"]);
         frm.create_field("link").set_label("Link (url Web or  URL scheme App)").set_val(data["link"]);
