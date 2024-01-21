@@ -286,6 +286,28 @@ class AI_Chat{
         carrot.ai.chat.show_all_chat();
     }
 
+    get_list_by_function(){
+        carrot.ai.chat.orderBy_at='func';
+        carrot.ai.chat.show_type='msg';
+        carrot.ai.chat.where_a='func';
+        carrot.ai.chat.where_b='!=';
+        carrot.ai.chat.where_c='0';
+        carrot.ai.chat.show_all_chat();
+    }
+
+    
+    get_list_by_user(){
+        var user_name_view=window.prompt("Enter Name User view", "Thien Thanh Tran");
+        if(user_name_view.trim()=="") return false;
+        
+        carrot.ai.chat.orderBy_at='user.name';
+        carrot.ai.chat.show_type='msg';
+        carrot.ai.chat.where_a='user.name';
+        carrot.ai.chat.where_b='==';
+        carrot.ai.chat.where_c=user_name_view;
+        carrot.ai.chat.show_all_chat();
+    }
+
     menu(){
         var html_menu='';
         var s_class_active='';
@@ -334,6 +356,8 @@ class AI_Chat{
                     html_menu+='<button onclick="carrot.ai.chat.get_list_by_key(\'key\',\'hi_'+i+'\');return false;" type="button" class="dropdown-item '+s_class_active+'"><i class="fa-solid fa-comments"></i> hi_'+i+'</button>';
                 }
                 html_menu+='<button onclick="carrot.ai.chat.get_list_by_key(\'key\',\'hit\');return false;" type="button" class="dropdown-item"><i class="fa-solid fa-hand-back-fist"></i> hit</button>';
+                html_menu+='<button onclick="carrot.ai.chat.get_list_by_function();return false;" type="button" class="dropdown-item"><i class="fa-solid fa-atom"></i> Function</button>';
+                html_menu+='<button onclick="carrot.ai.chat.get_list_by_user();return false;" type="button" class="dropdown-item"><i class="fa-solid fa-user"></i> User</button>';
             html_menu+='</div>';
         html_menu+='</div>';
 
