@@ -10,6 +10,7 @@ class AI_Chat{
     where_c="passed";
 
     show_type="msg";
+    funcs=[];
 
     constructor(carrot){
         this.carrot=carrot;
@@ -18,6 +19,24 @@ class AI_Chat{
         $(btn_list_chat).click(function(){carrot.ai.chat.show_all_chat(carrot.lang);});
         carrot.menu.create_menu("add_chat").set_label("Add Chat").set_icon(this.icon).set_act("carrot.ai.chat.show_add()").set_type("add");
         if(localStorage.getItem("obj_chats")!=null) this.obj_chats=JSON.parse(localStorage.getItem("obj_chats"));
+
+        this.funcs[0]="None";
+        this.funcs[1]="Open Music";
+        this.funcs[2]="Open Weather";
+        this.funcs[3]="Open Fashion Shop";
+        this.funcs[4]="Open Brain";
+        this.funcs[5]="Play Music";
+        this.funcs[6]="Stop Music";
+        this.funcs[7]="Offline music playlist";
+        this.funcs[8]="Online music playlist";
+        this.funcs[9]="List of radio stations";
+        this.funcs[10]="Rate";
+        this.funcs[11]="Share";
+        this.funcs[12]="Exit";
+        this.funcs[13]="List Background";
+        this.funcs[14]="Next Music";
+        this.funcs[15]="Pause Music";
+        this.funcs[16]="Open a system settings by link";
     }
 
     save_obj_chats(){
@@ -112,23 +131,9 @@ class AI_Chat{
         var field_face=frm.create_field("face").set_label("Face").set_val(data["face"]).set_type("select").add_btn(btn_random_face);
         for(var i=0;i<=18;i++) field_face.add_option(i,"Face "+i);
         var field_func=frm.create_field("func").set_label("Function App").set_val(data["func"]).set_type("select");
-        field_func.add_option("0","None");
-        field_func.add_option("1","Open Music");
-        field_func.add_option("2","Open Weather");
-        field_func.add_option("3","Open Fashion Shop");
-        field_func.add_option("4","Open Brain");
-        field_func.add_option("5","Play Music");
-        field_func.add_option("6","Stop Music");
-        field_func.add_option("7","Offline music playlist");
-        field_func.add_option("8","Online music playlist");
-        field_func.add_option("9","List of radio stations");
-        field_func.add_option("10","Rate");
-        field_func.add_option("11","Share");
-        field_func.add_option("12","Exit");
-        field_func.add_option("13","List Background");
-        field_func.add_option("14","Next Music");
-        field_func.add_option("15","Pause Music");
-        field_func.add_option("16","Open a system settings by link");
+        for (let i = 0; i < this.funcs.length; i++) {
+            field_func.add_option(i,this.funcs[i]);
+        }
 
         frm.create_field("mp3").set_label("Mp3 (Url audio)").set_val(data["mp3"]);
         frm.create_field("link").set_label("Link (url Web or  URL scheme App)").set_val(data["link"]);
@@ -354,11 +359,11 @@ class AI_Chat{
                     if(carrot.ai.chat.where_a=='key'){
                         if(carrot.ai.chat.where_c=='hi_'+i) s_class_active="active"; else s_class_active="";
                     }
-                    html_menu+='<button onclick="carrot.ai.chat.get_list_by_key(\'key\',\'hi_'+i+'\');return false;" type="button" class="dropdown-item '+s_class_active+'"><i class="fa-solid fa-comments"></i> hi_'+i+'</button>';
+                    html_menu+='<div onclick="carrot.ai.chat.get_list_by_key(\'key\',\'hi_'+i+'\');return false;" type="button" class="dropdown-item '+s_class_active+'"><i class="fa-solid fa-comments"></i> hi_'+i+'</div>';
                 }
-                html_menu+='<button onclick="carrot.ai.chat.get_list_by_key(\'key\',\'hit\');return false;" type="button" class="dropdown-item"><i class="fa-solid fa-hand-back-fist"></i> hit</button>';
-                html_menu+='<button onclick="carrot.ai.chat.get_list_by_function();return false;" type="button" class="dropdown-item"><i class="fa-solid fa-atom"></i> Function</button>';
-                html_menu+='<button onclick="carrot.ai.chat.get_list_by_user();return false;" type="button" class="dropdown-item"><i class="fa-solid fa-user"></i> User</button>';
+                html_menu+='<div onclick="carrot.ai.chat.get_list_by_key(\'key\',\'hit\');return false;" type="button" class="dropdown-item"><i class="fa-solid fa-hand-back-fist"></i> hit</div>';
+                html_menu+='<div onclick="carrot.ai.chat.get_list_by_function();return false;" type="button" class="dropdown-item"><i class="fa-solid fa-atom"></i> Function</div>';
+                html_menu+='<div onclick="carrot.ai.chat.get_list_by_user();return false;" type="button" class="dropdown-item"><i class="fa-solid fa-user"></i> User</div>';
             html_menu+='</div>';
         html_menu+='</div>';
 
@@ -748,6 +753,21 @@ class AI_Chat{
                                     html+='<div class="col-md-4 col-6 text-center">';
                                     html+='<b><l class="lang" key_lang="author">Author</l> <i class="fa-solid fa-user-nurse"></i></b>';
                                     html+='<p>'+data.user.name+'</p>';
+                                    html+='</div>';
+                                }
+
+                                if(data.func!=undefined){
+                                    var index_func=parseInt(data.func);
+                                    html+='<div class="col-md-4 col-6 text-center">';
+                                    html+='<b><l>Function</l> <i class="fa-solid fa-atom"></i></b>';
+                                    html+='<p>'+carrot.ai.chat.funcs[index_func]+'</p>';
+                                    html+='</div>';
+                                }
+
+                                if(data.link!=""){
+                                    html+='<div class="col-md-4 col-6 text-center">';
+                                    html+='<b><l>Link</l> <i class="fa-solid fa-link"></i></b>';
+                                    html+='<p>'+data.link+'</p>';
                                     html+='</div>';
                                 }
 
