@@ -238,6 +238,8 @@ class Carrot_Field{
                 if(icon!=null){
                     icon=JSON.parse(icon);
                     url_icon=icon.icon;
+                }else{
+                    carrot.icon.set_img_icon_url_by_id(this.value,this.name);
                 }
             }
             html+='<div class="input-group mb-3">';

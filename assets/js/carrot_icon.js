@@ -118,6 +118,16 @@ class Carrot_Icon{
         this.carrot.update_new_ver_cur("icon_category");
     }
 
+    set_img_icon_url_by_id(s_id_icon,emp_id){
+        this.carrot.db.collection("icon").doc(s_id_icon).get().then((doc) => {
+            if (doc.exists) {
+                var data_obj = doc.data();
+                $("#"+emp_id).attr("src",data_obj.icon);
+                return data_obj.icon;
+            }
+        });
+    }
+
     done_get_category(datas,carrot){
         carrot.icon.obj_icon_category=datas;
         carrot.icon.save_obj_icon_category();
