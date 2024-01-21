@@ -280,6 +280,7 @@ class AI_Chat{
     }
 
     get_list_by_key(opera_a,opera_c){
+        carrot.ai.chat.orderBy_at='date_create';
         carrot.ai.chat.show_type='msg';
         carrot.ai.chat.where_a=opera_a;
         carrot.ai.chat.where_c=opera_c;
@@ -299,7 +300,7 @@ class AI_Chat{
     get_list_by_user(){
         var user_name_view=window.prompt("Enter Name User view", "Thien Thanh Tran");
         if(user_name_view.trim()=="") return false;
-        
+
         carrot.ai.chat.orderBy_at='user.name';
         carrot.ai.chat.show_type='msg';
         carrot.ai.chat.where_a='user.name';
@@ -543,6 +544,9 @@ class AI_Chat{
         $("#box_input_search").change(function(){
             carrot.show_loading_search();
             var key_search=$("#box_input_search").val();
+            carrot.ai.chat.orderBy_at='date_create';
+            carrot.ai.chat.where_a="key";
+            carrot.ai.chat.where_c=key_search;
             carrot.db.collection("chat-"+carrot.langs.lang_setting).where("key","==",key_search).orderBy(carrot.ai.chat.orderBy_at,carrot.ai.chat.orderBy_type).limit(100).get().then((querySnapshot) => {
                 var obj_data=Object();
                 querySnapshot.forEach((doc) => {
