@@ -444,6 +444,7 @@ class AI_Chat{
             s_body+='<i id="btn_add_father_chat" role="button" sex_user="'+data.sex_user+'" sex_character="'+data.sex_character+'" id_chat="'+data.id+'" onclick="carrot.ai.chat.add_chat_with_father(this);return false;" class="fa-solid fa-square-plus float-end fa-2x text-success m-1"></i>';
             s_body+='<i id="btn_clone_chat" role="button" data-json="'+encodeURIComponent(JSON.stringify(data))+'" sex_user="'+data.sex_user+'" sex_character="'+data.sex_character+'" id_chat="'+data.id+'" onclick="carrot.ai.chat.clone_chat(this);return false;" class="fa-solid fa-clone dev float-end fa-2x text-success m-1"></i>';
             if(data.lang!="vi") s_body+='<i id="btn_translate_chat" role="button" onclick="tr_emp(\'chat_msg_'+data.index+'\',\''+carrot.langs.lang_setting+'\',\'vi\');return false;" class="fa-solid fa-language float-end fa-2x text-success m-1 dev"></i>';
+            s_body+='<i id="btn_check_same_chat" role="button" sex_user="'+data.sex_user+'" sex_character="'+data.sex_character+'" id_chat="'+data.id+'" onclick="carrot.ai.chat.show_list_child(this);return false;" class="fa-solid fa-child float-end fa-2x text-success m-1"></i>';
             s_body+='<i id="btn_check_same_chat" role="button" sex_user="'+data.sex_user+'" sex_character="'+data.sex_character+'" key_chat="'+data.key+'" onclick="carrot.ai.chat.show_check_same_key(this);return false;" class="fa-solid fa-rectangle-list float-end fa-2x text-success m-1"></i>';
         }
 
@@ -602,49 +603,7 @@ class AI_Chat{
         Swal.showLoading();
         this.carrot.db.collection("chat-"+this.carrot.langs.lang_setting).where("key","==",key_chat).limit(100).get().then((querySnapshot) => {
             var html='';
-            var s_class_status='';
-            var s_class_chat_type='fa-solid fa-comments';
-
-            html+='<table class="table table-sm table-hover">';
-            html+='<tbody>';
-            querySnapshot.forEach((doc) => {
-                var item_data=doc.data();
-                item_data["id"]=doc.id;
-                if(item_data["status"]=="passed") s_class_status='text-success'; else s_class_status='';
-
-                if(item_data["pater"]!=''&&item_data["pater"]!='0'){
-                    s_class_chat_type='fa-solid fa-comments';
-                }else{
-                    if(item_data["link"]!="")
-                        s_class_chat_type='fa-sharp fa-solid fa-link';
-                    else{
-                        if(item_data["func"]=="0"){
-                            s_class_chat_type='fa-sharp fa-solid fa-comment';
-                        }else{
-                            s_class_chat_type='fa-solid fa-comment-dots';
-                        }
-                    }
-                }
-
-                html+='<tr>';
-                    html+='<td class="fs-9 d-block text-justify">';
-                        html+=' <input class="form-check-input chat_checkbox dev" type="checkbox" role="button" data-chat-id="'+item_data.id+'" emp_type="msg"/> ';
-                        html+='<i class="'+s_class_chat_type+' '+s_class_status+'"></i> ';
-                        if(item_data.sex_user=='0') html+='<i class="fa-solid fa-mars text-primary"></i>'; else html+='<i class="fa-solid fa-venus text-danger"></i>';
-                        html+=' <i class="fa-sharp fa-solid fa-right-left"></i> ';
-                        if(item_data.sex_character=='0') html+='<i class="fa-solid fa-person text-primary"></i>'; else html+='<i class="fa-solid fa-person-dress text-danger"></i>';
-                        html+=' <b>'+item_data["key"]+'</b> : '+item_data["msg"];
-                    html+='</td>';
-                    html+='<td class="w-10">';
-                        html+='<i role="button" onclick="carrot.ai.chat.delete_chat_in_msg(this);" class="float-end dev fs-9 fa-solid fa-trash text-danger m-1" db_collection="chat-'+this.carrot.langs.lang_setting+'" db_document="'+item_data.id+'" db_obj="carrot.ai.chat"></i>';
-                        html+='<i role="button" class="float-end dev btn_app_edit fs-9 fa-solid fa-pen-to-square m-1" onclick="carrot.ai.chat.edit" db_collection="chat-'+this.carrot.langs.lang_setting+'" db_document="'+item_data.id+'" db_obj="carrot.ai.chat"></i>';
-                    html+='</td>';
-                html+='</tr>';
-            });
-
-            html+='</tbody>';
-            html+='</table>';
-
+            html+=this.list_data_chat_in_table(querySnapshot);
             Swal.close();
 
             var frm=new Carrot_Form('ai_same_key',carrot);
@@ -667,6 +626,90 @@ class AI_Chat{
         }).catch((error) => {
             this.carrot.log_error(error);
         });
+    }
+
+    show_list_child(emp){
+        var id_chat_father=$(emp).attr("id_chat");
+        Swal.showLoading();
+        this.carrot.db.collection("chat-"+this.carrot.langs.lang_setting).where("pater","==",id_chat_father).limit(100).get().then((querySnapshot) => {
+            Swal.close();
+
+            if(querySnapshot.docs.length==0){
+                this.carrot.msg("Empty list","alert");
+                return false;
+            }
+
+            var html='';
+            html+=this.list_data_chat_in_table(querySnapshot);
+            
+
+            var frm=new Carrot_Form('ai_list_child',carrot);
+            frm.set_title("child conversation list");
+
+            var table_list=frm.create_field("table_list");
+            table_list.set_type("msg");
+            table_list.set_val(html);
+
+            var btn_del_item=frm.create_btn();
+            btn_del_item.set_icon('fa-solid fa-trash-can');
+            btn_del_item.set_label("Delete items");
+            btn_del_item.set_class("btn dev btn-primary");
+            btn_del_item.set_act("carrot.ai.chat.del_multiple()");
+
+            frm.off_btn_done();
+            frm.show();
+
+            this.carrot.check_event();
+        }).catch((error) => {
+            this.carrot.log_error(error);
+        });
+    }
+
+    list_data_chat_in_table(querySnapshot){
+        var html='';
+        var s_class_status='';
+        var s_class_chat_type='fa-solid fa-comments';
+
+        html+='<table class="table table-sm table-hover">';
+        html+='<tbody>';
+        querySnapshot.forEach((doc) => {
+            var item_data=doc.data();
+            item_data["id"]=doc.id;
+            if(item_data["status"]=="passed") s_class_status='text-success'; else s_class_status='';
+
+            if(item_data["pater"]!=''&&item_data["pater"]!='0'){
+                s_class_chat_type='fa-solid fa-comments';
+            }else{
+                if(item_data["link"]!="")
+                    s_class_chat_type='fa-sharp fa-solid fa-link';
+                else{
+                    if(item_data["func"]=="0"){
+                        s_class_chat_type='fa-sharp fa-solid fa-comment';
+                    }else{
+                        s_class_chat_type='fa-solid fa-comment-dots';
+                    }
+                }
+            }
+
+            html+='<tr>';
+                html+='<td class="fs-9 d-block text-justify">';
+                    html+=' <input class="form-check-input chat_checkbox dev" type="checkbox" role="button" data-chat-id="'+item_data.id+'" emp_type="msg"/> ';
+                    html+='<i class="'+s_class_chat_type+' '+s_class_status+'"></i> ';
+                    if(item_data.sex_user=='0') html+='<i class="fa-solid fa-mars text-primary"></i>'; else html+='<i class="fa-solid fa-venus text-danger"></i>';
+                    html+=' <i class="fa-sharp fa-solid fa-right-left"></i> ';
+                    if(item_data.sex_character=='0') html+='<i class="fa-solid fa-person text-primary"></i>'; else html+='<i class="fa-solid fa-person-dress text-danger"></i>';
+                    html+=' <b>'+item_data["key"]+'</b> : '+item_data["msg"];
+                html+='</td>';
+                html+='<td class="w-10">';
+                    html+='<i role="button" onclick="carrot.ai.chat.delete_chat_in_msg(this);" class="float-end dev fs-9 fa-solid fa-trash text-danger m-1" db_collection="chat-'+this.carrot.langs.lang_setting+'" db_document="'+item_data.id+'" db_obj="carrot.ai.chat"></i>';
+                    html+='<i role="button" class="float-end dev btn_app_edit fs-9 fa-solid fa-pen-to-square m-1" onclick="carrot.ai.chat.edit" db_collection="chat-'+this.carrot.langs.lang_setting+'" db_document="'+item_data.id+'" db_obj="carrot.ai.chat"></i>';
+                html+='</td>';
+            html+='</tr>';
+        });
+
+        html+='</tbody>';
+        html+='</table>';
+        return html;
     }
 
     show(id,carrot){
