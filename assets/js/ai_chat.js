@@ -138,12 +138,21 @@ class AI_Chat{
         }
 
         frm.create_field("mp3").set_label("Mp3 (Url audio)").set_val(data["mp3"]);
-        frm.create_field("link").set_label("Link (url Web or  URL scheme App)").set_val(data["link"]);
+
+        var btn_add_func_sys=new Carrot_Btn();
+        btn_add_func_sys.set_icon("fa-solid fa-square-plus");
+        btn_add_func_sys.set_act("carrot.ai.chat.add_sys_fnc_for_link_field()");
+        frm.create_field("link").set_label("Link (url Web or  URL scheme App)").set_val(data["link"]).add_btn(btn_add_func_sys);
         frm.create_field("pater").set_label("Pater").set_val(data["pater"]).set_tip("Father chat details");
         frm.create_field("pater_details").set_label("Pater Details").set_val("Preview Pater Details").set_type("msg");
         frm.create_field("user").set_label("User").set_val(data["user"]).set_type("user");
         frm.create_field("date_create").set_label("Date Create").set_val(data["date_create"]);
         frm.create_field("lang").set_label("Lang").set_type("lang").set_val(data["lang"]);
+
+        var btn_list_child=new Carrot_Btn();
+        btn_list_child.set_icon("fa-solid fa-child");
+        btn_list_child.set_act("carrot.ai.chat.show_list_child('"+data["id"]+"')");
+        frm.add_btn(btn_list_child);
         return frm;
     }
 
@@ -154,7 +163,7 @@ class AI_Chat{
     }
 
     sel_random_face(){
-        var length_face=$('#face').children('option').length;
+        var length_face=$('#face').children('option').length-1;
         var random_face=Math. floor(Math. random() * length_face) + 1;
         $('#face').val(random_face);
     }
@@ -175,6 +184,95 @@ class AI_Chat{
         }).catch((error) => {
             carrot.log_error(error);
         });
+    }
+
+    add_sys_fnc_for_link_field(){
+        var list_sys_func=[];
+        var html='';
+
+        list_sys_func[0]="android.intent.action.DIAL";
+        list_sys_func[1]="android.intent.action.RINGTONE_PICKER";
+        list_sys_func[2]="android.provider.MediaStore.RECORD_SOUND";
+        list_sys_func[3]="android.search.action.SEARCH_SETTINGS";
+        list_sys_func[4]="android.settings.ACCESSIBILITY_SETTINGS";
+        list_sys_func[5]="android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS";
+        list_sys_func[6]="android.settings.ACTION_PRINT_SETTINGS";
+        list_sys_func[7]="android.settings.ADD_ACCOUNT_SETTINGS";
+        list_sys_func[8]="android.settings.AIRPLANE_MODE_SETTINGS";
+        list_sys_func[9]="android.settings.APN_SETTINGS";
+        list_sys_func[10]="android.settings.APPLICATION_DEVELOPMENT_SETTINGS";
+        list_sys_func[11]="android.settings.BATTERY_SAVER_SETTINGS";
+        list_sys_func[12]="android.settings.BLUETOOTH_SETTINGS";
+        list_sys_func[13]="android.settings.CAPTIONING_SETTINGS";
+        list_sys_func[14]="android.settings.CAST_SETTINGS";
+        list_sys_func[15]="android.settings.CHANNEL_NOTIFICATION_SETTINGS";
+        list_sys_func[16]="android.settings.DATA_ROAMING_SETTINGS";
+        list_sys_func[17]="android.settings.DATA_USAGE_SETTINGS";
+        list_sys_func[18]="android.settings.DATE_SETTINGS";
+        list_sys_func[19]="android.settings.DEVICE_INFO_SETTINGS";
+        list_sys_func[20]="android.settings.DISPLAY_SETTINGS";
+        list_sys_func[21]="android.settings.DREAM_SETTINGS";
+        list_sys_func[22]="android.settings.ENTERPRISE_PRIVACY_SETTINGS";
+        list_sys_func[23]="android.settings.FINGERPRINT_ENROLL";
+        list_sys_func[24]="android.settings.HARD_KEYBOARD_SETTINGS";
+        list_sys_func[25]="android.settings.HOME_SETTINGS";
+        list_sys_func[26]="android.settings.IGNORE_BATTERY_OPTIMIZATION_SETTINGS";
+        list_sys_func[27]="android.settings.INPUT_METHOD_SETTINGS";
+        list_sys_func[28]="android.settings.INPUT_METHOD_SUBTYPE_SETTINGS";
+        list_sys_func[29]="android.settings.INTERNAL_STORAGE_SETTINGS";
+        list_sys_func[30]="android.settings.LOCALE_SETTINGS";
+        list_sys_func[31]="android.settings.LOCATION_SOURCE_SETTINGS";
+        list_sys_func[32]="android.settings.MANAGE_ALL_APPLICATIONS_SETTINGS";
+        list_sys_func[33]="android.settings.MANAGE_DEFAULT_APPS_SETTINGS";
+        list_sys_func[34]="android.settings.MEMORY_CARD_SETTINGS";
+        list_sys_func[35]="android.settings.NETWORK_OPERATOR_SETTINGS";
+        list_sys_func[36]="android.settings.NFCSHARING_SETTINGS";
+        list_sys_func[37]="android.settings.NFC_PAYMENT_SETTINGS";
+        list_sys_func[38]="android.settings.NFC_SETTINGS";
+        list_sys_func[39]="android.settings.NIGHT_DISPLAY_SETTINGS";
+        list_sys_func[40]="android.settings.NOTIFICATION_POLICY_ACCESS_SETTINGS";
+        list_sys_func[41]="android.settings.PRIVACY_SETTINGS";
+        list_sys_func[42]="android.settings.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS";
+        list_sys_func[43]="android.settings.SECURITY_SETTINGS";
+        list_sys_func[44]="android.settings.SETTINGS";
+        list_sys_func[45]="android.settings.SOUND_SETTINGS";
+        list_sys_func[46]="android.settings.STORAGE_VOLUME_ACCESS_SETTINGS";
+        list_sys_func[47]="android.settings.SYNC_SETTINGS";
+        list_sys_func[48]="android.settings.USAGE_ACCESS_SETTINGS";
+        list_sys_func[49]="android.settings.USER_DICTIONARY_SETTINGS";
+        list_sys_func[50]="android.settings.VOICE_INPUT_SETTINGS";
+        list_sys_func[51]="android.settings.VPN_SETTINGS";
+        list_sys_func[52]="android.settings.VR_LISTENER_SETTINGS";
+        list_sys_func[53]="android.settings.WIFI_SETTINGS";
+        list_sys_func[54]="android.settings.WIRELESS_SETTINGS";
+        list_sys_func[55]="android.settings.ZEN_MODE_PRIORITY_SETTINGS";
+        list_sys_func[56]="android.speech.tts.engine.INSTALL_TTS_DATA";
+        list_sys_func[57]="android.app.action.SET_NEW_PASSWORD";
+        list_sys_func[58]="android.media.action.DISPLAY_AUDIO_EFFECT_CONTROL_PANEL";
+        list_sys_func[59]="android.intent.action.OPEN_DOCUMENT_TREE";
+        list_sys_func[60]="android.media.action.VIDEO_CAMERA";
+        list_sys_func[61]="android.media.action.VIDEO_CAPTURE";
+        list_sys_func[62]="android.intent.action.MUSIC_PLAYER";
+        list_sys_func[63]="android.intent.action.SET_WALLPAPER";
+        list_sys_func[64]="android.intent.action.VIEW_DOWNLOADS";
+        list_sys_func[65]="android.settings.panel.action.INTERNET_CONNECTIVITY";
+        list_sys_func[66]="android.settings.panel.action.NFC";
+        list_sys_func[67]="android.settings.panel.action.VOLUME";
+        list_sys_func[68]="android.settings.panel.action.WIFI";
+
+        $(list_sys_func).each(function(index,key){
+            html+='<button onclick="carrot.ai.chat.select_sys_func_for_link(\''+key+'\');" class="btn btn-sm btn-info m-1"><i class="fa-solid fa-atom"></i> '+key+'</button>';
+        });
+        Swal.fire({
+            title:"Add func sys",
+            html:html
+        });
+    }
+
+    select_sys_func_for_link(s_key){
+        $("#func").val(16);
+        $('#link').val(s_key);
+        Swal.close();
     }
 
     add_key_fnc_for_msg_field(){
@@ -452,7 +550,7 @@ class AI_Chat{
             s_body+='<i id="btn_add_father_chat" role="button" sex_user="'+data.sex_user+'" sex_character="'+data.sex_character+'" id_chat="'+data.id+'" onclick="carrot.ai.chat.add_chat_with_father(this);return false;" class="fa-solid fa-square-plus float-end fa-2x text-success m-1"></i>';
             s_body+='<i id="btn_clone_chat" role="button" data-json="'+encodeURIComponent(JSON.stringify(data))+'" sex_user="'+data.sex_user+'" sex_character="'+data.sex_character+'" id_chat="'+data.id+'" onclick="carrot.ai.chat.clone_chat(this);return false;" class="fa-solid fa-clone dev float-end fa-2x text-success m-1"></i>';
             if(data.lang!="vi") s_body+='<i id="btn_translate_chat" role="button" onclick="tr_emp(\'chat_msg_'+data.index+'\',\''+carrot.langs.lang_setting+'\',\'vi\');return false;" class="fa-solid fa-language float-end fa-2x text-success m-1 dev"></i>';
-            s_body+='<i id="btn_check_same_chat" role="button" sex_user="'+data.sex_user+'" sex_character="'+data.sex_character+'" id_chat="'+data.id+'" onclick="carrot.ai.chat.show_list_child(this);return false;" class="fa-solid fa-child float-end fa-2x text-success m-1"></i>';
+            s_body+='<i id="btn_list_child_chat" role="button" onclick="carrot.ai.chat.show_list_child(\''+data.id+'\');return false;" class="fa-solid fa-child float-end fa-2x text-success m-1"></i>';
             s_body+='<i id="btn_check_same_chat" role="button" sex_user="'+data.sex_user+'" sex_character="'+data.sex_character+'" key_chat="'+data.key+'" onclick="carrot.ai.chat.show_check_same_key(this);return false;" class="fa-solid fa-rectangle-list float-end fa-2x text-success m-1"></i>';
         }
 
@@ -636,8 +734,7 @@ class AI_Chat{
         });
     }
 
-    show_list_child(emp){
-        var id_chat_father=$(emp).attr("id_chat");
+    show_list_child(id_chat_father){
         Swal.showLoading();
         this.carrot.db.collection("chat-"+this.carrot.langs.lang_setting).where("pater","==",id_chat_father).limit(100).get().then((querySnapshot) => {
             Swal.close();
