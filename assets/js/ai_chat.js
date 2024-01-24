@@ -37,6 +37,8 @@ class AI_Chat{
         this.funcs[14]="Next Music";
         this.funcs[15]="Pause Music";
         this.funcs[16]="Open a system settings by link";
+        this.funcs[17]="Turn on the flashlight";
+        this.funcs[18]="Turn off the flashlight";
     }
 
     save_obj_chats(){
@@ -400,16 +402,21 @@ class AI_Chat{
         var s_body='';
         var s_key=data.key;
         var s_color_icon='';
+        var s_btn_extra='';
 
+        if(carrot.ai.chat.where_c!=s_key){
+            s_btn_extra=s_btn_extra+'<div role="button" class="dev btn btn-success btn-sm mr-2" onclick="carrot.ai.chat.get_list_by_key(\'key\',\''+s_key+'\');return false;"><i class="fa-solid fa-comment-dots"></i></div>';
+        }
+ 
         item_list.set_index(data.index);
         item_list.set_id(data.id);
-        item_list.set_btn_dev_extra('<div role="button" class="dev btn btn-success btn-sm mr-2" onclick="carrot.ai.chat.get_list_by_key(\'key\',\''+s_key+'\');return false;"><i class="fa-solid fa-comment-dots"></i></div>');
 
         if(data.status=="passed") s_color_icon=" text-success ";
         if(data.status=="reserve") s_color_icon=" text-warning ";
 
         if(data.pater!=''&&data.pater!='0'){
             item_list.set_icon_font("fa-solid fa-comments mt-2 "+s_color_icon+" chat_icon");
+            s_btn_extra=s_btn_extra+'<div role="button" db_collection="chat-'+carrot.langs.lang_setting+'" db_document="'+data.pater+'" class="dev btn btn_app_edit bg-secondary text-white btn-sm mr-2" onclick="carrot.ai.chat.edit" db_obj="carrot.ai.chat"><i class="fa-solid fa-feather"></i></div>';
         }else{
             if(data.link!="")
                 item_list.set_icon_font("fa-sharp fa-solid fa-link mt-2 "+s_color_icon+" chat_icon");
@@ -422,7 +429,8 @@ class AI_Chat{
                 }
             }
         }
-            
+
+        item_list.set_btn_dev_extra(s_btn_extra);
         item_list.set_name(data.key);
         item_list.set_tip('<i class="fa-solid fa-circle" style="color:'+data.color+'"></i> '+' <span id="chat_msg_'+data.index+'">'+data.msg+'</span>');
 
