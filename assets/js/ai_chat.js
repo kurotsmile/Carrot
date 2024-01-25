@@ -39,6 +39,7 @@ class AI_Chat{
         this.funcs[16]="Open a system settings by link";
         this.funcs[17]="Turn on the flashlight";
         this.funcs[18]="Turn off the flashlight";
+        this.funcs[19]="Open the application using Bundle Id";
     }
 
     save_obj_chats(){
@@ -259,6 +260,7 @@ class AI_Chat{
         list_sys_func[66]="android.settings.panel.action.NFC";
         list_sys_func[67]="android.settings.panel.action.VOLUME";
         list_sys_func[68]="android.settings.panel.action.WIFI";
+        list_sys_func[69]="com.android.contacts.action.LIST_ALL_CONTACTS";
 
         $(list_sys_func).each(function(index,key){
             html+='<button onclick="carrot.ai.chat.select_sys_func_for_link(\''+key+'\');" class="btn btn-sm btn-info m-1"><i class="fa-solid fa-atom"></i> '+key+'</button>';
@@ -401,7 +403,6 @@ class AI_Chat{
         carrot.ai.chat.show_all_chat();
     }
 
-    
     get_list_by_user(){
         var user_name_view=window.prompt("Enter Name User view", "Thien Thanh Tran");
         if(user_name_view.trim()=="") return false;
@@ -516,15 +517,14 @@ class AI_Chat{
             item_list.set_icon_font("fa-solid fa-comments mt-2 "+s_color_icon+" chat_icon");
             s_btn_extra=s_btn_extra+'<div role="button" db_collection="chat-'+carrot.langs.lang_setting+'" db_document="'+data.pater+'" class="dev btn btn_app_edit bg-secondary text-white btn-sm mr-2" onclick="carrot.ai.chat.edit" db_obj="carrot.ai.chat"><i class="fa-solid fa-feather"></i></div>';
         }else{
-            if(data.link!="")
+            if(data.func!="0"&&data.link!=""){
+                item_list.set_icon_font("fa-solid fa-atom mt-2 "+s_color_icon+" chat_icon");
+            }else if(data.link!=""){
                 item_list.set_icon_font("fa-sharp fa-solid fa-link mt-2 "+s_color_icon+" chat_icon");
-            else{
-                if(data.func!="0"){
-                    item_list.set_icon_font("fa-solid fa-comment-dots mt-2 "+s_color_icon+" chat_icon");
-                } 
-                else{
-                    item_list.set_icon_font("fa-solid fa-comment mt-2 "+s_color_icon+" chat_icon");
-                }
+            }else if(data.func!="0"){
+                item_list.set_icon_font("fa-solid fa-comment-dots mt-2 "+s_color_icon+" chat_icon");
+            }else{
+                item_list.set_icon_font("fa-solid fa-comment mt-2 "+s_color_icon+" chat_icon");
             }
         }
 
@@ -747,7 +747,6 @@ class AI_Chat{
             var html='';
             html+=this.list_data_chat_in_table(querySnapshot);
             
-
             var frm=new Carrot_Form('ai_list_child',carrot);
             frm.set_title("child conversation list");
 
@@ -785,14 +784,14 @@ class AI_Chat{
             if(item_data["pater"]!=''&&item_data["pater"]!='0'){
                 s_class_chat_type='fa-solid fa-comments';
             }else{
-                if(item_data["link"]!="")
-                    s_class_chat_type='fa-sharp fa-solid fa-link';
-                else{
-                    if(item_data["func"]=="0"){
-                        s_class_chat_type='fa-sharp fa-solid fa-comment';
-                    }else{
-                        s_class_chat_type='fa-solid fa-comment-dots';
-                    }
+                if(item_data.func!="0"&&item_data.link!=""){
+                    s_class_chat_type="fa-solid fa-atom";
+                }else if(item_data.link!=""){
+                    s_class_chat_type="fa-sharp fa-solid fa-link";
+                }else if(item_data.func!="0"){
+                    s_class_chat_type="fa-solid fa-comment-dots";
+                }else{
+                    s_class_chat_type="fa-solid fa-comment";
                 }
             }
 
