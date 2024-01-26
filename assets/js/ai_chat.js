@@ -843,7 +843,7 @@ class AI_Chat{
                     html+='<div class="row bg-white shadow-sm">';
 
                         html+='<div class="col-md-2 p-3 text-center">';
-                            html+='<i class="fa-solid fa-comment fa-3x"></i>;'
+                            html+='<i class="fa-solid fa-comment fa-3x"></i>';
                         html+='</div>';
 
                         html+='<div class="col-md-10 p-2">';

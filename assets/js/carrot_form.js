@@ -225,6 +225,7 @@ class Carrot_Field{
             html+='</div>';
         }
         else if(this.type=='color'){
+            if(this.value.length>=9) this.value=this.value.substring(0,7);
             html+='<input type="color" class="form-control form-control-color cr_field m-0"  id="'+this.name+'" value="'+this.value+'" title="Choose your color"></input>';
         }
         else if(this.type=='slider'||this.type=='range'){
