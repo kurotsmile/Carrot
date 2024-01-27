@@ -1,6 +1,8 @@
 class AI_Chat{
     carrot;
     obj_chats=null;
+    obj_animations=null;
+    list_animation_act=Array();
     icon="fa-solid fa-comments";
 
     orderBy_at="date_create";
@@ -40,6 +42,15 @@ class AI_Chat{
         this.funcs[17]="Turn on the flashlight";
         this.funcs[18]="Turn off the flashlight";
         this.funcs[19]="Open the application using Bundle Id";
+
+        fetch('data_animations.json').then(response => response.json()).then((text) => {
+            this.obj_animations=text;
+            $.each(this.obj_animations, function(k,v) {
+                $.each(v.data, function(k_data,v_data) {
+                    carrot.ai.chat.list_animation_act.push(v_data.name);
+                });
+            });
+        });
     }
 
     save_obj_chats(){
@@ -63,7 +74,7 @@ class AI_Chat{
         data_new_chat["sex_character"]="0";
         data_new_chat["color"]="#ffffff";
         data_new_chat["icon"]="";
-        data_new_chat["action"]="0";
+        data_new_chat["act"]="";
         data_new_chat["face"]="0";
         data_new_chat["func"]="";
         data_new_chat["mp3"]="";
@@ -125,8 +136,10 @@ class AI_Chat{
         var btn_random_action=new Carrot_Btn();
         btn_random_action.set_icon("fa-solid fa-shuffle");
         btn_random_action.set_act("carrot.ai.chat.sel_random_action()");
-        var field_action=frm.create_field("action").set_label("Action").set_val(data["action"]).set_type("select").add_btn(btn_random_action);
-        for(var i=0;i<=40;i++) field_action.add_option(i,"Action "+i);
+        var btn_list_action=new Carrot_Btn();
+        btn_list_action.set_icon("fa-solid fa-list");
+        btn_list_action.set_act("carrot.ai.chat.show_list_category_action_animations()");
+        frm.create_field("act").set_label("Action").set_val(data["act"]).add_btn(btn_random_action).add_btn(btn_list_action);
 
         var btn_random_face=new Carrot_Btn();
         btn_random_face.set_icon("fa-solid fa-shuffle");
@@ -158,9 +171,38 @@ class AI_Chat{
     }
 
     sel_random_action(){
-        var length_action=$('#action').children('option').length;
-        var random_action=Math. floor(Math. random() * length_action) + 1;
-        $('#action').val(random_action);
+        var random_action=Math. floor(Math. random() * this.list_animation_act.length);
+        $('#act').val(this.list_animation_act[random_action]);
+    }
+
+    show_list_category_action_animations(){
+        var html='';
+        $.each(this.obj_animations, function(k,v) {
+            html+='<button onclick="carrot.ai.chat.show_list_action_animations_by_cat(\''+k+'\');" class="btn btn-sm btn-info m-1"><i class="fa-solid fa-radiation"></i> '+v.name+'</button>';
+        });
+
+        Swal.fire({
+            title:"List Category Actions",
+            html:html
+        });
+    }
+
+    show_list_action_animations_by_cat(index_cat){
+        var obj_cat=this.obj_animations[index_cat];
+        var html='';
+        $.each(obj_cat.data, function(k,v) {
+            html+='<button onclick="carrot.ai.chat.sel_action_animation(\''+v.name+'\');" class="btn btn-sm btn-info m-1"><i class="fa-solid fa-person-running"></i> '+v.name+'</button>';
+        });
+
+        Swal.fire({
+            title:"List Category Actions",
+            html:html
+        });
+    }
+
+    sel_action_animation(s_name_animation){
+        Swal.close();
+        $("#act").val(s_name_animation);
     }
 
     sel_random_face(){

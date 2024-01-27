@@ -1,0 +1,266 @@
+[
+  {
+    "name": "Default",
+    "data": [
+      {
+        "buy": 0,
+        "name": "IdleE_wing"
+      },
+      {
+        "buy": 0,
+        "name": "DieB"
+      },
+      {
+        "buy": 0,
+        "name": "Jump"
+      },
+      {
+        "buy": 0,
+        "name": "DieA"
+      },
+      {
+        "buy": 0,
+        "name": "Run"
+      },
+      {
+        "buy": 0,
+        "name": "CuteA"
+      },
+      {
+        "buy": 0,
+        "name": "CastspellC"
+      },
+      {
+        "buy": 0,
+        "name": "Walk"
+      },
+      {
+        "buy": 0,
+        "name": "Damaged"
+      },
+      {
+        "buy": 0,
+        "name": "SLIDE00"
+      },
+      {
+        "buy": 0,
+        "name": "PoseA_wing"
+      },
+      {
+        "buy": 0,
+        "name": "IdleG_wing"
+      },
+      {
+        "buy": 0,
+        "name": "Walk_back"
+      },
+      {
+        "buy": 0,
+        "name": "Cry"
+      },
+      {
+        "buy": 0,
+        "name": "IdleF"
+      },
+      {
+        "buy": 0,
+        "name": "Atk1"
+      },
+      {
+        "buy": 0,
+        "name": "Fly_idle"
+      },
+      {
+        "buy": 0,
+        "name": "Atk3"
+      },
+      {
+        "buy": 0,
+        "name": "Shocked"
+      },
+      {
+        "buy": 0,
+        "name": "Atk6"
+      },
+      {
+        "buy": 0,
+        "name": "Bye"
+      },
+      {
+        "buy": 0,
+        "name": "LOSE00 0"
+      },
+      {
+        "buy": 0,
+        "name": "Rei"
+      },
+      {
+        "buy": 0,
+        "name": "Idle_B"
+      },
+      {
+        "buy": 0,
+        "name": "Walk_L"
+      },
+      {
+        "buy": 0,
+        "name": "CastspellB"
+      },
+      {
+        "buy": 0,
+        "name": "Thinking"
+      },
+      {
+        "buy": 0,
+        "name": "WALK00_B"
+      },
+      {
+        "buy": 0,
+        "name": "Angpose"
+      },
+      {
+        "buy": 0,
+        "name": "HANDUP00_R"
+      },
+      {
+        "buy": 0,
+        "name": "REFLESH00"
+      },
+      {
+        "buy": 0,
+        "name": "Cast spellA"
+      },
+      {
+        "buy": 0,
+        "name": "WIN00"
+      },
+      {
+        "buy": 0,
+        "name": "JUMP01B"
+      },
+      {
+        "buy": 0,
+        "name": "Atk7"
+      },
+      {
+        "buy": 0,
+        "name": "Atk_A1_wing"
+      },
+      {
+        "buy": 0,
+        "name": "Atk2"
+      },
+      {
+        "buy": 0,
+        "name": "Atk_A2_wing"
+      },
+      {
+        "buy": 0,
+        "name": "Atk_A3_wing"
+      },
+      {
+        "buy": 0,
+        "name": "IdleG_wing"
+      },
+      {
+        "buy": 0,
+        "name": "UMATOBI00"
+      }
+    ]
+  },
+  {
+    "name": "Love",
+    "data": [
+      {
+        "name": "Baseball_Hit",
+        "buy": 0
+      },
+      {
+        "name": "Breakdance_Freeze_Var_2",
+        "buy": 0
+      },
+      {
+        "name": "Crawling",
+        "buy": 1
+      },
+      {
+        "name": "Dig_And_Plant_Seeds",
+        "buy": 0
+      },
+      {
+        "name": "Falling",
+        "buy": 0
+      },
+      {
+        "name": "Jog_In_Circle",
+        "buy": 0
+      },
+      {
+        "name": "Kettlebell_Swing",
+        "buy": 1
+      },
+      {
+        "name": "Kiss",
+        "buy": 0
+      },
+      {
+        "name": "Praying",
+        "buy": 0
+      },
+      {
+        "name": "Rumba_Dancing",
+        "buy": 1
+      },
+      {
+        "name": "Sitting_Laughing",
+        "buy": 1
+      },
+      {
+        "name": "Standing_Greeting",
+        "buy": 1
+      },
+      {
+        "name": "Thankful",
+        "buy": 0
+      }
+    ]
+  },
+  {
+    "name": "Technology",
+    "data": [
+      {
+        "name": "Button_Pushing",
+        "buy": 0
+      },
+      {
+        "name": "Talking_On_Phone",
+        "buy": 0
+      },
+      {
+        "name": "Using_A_Fax_Machine",
+        "buy": 1
+      }
+    ]
+  },
+  {
+    "name": "Martial arts",
+    "data": [
+      {
+        "name": "Boxing",
+        "buy": 0
+      },
+      {
+        "name": "Brutal_Assassination",
+        "buy": 0
+      },
+      {
+        "name": "Chapa_Giratoria",
+        "buy": 1
+      },
+      {
+        "name": "Mma_Kick",
+        "buy": 0
+      }
+    ]
+  }
+]
