@@ -320,7 +320,7 @@ class AI_Chat{
     }
 
     add_key_fnc_for_msg_field(){
-        var list_parameter_msg=Array("{ten_user}","{ten_nv}","{gio}","{phut}","{ngay}","{thang}","{nam}","{thu}","{key_chat}");
+        var list_parameter_msg=Array("{ten_user}","{ten_nv}","{gio}","{phut}","{ngay}","{thang}","{nam}","{thu}","{key_chat}","{song_name}");
         var html='';
         $(list_parameter_msg).each(function(index,key){
             html+='<button onclick="carrot.ai.chat.select_key_parameter_for_msg(\''+key+'\');" class="btn btn-sm btn-info m-1"><i class="fa-brands fa-keycdn"></i> '+key+'</button>';
