@@ -505,6 +505,8 @@ class AI_Chat{
                     html_menu+='<div onclick="carrot.ai.chat.get_list_by_key(\'key\',\'hi_'+i+'\');return false;" type="button" class="dropdown-item '+s_class_active+'"><i class="fa-solid fa-comments"></i> hi_'+i+'</div>';
                 }
                 html_menu+='<div onclick="carrot.ai.chat.get_list_by_key(\'key\',\'hit\');return false;" type="button" class="dropdown-item"><i class="fa-solid fa-hand-back-fist"></i> hit</div>';
+                html_menu+='<div onclick="carrot.ai.chat.get_list_by_key(\'key\',\'found_song\');return false;" type="button" class="dropdown-item"><i class="fa-solid fa-hand-back-fist"></i> found_song</div>';
+                html_menu+='<div onclick="carrot.ai.chat.get_list_by_key(\'key\',\'no_found_song\');return false;" type="button" class="dropdown-item"><i class="fa-solid fa-hand-back-fist"></i> no_found_song</div>';
                 html_menu+='<div onclick="carrot.ai.chat.get_list_by_function();return false;" type="button" class="dropdown-item"><i class="fa-solid fa-atom"></i> Function</div>';
                 html_menu+='<div onclick="carrot.ai.chat.get_list_by_user();return false;" type="button" class="dropdown-item"><i class="fa-solid fa-user"></i> User</div>';
             html_menu+='</div>';
