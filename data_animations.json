@@ -222,6 +222,34 @@
       {
         "name": "Thankful",
         "buy": 0
+      },
+      {
+        "name": "Blow_A_Kiss",
+        "buy": 0
+      },
+      {
+        "name": "Catwalk_Walking",
+        "buy": 1
+      },
+      {
+        "name": "Excited1",
+        "buy": 1
+      },
+      {
+        "name": "Hokey_Pokey",
+        "buy": 0
+      },
+      {
+        "name": "Look_Around",
+        "buy": 0
+      }, 
+      {
+        "name": "Ninja_Idle",
+        "buy": 0
+      }, 
+      {
+        "name": "Standing_Idle_03",
+        "buy": 0
       }
     ]
   },
@@ -239,6 +267,26 @@
       {
         "name": "Using_A_Fax_Machine",
         "buy": 1
+      },
+      {
+        "name": "Northern_Soul_Spin",
+        "buy": 1
+      },
+      {
+        "name": "Pick_Fruit",
+        "buy": 0
+      },
+      {
+        "name": "Texting",
+        "buy": 0
+      },
+      {
+        "name": "Talking",
+        "buy": 0
+      },
+      {
+        "name": "Bicep_Curl",
+        "buy": 0
       }
     ]
   },
@@ -259,6 +307,108 @@
       },
       {
         "name": "Mma_Kick",
+        "buy": 0
+      },
+      {
+        "name": "Au_To_Role",
+        "buy": 0
+      },
+      {
+        "name": "Headbutt",
+        "buy": 1
+      },
+      {
+        "name": "Punching",
+        "buy": 1
+      },
+      {
+        "name": "Back_Squat",
+        "buy": 0
+      }
+    ]
+  },
+  {
+    "name": "Dance",
+    "data": [
+       {
+      "name": "002_SIM01_Final",
+      "buy": 0
+      },
+      {
+        "name": "Bboy_Hip_Hop_Move",
+        "buy": 0
+      },{
+        "name": "Bellydancing",
+        "buy": 0
+      },{
+        "name": "Booty_Hip_Hop_Dance",
+        "buy": 0
+      },{
+        "name": "Breakdance_Uprock_Var_2",
+        "buy": 0
+      },
+      {
+        "name": "Breakdance_1990",
+        "buy": 1
+      },
+      {
+        "name": "Chicken_Dance",
+        "buy": 0
+      },
+      {
+        "name": "Dancing_Twerk",
+        "buy": 1
+      },
+      {
+        "name": "Hip_Hop_Dancing_2",
+        "buy": 1
+      },
+      {
+        "name": "Hip_Hop_Dancing",
+        "buy": 0
+      },
+      {
+        "name": "Hip_Hop_Dancing_3",
+        "buy": 1
+      },
+      {
+        "name": "Jazz_Dancing",
+        "buy": 1
+      },
+      {
+        "name": "Macarena_Dance",
+        "buy": 0
+      },
+      {
+        "name": "Robot_Hip_Hop_Dance",
+        "buy": 0
+      },
+      {
+        "name": "Salsa_Dancing",
+        "buy": 1
+      },
+      {
+        "name": "Samba_Dancing",
+        "buy": 0
+      },
+      {
+        "name": "Shopping_Cart_Dance",
+        "buy": 1
+      },
+      {
+        "name": "Silly_Dancing",
+        "buy": 0
+      },
+      {
+        "name": "Swing_Dancing",
+        "buy": 1
+      },
+      {
+        "name": "Twist_Dance",
+        "buy": 0
+      },
+      {
+        "name": "Ymca_Dance",
         "buy": 0
       }
     ]
