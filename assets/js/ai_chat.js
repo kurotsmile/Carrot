@@ -42,6 +42,7 @@ class AI_Chat{
         this.funcs[17]="Turn on the flashlight";
         this.funcs[18]="Turn off the flashlight";
         this.funcs[19]="Open the application using Bundle Id";
+        this.funcs[20]="Open Shop";
 
         fetch('data_animations.json').then(response => response.json()).then((text) => {
             this.obj_animations=text;
