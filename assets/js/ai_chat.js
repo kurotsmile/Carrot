@@ -2,6 +2,7 @@ class AI_Chat{
     carrot;
     obj_chats=null;
     obj_animations=null;
+    obj_func=null;
     list_animation_act=Array();
     icon="fa-solid fa-comments";
 
@@ -22,28 +23,6 @@ class AI_Chat{
         carrot.menu.create_menu("add_chat").set_label("Add Chat").set_icon(this.icon).set_act("carrot.ai.chat.show_add()").set_type("add");
         if(localStorage.getItem("obj_chats")!=null) this.obj_chats=JSON.parse(localStorage.getItem("obj_chats"));
 
-        this.funcs[0]="None";
-        this.funcs[1]="Open Music";
-        this.funcs[2]="Open Weather";
-        this.funcs[3]="Open Fashion Shop";
-        this.funcs[4]="Open Brain";
-        this.funcs[5]="Play Music";
-        this.funcs[6]="Stop Music";
-        this.funcs[7]="Offline music playlist";
-        this.funcs[8]="Online music playlist";
-        this.funcs[9]="List of radio stations";
-        this.funcs[10]="Rate";
-        this.funcs[11]="Share";
-        this.funcs[12]="Exit";
-        this.funcs[13]="List Background";
-        this.funcs[14]="Next Music";
-        this.funcs[15]="Pause Music";
-        this.funcs[16]="Open a system settings by link";
-        this.funcs[17]="Turn on the flashlight";
-        this.funcs[18]="Turn off the flashlight";
-        this.funcs[19]="Open the application using Bundle Id";
-        this.funcs[20]="Open Shop";
-
         fetch('data_animations.json').then(response => response.json()).then((text) => {
             this.obj_animations=text;
             $.each(this.obj_animations, function(k,v) {
@@ -51,6 +30,11 @@ class AI_Chat{
                     carrot.ai.chat.list_animation_act.push(v_data.name);
                 });
             });
+        });
+
+        fetch('data_chat_func.json').then(response => response.json()).then((text) => {
+            this.obj_func=text;
+            this.funcs=this.obj_func.funcs;
         });
     }
 
@@ -231,82 +215,19 @@ class AI_Chat{
     }
 
     add_sys_fnc_for_link_field(){
-        var list_sys_func=[];
+        var index_func=parseInt($("#func").val());
+        var name_arr_func=this.funcs[index_func];
+        this.show_list_link_extension(this.obj_func[name_arr_func]);
+    }
+
+    show_list_link_extension(obj_array){
         var html='';
-
-        list_sys_func[0]="android.intent.action.DIAL";
-        list_sys_func[1]="android.intent.action.RINGTONE_PICKER";
-        list_sys_func[2]="android.provider.MediaStore.RECORD_SOUND";
-        list_sys_func[3]="android.search.action.SEARCH_SETTINGS";
-        list_sys_func[4]="android.settings.ACCESSIBILITY_SETTINGS";
-        list_sys_func[5]="android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS";
-        list_sys_func[6]="android.settings.ACTION_PRINT_SETTINGS";
-        list_sys_func[7]="android.settings.ADD_ACCOUNT_SETTINGS";
-        list_sys_func[8]="android.settings.AIRPLANE_MODE_SETTINGS";
-        list_sys_func[9]="android.settings.APN_SETTINGS";
-        list_sys_func[10]="android.settings.APPLICATION_DEVELOPMENT_SETTINGS";
-        list_sys_func[11]="android.settings.BATTERY_SAVER_SETTINGS";
-        list_sys_func[12]="android.settings.BLUETOOTH_SETTINGS";
-        list_sys_func[13]="android.settings.CAPTIONING_SETTINGS";
-        list_sys_func[14]="android.settings.CAST_SETTINGS";
-        list_sys_func[15]="android.settings.CHANNEL_NOTIFICATION_SETTINGS";
-        list_sys_func[16]="android.settings.DATA_ROAMING_SETTINGS";
-        list_sys_func[17]="android.settings.DATA_USAGE_SETTINGS";
-        list_sys_func[18]="android.settings.DATE_SETTINGS";
-        list_sys_func[19]="android.settings.DEVICE_INFO_SETTINGS";
-        list_sys_func[20]="android.settings.DISPLAY_SETTINGS";
-        list_sys_func[21]="android.settings.DREAM_SETTINGS";
-        list_sys_func[22]="android.settings.ENTERPRISE_PRIVACY_SETTINGS";
-        list_sys_func[23]="android.settings.FINGERPRINT_ENROLL";
-        list_sys_func[24]="android.settings.HARD_KEYBOARD_SETTINGS";
-        list_sys_func[25]="android.settings.HOME_SETTINGS";
-        list_sys_func[26]="android.settings.IGNORE_BATTERY_OPTIMIZATION_SETTINGS";
-        list_sys_func[27]="android.settings.INPUT_METHOD_SETTINGS";
-        list_sys_func[28]="android.settings.INPUT_METHOD_SUBTYPE_SETTINGS";
-        list_sys_func[29]="android.settings.INTERNAL_STORAGE_SETTINGS";
-        list_sys_func[30]="android.settings.LOCALE_SETTINGS";
-        list_sys_func[31]="android.settings.LOCATION_SOURCE_SETTINGS";
-        list_sys_func[32]="android.settings.MANAGE_ALL_APPLICATIONS_SETTINGS";
-        list_sys_func[33]="android.settings.MANAGE_DEFAULT_APPS_SETTINGS";
-        list_sys_func[34]="android.settings.MEMORY_CARD_SETTINGS";
-        list_sys_func[35]="android.settings.NETWORK_OPERATOR_SETTINGS";
-        list_sys_func[36]="android.settings.NFCSHARING_SETTINGS";
-        list_sys_func[37]="android.settings.NFC_PAYMENT_SETTINGS";
-        list_sys_func[38]="android.settings.NFC_SETTINGS";
-        list_sys_func[39]="android.settings.NIGHT_DISPLAY_SETTINGS";
-        list_sys_func[40]="android.settings.NOTIFICATION_POLICY_ACCESS_SETTINGS";
-        list_sys_func[41]="android.settings.PRIVACY_SETTINGS";
-        list_sys_func[42]="android.settings.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS";
-        list_sys_func[43]="android.settings.SECURITY_SETTINGS";
-        list_sys_func[44]="android.settings.SETTINGS";
-        list_sys_func[45]="android.settings.SOUND_SETTINGS";
-        list_sys_func[46]="android.settings.STORAGE_VOLUME_ACCESS_SETTINGS";
-        list_sys_func[47]="android.settings.SYNC_SETTINGS";
-        list_sys_func[48]="android.settings.USAGE_ACCESS_SETTINGS";
-        list_sys_func[49]="android.settings.USER_DICTIONARY_SETTINGS";
-        list_sys_func[50]="android.settings.VOICE_INPUT_SETTINGS";
-        list_sys_func[51]="android.settings.VPN_SETTINGS";
-        list_sys_func[52]="android.settings.VR_LISTENER_SETTINGS";
-        list_sys_func[53]="android.settings.WIFI_SETTINGS";
-        list_sys_func[54]="android.settings.WIRELESS_SETTINGS";
-        list_sys_func[55]="android.settings.ZEN_MODE_PRIORITY_SETTINGS";
-        list_sys_func[56]="android.speech.tts.engine.INSTALL_TTS_DATA";
-        list_sys_func[57]="android.app.action.SET_NEW_PASSWORD";
-        list_sys_func[58]="android.media.action.DISPLAY_AUDIO_EFFECT_CONTROL_PANEL";
-        list_sys_func[59]="android.intent.action.OPEN_DOCUMENT_TREE";
-        list_sys_func[60]="android.media.action.VIDEO_CAMERA";
-        list_sys_func[61]="android.media.action.VIDEO_CAPTURE";
-        list_sys_func[62]="android.intent.action.MUSIC_PLAYER";
-        list_sys_func[63]="android.intent.action.SET_WALLPAPER";
-        list_sys_func[64]="android.intent.action.VIEW_DOWNLOADS";
-        list_sys_func[65]="android.settings.panel.action.INTERNET_CONNECTIVITY";
-        list_sys_func[66]="android.settings.panel.action.NFC";
-        list_sys_func[67]="android.settings.panel.action.VOLUME";
-        list_sys_func[68]="android.settings.panel.action.WIFI";
-        list_sys_func[69]="com.android.contacts.action.LIST_ALL_CONTACTS";
-
-        $(list_sys_func).each(function(index,key){
+        var index_func=parseInt($("#func").val());
+        $(obj_array).each(function(index,key){
             html+='<button onclick="carrot.ai.chat.select_sys_func_for_link(\''+key+'\');" class="btn btn-sm btn-info m-1"><i class="fa-solid fa-atom"></i> '+key+'</button>';
+            if(index_func==19){
+                html+='<a href="https://play.google.com/store/apps/details?id='+key+'" class="btn btn-sm btn-success m-1" target="_blank"><i class="fa-solid fa-link"></i></a>';
+            }
         });
         Swal.fire({
             title:"Add func sys",
@@ -315,7 +236,6 @@ class AI_Chat{
     }
 
     select_sys_func_for_link(s_key){
-        $("#func").val(16);
         $('#link').val(s_key);
         Swal.close();
     }
