@@ -461,11 +461,51 @@ class AI_Chat{
         carrot.ai.chat.check_event();
     }
 
+    get_icon(data){
+        var s_color_icon='';
+        var s_icon="";
+        if(data.status=="passed") s_color_icon=" text-success ";
+        if(data.status=="reserve") s_color_icon=" text-warning ";
+
+        if(data.pater!=''&&data.pater!='0'){
+            s_icon="fa-solid fa-comments mt-2 "+s_color_icon+" chat_icon";
+        }else{
+            if(data.func!="0"){
+                if(data.func=="1") s_icon="fa-solid fa-file-audio mt-2 "+s_color_icon+" chat_icon";
+                else if(data.func=="2") s_icon="fa-solid fa-cloud-sun mt-2 "+s_color_icon+" chat_icon";
+                else if(data.func=="3") s_icon="fa-solid fa-shirt mt-2 "+s_color_icon+" chat_icon";
+                else if(data.func=="4") s_icon="fa-solid fa-brain mt-2 "+s_color_icon+" chat_icon";
+                else if(data.func=="5") s_icon="fa-solid fa-circle-play mt-2 "+s_color_icon+" chat_icon";
+                else if(data.func=="6") s_icon="fa-solid fa-compact-disc mt-2 "+s_color_icon+" chat_icon";
+                else if(data.func=="7") s_icon="fa-solid fa-record-vinyl mt-2 "+s_color_icon+" chat_icon";
+                else if(data.func=="9") s_icon="fa-solid fa-radio mt-2 "+s_color_icon+" chat_icon";
+                else if(data.func=="10") s_icon="fa-solid fa-star-half-stroke mt-2 "+s_color_icon+" chat_icon";
+                else if(data.func=="11") s_icon="fa-solid fa-square-share-nodes mt-2 "+s_color_icon+" chat_icon";
+                else if(data.func=="12") s_icon="fa-solid fa-power-off mt-2 "+s_color_icon+" chat_icon";
+                else if(data.func=="13") s_icon="fa-solid fa-images mt-2 "+s_color_icon+" chat_icon";
+                else if(data.func=="14") s_icon="fa-solid fa-forward-step mt-2 "+s_color_icon+" chat_icon";
+                else if(data.func=="15") s_icon="fa-solid fa-circle-pause mt-2 "+s_color_icon+" chat_icon";
+                else if(data.func=="16") s_icon="fa-solid fa-rocket mt-2 "+s_color_icon+" chat_icon";
+                else if(data.func=="17") s_icon="fa-solid fa-lightbulb mt-2 "+s_color_icon+" chat_icon";
+                else if(data.func=="18") s_icon="fa-regular fa-lightbulb mt-2 "+s_color_icon+" chat_icon";
+                else if(data.func=="19") s_icon="fa-brands fa-app-store-ios mt-2 "+s_color_icon+" chat_icon";
+                else if(data.func=="20") s_icon="fa-solid fa-store mt-2 "+s_color_icon+" chat_icon";
+                else s_icon="fa-solid fa-atom mt-2 "+s_color_icon+" chat_icon";
+            }else if(data.link!=""){
+                s_icon="fa-sharp fa-solid fa-link mt-2 "+s_color_icon+" chat_icon";
+            }else if(data.func!="0"){
+                s_icon="fa-solid fa-comment-dots mt-2 "+s_color_icon+" chat_icon";
+            }else{
+                s_icon="fa-solid fa-comment mt-2 "+s_color_icon+" chat_icon";
+            }
+        }
+        return s_icon;
+    }
+
     box_chat_item(data,s_class="col-md-4 mb-3"){
         var item_list=new Carrot_List_Item(carrot);
         var s_body='';
         var s_key=data.key;
-        var s_color_icon='';
         var s_btn_extra='';
 
         if(carrot.ai.chat.where_c!=s_key){
@@ -475,24 +515,11 @@ class AI_Chat{
         item_list.set_index(data.index);
         item_list.set_id(data.id);
 
-        if(data.status=="passed") s_color_icon=" text-success ";
-        if(data.status=="reserve") s_color_icon=" text-warning ";
-
         if(data.pater!=''&&data.pater!='0'){
-            item_list.set_icon_font("fa-solid fa-comments mt-2 "+s_color_icon+" chat_icon");
             s_btn_extra=s_btn_extra+'<div role="button" db_collection="chat-'+carrot.langs.lang_setting+'" db_document="'+data.pater+'" class="dev btn btn_app_edit bg-secondary text-white btn-sm mr-2" onclick="carrot.ai.chat.edit" db_obj="carrot.ai.chat"><i class="fa-solid fa-feather"></i></div>';
-        }else{
-            if(data.func!="0"&&data.link!=""){
-                item_list.set_icon_font("fa-solid fa-atom mt-2 "+s_color_icon+" chat_icon");
-            }else if(data.link!=""){
-                item_list.set_icon_font("fa-sharp fa-solid fa-link mt-2 "+s_color_icon+" chat_icon");
-            }else if(data.func!="0"){
-                item_list.set_icon_font("fa-solid fa-comment-dots mt-2 "+s_color_icon+" chat_icon");
-            }else{
-                item_list.set_icon_font("fa-solid fa-comment mt-2 "+s_color_icon+" chat_icon");
-            }
         }
 
+        item_list.set_icon_font(this.get_icon(data));
         item_list.set_btn_dev_extra(s_btn_extra);
         item_list.set_name(data.key);
         item_list.set_tip('<i class="fa-solid fa-circle" style="color:'+data.color+'"></i> '+' <span id="chat_msg_'+data.index+'">'+data.msg+'</span>');
@@ -515,7 +542,7 @@ class AI_Chat{
             s_body+='<i id="btn_add_father_chat" role="button" sex_user="'+data.sex_user+'" sex_character="'+data.sex_character+'" id_chat="'+data.id+'" onclick="carrot.ai.chat.add_chat_with_father(this);return false;" class="fa-solid fa-square-plus float-end fa-2x text-success m-1"></i>';
             s_body+='<i id="btn_clone_chat" role="button" data-json="'+encodeURIComponent(JSON.stringify(data))+'" sex_user="'+data.sex_user+'" sex_character="'+data.sex_character+'" id_chat="'+data.id+'" onclick="carrot.ai.chat.clone_chat(this);return false;" class="fa-solid fa-clone dev float-end fa-2x text-success m-1"></i>';
             if(data.lang!="vi") s_body+='<i id="btn_translate_chat" role="button" onclick="tr_emp(\'chat_msg_'+data.index+'\',\''+carrot.langs.lang_setting+'\',\'vi\');return false;" class="fa-solid fa-language float-end fa-2x text-success m-1 dev"></i>';
-            s_body+='<i id="btn_list_child_chat" role="button" onclick="carrot.ai.chat.show_list_child(\''+data.id+'\');return false;" class="fa-solid fa-child float-end fa-2x text-success m-1"></i>';
+            s_body+='<i id="btn_list_child_chat" role="button" onclick="carrot.ai.chat.show_list_child(\''+data.id+'\');return false;" class="fa-solid fa-comments float-end fa-2x text-success m-1"></i>';
             s_body+='<i id="btn_check_same_chat" role="button" sex_user="'+data.sex_user+'" sex_character="'+data.sex_character+'" key_chat="'+data.key+'" onclick="carrot.ai.chat.show_check_same_key(this);return false;" class="fa-solid fa-rectangle-list float-end fa-2x text-success m-1"></i>';
         }
 
@@ -736,34 +763,15 @@ class AI_Chat{
 
     list_data_chat_in_table(querySnapshot){
         var html='';
-        var s_class_status='';
-        var s_class_chat_type='fa-solid fa-comments';
-
         html+='<table class="table table-sm table-hover">';
         html+='<tbody>';
         querySnapshot.forEach((doc) => {
             var item_data=doc.data();
             item_data["id"]=doc.id;
-            if(item_data["status"]=="passed") s_class_status='text-success'; else s_class_status='';
-
-            if(item_data["pater"]!=''&&item_data["pater"]!='0'){
-                s_class_chat_type='fa-solid fa-comments';
-            }else{
-                if(item_data.func!="0"&&item_data.link!=""){
-                    s_class_chat_type="fa-solid fa-atom";
-                }else if(item_data.link!=""){
-                    s_class_chat_type="fa-sharp fa-solid fa-link";
-                }else if(item_data.func!="0"){
-                    s_class_chat_type="fa-solid fa-comment-dots";
-                }else{
-                    s_class_chat_type="fa-solid fa-comment";
-                }
-            }
-
             html+='<tr>';
                 html+='<td class="fs-9 d-block text-justify">';
                     html+=' <input class="form-check-input chat_checkbox dev" type="checkbox" role="button" data-chat-id="'+item_data.id+'" emp_type="msg"/> ';
-                    html+='<i class="'+s_class_chat_type+' '+s_class_status+'"></i> ';
+                    html+='<i class="'+this.get_icon(item_data)+'"></i> ';
                     if(item_data.sex_user=='0') html+='<i class="fa-solid fa-mars text-primary"></i>'; else html+='<i class="fa-solid fa-venus text-danger"></i>';
                     html+=' <i class="fa-sharp fa-solid fa-right-left"></i> ';
                     if(item_data.sex_character=='0') html+='<i class="fa-solid fa-person text-primary"></i>'; else html+='<i class="fa-solid fa-person-dress text-danger"></i>';
