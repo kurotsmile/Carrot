@@ -648,6 +648,8 @@ class AI_Chat{
         $("#box_input_search").change(function(){
             carrot.show_loading_search();
             var key_search=$("#box_input_search").val();
+            key_search=key_search.toLowerCase();
+            key_search=key_search.trim();
             carrot.ai.chat.orderBy_at='date_create';
             carrot.ai.chat.where_a="key";
             carrot.ai.chat.where_c=key_search;
