@@ -410,7 +410,7 @@ class Carrot_Music{
         frm.create_field("link_ytb").set_label("link ytb").add_btn_download_ytb().set_val(data["link_ytb"]).add_btn(btn_ytb_avatar).set_tip("Dán liên kết Youtube vào đây để nhập tự động thông tin bài hát");
         frm.create_field("name").set_label("Name").set_val(data["name"]).set_tip("Create id url by name").add_btn_search_google().add_btn_search_ytb().add_btn_toLower();
         frm.create_field("avatar").set_label("Avatar (url)").set_val(data["avatar"]).set_type("file").set_type_file("image/*");
-        frm.create_field("artist").set_label("Artist").set_val(data["artist"]);
+        frm.create_field("artist").set_label("Artist").set_val(data["artist"]).add_btn_toLower();
         frm.create_field("mp3").set_label("Mp3 (Url)").set_val(data["mp3"]).set_type("file").set_type_file("audio/*");
         frm.create_field("lyrics").set_label("lyrics").set_val(data["lyrics"]).set_type("editor");
 
