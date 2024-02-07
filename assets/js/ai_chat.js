@@ -426,8 +426,8 @@ class AI_Chat{
                     html_menu+='<div onclick="carrot.ai.chat.get_list_by_key(\'key\',\'hi_'+i+'\');return false;" type="button" class="dropdown-item '+s_class_active+'"><i class="fa-solid fa-comments"></i> hi_'+i+'</div>';
                 }
                 html_menu+='<div onclick="carrot.ai.chat.get_list_by_key(\'key\',\'hit\');return false;" type="button" class="dropdown-item"><i class="fa-solid fa-hand-back-fist"></i> hit</div>';
-                html_menu+='<div onclick="carrot.ai.chat.get_list_by_key(\'key\',\'found_song\');return false;" type="button" class="dropdown-item"><i class="fa-solid fa-comment"></i> found_song</div>';
-                html_menu+='<div onclick="carrot.ai.chat.get_list_by_key(\'key\',\'no_found_song\');return false;" type="button" class="dropdown-item"><i class="fa-solid fa-comment"></i> no_found_song</div>';
+                html_menu+='<div onclick="carrot.ai.chat.get_list_by_key(\'key\',\'found_song\');return false;" type="button" class="dropdown-item"><i class="fa-solid fa-magnifying-glass-plus"></i> found_song</div>';
+                html_menu+='<div onclick="carrot.ai.chat.get_list_by_key(\'key\',\'no_found_song\');return false;" type="button" class="dropdown-item"><i class="fa-solid fa-magnifying-glass-minus"></i> no_found_song</div>';
                 html_menu+='<div onclick="carrot.ai.chat.get_list_by_function();return false;" type="button" class="dropdown-item"><i class="fa-solid fa-atom"></i> Function</div>';
                 html_menu+='<div onclick="carrot.ai.chat.get_list_by_user();return false;" type="button" class="dropdown-item"><i class="fa-solid fa-user"></i> User</div>';
             html_menu+='</div>';
@@ -469,7 +469,10 @@ class AI_Chat{
 
         if(data.pater!=''&&data.pater!='0'){
             s_icon="fa-solid fa-comments mt-2 "+s_color_icon+" chat_icon";
-        }else{
+        }else if(data.key=="hit"){
+            s_icon="fa-solid fa-comments mt-2 "+s_color_icon+" chat_icon";
+        }
+        else{
             if(data.func!="0"){
                 if(data.func=="1") s_icon="fa-solid fa-file-audio mt-2 "+s_color_icon+" chat_icon";
                 else if(data.func=="2") s_icon="fa-solid fa-cloud-sun mt-2 "+s_color_icon+" chat_icon";
