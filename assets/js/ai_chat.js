@@ -470,7 +470,7 @@ class AI_Chat{
         if(data.pater!=''&&data.pater!='0'){
             s_icon="fa-solid fa-comments mt-2 "+s_color_icon+" chat_icon";
         }else if(data.key=="hit"){
-            s_icon="fa-solid fa-comments mt-2 "+s_color_icon+" chat_icon";
+            s_icon="fa-solid fa-hand-fist mt-2 "+s_color_icon+" chat_icon";
         }
         else{
             if(data.func!="0"){
