@@ -298,10 +298,13 @@ class AI_Chat{
         var html='';
         html+='<div class="row">';
         html+='<div class="col-12">';
+        html+='<span role="button" onclick="carrot.ai.chat.select_key_msg(\'hit\')" class="btn btn-info btn-sm m-1"><i class="fa-solid fa-hand-back-fist"></i> hit</span>';
+        html+='<span role="button" onclick="carrot.ai.chat.select_key_msg(\'tip\')" class="btn btn-info btn-sm m-1"><i class="fa-solid fa-circle-question"></i> tip</span>';
+        html+='<span role="button" onclick="carrot.ai.chat.select_key_msg(\'found_song\')" class="btn btn-info btn-sm m-1"><i class="fa-solid fa-magnifying-glass-plus"></i> found_song</span>';
+        html+='<span role="button" onclick="carrot.ai.chat.select_key_msg(\'no_found_song\')" class="btn btn-info btn-sm m-1"><i class="fa-solid fa-magnifying-glass-minus"></i> no_found_song</span>';
         for(var i=0;i<=23;i++){
             html+='<span role="button" onclick="carrot.ai.chat.select_key_msg(\'hi_'+i+'\')" class="btn btn-info btn-sm m-1"><i class="fa-solid fa-comment-dots"></i> hi_'+i+'</span>';
         }
-        html+='<span role="button" onclick="carrot.ai.chat.select_key_msg(\'hit\')" class="btn btn-info btn-sm m-1"><i class="fa-solid fa-hand-back-fist"></i> Hit</span>';
         html+='</div>';
         html+='</div>';
 
@@ -419,17 +422,18 @@ class AI_Chat{
                 if(carrot.ai.chat.where_a=='key'&&carrot.ai.chat.where_c!='') html_menu+=' ('+carrot.ai.chat.where_c+')';
             html_menu+='</button>';
             html_menu+='<div class="dropdown-menu" aria-labelledby="btn_list_msg">';
+                html_menu+='<div onclick="carrot.ai.chat.get_list_by_key(\'key\',\'hit\');return false;" type="button" class="dropdown-item"><i class="fa-solid fa-hand-back-fist"></i> hit</div>';
+                html_menu+='<div onclick="carrot.ai.chat.get_list_by_key(\'key\',\'tip\');return false;" type="button" class="dropdown-item"><i class="fa-solid fa-circle-question"></i> tip</div>';
+                html_menu+='<div onclick="carrot.ai.chat.get_list_by_key(\'key\',\'found_song\');return false;" type="button" class="dropdown-item"><i class="fa-solid fa-magnifying-glass-plus"></i> found_song</div>';
+                html_menu+='<div onclick="carrot.ai.chat.get_list_by_key(\'key\',\'no_found_song\');return false;" type="button" class="dropdown-item"><i class="fa-solid fa-magnifying-glass-minus"></i> no_found_song</div>';
+                html_menu+='<div onclick="carrot.ai.chat.get_list_by_function();return false;" type="button" class="dropdown-item"><i class="fa-solid fa-atom"></i> Function</div>';
+                html_menu+='<div onclick="carrot.ai.chat.get_list_by_user();return false;" type="button" class="dropdown-item"><i class="fa-solid fa-user"></i> User</div>';
                 for(var i=0;i<24;i++){
                     if(carrot.ai.chat.where_a=='key'){
                         if(carrot.ai.chat.where_c=='hi_'+i) s_class_active="active"; else s_class_active="";
                     }
                     html_menu+='<div onclick="carrot.ai.chat.get_list_by_key(\'key\',\'hi_'+i+'\');return false;" type="button" class="dropdown-item '+s_class_active+'"><i class="fa-solid fa-comments"></i> hi_'+i+'</div>';
                 }
-                html_menu+='<div onclick="carrot.ai.chat.get_list_by_key(\'key\',\'hit\');return false;" type="button" class="dropdown-item"><i class="fa-solid fa-hand-back-fist"></i> hit</div>';
-                html_menu+='<div onclick="carrot.ai.chat.get_list_by_key(\'key\',\'found_song\');return false;" type="button" class="dropdown-item"><i class="fa-solid fa-magnifying-glass-plus"></i> found_song</div>';
-                html_menu+='<div onclick="carrot.ai.chat.get_list_by_key(\'key\',\'no_found_song\');return false;" type="button" class="dropdown-item"><i class="fa-solid fa-magnifying-glass-minus"></i> no_found_song</div>';
-                html_menu+='<div onclick="carrot.ai.chat.get_list_by_function();return false;" type="button" class="dropdown-item"><i class="fa-solid fa-atom"></i> Function</div>';
-                html_menu+='<div onclick="carrot.ai.chat.get_list_by_user();return false;" type="button" class="dropdown-item"><i class="fa-solid fa-user"></i> User</div>';
             html_menu+='</div>';
         html_menu+='</div>';
 
@@ -471,6 +475,8 @@ class AI_Chat{
             s_icon="fa-solid fa-comments mt-2 "+s_color_icon+" chat_icon";
         }else if(data.key=="hit"){
             s_icon="fa-solid fa-hand-fist mt-2 "+s_color_icon+" chat_icon";
+        }else if(data.key=="tip"){
+            s_icon="fa-solid fa-circle-question mt-2 "+s_color_icon+" chat_icon";
         }
         else{
             if(data.func!="0"){
