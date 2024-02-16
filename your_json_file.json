@@ -1,0 +1,25 @@
+{
+  "lang": "en",
+  "link": "android.provider.MediaStore.RECORD_SOUND",
+  "user": {
+    "avatar": "https://lh3.googleusercontent.com/a/AAcHTteq6PPFniFz0xUeWLo66It0ThtyB7R5Xtkk5sZe8WWVEG0=s512-c",
+    "name": "Thien Thanh Tran",
+    "id": "bUqulTDPnfNfqCJ7rnYXziBdcCm2",
+    "lang": "vi"
+  },
+  "func": "16",
+  "sex_character": "0",
+  "id": "chat1707363671590",
+  "msg": "I have turned on the recording function! What are you going to record?",
+  "pater": "",
+  "color": "#fdf48b",
+  "face": "9",
+  "mp3": "",
+  "sex_user": "0",
+  "act": "Pick_Fruit",
+  "key": "recording",
+  "icon": "icon1694786467009",
+  "status": "passed",
+  "date_create": "2024-02-08T03:41:11.590Z",
+  "collection": "chat-en"
+}

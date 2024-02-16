@@ -528,6 +528,8 @@ class AI_Chat{
             s_btn_extra=s_btn_extra+'<div role="button" db_collection="chat-'+carrot.langs.lang_setting+'" db_document="'+data.pater+'" class="dev btn btn_app_edit bg-secondary text-white btn-sm mr-2" onclick="carrot.ai.chat.edit" db_obj="carrot.ai.chat"><i class="fa-solid fa-feather"></i></div>';
         }
 
+        s_btn_extra=s_btn_extra+'<div role="button" db_collection="chat-'+carrot.langs.lang_setting+'" db_document="'+data.id+'" class="dev btn bg-info text-white btn-sm mr-2" onclick="carrot.ai.chat.replication(this)" db_obj="carrot.ai.chat"><i class="fa-solid fa-viruses"></i></div>';
+
         item_list.set_icon_font(this.get_icon(data));
         item_list.set_btn_dev_extra(s_btn_extra);
         item_list.set_name(data.key);
@@ -798,6 +800,71 @@ class AI_Chat{
         html+='</tbody>';
         html+='</table>';
         return html;
+    }
+
+    replication(emp){
+        var db_collection=$(emp).attr("db_collection");
+        var db_document=$(emp).attr("db_document");
+        carrot.get_doc(db_collection,db_document,this.replication_load_data);
+    }
+
+    replication_load_data(data,carrot){
+        Swal.close();
+
+        var list_lang=carrot.langs.list_lang;
+        var html='';
+
+        $.each(list_lang, function(index, lang) {
+            if(lang.key!=carrot.langs.lang_setting){
+                carrot.ai.chat.translateData(data, lang.key);
+            }
+        });
+
+        html+='<div class="modal-header">';
+        html+='<h5 class="modal-title"><i class="fa-solid fa-viruses"></i> Replication</h5>';
+        html+='<button type="button" class="close box_close" data-dismiss="modal" aria-label="Close"><i class="fa-solid fa-circle-xmark"></i></button>';
+        html+='</div>';
+
+        html+='<div id="frm_replication_all_item" class="modal-body">';
+
+        html+='</div>';
+
+        html+='<div class="modal-footer">';
+            html+='<button id="btn_replication_close" type="button" class="btn btn-secondary box_close" data-dismiss="modal"><i class="fa-solid fa-circle-xmark"></i> Close</button>';
+        html+='</div>';
+        carrot.box(html);
+
+        $(".box_close").click(function(){
+            $('#box').modal('hide'); 
+        });
+    }
+
+    translateData(data_chat, targetLanguage) {
+        var apiUrl = "https://translation.googleapis.com/language/translate/v2?key=AIzaSyDtrxOBgBfiRLaxKP0p_UzfE2-hsjHNKBw";
+        var keyData = {
+            q: data_chat.key,
+            target: targetLanguage
+        };
+        var msgData = {
+            q: data_chat.msg,
+            target: targetLanguage
+        };
+
+        $.when(
+            $.post(apiUrl, keyData),
+            $.post(apiUrl, msgData)
+        ).done(function(keyResponse, msgResponse) {
+            data_chat.key=keyResponse[0].data.translations[0].translatedText;
+            data_chat.msg=msgResponse[0].data.translations[0].translatedText;
+            data_chat.lang=targetLanguage;
+            var html='<ul style="border-bottom: solid 1px lightgrey;">';
+            html+='<li><b>'+data_chat.lang+'</b><li>';
+            html+='<li>Key: <span style="color:black">'+data_chat.key+'</span><li>';
+            html+='<li>Msg: <span style="color:black">'+data_chat.msg+'</span><li>';
+            html+='</ul>';
+            $("#frm_replication_all_item").append(html);
+            carrot.set_doc("chat-"+data_chat.lang,data_chat.id,data_chat);
+        });
     }
 
     show(id,carrot){
