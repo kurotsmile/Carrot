@@ -854,8 +854,10 @@ class AI_Chat{
             $.post(apiUrl, keyData),
             $.post(apiUrl, msgData)
         ).done(function(keyResponse, msgResponse) {
-            data_chat.key=keyResponse[0].data.translations[0].translatedText;
-            data_chat.msg=msgResponse[0].data.translations[0].translatedText;
+            var key=keyResponse[0].data.translations[0].translatedText;
+            var msg=msgResponse[0].data.translations[0].translatedText;
+            data_chat.key=key.toLowerCase();
+            data_chat.msg=msg.toLowerCase();
             data_chat.lang=targetLanguage;
             var html='<ul style="border-bottom: solid 1px lightgrey;">';
             html+='<li><b>'+data_chat.lang+'</b><li>';
