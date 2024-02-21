@@ -273,7 +273,7 @@ class Carrot_Music{
                         html+='<div class="row pt-4">';
                             html+='<div class="col-12 text-center">';
                                 html+='<button id="btn_share" type="button" class="btn d-inline btn-success"><i class="fa-solid fa-share-nodes"></i> <l class="lang" key_lang="share">Share</l> </button> ';
-                                html+='<button id="register_protocol_url" type="button" class="btn d-inline btn-success" ><i class="fa-solid fa-registered"></i> <l class="lang" key_lang="register_protocol_url">Check Open with..</l> </button> ';
+                                html+='<a href="music://show/'+data.id+'/'+data.lang+'" id="register_protocol_url" type="button" class="btn d-inline btn-success" ><i class="fa-solid fa-registered"></i> <l class="lang" key_lang="register_protocol_url">Check Open with..</l> </a> ';
                                 html+='<button id="btn_open_app" type="button" class="btn d-inline btn-success" ><i class="fa-solid fa-rocket"></i> <l class="lang" key_lang="open_with">Open with..</l> </button> ';
                                 if(data.mp3!=""){
                                     if(carrot.music.check_pay(data.name))

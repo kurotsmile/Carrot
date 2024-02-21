@@ -972,6 +972,14 @@ class AI_Chat{
                                 }
 
                             html+='</div>';
+
+                            html+='<div class="row pt-4">';
+                                html+='<div class="col-12 text-center">';
+                                html+='<button id="btn_share" type="button" class="btn d-inline btn-success m-1"><i class="fa-solid fa-share-nodes"></i> <l class="lang" key_lang="share">Share</l></button>';
+                                html+='<a id="register_protocol_url" href="ailover://show/'+data.id+'/'+data.lang+'" type="button" class="btn d-inline btn-success m-1" ><i class="fa-solid fa-rocket"></i> <l class="lang" key_lang="open_with">Open with..</l></a>';
+                                html+='</div>';
+                            html+='</div>';
+
                         html+='</div>';
 
                     html+='</div>';
