@@ -1031,6 +1031,11 @@ class Carrot_Site{
             },
             onApprove: function(data, actions) {
             return actions.order.capture().then(function(details) {
+                if(carrot.in_app_pay!=null){
+                    $.each(carrot.in_app_pay, function (key, val) {
+                        details[key]=val;
+                    });               
+                }
                 carrot.set_doc("order",id_product+"_"+carrot.create_id(),details);
                 act_done(carrot);
                 carrot.msg("Pay success!");

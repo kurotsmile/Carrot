@@ -5,8 +5,20 @@ var description_product=decodeURI(carrot.get_param_url("description"));
 var price_product=carrot.get_param_url("price");
 var user_id=carrot.get_param_url("user_id");
 var user_lang=carrot.get_param_url("user_lang");
+var user_name=decodeURI(carrot.get_param_url("user_name"));
+var type_product=carrot.get_param_url("type");
 
 var html='';
+
+var data_pay=new Object();
+data_pay["user_id"]=user_id;
+data_pay["user_lang"]=user_lang;
+data_pay["id_product"]=id_product;
+data_pay["price"]=price_product;
+data_pay["type_product"]=type_product;
+data_pay["date"]=new Date().toISOString();
+carrot["in_app_pay"]=data_pay;
+
 html+='<div class="row">';
     html+='<div class="mt-2 col-md-6">';
         html+='<div class="card">';
@@ -24,7 +36,12 @@ html+='<div class="row">';
                 html+='<li class="list-group-item pt-1 pb-1"><i class="fa-solid fa-shield-heart"></i> All transaction information is absolutely confidential <i class="float-end fa-solid fa-circle-check text-success"></i></li>';
                 html+='<li class="list-group-item pt-1 pb-1"><i class="fa-solid fa-shield-cat"></i> Replace payment on paypal platform <i class="float-end fa-solid fa-circle-check text-success"></i></li>';
                 if(user_id!=""){
-                    html+='<li class="list-group-item pt-1 pb-1"><i class="fa-solid fa-user-shield"></i> '+user_id+'-('+user_lang+') <i class="float-end fa-solid fa-circle-check text-success"></i></li>';
+                    if(user_name==undefined){
+                        user_name=user_id;
+                        html+='<li class="list-group-item pt-1 pb-1"><i class="fa-solid fa-user-shield"></i> '+user_name+'-('+user_lang+') <i class="float-end fa-solid fa-circle-check text-success"></i></li>';
+                    }else{
+                        html+='<li class="list-group-item pt-1 pb-1"><i class="fa-solid fa-user-shield"></i> '+user_name+' <i class="float-end fa-solid fa-circle-check text-success"></i></li>';
+                    }
                 }
                 html+='<li class="list-group-item pt-1 pb-1"><i class="fa-solid fa-umbrella"></i> Click the buy now button to start ordering and paying for the product. Once you have paid, return to the application or game to start using the service and purchased products.</li>';
             html+='</ul>';
@@ -41,6 +58,9 @@ carrot.show(html);
 carrot.check_event();
 
 function pay_product(){
-    carrot.show_pay(id_product,title_product,description_product,price_product,carrot.pay.pay_success);
+    carrot.show_pay(id_product,title_product,description_product,price_product,pay_in_app_success);
 }
 
+function pay_in_app_success(){
+    carrot.msg("Buy in-app success","success");
+}
