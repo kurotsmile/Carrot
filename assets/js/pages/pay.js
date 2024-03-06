@@ -7,6 +7,7 @@ var user_id=carrot.get_param_url("user_id");
 var user_lang=carrot.get_param_url("user_lang");
 var user_name=decodeURI(carrot.get_param_url("user_name"));
 var type_product=carrot.get_param_url("type");
+var id_order=carrot.get_param_url("id_order");
 
 var html='';
 
@@ -14,6 +15,7 @@ var data_pay=new Object();
 data_pay["user_id"]=user_id;
 data_pay["user_lang"]=user_lang;
 data_pay["id_product"]=id_product;
+data_pay["id_order"]=id_order;
 data_pay["price"]=price_product;
 data_pay["type_product"]=type_product;
 carrot["in_app_pay"]=data_pay;
