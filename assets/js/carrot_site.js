@@ -170,6 +170,7 @@ class Carrot_Site{
 
         var TodayDate = new Date();
         var m = TodayDate.getMonth();
+        m++;
         $("#logo_carrot").attr("src","images/logo/logo_"+m+".png");
     }
 
@@ -909,9 +910,14 @@ class Carrot_Site{
                 this.home();
             };
         }else{
-            this.load_bar();
-            $("#load_bar").css("width","100%");
-            this.home();
+            var id_page=this.get_param_url("page");
+            if(id_page!=""){
+                $('head').append('<script type="text/javascript" src="assets/js/pages/'+id_page+'.js?ver='+this.get_ver_cur("js")+'"></script>');
+            }else{
+                this.load_bar();
+                $("#load_bar").css("width","100%");
+                this.home();
+            }
         }
     }
 
