@@ -37,7 +37,7 @@ html+='<div class="row">';
                 html+='<li class="list-group-item pt-1 pb-1"><i class="fa-solid fa-shield-heart"></i> All transaction information is absolutely confidential <i class="float-end fa-solid fa-circle-check text-success"></i></li>';
                 html+='<li class="list-group-item pt-1 pb-1"><i class="fa-solid fa-shield-cat"></i> Replace payment on paypal platform <i class="float-end fa-solid fa-circle-check text-success"></i></li>';
                 if(user_id!=""){
-                    if(user_name==undefined){
+                    if(user_name=="undefined"){
                         user_name=user_id;
                         html+='<li class="list-group-item pt-1 pb-1"><i class="fa-solid fa-user-shield"></i> '+user_name+'-('+user_lang+') <i class="float-end fa-solid fa-circle-check text-success"></i></li>';
                     }else{
@@ -63,5 +63,5 @@ function pay_product(){
 }
 
 function pay_in_app_success(){
-    carrot.msg("Buy in-app success","success");
+    carrot.msg("Successful payment, please return to the application to use the services or products purchased!","success");
 }
