@@ -16,7 +16,6 @@ data_pay["user_lang"]=user_lang;
 data_pay["id_product"]=id_product;
 data_pay["price"]=price_product;
 data_pay["type_product"]=type_product;
-data_pay["date"]=new Date().toISOString();
 carrot["in_app_pay"]=data_pay;
 
 html+='<div class="row">';
