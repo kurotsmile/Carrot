@@ -911,7 +911,7 @@ class Carrot_Site{
             };
         }else{
             var id_page=this.get_param_url("page");
-            if(id_page!=""){
+            if(id_page!=undefined){
                 $('head').append('<script type="text/javascript" src="assets/js/pages/'+id_page+'.js?ver='+this.get_ver_cur("js")+'"></script>');
             }else{
                 this.load_bar();
