@@ -427,6 +427,11 @@ class Carrot_Bible{
         btn_add.set_label("Add Chapter");
         btn_add.set_icon("fa-solid fa-square-check");
         btn_add.set_onclick("carrot.bible.act_done_chapter_to_book()");
+
+        var btn_add_by_text=frm.create_btn();
+        btn_add_by_text.set_label("Add by Text");
+        btn_add_by_text.set_icon("fa-solid fa-square-check");
+        btn_add_by_text.set_onclick("carrot.bible.add_paragraph_by_text()");
         frm.off_btn_done();
         return frm;
     } 
@@ -566,5 +571,45 @@ class Carrot_Bible{
             ebook_file.add_chapter("Chapter "+(index+1),xhtml);
         });
         ebook_file.download();
+    }
+
+    add_paragraph_by_text(){
+        var number_start=prompt("Start:");
+        var number_end=prompt("End:");
+        var inp_data=prompt("Enter collection", "Enter name collection");
+        if(number_start=="") return;
+        if(number_end=="")return;
+        carrot.bible.splitTextIntoSentences(inp_data,number_start,number_end);
+    }
+
+    splitTextIntoSentences(text, number_start,number_end) {
+        for (var i = number_start; i < number_end+1;i++) {
+            var p_paragraph="";
+            if(i==number_end){
+                p_paragraph=text.substring(text.indexOf(i.toString()),text.toString().length);
+            }else{
+                p_paragraph=text.substring(text.indexOf(i.toString()),text.indexOf((i+1).toString()));
+            }
+            p_paragraph=p_paragraph.replace((i+1).toString(),"");
+            console.log(p_paragraph);
+            var html='';
+            html+='<div class="input-group">';
+            html+='<div class="input-group-prepend">';
+                html+='<div class="input-group-text">'+i+'</div>';
+            html+='</div>';
+
+            html+='<input id="p_'+i+'" type="text" class="form-control paragraph" value=""   placeholder="Enter Paragraph"/>';
+
+            html+='<div class="input-group-prepend">';
+                html+='<div  role="button" onclick="paste_tag(\'p_'+i+'\');return false;" class="input-group-text"><i class="fa-solid fa-clipboard"></i> &nbsp</div>';
+            html+='</div>';
+
+            html+='<div class="input-group-prepend">';
+                html+='<div  role="button" onclick="carrot.bible.delete_paragraph(this);return false;" class="input-group-text btn-danger"><i class="fa-solid fa-delete-left"></i> &nbsp</div>';
+            html+='</div>';
+
+            html+='</div>';
+            $("#paragraphs").append(html);
+        }
     }
 }

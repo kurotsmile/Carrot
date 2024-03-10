@@ -299,7 +299,7 @@ class Carrot_Langs{
             html+='<tr class="'+s_class+'">';
             html+='<td scope="col" class="w-10"><b>'+key+'</b></td>';
             html+='<td scope="col" class="w-25">';
-                html+='<span id="txt_'+key+'">'+value+'</span> '
+                html+='<span id="txt_'+key+'" class="lang_key_setting" data="'+key+'" val="'+value+'">'+value+'</span> '
                 if(key!='id') html+='<button class="btn btn-outline-secondary btn-sm" type="button" onclick="copy_txt_tag(\'txt_'+key+'\')"><i class="fa-solid fa-copy"></i></button> <button class="btn btn-outline-secondary btn-sm" type="button" onclick="tr(\'txt_'+key+'\',\''+langs.lang_setting+'\')"><i class="fa-solid fa-language"></i></button>';
             html+='</td>';
             html+='<td scope="col">';
@@ -318,6 +318,7 @@ class Carrot_Langs{
 
         html+='<button id="btn_done_setting_lang" type="button" class="btn btn-primary mr-1 mt-1"><i class="fa-solid fa-square-check"></i> Done</button> ';
         if(data_lang_change.id=="en") html+='<button id="btn_add_field_setting_lang" type="button" class="btn btn-secondary mr-1 mt-1 btn-sm" ><i class="fa-solid fa-add"></i> Add Field</button>';
+        if(data_lang_change.id!="en") html+='<button onclick="carrot.langs.automatic_translate_table();return false;" type="button" class="btn btn-secondary mr-1 mt-1 btn-sm" ><i class="fa-solid fa-add"></i> Automatically translated</button>';
         $("#main_contain").html(html);
         if(data_lang_change.id=="en") document.getElementById("btn_add_field_setting_lang").onclick = event => {  this.add_field_for_setting_lang();}
         new DataTable('#table_setting_lang', {responsive: true,pageLength:1000});
@@ -368,6 +369,28 @@ class Carrot_Langs{
             html_new_field+='</td>';
             html_new_field+='</tr>';
             $("#body_table_lang_setting").append(html_new_field);
+        });
+    }
+
+    automatic_translate_table(){
+        $(".lang_key_setting").each(function(){
+            var emp_val=$(this).attr("val");
+            var emp_key=$(this).attr("data");
+            if(emp_key!="id") carrot.langs.translateData_table_row(emp_val,"#inp_"+emp_key,carrot.langs.lang_setting);
+        });
+    }
+
+    translateData_table_row(val_tr,emp_tr,targetLanguage) {
+        var apiUrl = "https://translation.googleapis.com/language/translate/v2?key=AIzaSyDtrxOBgBfiRLaxKP0p_UzfE2-hsjHNKBw";
+        var msgData = {
+            q:val_tr,
+            target: targetLanguage
+        };
+        $.when(
+            $.post(apiUrl, msgData)
+        ).done(function(msgResponse) {
+            var msg=msgResponse.data.translations[0].translatedText;
+            $(emp_tr).val(msg);
         });
     }
 
