@@ -377,7 +377,7 @@ class Carrot_Langs{
             var emp_val=$(this).attr("val");
             var emp_key=$(this).attr("data");
             var val_change=$(this).attr("val_change");
-            if(emp_key!="id"&&val_change!="") carrot.langs.translateData_table_row(emp_val,"#inp_"+emp_key,carrot.langs.lang_setting);
+            if(emp_key!="id"&&val_change=="") carrot.langs.translateData_table_row(emp_val,"#inp_"+emp_key,carrot.langs.lang_setting);
         });
     }
 
