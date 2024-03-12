@@ -60,9 +60,13 @@ class Carrot_Background{
                         var url_background='';
                         if(data.icon!=null) url_background=data.icon;
                         if(url_background=="") url_background="images/avatar_default.png";
-                        html+='<div class="img-cover"><img class="rounded" src="'+url_background+'" alt="'+data.id+'"></div>';
+                        html+='<div class="img-cover" style="height:500px;overflow-y: hidden;"><img class="rounded" src="'+url_background+'" alt="'+data.id+'"></div>';
                         html+='<div class="det mt-2 col-9">';
                         html+="<h5 class='mb-0 fs-6'>"+data.id+"</h5>";
+                        if(data.buy=="0")
+                            html+='<span class="text-success"><i class="fa-solid fa-file-arrow-down"></i> Free</span>';
+                        else
+                            html+='<span class="text-primary"><i class="fa-solid fa-cart-shopping"></i> Buy</span>';
                         html+="</div>";
                         html+=carrot.btn_dev("background",data.id);
                 html+="</div>";
@@ -94,6 +98,9 @@ class Carrot_Background{
         frm.create_field("id").set_label("ID").set_val(data.id).set_type("id");
         frm.create_field("name").set_label("Name").set_val(data.name);
         frm.create_field("icon").set_label("Icon (url)").set_val(data.icon).set_type("file").set_type_file("image/*");
+        var item_sell=frm.create_field("buy").set_label("Status Sell").set_val(data.buy).set_type("select");
+        item_sell.add_option("0","Free");
+        item_sell.add_option("1","Buy");
         return frm;
     }
 
