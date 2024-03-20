@@ -64,7 +64,7 @@ class Carrot_Site{
             measurementId: "G-KXDDJ42JFN",
         }
 
-        fetch('config.json').then(response => response.json()).then((text) => {this.config=text;console.log(this.config);});
+        fetch('config.json').then(response => response.json()).then((text) => {this.config=text;});
 
         this.setup_sever_db();
 
