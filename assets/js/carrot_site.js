@@ -51,6 +51,7 @@ class Carrot_Site{
     rate;
     ebook;
     piano;
+    config;
     
     constructor(){
         this.firebaseConfig_mainhost={
@@ -62,6 +63,8 @@ class Carrot_Site{
             appId: "1:745653792874:web:55d78113cd3dea7c28da13",
             measurementId: "G-KXDDJ42JFN",
         }
+
+        fetch('config.json').then(response => response.json()).then((text) => {this.config=text;console.log(this.config);});
 
         this.setup_sever_db();
 

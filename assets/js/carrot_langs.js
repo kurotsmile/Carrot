@@ -382,7 +382,7 @@ class Carrot_Langs{
     }
 
     translateData_table_row(val_tr,emp_tr,targetLanguage) {
-        var apiUrl = "https://translation.googleapis.com/language/translate/v2?key=AIzaSyDtrxOBgBfiRLaxKP0p_UzfE2-hsjHNKBw";
+        var apiUrl = "https://translation.googleapis.com/language/translate/v2?key="+carrot.config.key_api_google_translate;
         var msgData = {
             q:val_tr,
             target: targetLanguage

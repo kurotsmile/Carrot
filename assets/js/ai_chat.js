@@ -840,7 +840,7 @@ class AI_Chat{
     }
 
     translateData(data_chat, targetLanguage) {
-        var apiUrl = "https://translation.googleapis.com/language/translate/v2?key=AIzaSyDtrxOBgBfiRLaxKP0p_UzfE2-hsjHNKBw";
+        var apiUrl = "https://translation.googleapis.com/language/translate/v2?key="+carrot.config.key_api_google_translate;
         var keyData = {
             q: data_chat.key,
             target: targetLanguage
