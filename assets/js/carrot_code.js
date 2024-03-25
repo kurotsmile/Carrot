@@ -43,6 +43,7 @@ class Carrot_Code{
         new_data["code_theme"]="default.min.css";
         new_data["date"]=$.datepicker.formatDate('yy-mm-dd', new Date());
         new_data["user"]=this.carrot.user.get_user_login();
+        new_data["status"]="pending";
         this.show_add_or_edit_code(new_data).set_title("Add code").set_msg_done("Add code success!").show();
         this.reload_code_editor_field();
     }
@@ -79,6 +80,10 @@ class Carrot_Code{
         code_theme.add_option("far.min.css","Far");
         code_theme.add_option("felipec.min.css","Felipec");
         code_theme.add_option("foundation.min.css","Foundation");
+        var status_code=frm.create_field("status").set_label("status").set_value(data_code["status"]).set_type("date");
+        status_code.set_type("select");
+        status_code.add_option("pending","pending");
+        status_code.add_option("public","public");
         frm.create_field("date").set_label("Date Create").set_value(data_code["date"]).set_type("date");
         frm.create_field("user").set_label("User Create").set_val(data_code["user"]).set_type("user");
         return frm;

@@ -337,13 +337,17 @@ class Carrot_Langs{
         });
 
         $("#btn_done_setting_lang").click(function(){
+            var lang_db=new Object();
             var data_inp_lang=new Object();
             $(".inp-lang").each(function(index,emp){
                 var key_lang=$(this).attr("data-key");
                 var val_lang=$(this).val();
                 data_inp_lang[key_lang]=val_lang;
             });
-            carrot.set_doc(langs.lang_setting_db_collection,langs.lang_setting,data_inp_lang);
+            lang_db[langs.lang_setting_db_collection]=data_inp_lang;
+            console.log(lang_db);
+            alert("Cap nhat thanh cong");
+            //carrot.set_doc(langs.lang_setting_db_collection,langs.lang_setting,data_inp_lang);
             $.MessageBox("Cập nhật "+langs.lang_setting_db_collection+" - "+langs.lang_setting+" thành công!")
         });
     }
