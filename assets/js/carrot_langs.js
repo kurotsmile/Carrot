@@ -3,13 +3,14 @@ class Carrot_Langs{
     list_lang=Array();
     icon="fa-sharp fa-solid fa-language";
     lang_setting="en";
-    lang_setting_db_collection="en";
+    lang_setting_db_collection="";
 
     lang_web=null;//One obj seve
     obj_lang_web=Object();//List obj save
     arr_lang_setting_db=Array();
 
     obj_lang_setting_category=null;
+    lang_db=null;
     
     constructor(carrot){
         this.carrot=carrot;
@@ -30,7 +31,7 @@ class Carrot_Langs{
         var btn_setting=carrot.menu.create("setting_lang").set_label("Setting Lang").set_icon(this.icon).set_type("setting");
         $(btn_add).click(function(){carrot.langs.add_lang();});
         $(btn_list).click(function(){carrot.langs.list();});
-        $(btn_setting).click(function(){carrot.langs.show_setting_lang_by_key(carrot.lang,"lang_app");});
+        $(btn_setting).click(function(){carrot.langs.list_category_setting_lang();});
 
         $("#key_lang").html(carrot.lang);
         $("#btn_change_lang").click(function(){ carrot.langs.show_list_change_lang();});
@@ -64,24 +65,10 @@ class Carrot_Langs{
         html+='<div class="row mb-3">';
             html+='<div class="col-12 m-0 btn-toolba" role="toolbar" aria-label="Toolbar with button groups">';
                 html+='<div role="group" aria-label="First group"  class="btn-group mr-2">';
-                    if(carrot.langs.lang_setting_db_collection=="lang_app")
-                        html+='<button onclick="carrot.langs.show_setting_lang_app()" type="button" class="btn btn-info btn-sm"><i class="'+this.icon+'"></i> App Lang</button>';
-                    else
-                        html+='<button onclick="carrot.langs.show_setting_lang_app()" type="button" class="btn btn-dark btn-sm"><i class="fa-solid fa-list"></i> App Lang</button>';
-
-                    if(carrot.langs.lang_setting_db_collection=="lang_web")
-                        html+='<button onclick="carrot.langs.show_setting_lang_web()" type="button" class="btn btn-info btn-sm"><i class="'+this.icon+'"></i> Web Lang</button>';
-                    else
-                        html+='<button onclick="carrot.langs.show_setting_lang_web()" type="button" class="btn btn-dark btn-sm"><i class="fa-solid fa-list"></i> Web Lang</button>';
-
-                    if(carrot.langs.lang_setting_db_collection=="lang_app_ai_lover")
-                        html+='<button onclick="carrot.langs.show_setting_lang_ai()" type="button" class="btn btn-info btn-sm"><i class="'+this.icon+'"></i> Ai Lover</button>';
-                    else
-                        html+='<button onclick="carrot.langs.show_setting_lang_ai()" type="button" class="btn btn-dark btn-sm"><i class="fa-solid fa-list"></i> Ai Lover</button>';
-
                     html+='<button onclick="carrot.langs.list_category_setting_lang();" type="button" class="btn btn-dark btn-sm"><i class="fa-solid fa-rectangle-list"></i> Category Lang Setting</button>';
+                    html+='<button onclick="carrot.langs.add_setting_lang()" class="btn btn-sm btn-success"><i class="fa-solid fa-square-plus"></i> Add setting lang</button>';
                     html+=btn_extension;
-                    html+=carrot.langs.list_btn_lang_select();
+                    if(this.lang_setting_db_collection!="") html+=carrot.langs.list_btn_lang_select();
                 html+='</div>';
             html+='</div>';
         html+='</div>';
@@ -230,40 +217,29 @@ class Carrot_Langs{
         this.show_setting_lang_by_key(this.lang_setting,"lang_app_ai_lover");
     }
 
-    show_setting_lang_by_key(s_key_lang_change="",s_collection){    
-        var data_obj_lang_tag=new Object();
-        var data_obj_lang_change=new Object();
-        Swal.showLoading();
+    show_setting_lang_by_key(s_key_lang_change="",s_db_lang){
+        var data_obj_lang_tag=null;
+        var data_obj_lang_change=null;
+        this.lang_db=new Object();
         this.lang_setting=s_key_lang_change;
-        this.carrot.db.collection(s_collection).doc("en").get().then((doc) => {
-            if (doc.exists) {
-                data_obj_lang_tag = doc.data();
-                data_obj_lang_tag["id"]=doc.id;
-                this.carrot.db.collection(s_collection).doc(s_key_lang_change).get().then((doc) => {
-                    if (doc.exists) {
-                        data_obj_lang_change = doc.data();
-                        data_obj_lang_change["id"]=doc.id;
-                        this.carrot.langs.lang_setting_db_collection=s_collection;
-                        this.carrot.langs.show_setting_lang(data_obj_lang_tag,data_obj_lang_change);
-                        Swal.close();
-                    }else{
-                        data_obj_lang_tag["id"]=this.lang_setting;
-                        data_obj_lang_change["id"]=this.lang_setting;
-                        this.carrot.langs.lang_setting_db_collection=s_collection;
-                        this.carrot.langs.show_setting_lang(data_obj_lang_tag,data_obj_lang_change);
-                        Swal.close();
-                    }
-                }).catch((error) => {
-                    this.carrot.log(error.message);
-                    Swal.close();
-                });
+        this.lang_setting_db_collection=s_db_lang;
+        this.carrot.db.collection("lang_data").doc(s_db_lang).get().then((doc) => {
+            if(doc.exists){
+                var data_doc=doc.data();
+                carrot.langs.lang_db=data_doc[s_db_lang];
+                data_obj_lang_tag=carrot.langs.lang_db["en"];
+                data_obj_lang_change=carrot.langs.lang_db[s_key_lang_change];
+                if(data_obj_lang_change==null){
+                    data_obj_lang_change=new Object();
+                    data_obj_lang_change["id"]=s_key_lang_change;
+                }
             }else{
-                data_obj_lang_tag["id"]=this.lang_setting;
-                data_obj_lang_change["id"]=this.lang_setting;
-                this.carrot.langs.lang_setting_db_collection=s_collection;
-                this.carrot.langs.show_setting_lang(data_obj_lang_tag,data_obj_lang_change);
-                Swal.close();
+                data_obj_lang_tag=new Object();
+                data_obj_lang_tag["id"]=s_key_lang_change;
+                data_obj_lang_change=new Object();
+                data_obj_lang_change["id"]=s_key_lang_change;
             }
+            carrot.langs.show_setting_lang(data_obj_lang_tag,data_obj_lang_change);
         }).catch((error) => {
             this.carrot.log(error.message);
             Swal.close();
@@ -337,7 +313,7 @@ class Carrot_Langs{
         });
 
         $("#btn_done_setting_lang").click(function(){
-            var lang_db=new Object();
+            var lang_db_new=new Object();
             var lang_country=new Object();
             var data_inp_lang=new Object();
             $(".inp-lang").each(function(index,emp){
@@ -346,11 +322,8 @@ class Carrot_Langs{
                 data_inp_lang[key_lang]=val_lang;
             });
             lang_country[langs.lang_setting]=data_inp_lang;
-            lang_db[langs.lang_setting_db_collection]=lang_country;
-            console.log(lang_db);
-            alert("Cap nhat thanh cong sss-2");
-            //carrot.set_doc(langs.lang_setting_db_collection,langs.lang_setting,data_inp_lang);
-            carrot.set_doc_merge("lang_data",langs.lang_setting_db_collection,lang_db);
+            lang_db_new[langs.lang_setting_db_collection]=lang_country;
+            carrot.set_doc_merge("lang_data",langs.lang_setting_db_collection,lang_db_new);
             $.MessageBox("Cập nhật "+langs.lang_setting_db_collection+" - "+langs.lang_setting+" thành công!")
         });
     }
@@ -470,11 +443,10 @@ class Carrot_Langs{
     done_list_category_setting_lang(data,carrot){
         carrot.change_title_page("lang_category","?p=lang_category","langs");
         carrot.langs.arr_lang_setting_db=data.lang_setting;
+        carrot.langs.lang_setting_db_collection="";
         var array_setting_lang=data.lang_setting;
         var html='';
-        var html_btn_extension='';
-        html_btn_extension+='<button onclick="carrot.langs.add_setting_lang()" class="btn btn-sm btn-success"><i class="fa-solid fa-square-plus"></i> Add setting lang</button>';
-        html+=carrot.langs.menu(html_btn_extension);
+        html+=carrot.langs.menu();
         html+='<div class="row">';
         $(array_setting_lang).each(function(index,langs){
             var item_lang_setting=new Carrot_List_Item(carrot);
