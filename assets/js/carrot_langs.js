@@ -313,7 +313,6 @@ class Carrot_Langs{
         });
 
         $("#btn_done_setting_lang").click(function(){
-            var lang_db_new=new Object();
             var lang_country=new Object();
             var data_inp_lang=new Object();
             $(".inp-lang").each(function(index,emp){
@@ -322,8 +321,7 @@ class Carrot_Langs{
                 data_inp_lang[key_lang]=val_lang;
             });
             lang_country[langs.lang_setting]=data_inp_lang;
-            lang_db_new[langs.lang_setting_db_collection]=lang_country;
-            carrot.set_doc_merge("lang_data",langs.lang_setting_db_collection,lang_db_new);
+            carrot.set_doc_merge("lang_data",langs.lang_setting_db_collection,lang_country);
             $.MessageBox("Cập nhật "+langs.lang_setting_db_collection+" - "+langs.lang_setting+" thành công!")
         });
     }
