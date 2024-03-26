@@ -225,8 +225,7 @@ class Carrot_Langs{
         this.lang_setting_db_collection=s_db_lang;
         this.carrot.db.collection("lang_data").doc(s_db_lang).get().then((doc) => {
             if(doc.exists){
-                var data_doc=doc.data();
-                carrot.langs.lang_db=data_doc[s_db_lang];
+                carrot.langs.lang_db=doc.data();
                 data_obj_lang_tag=carrot.langs.lang_db["en"];
                 data_obj_lang_change=carrot.langs.lang_db[s_key_lang_change];
                 if(data_obj_lang_change==null){
@@ -321,6 +320,7 @@ class Carrot_Langs{
                 data_inp_lang[key_lang]=val_lang;
             });
             lang_country[langs.lang_setting]=data_inp_lang;
+            lang_country["id"]=langs.lang_setting_db_collection;
             carrot.set_doc_merge("lang_data",langs.lang_setting_db_collection,lang_country);
             $.MessageBox("Cập nhật "+langs.lang_setting_db_collection+" - "+langs.lang_setting+" thành công!")
         });
