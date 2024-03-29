@@ -19,14 +19,26 @@ class Midi{
 
     box_item(data){
         var  data_index=data.data_index;
-        var html='<div class="col-md-4 mb-3">';
+        var s_icon="";
+        var s_color_status="";
+        var html="";
+
+        if(data.status=="public"){
+            s_icon="fa-solid fa-guitar";
+            s_color_status="text-success";
+        }else{
+            s_icon="fa-brands fa-hashnode";
+            s_color_status="text-warning";
+        }
+
+        html='<div class="col-md-4 mb-3">';
             html+='<div class="app-cover p-2 shadow-md bg-white">';
                 html+='<div class="row">';
-                    html+='<div class="col-2 text-center d-fex"><i class="fa-3x fa-solid fa-guitar"></i></div>';
+                    html+='<div class="col-2 text-center d-fex"><i class="fa-3x '+s_icon+'"></i></div>';
                     html+='<div class="col-10"">';
                         html+="<h5 class='mb-0 fs-6'>"+data.name+"</h5>";
-                        html+='<div class="fs-9 text-warning"><i class="fa-solid fa-gauge-high"></i> Speed: '+data.speed+'</div>';
-                        html+='<div class="fs-9"><i class="fa-solid fa-dice-d6"></i> status: '+data.status+'</div>';
+                            html+='<div class="fs-9 '+s_color_status+'"><i class="fa-solid fa-dice-d6"></i> status: '+data.status+'</div>';
+                        html+='<div class="fs-9 "><i class="fa-solid fa-gauge-high"></i> Speed: '+data.speed+'</div>';
                         html+='<div class="fs-9"><i class="fa-solid fa-music"></i> Note: '+data_index.length+'</div>';
                     html+='</div>';
                 html+='</div>';
