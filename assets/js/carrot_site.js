@@ -50,7 +50,6 @@ class Carrot_Site{
     radio;
     rate;
     ebook;
-    piano;
     config;
     
     constructor(){
@@ -64,7 +63,7 @@ class Carrot_Site{
             measurementId: "G-KXDDJ42JFN",
         }
 
-        fetch('config.json').then(response => response.json()).then((text) => {this.config=text;});
+        fetch('config.json').then(response => response.json()).then((text) => {this.config=text;this.log(text);});
 
         this.setup_sever_db();
 
@@ -99,7 +98,6 @@ class Carrot_Site{
         $('head').append('<script type="text/javascript" src="assets/js/carrot_background.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_radio.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_ebook.js?ver='+this.get_ver_cur("js")+'"></script>');
-        $('head').append('<script type="text/javascript" src="assets/js/carrot_piano.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_rate.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/ai_lover.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/ai_chat.js?ver='+this.get_ver_cur("js")+'"></script>');
@@ -138,7 +136,6 @@ class Carrot_Site{
         this.file=new Carrot_File(this);
         this.pay=new Carrot_Pay(this);
         this.rate=new Carrot_Rate(this);
-        this.piano=new Carrot_Piano(this);
 
         var btn_mod_host=this.menu.create("btn_mode_host").set_label("Change Mode Host").set_type("setting").set_icon("fa-brands fa-dev");
         $(btn_mod_host).click(function(){carrot.change_host_connection();});
@@ -154,6 +151,14 @@ class Carrot_Site{
 
         var btn_site_map=this.menu.create("btn_site_map").set_label("Site Map").set_type("setting").set_icon("fa-solid fa-sitemap");
         $(btn_site_map).click(function(){carrot.show_site_map();});
+
+        var btn_midi=this.menu.create("btn_midi_piano").set_label("Midi").set_icon("fa-solid fa-drum");
+        $(btn_midi).click(function(){
+            if(carrot.midi!=null)
+                carrot.midi.show_list();
+            else
+                $('head').append('<script type="text/javascript" src="assets/js/pages/piano.js?ver='+carrot.get_ver_cur("js")+'"></script>');
+        });
 
         $("#btn_model_site").click(function(){carrot.change_mode_site();});
 
@@ -473,8 +478,10 @@ class Carrot_Site{
         this.db.collection(db_collection).doc(db_doc_id).delete().then(() => {
             carrot.msg("Document "+db_doc_id+" successfully deleted!");
             this.delete_cache_obj_by_collection(db_collection);
-            console.log("Document "+db_doc_id+" successfully deleted!");
-            this.call_func_by_id_page(db_collection,"reload");
+            if($('#'+db_doc_id).length)
+                $('#'+db_doc_id).remove();
+            else
+                this.call_func_by_id_page(db_collection,"reload");
         }).catch((error) => {
             this.log_error(error);
         });
@@ -944,7 +951,7 @@ class Carrot_Site{
                 if(func_del!=null)
                     html+="<div role='button' class='dev btn btn_app_del btn-danger btn-sm mr-2' onclick='"+func_del+"'><i class=\"fa-solid fa-trash\"></i></div> ";
                 else
-                    html+="<div role='button' class='dev btn btn_app_del btn-danger btn-sm mr-2'  db_collection='"+db_collection+"' db_document='"+db_document+"' db_obj='"+obj_js+"'><i class=\"fa-solid fa-trash\"></i></div> ";
+                    html+="<div role='button' class='dev btn btn_app_del btn-danger btn-sm mr-2' db_collection='"+db_collection+"' db_document='"+db_document+"' db_obj='"+obj_js+"'><i class=\"fa-solid fa-trash\"></i></div> ";
 
                 html+=extra_content;
                 html+="<div role='button' class='dev btn btn_app_export btn-dark btn-sm mr-2'  db_collection='"+db_collection+"' db_document='"+db_document+"' db_obj='"+obj_js+"'><i class=\"fa-solid fa-download\"></i></div> ";
@@ -1187,6 +1194,14 @@ class Carrot_Site{
     hide_loading_search(){
         $("#search_status_icon").attr("class","fa-sharp fa-solid fa-magnifying-glass");
         $("#box_input_search").val("");
+    }
+
+    show_loading_page(){
+        var html="";
+        html+='<div class="row m-0 pt-5">';
+        html+='<div class="col-12 text-center pt-1"><i class="fa-solid fa-circle-notch fa-spin fa-2xl"></i> Loading...</div>';
+        html+='</div>';
+        this.show(html);
     }
 
     change_style_mode(){

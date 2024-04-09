@@ -14,6 +14,7 @@ class Carrot_List_Item{
     obj_js=null;
 
     s_act_edit;
+    s_act_click='';
     s_act_del;
     s_btn_dev_extra='';
 
@@ -86,6 +87,10 @@ class Carrot_List_Item{
         this.s_act_edit=s_fnc_edit;
     }
 
+    set_act_click(s_fnc_click){
+        this.s_act_click=s_fnc_click;
+    }
+
     set_act_delete(s_fnc_del){
         this.s_act_del=s_fnc_del;
     }
@@ -95,13 +100,21 @@ class Carrot_List_Item{
     }
 
     html(){
-        var html='';
+        var s_htm_act_click='';
+
+        if(this.s_act_click!=''){
+            s_htm_act_click='onclick="carrot.get_doc(\''+this.db_collection+'\',\''+this.id+'\','+this.s_act_click+')"';
+        }
+
         var html="<div class='box_app "+this.class+"' id=\""+this.id+"\" key_search=\""+this.name+"\" data-sort='"+this.index+"'>";
             html+='<div class="app-cover p-2 shadow-md bg-white">';
             html+='<div class="row">';
-                if(this.icon_img!=null) html+='<div role="button" class="img-cover '+this.class_icon+' '+this.db_collection+'_icon" db_collection="'+this.db_collection+'" app_id="'+this.id+'"  obj_id="'+this.id+'" obj_index="'+this.index+'"><img class="rounded" src="'+this.icon_img+'" alt="'+this.name+'"></div>';
-                else html+='<div class="pe-0 col-1 text-center"><i role="button" class="'+this.icon_font+' fa-2x" obj_id="'+this.id+'" obj_index="'+this.index+'"></i></div>';
-                    html+='<div class="det '+ this.class_body+'">';
+                if(this.icon_img!=null) 
+                    html+='<div role="button" '+s_htm_act_click+' class="img-cover '+this.class_icon+' '+this.db_collection+'_icon" db_collection="'+this.db_collection+'" app_id="'+this.id+'"  obj_id="'+this.id+'" obj_index="'+this.index+'"><img class="rounded" src="'+this.icon_img+'" alt="'+this.name+'"></div>';
+                else 
+                    html+='<div class="pe-0 col-1 text-center"><i role="button" '+s_htm_act_click+' class="'+this.icon_font+' fa-2x" obj_id="'+this.id+'" obj_index="'+this.index+'"></i></div>';
+
+                html+='<div class="det '+ this.class_body+'">';
                     if(this.name!=undefined) html+="<h5 class='mb-0 fs-6 mt-0'>"+this.name+"</h5>";
                         if(this.tip!=null)html+="<span class='fs-8'>"+this.tip+"</span>"; 
                         if(this.body!=null){
