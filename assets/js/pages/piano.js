@@ -135,12 +135,35 @@ class Midi{
                             }
                         html+='</div>';
 
+                        html+='<div class="row pt-4 pb-4">';
+                            html+='<div class="col-12 text-center">';
+                            html+='<button id="btn_share" type="button" class="btn d-inline btn-success"><i class="fa-solid fa-share-nodes"></i> <l class="lang" key_lang="share">Share</l> </button> ';
+                            html+='<a id="register_protocol_url" href="midi://show/'+data.id+'" type="button"  class="btn d-inline btn-success" ><i class="fa-solid fa-rocket"></i> <l class="lang" key_lang="open_with">Open with..</l> </a> ';
+                            if(carrot.midi.check_pay(data.id))
+                                html+='<button id="btn_download" type="button" class="btn d-inline btn-success"><i class="fa-solid fa-download"></i> <l class="lang" key_lang="download">Download</l> </button> ';
+                            else
+                                html+='<button id="btn_download" type="button" class="btn d-inline btn-info"><i class="fa-brands fa-paypal"></i> <l class="lang" key_lang="download">Download</l> </button> ';
+                            html+='</div>';
+                        html+='</div>';
+
                     html+='</div>';
+
+                    html+='<div class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
+                    html+='<div class="text-break">'+data.data_index+'</div>';
+                    html+='</div>';
+
                 html+='</div>';
             html+='</div>';
         html+='</div>';
         carrot.show(html);
         carrot.check_event();
+    }
+
+    check_pay(id){
+        if(localStorage.getItem("buy_midi_"+id)!=null)
+            return true;
+        else
+            return false;
     }
 }
 
