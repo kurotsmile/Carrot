@@ -1,9 +1,17 @@
 class Midi{
 
     objs=null;
+    note_frequency=null;
+    footnotes_frequency=null;
+    index_note_play=-1;
+    intervalID_midi_play=null;
+    length_note_midi_play=-1;
 
     constructor(){
+        $('head').append('<link id="style_obj_midi" href="assets/css/piano_midi.css?'+carrot.get_ver_cur("js")+'" rel="stylesheet" type="text/css"/>');
         this.objs=JSON.parse(localStorage.getItem("objs_midi"));
+        this.note_frequency=[65.40639,73.41619,82.40689,87.30706,97.99886,110.0000,123.4708,130.8128,146.8324,164.8138,174.6141,195.9977,220.0000,246.9417,261.6256,293.6648,329.6276,349.2282,391.9954,440.0000,493.8833,523.2511,587.3295,659.2551,698.4565,783.9909,880.0000,987.7666,1046.502,1174.659,1318.510,1396.913,1567.982,1760.000,1975.533,2093.005];
+        this.footnotes_frequency=[69.29566,77.78175,92.49861,103.8262,116.5409,138.5913,155.5635,184.9972,207.6523,233.0819,277.1826,311.1270,369.9944,415.3047,466.1638,1108.731,1244.508,1479.978,1661.219,1864.655];
     }
 
     show(){
@@ -106,8 +114,9 @@ class Midi{
             html+='<div class="row">';
                 html+='<div class="col-md-8 ps-4 ps-lg-3">';
                     html+='<div class="row bg-white shadow-sm">';
+
                         html+='<div class="col-md-4 p-3 text-center">';
-                            html+='<i class="fa-solid fa-guitar fa-5x"></i>';
+                            html+='<i class="fa-solid fa-guitar fa-5x"></i><br/>';
                         html+='</div>';
 
                         html+='<div class="col-md-8 p-2">';
@@ -148,9 +157,44 @@ class Midi{
 
                     html+='</div>';
 
+                    var midi_notes=JSON.parse(data.data_index);
+                    var type_notes=JSON.parse(data.data_type);
+                    carrot.midi.length_note_midi_play=midi_notes[0].length;
                     html+='<div class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
-                    html+='<div class="text-break">'+data.data_index+'</div>';
+                    html+='<div class="col-12">';
+                        html+='<div class="row mb-2">';
+                            html+='<div class="col-4">';
+                                html+='<i role="button" onclick="carrot.midi.playMidi()" class="fa-sharp fa-solid fa-circle-play fa-3x text-success mt-2 mr-2"></i>';
+                            html+='</div>';
+                            html+='<div class="col-4">';
+                                html+='<i class="fa-solid fa-dice-one"></i> : '+midi_notes[0].length+"</br>";
+                                html+='<i class="fa-solid fa-grip-lines"></i> : '+midi_notes.length+"</br>";
+                                html+='<i class="fa-solid fa-music"></i> : '+(midi_notes[0].length*midi_notes.length);
+                            html+='</div>';
+                            html+='<div class="col-4">';
+                                html+='<i class="fa-solid fa-2x fa-volume-high"></i>';
+                            html+='</div>';
+                        html+='</div>';
+                        html+='<div class="row">';
+                            html+='<div id="midi" class="text-break">';
+                            for(var i=0;i<midi_notes.length;i++){
+                                var notes=midi_notes[i];
+                                var types=type_notes[i];
+                                html+='<div class="midi_line">';
+                                for(var y=0;y<notes.length;y++){
+                                    if(notes[y]==-1)
+                                    html+='<div class="midi_note none midi_note_'+y+'" note_index="'+notes[y]+'" note_type="'+types[y]+'" onclick="carrot.midi.playNote('+notes[y]+',0)"><i class="fa-brands fa-ethereum"></i></div>';
+                                    else
+                                    html+='<div class="midi_note midi_note_'+y+'" note_index="'+notes[y]+'" note_type="'+types[y]+'"  onclick="carrot.midi.playNote('+notes[y]+','+types[y]+')">'+notes[y]+'</div>';
+                                }
+                                html+='</div>';
+                            }
+                            html+='</div>';
+                        html+='</div>';
                     html+='</div>';
+                    html+='</div>';
+
+                    
 
                 html+='</div>';
             html+='</div>';
@@ -164,6 +208,78 @@ class Midi{
             return true;
         else
             return false;
+    }
+
+    playNote(index_note,type_note) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audioContext = new AudioContext();
+        var frequency = 0;
+        if(type_note==0)
+            frequency = carrot.midi.note_frequency[index_note];
+        else
+            frequency = carrot.midi.footnotes_frequency[index_note];
+        const oscillator = audioContext.createOscillator();
+        oscillator.type = 'square';
+        oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+        oscillator.connect(audioContext.destination);
+        oscillator.start();
+        setTimeout(function() {
+          oscillator.stop();
+        }, 300);
+    }
+
+    playNoteArray(frequencies) {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        const oscillators = frequencies.map(function(frequency) {
+          const oscillator = audioContext.createOscillator();
+          oscillator.type = 'square';
+          oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+          oscillator.connect(audioContext.destination);
+          return oscillator;
+        });
+  
+        oscillators.forEach(function(oscillator) {
+          oscillator.start();
+        });
+  
+        setTimeout(function() {
+          oscillators.forEach(function(oscillator) {
+            oscillator.stop();
+          });
+        }, 300);
+    }
+
+    playMidi(){
+        this.intervalID_midi_play = setInterval(function() {
+            carrot.midi.index_note_play++;
+            var array_note=Array();
+            $(".midi_note_"+carrot.midi.index_note_play).each(function(index,emp_note){
+                var index_note=$(emp_note).attr("note_index");
+                var type_note=$(emp_note).attr("note_type");
+                if(index_note!=-1){
+                    if(type_note==0)
+                        array_note.push(carrot.midi.note_frequency[index_note]);
+                    else
+                        array_note.push(carrot.midi.footnotes_frequency[index_note]);
+                }
+                $(emp_note).addClass("play");
+                $(emp_note).hide(2000);
+            });
+
+            if(array_note.length>0){
+                carrot.midi.playNoteArray(array_note);
+            }
+            console.log(carrot.midi.index_note_play+" -> "+array_note.length);
+            if(carrot.midi.index_note_play>=carrot.midi.length_note_midi_play) carrot.midi.stopMidi();
+        }, 150);
+    }
+
+    stopMidi(){
+        clearInterval(this.intervalID_midi_play);
+        this.index_note_play=-1;
+        $(".midi_note").show();
+        $(".midi_note").removeClass("play");
     }
 }
 

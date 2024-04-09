@@ -1,0 +1,43 @@
+#midi{
+    width: 100%;
+    overflow-y: auto;
+    float: left;
+}
+
+.midi_line{
+    background: #612e61;
+    color: white;
+    width: auto;
+    float: left;
+    height: 32px;
+    display: inline-flex;
+    border-radius: 3px;
+}
+
+.midi_note {
+    float: left;
+    width: 25px;
+    height: 25px;
+    background-color: lightskyblue;
+    border-radius: 3px;
+    margin: 3px;
+    text-align: center;
+    color: black;
+    cursor: pointer;
+}
+
+.midi_note.none {
+    background-color: darkorange;
+    padding-top: 6px;
+    color: sienna;
+    cursor: none;
+}
+
+.midi_note:hover{
+    background-color: yellow;
+    color: black;
+}
+
+.midi_note.play{
+    background-color: greenyellow;
+}
