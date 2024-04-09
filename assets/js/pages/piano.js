@@ -7,6 +7,8 @@ class Midi{
     intervalID_midi_play=null;
     length_note_midi_play=-1;
 
+    oscillators=[];
+
     constructor(){
         $('head').append('<link id="style_obj_midi" href="assets/css/piano_midi.css?'+carrot.get_ver_cur("js")+'" rel="stylesheet" type="text/css"/>');
         this.objs=JSON.parse(localStorage.getItem("objs_midi"));
@@ -52,7 +54,7 @@ class Midi{
         carrot.show('<div id="all_item" class="row m-0"></div>');
         $(midis).each(function(index,midi){
             midi["index"]=index;
-            $("#all_item").append(carrot.midi.box_item(midi));
+            $("#all_item").append(carrot.midi.box_item(midi).html());
         });
         carrot.check_event();
     }
@@ -88,7 +90,7 @@ class Midi{
         item_obj.set_body(html);
         item_obj.set_act_edit("carrot.midi.edit");
         item_obj.set_act_click("carrot.midi.info");
-        return item_obj.html();
+        return item_obj;
     }
 
     edit(data,carrot){
@@ -194,9 +196,19 @@ class Midi{
                     html+='</div>';
                     html+='</div>';
 
+ 
                     
-
                 html+='</div>';
+
+                html+='<div class="col-md-4">';
+                html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-3 lang"  key_lang="related_midi">Related Midi</h4>';
+                var list_midi_other= carrot.midi.objs.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
+                for(var i=0;i<list_midi_other.length;i++){
+                    if(i>=10) break;
+                    if(data.id!=list_midi_other[i].id) html+=carrot.midi.box_item(list_midi_other[i]).set_class('col-md-12 mb-3').html();
+                };
+                html+='</div>';
+
             html+='</div>';
         html+='</div>';
         carrot.show(html);
@@ -231,26 +243,21 @@ class Midi{
     playNoteArray(frequencies) {
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
-        const oscillators = frequencies.map(function(frequency) {
-          const oscillator = audioContext.createOscillator();
-          oscillator.type = 'square';
-          oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
-          oscillator.connect(audioContext.destination);
-          return oscillator;
-        });
-  
-        oscillators.forEach(function(oscillator) {
-          oscillator.start();
-        });
-  
-        setTimeout(function() {
-          oscillators.forEach(function(oscillator) {
-            oscillator.stop();
-          });
-        }, 300);
+         this.oscillators.push(...frequencies.map(function(frequency) {
+            const oscillator = audioContext.createOscillator();
+            oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+            oscillator.connect(audioContext.destination);
+            oscillator.start();
+            setTimeout(function() {
+                oscillator.stop();
+            }, 300);
+            return oscillator;
+        }));
     }
 
     playMidi(){
+        this.oscillators=[];
+        carrot.midi.index_note_play=-1;
         this.intervalID_midi_play = setInterval(function() {
             carrot.midi.index_note_play++;
             var array_note=Array();
@@ -276,10 +283,14 @@ class Midi{
     }
 
     stopMidi(){
-        clearInterval(this.intervalID_midi_play);
+        clearInterval(carrot.midi.intervalID_midi_play);
         this.index_note_play=-1;
         $(".midi_note").show();
         $(".midi_note").removeClass("play");
+        this.oscillators.forEach(function(oscillator) {
+            oscillator.stop();
+        });
+        this.oscillators.length = 0;
     }
 }
 

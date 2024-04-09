@@ -69,6 +69,7 @@ class Carrot_List_Item{
 
     set_class(s_class){
         this.class=s_class;
+        return this;
     }
 
     set_class_icon(s_class){
