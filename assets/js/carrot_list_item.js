@@ -9,6 +9,7 @@ class Carrot_List_Item{
     body=null;
     class="col-md-4 mb-3";
     class_icon="pe-0 col-3";
+    class_icon_col="col-1";
     class_body="mt-2 col-12";
     db_collection=null;
     obj_js=null;
@@ -76,6 +77,10 @@ class Carrot_List_Item{
         this.class_icon=s_class;
     }
 
+    set_class_icon_col(s_class){
+        this.class_icon_col=s_class;
+    }
+
     set_class_body(s_class){
         this.class_body=s_class;
     }
@@ -113,7 +118,7 @@ class Carrot_List_Item{
                 if(this.icon_img!=null) 
                     html+='<div role="button" '+s_htm_act_click+' class="img-cover '+this.class_icon+' '+this.db_collection+'_icon" db_collection="'+this.db_collection+'" app_id="'+this.id+'"  obj_id="'+this.id+'" obj_index="'+this.index+'"><img class="rounded" src="'+this.icon_img+'" alt="'+this.name+'"></div>';
                 else 
-                    html+='<div class="pe-0 col-1 text-center"><i role="button" '+s_htm_act_click+' class="'+this.icon_font+' fa-2x" obj_id="'+this.id+'" obj_index="'+this.index+'"></i></div>';
+                    html+='<div class="pe-0 '+this.class_icon_col+' text-center"><i role="button" '+s_htm_act_click+' class="'+this.icon_font+' fa-2x" obj_id="'+this.id+'" obj_index="'+this.index+'"></i></div>';
 
                 html+='<div class="det '+ this.class_body+'">';
                     if(this.name!=undefined) html+="<h5 class='mb-0 fs-6 mt-0'>"+this.name+"</h5>";

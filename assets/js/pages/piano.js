@@ -1,12 +1,12 @@
 class Midi{
 
     objs=null;
+
     note_frequency=null;
     footnotes_frequency=null;
     index_note_play=-1;
     intervalID_midi_play=null;
     length_note_midi_play=-1;
-
     oscillators=[];
 
     constructor(){
@@ -37,11 +37,11 @@ class Midi{
     Get_list_from_server_and_show(){
         carrot.db.collection("Midi Piano Editor").limit(200).get().then((querySnapshot) => {
             if(querySnapshot.docs.length>0){
-                carrot.midi.objs=Array();
+                carrot.midi.objs=Object();
                 querySnapshot.forEach((doc) => {
                     var data=doc.data();
                     data["id"]=doc.id;
-                    carrot.midi.objs.push(data);
+                    carrot.midi.objs[doc.id]=data;
                 }); 
 
                 localStorage.setItem("objs_midi",JSON.stringify(carrot.midi.objs));
@@ -51,16 +51,26 @@ class Midi{
     }
 
     show_list_by_objs(midis){
+        midis=carrot.convert_obj_to_list_array(midis);
         carrot.show('<div id="all_item" class="row m-0"></div>');
         $(midis).each(function(index,midi){
+            console.log(midi);
             midi["index"]=index;
             $("#all_item").append(carrot.midi.box_item(midi).html());
         });
-        carrot.check_event();
+        carrot.midi.check_event();
     }
     
     show_midi_by_id(id){
-        carrot.get_doc("Midi Piano Editor",id,this.info);
+        if(this.objs!=null){
+            if(this.objs[id]!=null){
+                this.info(this.objs[id],carrot);
+            }else{
+                carrot.get_doc("Midi Piano Editor",id,this.info);
+            }
+        }else{
+            carrot.get_doc("Midi Piano Editor",id,this.info);
+        }
     }
 
     box_item(data){
@@ -78,18 +88,20 @@ class Midi{
         }
 
         html+='<div class="fs-9 '+s_color_status+'"><i class="fa-solid fa-dice-d6"></i> status: '+data.status+'</div>';
-        html+='<div class="fs-9 "><i class="fa-solid fa-gauge-high"></i> Speed: '+data.speed+'</div>';
+        html+='<div class="fs-9 "><i class="fa-solid fa-gauge-high"></i> Speed: '+data.speed;
+        if(data.category!=null) html+='  <i class="fa-solid fa-music"></i> Category: '+data.category;
+        html+='</div>';
         html+='<div class="fs-9"><i class="fa-solid fa-music"></i> Note: '+data_index.length+'</div>';
         
         var item_obj=new Carrot_List_Item(carrot);
         item_obj.set_db("Midi Piano Editor");
-        item_obj.set_icon_font(s_icon+" "+s_color_status);
+        item_obj.set_icon_font(s_icon+" "+s_color_status+" fa-3x midi_icon");
         item_obj.set_id(data.id);
         item_obj.set_title(data.name);
-        item_obj.set_class_body("col-10")
+        item_obj.set_class_body("col-10");
+        item_obj.set_class_icon_col("col-2");
         item_obj.set_body(html);
         item_obj.set_act_edit("carrot.midi.edit");
-        item_obj.set_act_click("carrot.midi.info");
         return item_obj;
     }
 
@@ -196,13 +208,11 @@ class Midi{
                     html+='</div>';
                     html+='</div>';
 
- 
-                    
                 html+='</div>';
 
                 html+='<div class="col-md-4">';
                 html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-3 lang"  key_lang="related_midi">Related Midi</h4>';
-                var list_midi_other= carrot.midi.objs.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
+                var list_midi_other= carrot.convert_obj_to_list_array(carrot.midi.objs).map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
                 for(var i=0;i<list_midi_other.length;i++){
                     if(i>=10) break;
                     if(data.id!=list_midi_other[i].id) html+=carrot.midi.box_item(list_midi_other[i]).set_class('col-md-12 mb-3').html();
@@ -212,6 +222,14 @@ class Midi{
             html+='</div>';
         html+='</div>';
         carrot.show(html);
+        carrot.midi.check_event();
+    }
+
+    check_event(){
+        $(".midi_icon").click(function(){
+            var obj_id=$(this).attr("obj_id");
+            carrot.midi.show_midi_by_id(obj_id);
+        });
         carrot.check_event();
     }
 
@@ -277,7 +295,7 @@ class Midi{
             if(array_note.length>0){
                 carrot.midi.playNoteArray(array_note);
             }
-            console.log(carrot.midi.index_note_play+" -> "+array_note.length);
+            
             if(carrot.midi.index_note_play>=carrot.midi.length_note_midi_play) carrot.midi.stopMidi();
         }, 150);
     }

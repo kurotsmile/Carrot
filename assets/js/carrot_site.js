@@ -410,6 +410,14 @@ class Carrot_Site{
         return list_obj;
     }
 
+    convert_obj_to_list_array(obj_carrot){
+        var list_obj=Array();
+        $.each(obj_carrot,function(key,val){
+            list_obj.push(val);
+        });
+        return list_obj;
+    }
+
     obj_to_array(objs){
         return this.convert_obj_to_list(objs);
     }
