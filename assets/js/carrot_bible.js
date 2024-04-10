@@ -28,7 +28,7 @@ class Carrot_Bible{
     }
 
     get_list_by_key_lang(s_key){
-        Swal.showLoading();
+        this.carrot.loading();
         console.log("load bible:"+s_key);
         this.carrot.langs.lang_setting=s_key;
         this.carrot.db.collection(this.id_page).where("lang", "==", s_key).get().then((querySnapshot) => {

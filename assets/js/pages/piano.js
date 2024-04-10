@@ -25,7 +25,7 @@ class Midi{
     }
 
     show_list(){
-        carrot.show_loading_page();
+        carrot.loading("Get data list midi");
         carrot.change_title_page("List Midi","?page=piano","midi");
 
         if(this.objs!=null)
@@ -51,6 +51,7 @@ class Midi{
     }
 
     show_list_by_objs(midis){
+        carrot.hide_loading();
         midis=carrot.convert_obj_to_list_array(midis);
         carrot.show('<div id="all_item" class="row m-0"></div>');
         $(midis).each(function(index,midi){
@@ -313,4 +314,4 @@ class Midi{
 
 var midi=new Midi();
 carrot.midi=midi;
-midi.show();
+if(carrot.call_show_on_load_pagejs) carrot.midi.show();

@@ -1,4 +1,4 @@
-class app_carrot{
+class Appp{
     
     objs=null;
     link_store=null;
@@ -34,8 +34,20 @@ class app_carrot{
         this.get_data();
     }
 
+    show_for_home(){
+        $("#all_app_contain").html('<div class="col-12 text-center"><i class="fa-solid fa-spinner fa-3x fa-spin"></i></div>');
+        if(this.objs!=null){
+            $("#all_app_contain").html('');
+
+            $(carrot.convert_obj_to_list_array(carrot.appp.objs)).each(function(index,data){
+                if(index>=12) return false;
+                $("#all_app_contain").append(carrot.appp.box_app_item(data));
+            });
+        }
+    }
+
     get_data_link_store(){
-        carrot.show_loading_page("Load all link store...");
+        carrot.loading("Get data link store");
         var q=new Carrot_Query("link_store");
         q.get_data(this.act_get_data_link_store_done);
     }
@@ -46,7 +58,7 @@ class app_carrot{
     }
 
     get_data(){
-        carrot.show_loading_page("Load data "+this.type_view+"...");
+        carrot.loading("Get data app and game");
         var q=new Carrot_Query("app");
         q.add_select("name_"+carrot.lang);
         q.add_select("name_en");
@@ -63,13 +75,16 @@ class app_carrot{
     }
 
     act_get_data_app_done(data){
+        Swal.close();
         var html="";
         html+=carrot.appp.menu();
         html+='<div id="all_app" class="row m-0"></div>';
         carrot.show(html);
 
+        carrot.appp.objs={};
         $(data).each(function(index,data_app){
             data_app["index"]=index;
+            carrot.appp.objs[data_app.id_doc]=data_app;
             $("#all_app").append(carrot.appp.box_app_item(data_app));
         });
         carrot.check_event();
@@ -156,6 +171,6 @@ class app_carrot{
     }
 }
 
-var appp=new app_carrot();
+var appp=new Appp();
 carrot.appp=appp;
-appp.show();
+if(carrot.call_show_on_load_pagejs) carrot.appp.show();

@@ -52,6 +52,8 @@ class Carrot_Site{
     rate;
     ebook;
     config;
+
+    call_show_on_load_pagejs=true;
     
     constructor(){
         if(localStorage.getItem("index_server")!=null)this.index_server=parseInt(localStorage.getItem("index_server"));
@@ -146,13 +148,8 @@ class Carrot_Site{
         this.code=new Carrot_Code(this);
 
         var btn_midi=this.menu.create("btn_midi_piano").set_label("Midi").set_icon("fa-solid fa-drum");
-        $(btn_midi).click(function(){
-            if(carrot.midi!=null)
-                carrot.midi.show_list();
-            else
-                $('head').append('<script type="text/javascript" src="assets/js/pages/piano.js?ver='+carrot.get_ver_cur("js")+'"></script>');
-        });
-        
+        $(btn_midi).click(function(){carrot.load_js_page("piano","Midi","carrot.midi.show_list()");});
+
         this.icon=new Carrot_Icon(this); 
         this.audio=new Carrot_Audio(this);
         this.radio=new Carrot_Radio(this);
@@ -193,13 +190,11 @@ class Carrot_Site{
         var btn_del_all=this.menu.create("btn_del_all").set_label("Delete all data cache").set_type("setting").set_icon("fa-solid fa-trash-can");
         $(btn_del_all).click(function(){carrot.act_delete_all_data();});
 
+        var btn_home_new=this.menu.create("btn_home_new").set_label("Home new").set_type("dev").set_icon("fa-solid fa-home");
+        $(btn_home_new).click(function(){carrot.load_js_page("home","Home","carrot.home.show()");});
+
         var btn_app=this.menu.create("btn_app").set_label("App and Game").set_type("dev").set_icon("fa-solid fa-gamepad");
-        $(btn_app).click(function(){
-            if(carrot.appp!=null)
-                carrot.appp.show();
-            else
-                $('head').append('<script type="text/javascript" src="assets/js/pages/app.js?ver='+carrot.get_ver_cur("js")+'"></script>');
-        });
+        $(btn_app).click(function(){carrot.load_js_page("app","Appp","carrot.appp.show()");});
 
         $("#btn_model_site").click(function(){carrot.change_mode_site();});
 
@@ -947,7 +942,7 @@ class Carrot_Site{
         }else{
             var id_page=this.get_param_url("page");
             if(id_page!=undefined){
-                $('head').append('<script type="text/javascript" src="assets/js/pages/'+id_page+'.js?ver='+this.get_ver_cur("js")+'"></script>');
+                this.load_js_page(id_page);
             }else{
                 this.load_bar();
                 $("#load_bar").css("width","100%");
@@ -1221,12 +1216,21 @@ class Carrot_Site{
         $("#box_input_search").val("");
     }
 
-    show_loading_page(msg="Loading..."){
-        var html="";
-        html+='<div class="row m-0 pt-5">';
-        html+='<div class="col-12 text-center pt-1"><i class="fa-solid fa-circle-notch fa-spin fa-2xl"></i> '+msg+'</div>';
-        html+='</div>';
-        this.show(html);
+    loading(msg=''){
+        if(msg!='') msg=msg+'<br/><br/>';
+        Swal.fire({
+            title: 'Please wait...',
+            html: msg+'<i class="fa-solid fa-ghost fa-bounce"></i> <i class="fa-solid fa-ghost fa-beat-fade" style="color: green;"></i> <i class="fa-solid fa-ghost fa-bounce"></i> <i class="fa-solid fa-ghost fa-beat-fade" style="color: green;"></i> <i class="fa-solid fa-ghost fa-flip" style="color: #63E6BE;"></i>',
+            allowEscapeKey: false,
+            allowOutsideClick: false,
+            didOpen: () => {
+              Swal.showLoading()
+            }
+          });
+    }
+
+    hide_loading(){
+        Swal.close();
     }
 
     change_style_mode(){
@@ -1296,5 +1300,37 @@ class Carrot_Site{
         localStorage.clear();
         localStorage.setItem("index_server",this.index_server);
         location.reload();
+    }
+
+    load_js_page(file_name_js_page, className=null, callback=null) {
+
+        var url="assets/js/pages/"+file_name_js_page+".js?ver="+this.get_ver_cur("js");
+        if(className!=null){
+            if (window.hasOwnProperty(className)) {
+                eval(callback);
+                return;
+            }
+            this.call_show_on_load_pagejs=false;
+        }else{
+            this.call_show_on_load_pagejs=true;
+        }
+
+        return new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = url;
+            script.onload = () => {
+                if(callback!=null) eval(callback);
+            };
+            script.onerror = reject;
+            document.head.appendChild(script);
+        })
+        .then(() => {
+            if (typeof callback === 'function') {
+                if(callback!=null) eval(callback);
+            }
+        })
+        .catch(error => {
+            console.error('Error loading script:', error);
+        });
     }
 }
