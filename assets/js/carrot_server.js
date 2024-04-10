@@ -31,20 +31,12 @@ class Carrot_Query{
     }
 
     toJson(){
-        const query = {
-            structuredQuery: {
-                select: {
-                fields: this.select_fields
-                },
-                from: this.collections,
-                where: {
-                compositeFilter: {
-                    op: 'AND',
-                    filters: this.filters_search
-                }
-                }
-            }
-        };
+        var query={};
+        var structuredQuery={};
+        if(this.select_fields.length>0) structuredQuery["select"]={fields: this.select_fields};
+        structuredQuery["from"]=this.collections;
+        structuredQuery["where"]={compositeFilter: {op: 'AND',filters: this.filters_search}};
+        query["structuredQuery"]=structuredQuery;
         return JSON.stringify(query);
     }
 
@@ -63,6 +55,7 @@ class Carrot_Query{
             return response.json();
           })
           .then(data => {
+            console.log(data);
             var list=[];
             for(var i=0;i<data.length;i++){
                 list.push(carrot.server.simplifyDocument(data[i].document.fields));

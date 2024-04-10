@@ -2,9 +2,8 @@ class Sync{
 
     show(){
         carrot.show_loading_page();
-        var q=new Carrot_Query("lang_data");
-        q.add_select("vi");
-        q.add_where("id","lang_web");
+        var q=new Carrot_Query("app");
+        
         q.get_data(this.info);
     }
 
