@@ -1,6 +1,83 @@
+class Carrot_Query{
+    
+    collections=[];
+    select_fields=[];
+    filters_search=[];
+
+    constructor(collection){
+        var coll={};
+        coll["collectionId"]=collection;
+        this.collections.push(coll);
+    }
+
+    add_select(name_field){
+        var field={};
+        field["fieldPath"]=name_field;
+        this.select_fields.push(field);
+    }
+
+    add_where(field_name,searchValue,op="EQUAL"){
+        var Filter={};
+        var fieldFilter={};
+        var f={};
+        var v={};
+        f["fieldPath"]=field_name;
+        v["stringValue"]=searchValue;
+        fieldFilter["field"]=f;
+        fieldFilter["op"]=op;
+        fieldFilter["value"]=v;
+        Filter["fieldFilter"]=fieldFilter;
+        this.filters_search.push(Filter);
+    }
+
+    toJson(){
+        const query = {
+            structuredQuery: {
+                select: {
+                fields: this.select_fields
+                },
+                from: this.collections,
+                where: {
+                compositeFilter: {
+                    op: 'AND',
+                    filters: this.filters_search
+                }
+                }
+            }
+        };
+        return JSON.stringify(query);
+    }
+
+    get_data(act_done){
+        fetch(carrot.config.url_server_rest_api[carrot.index_server]+":runQuery", {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: this.toJson()
+          })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            return response.json();
+          })
+          .then(data => {
+            var list=[];
+            for(var i=0;i<data.length;i++){
+                list.push(carrot.server.simplifyDocument(data[i].document.fields));
+            }
+            act_done(list);
+          })
+          .catch(error => {
+            console.error('There was a problem with your fetch operation:', error);
+          });
+    }
+}
+
 class Carrot_Server{
-    get_doc(act_done){
-        fetch(carrot.config.url_server_rest_api[carrot.index_server]+"/app")
+    get_collection(collection,act_done){
+        fetch(carrot.config.url_server_rest_api[carrot.index_server]+"/"+collection)
             .then((response) => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -8,7 +85,24 @@ class Carrot_Server{
               return response.json();
             })
             .then((data) => {
-              act_done(this.simplifyDocument(data));
+                var list=[];
+                for(var i=0;i<data.documents.length;i++){
+                    list.push(this.simplifyDocument(data.documents[i].fields));
+                }
+                act_done(list);
+            }).catch((error) => {console.log('failed', error);});
+    }
+
+    get_doc(collection,document,act_done){
+        fetch(carrot.config.url_server_rest_api[carrot.index_server]+"/"+collection+"/"+document)
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+              return response.json();
+            })
+            .then((data) => {
+                act_done(this.simplifyDocument(data.fields));
             }).catch((error) => {console.log('failed', error);});
     }
 
@@ -34,11 +128,11 @@ class Carrot_Server{
               } else if ('booleanValue' in item) {
                 return item.booleanValue;
               } else {
-                return simplifyDocument(item.mapValue.fields);
+                return carrot.server.simplifyDocument(item.mapValue.fields);
               }
             });
           } else if ('mapValue' in value) {
-            simplifiedObject[key] = simplifyDocument(value.mapValue.fields);
+            simplifiedObject[key] = carrot.server.simplifyDocument(value.mapValue.fields);
           }
         }
         return simplifiedObject;

@@ -1,13 +1,15 @@
 class Sync{
 
     show(){
-        carrot.show("sdsd");
-        carrot.server.get_doc(this.info);
+        carrot.show_loading_page();
+        var q=new Carrot_Query("lang_data");
+        q.add_select("vi");
+        q.add_where("id","lang_web");
+        q.get_data(this.info);
     }
 
     info(data){
-        console.log("data:"+data.documents[0].fields);
-        carrot.msg("Get data success!","success");
+        carrot.show(JSON.stringify(data));
     }
 }
 

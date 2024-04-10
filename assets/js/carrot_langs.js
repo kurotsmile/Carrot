@@ -119,11 +119,14 @@ class Carrot_Langs{
     get_all_data_lang_web(){
         this.carrot.load_bar();
         this.carrot.log("Get lang "+this.carrot.lang+" from server","alert");
-        this.carrot.get_doc("lang_web",this.carrot.lang,this.get_data_lang_web_done);
+        var q=new Carrot_Query("lang_data");
+        q.add_select(carrot.lang);
+        q.add_where("id","lang_web");
+        q.get_data(this.get_data_lang_web_done);
         this.carrot.update_new_ver_cur("lang_web",true);
     }
 
-    get_data_lang_web_done(data,carrot){
+    get_data_lang_web_done(data){
         carrot.langs.lang_web=data;
         carrot.langs.obj_lang_web[carrot.lang]=JSON.stringify(carrot.langs.lang_web);
         carrot.langs.save_lang_web();
