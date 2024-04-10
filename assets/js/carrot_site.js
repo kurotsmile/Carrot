@@ -108,6 +108,7 @@ class Carrot_Site{
         else
             this.paypal_CLIENT_ID=this.paypal_pub_CLIENT_ID;
 
+        $('head').append('<script type="text/javascript" src="assets/js/carrot_server.js?ver='+this.get_ver_cur("js")+'"></script>');    
         $('head').append('<script type="text/javascript" src="assets/js/carrot_langs.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_link_store.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_app.js?ver='+this.get_ver_cur("js")+'"></script>');
@@ -135,6 +136,7 @@ class Carrot_Site{
         $('head').append('<script type="text/javascript" src="assets/js/carrot_privacy_policy.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="https://www.paypal.com/sdk/js?client-id='+this.paypal_CLIENT_ID+'"></script>');
 
+        this.server=new Carrot_Server();
         this.menu=new Carrot_Menu(this);
         this.langs=new Carrot_Langs(this);
         this.link_store=new Carrot_Link_Store(this);
@@ -157,7 +159,7 @@ class Carrot_Site{
         this.file=new Carrot_File(this);
         this.pay=new Carrot_Pay(this);
         this.rate=new Carrot_Rate(this);
-
+        
         var btn_mod_host=this.menu.create("btn_mode_host").set_label("Change Mode Host").set_type("setting").set_icon("fa-brands fa-dev");
         $(btn_mod_host).click(function(){carrot.change_host_connection();});
 
