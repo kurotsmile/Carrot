@@ -53,9 +53,10 @@ class Carrot_Site{
     config;
     
     constructor(){
-        fetch('config.git?=2.2').then(response => response.json()).then((text) => {
-            this.config=text;
-            this.setup_sever_db(1);
+        fetch('rabbit.data?=2.2').then(response => response.text()).then((text) => {
+            var data_text=atob(text);
+            this.config=JSON.parse(data_text);
+            this.setup_sever_db(0);
         }); 
     };
 
@@ -172,6 +173,9 @@ class Carrot_Site{
 
         var btn_site_map=this.menu.create("btn_site_map").set_label("Site Map").set_type("setting").set_icon("fa-solid fa-sitemap");
         $(btn_site_map).click(function(){carrot.show_site_map();});
+
+        var btn_update_config=this.menu.create("btn_update_config").set_label("Update File Config").set_type("setting").set_icon("fa-solid fa-file");
+        $(btn_update_config).click(function(){carrot.act_update_file_config();});
 
         var btn_midi=this.menu.create("btn_midi_piano").set_label("Midi").set_icon("fa-solid fa-drum");
         $(btn_midi).click(function(){
@@ -1255,6 +1259,20 @@ class Carrot_Site{
     act_done_change_server(){
         var index_server=$("#server_db").val();
         this.setup_sever_db(parseInt(index_server));
-        alert("Change server success");
+        this.msg("Change server success!","success");
+    }
+
+    act_update_file_config(){
+        fetch('config.json?=2.2').then(response => response.text()).then((text) => {
+            const binaryData = btoa(text);
+            const blob = new Blob([binaryData], {type: 'text/plain'});
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'rabbit.data';
+            link.click();
+            URL.revokeObjectURL(url);
+            this.msg("Update File config success!","success");
+        }); 
     }
 }
