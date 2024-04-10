@@ -53,7 +53,7 @@ class Carrot_Site{
     config;
     
     constructor(){
-        fetch('config.json?=2.2').then(response => response.json()).then((text) => {
+        fetch('config.git?=2.2').then(response => response.json()).then((text) => {
             this.config=text;
             this.setup_sever_db(1);
         }); 
