@@ -3,6 +3,7 @@ class Carrot_Query{
     collections=[];
     select_fields=[];
     filters_search=[];
+    limit=-1;
 
     constructor(collection){
         var coll={};
@@ -30,12 +31,17 @@ class Carrot_Query{
         this.filters_search.push(Filter);
     }
 
+    set_limit(count){
+        this.limit=count;
+    }
+
     toJson(){
         var query={};
         var structuredQuery={};
         if(this.select_fields.length>0) structuredQuery["select"]={fields: this.select_fields};
         structuredQuery["from"]=this.collections;
         structuredQuery["where"]={compositeFilter: {op: 'AND',filters: this.filters_search}};
+        if(this.limit!=-1) structuredQuery["limit"]=this.limit;
         query["structuredQuery"]=structuredQuery;
         return JSON.stringify(query);
     }
@@ -43,9 +49,7 @@ class Carrot_Query{
     get_data(act_done){
         fetch(carrot.config.url_server_rest_api[carrot.index_server]+":runQuery", {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
+            headers: {'Content-Type': 'application/json'},
             body: this.toJson()
           })
           .then(response => {
@@ -55,10 +59,11 @@ class Carrot_Query{
             return response.json();
           })
           .then(data => {
-            console.log(data);
             var list=[];
             for(var i=0;i<data.length;i++){
-                list.push(carrot.server.simplifyDocument(data[i].document.fields));
+                var obj_data=carrot.server.simplifyDocument(data[i].document.fields);
+                obj_data["id_doc"]=data[i].document.name.split("/").pop();
+                list.push(obj_data);
             }
             act_done(list);
           })
@@ -80,7 +85,9 @@ class Carrot_Server{
             .then((data) => {
                 var list=[];
                 for(var i=0;i<data.documents.length;i++){
-                    list.push(this.simplifyDocument(data.documents[i].fields));
+                    var obj_data=carrot.server.simplifyDocument(data[i].document.fields);
+                    obj_data["id_doc"]=data[i].document.name.split("/").pop();
+                    list.push(obj_data);
                 }
                 act_done(list);
             }).catch((error) => {console.log('failed', error);});
@@ -95,7 +102,9 @@ class Carrot_Server{
               return response.json();
             })
             .then((data) => {
-                act_done(this.simplifyDocument(data.fields));
+                var obj_data=carrot.server.simplifyDocument(data[i].document.fields);
+                obj_data["id_doc"]=data[i].document.name.split("/").pop();
+                act_done(this.simplifyDocument(obj_data));
             }).catch((error) => {console.log('failed', error);});
     }
 

@@ -144,6 +144,15 @@ class Carrot_Site{
         this.user=new Carrot_user(this);
         this.music=new Carrot_Music(this);
         this.code=new Carrot_Code(this);
+
+        var btn_midi=this.menu.create("btn_midi_piano").set_label("Midi").set_icon("fa-solid fa-drum");
+        $(btn_midi).click(function(){
+            if(carrot.midi!=null)
+                carrot.midi.show_list();
+            else
+                $('head').append('<script type="text/javascript" src="assets/js/pages/piano.js?ver='+carrot.get_ver_cur("js")+'"></script>');
+        });
+        
         this.icon=new Carrot_Icon(this); 
         this.audio=new Carrot_Audio(this);
         this.radio=new Carrot_Radio(this);
@@ -183,14 +192,6 @@ class Carrot_Site{
 
         var btn_del_all=this.menu.create("btn_del_all").set_label("Delete all data cache").set_type("setting").set_icon("fa-solid fa-trash-can");
         $(btn_del_all).click(function(){carrot.act_delete_all_data();});
-
-        var btn_midi=this.menu.create("btn_midi_piano").set_label("Midi").set_icon("fa-solid fa-drum");
-        $(btn_midi).click(function(){
-            if(carrot.midi!=null)
-                carrot.midi.show_list();
-            else
-                $('head').append('<script type="text/javascript" src="assets/js/pages/piano.js?ver='+carrot.get_ver_cur("js")+'"></script>');
-        });
 
         var btn_app=this.menu.create("btn_app").set_label("App and Game").set_type("dev").set_icon("fa-solid fa-gamepad");
         $(btn_app).click(function(){
@@ -1220,10 +1221,10 @@ class Carrot_Site{
         $("#box_input_search").val("");
     }
 
-    show_loading_page(){
+    show_loading_page(msg="Loading..."){
         var html="";
         html+='<div class="row m-0 pt-5">';
-        html+='<div class="col-12 text-center pt-1"><i class="fa-solid fa-circle-notch fa-spin fa-2xl"></i> Loading...</div>';
+        html+='<div class="col-12 text-center pt-1"><i class="fa-solid fa-circle-notch fa-spin fa-2xl"></i> '+msg+'</div>';
         html+='</div>';
         this.show(html);
     }

@@ -1,6 +1,5 @@
 class Carrot_Ebook_File{
 
-    //Meta Info
     title='Undefined';
     lang='en';
     description='';

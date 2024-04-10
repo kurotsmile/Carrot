@@ -1,26 +1,76 @@
 class app_carrot{
     
     objs=null;
-    status_view='all';
+    link_store=null;
+    status_view='publish';
+    type_view='all';
 
     show(){
-        carrot.show_loading_page();
-        carrot.db.collection("app").where("status","==","publish").limit(200).get().then((querySnapshot) => {
-            if(querySnapshot.docs.length>0){
-                var html="";
-                html+=this.menu();
-                html+='<div id="all_app" class="row m-0">';
-                html+='</div>';
-                carrot.show(html);
+        this.get_data_link_store();
+    }
+    
+    show_all(){
+        this.type_view="all";
+        this.get_data();
+    }
 
-                this.objs=Object();
-                querySnapshot.forEach((doc) => {
-                    var data_app=doc.data();
-                    data_app["id"]=doc.id;
-                    this.objs[doc.id]=data_app;
-                    $("#all_app").append(this.box_app_item(data_app));
-                }); 
-            }
+    show_app(){
+        this.type_view="app";
+        this.get_data();
+    }
+
+    show_game(){
+        this.type_view="game";
+        this.get_data();
+    }
+
+    show_app_publish(){
+        this.status_view="publish";
+        this.get_data();
+    }
+
+    show_app_draft(){
+        this.status_view="draft";
+        this.get_data();
+    }
+
+    get_data_link_store(){
+        carrot.show_loading_page("Load all link store...");
+        var q=new Carrot_Query("link_store");
+        q.get_data(this.act_get_data_link_store_done);
+    }
+
+    act_get_data_link_store_done(data){
+        carrot.appp.link_store=data;
+        carrot.appp.show_all();
+    }
+
+    get_data(){
+        carrot.show_loading_page("Load data "+this.type_view+"...");
+        var q=new Carrot_Query("app");
+        q.add_select("name_"+carrot.lang);
+        q.add_select("name_en");
+        q.add_select("icon");
+        q.add_select("type");
+
+        $(carrot.appp.link_store).each(function(index,store){
+            q.add_select(store.key);
+        });
+
+        q.add_where("status",this.status_view);
+        if(this.type_view!="all") q.add_where("type",this.type_view);
+        q.get_data(this.act_get_data_app_done);
+    }
+
+    act_get_data_app_done(data){
+        var html="";
+        html+=carrot.appp.menu();
+        html+='<div id="all_app" class="row m-0"></div>';
+        carrot.show(html);
+
+        $(data).each(function(index,data_app){
+            data_app["index"]=index;
+            $("#all_app").append(carrot.appp.box_app_item(data_app));
         });
         carrot.check_event();
     }
@@ -53,9 +103,9 @@ class app_carrot{
                                 html+='<li class="col-4"><span class="text-secondary float-end"><i class="fa-solid fa-gamepad"></i></span></li>';
                         html+='</ul>';
 
-                        if(carrot.link_store.list_link_store!=null){
+                        if(carrot.appp.link_store!=null){
                             var html_store_link="";
-                            $(carrot.link_store.list_link_store).each(function(index,store){
+                            $(carrot.appp.link_store).each(function(index,store){
                                 if(data_app[store.key]!=null){
                                     var link_store_app=data_app[store.key];
                                     if(link_store_app!='') html_store_link+="<a class='link_app' title=\""+store.name+"\" target=\"_blank\" href=\""+link_store_app+"\"><i class=\""+store.icon+"\"></i></a>";
@@ -77,19 +127,32 @@ class app_carrot{
         var html='';
         var s_class='';
         html+='<div class="row dev mb-2">';
-            html+='<div class="col-md-12">';
-                html+='<div class="btn-group" role="group">';
-                    if(this.status_view=='all') s_class='active'; else s_class='';
-                    html+='<div class="btn btn-sm btn-success '+s_class+'" onclick="carrot.app.get_all_data_app();"><i class="fa-solid fa-table-list"></i> All App</div>';
+            html+='<div class="col-12">';
+                html+='<div class="btn-group mr-2" role="group">';
+                    if(this.type_view=='all') s_class='active'; else s_class='';
+                    html+='<div class="btn btn-sm btn-success '+s_class+'" onclick="carrot.appp.show_all();"><i class="fa-solid fa-table-list"></i> All</div>';
+                    if(this.type_view=='app') s_class='active'; else s_class='';
+                    html+='<div class="btn btn-sm btn-success '+s_class+'" onclick="carrot.appp.show_app();"><i class="fa-solid fa-mobile"></i> App</div>';
+                    if(this.type_view=='game') s_class='active'; else s_class='';
+                    html+='<div class="btn btn-sm btn-success '+s_class+'" onclick="carrot.appp.show_game();"><i class="fa-solid fa-gamepad"></i> Game</div>';
+                html+='</div>';
+                html+=' <div class="btn-group" role="group">';
                     if(this.status_view=='publish') s_class='active'; else s_class='';
-                    html+='<div class="btn btn-sm btn-success '+s_class+'" onclick="carrot.app.get_public_data_app();"><i class="fa-solid fa-van-shuttle"></i> Public App</div>';
+                    html+='<div class="btn btn-sm btn-success '+s_class+'" onclick="carrot.appp.show_app_publish();"><i class="fa-solid fa-van-shuttle"></i> Public App</div>';
                     if(this.status_view=='draft') s_class='active'; else s_class='';
-                    html+='<div class="btn btn-sm btn-success '+s_class+'" onclick="carrot.app.get_draft_data_app();"><i class="fa-solid fa-layer-group"></i> Draft App</div>';
-                    html+='<div class="btn btn-sm btn-danger" onclick="carrot.app.delete_all_data();"><i class="fa-solid fa-dumpster-fire"></i> Delete All data</div>';
+                    html+='<div class="btn btn-sm btn-success '+s_class+'" onclick="carrot.appp.show_app_draft();"><i class="fa-solid fa-layer-group"></i> Draft App</div>';
+                    html+='<div class="btn btn-sm btn-danger" onclick="carrot.appp.clear_all_data();"><i class="fa-solid fa-dumpster-fire"></i> Delete All data</div>';
                 html+='</div>';
             html+='</div>';
         html+='</div>';
         return html;
+    }
+
+    clear_all_data(){
+        carrot.type_view="all";
+        carrot.status_view="publish";
+        setTimeout(3000,()=>{carrot.appp.show();});
+        carrot.msg("Delete all data app success!","success");
     }
 }
 
