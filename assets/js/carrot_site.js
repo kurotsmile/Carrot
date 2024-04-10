@@ -8,6 +8,7 @@ class Carrot_Site{
     paypal_pub_CLIENT_ID="AYgLieFpLUDxi_LBdzDqT2ucT4MIa-O0vwX7w3CKGfQgMGROOHu-xz2y5Jes77owCYQ1eLmOII_ch2VZ";
     paypal_dev_CLIENT_ID="AcW86yX1h7Mae8ofqkhDol9d9kq5zI4fVY5jKuRT45uTwQw52aYYDNI5AwjrKw7tAExqW5N128z1qLF1";
     paypal_CLIENT_ID="";
+    index_server=0;
 
     /*Obj page*/
     lang;
@@ -53,10 +54,12 @@ class Carrot_Site{
     config;
     
     constructor(){
+        if(localStorage.getItem("index_server")!=null)this.index_server=parseInt(localStorage.getItem("index_server"));
+
         fetch('rabbit.data?=2.2').then(response => response.text()).then((text) => {
             var data_text=atob(text);
             this.config=JSON.parse(data_text);
-            this.setup_sever_db(0);
+            this.setup_sever_db(this.index_server);
         }); 
     };
 
@@ -72,8 +75,7 @@ class Carrot_Site{
                 this.is_localhost = true;
         }
 
-        if(this.firebase==null) this.firebase =firebase.initializeApp(this.firebaseConfig_mainhost);
-
+        this.firebase =firebase.initializeApp(this.firebaseConfig_mainhost);
         this.auth=this.firebase.auth();
         this.storage = this.firebase.storage();
         this.db = this.firebase.firestore();
@@ -176,6 +178,9 @@ class Carrot_Site{
 
         var btn_update_config=this.menu.create("btn_update_config").set_label("Update File Config").set_type("setting").set_icon("fa-solid fa-file");
         $(btn_update_config).click(function(){carrot.act_update_file_config();});
+
+        var btn_del_all=this.menu.create("btn_del_all").set_label("Delete all data cache").set_type("setting").set_icon("fa-solid fa-trash-can");
+        $(btn_del_all).click(function(){carrot.act_delete_all_data();});
 
         var btn_midi=this.menu.create("btn_midi_piano").set_label("Midi").set_icon("fa-solid fa-drum");
         $(btn_midi).click(function(){
@@ -295,8 +300,9 @@ class Carrot_Site{
             }
         }).catch((error) => {
             this.log(error.message,"error");
-            this.show_error_connect_sever();
-            this.load_page();
+            //this.show_error_connect_sever();
+            //this.load_page();
+            this.act_next_server_when_fail();
         });
     }
 
@@ -1257,9 +1263,9 @@ class Carrot_Site{
     }
 
     act_done_change_server(){
-        var index_server=$("#server_db").val();
-        this.setup_sever_db(parseInt(index_server));
-        this.msg("Change server success!","success");
+        this.index_server=parseInt($("#server_db").val());
+        localStorage.setItem("index_server",this.index_server);
+        location.reload();
     }
 
     act_update_file_config(){
@@ -1274,5 +1280,18 @@ class Carrot_Site{
             URL.revokeObjectURL(url);
             this.msg("Update File config success!","success");
         }); 
+    }
+
+    act_next_server_when_fail(){
+        this.index_server++;
+        if(this.index_server>=this.config.server.length) this.index_server=0;
+        localStorage.setItem("index_server",this.index_server);
+        location.reload();
+    }
+
+    act_delete_all_data(){
+        localStorage.clear();
+        localStorage.setItem("index_server",this.index_server);
+        location.reload();
     }
 }
