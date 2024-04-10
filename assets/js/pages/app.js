@@ -7,7 +7,6 @@ class app_carrot{
         carrot.show_loading_page();
         carrot.db.collection("app").where("status","==","publish").limit(200).get().then((querySnapshot) => {
             if(querySnapshot.docs.length>0){
-
                 var html="";
                 html+=this.menu();
                 html+='<div id="all_app" class="row m-0">';
@@ -92,7 +91,6 @@ class app_carrot{
         html+='</div>';
         return html;
     }
-
 }
 
 var appp=new app_carrot();
