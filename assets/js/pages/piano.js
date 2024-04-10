@@ -54,7 +54,6 @@ class Midi{
         midis=carrot.convert_obj_to_list_array(midis);
         carrot.show('<div id="all_item" class="row m-0"></div>');
         $(midis).each(function(index,midi){
-            console.log(midi);
             midi["index"]=index;
             $("#all_item").append(carrot.midi.box_item(midi).html());
         });

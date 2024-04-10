@@ -53,27 +53,45 @@ class Carrot_Site{
     config;
     
     constructor(){
-        this.firebaseConfig_mainhost={
-            apiKey: "AIzaSyDzsx1KYLZL5COz1NaTD8cOz8GYalX2Dxc",
-            authDomain: "carrotstore.firebaseapp.com",
-            projectId: "carrotstore",
-            storageBucket: "carrotstore.appspot.com",
-            messagingSenderId: "745653792874",
-            appId: "1:745653792874:web:55d78113cd3dea7c28da13",
-            measurementId: "G-KXDDJ42JFN",
+        fetch('config.json?=2.2').then(response => response.json()).then((text) => {
+            this.config=text;
+            this.setup_sever_db(1);
+        }); 
+    };
+
+    setup_sever_db(index_sever){
+        this.firebaseConfig_mainhost=this.config.server[index_sever];
+        this.log("setup_sever_db","warning");
+        if (localStorage.getItem("is_localhost") == null) {
+            this.is_localhost = false;
+        } else {
+            if (localStorage.getItem("is_localhost") == "false")
+                this.is_localhost = false;
+            else
+                this.is_localhost = true;
         }
 
-        fetch('config.json').then(response => response.json()).then((text) => {this.config=text;this.log(text);});
+        if(this.firebase==null) this.firebase =firebase.initializeApp(this.firebaseConfig_mainhost);
 
-        this.setup_sever_db();
+        this.auth=this.firebase.auth();
+        this.storage = this.firebase.storage();
+        this.db = this.firebase.firestore();
+        if(this.is_localhost){
+            this.auth.useEmulator("http://localhost:9099", { disableWarnings: true });
+            this.db.useEmulator('localhost', 8082);
+            this.storage.useEmulator('localhost', 9199);
+        }
+        if(this.db==null) this.show_error_connect_sever();
 
         if(localStorage.getItem("mode_site") != null) this.mode_site = localStorage.getItem("mode_site");
         if(localStorage.getItem("is_dev") != null) this.is_dev = localStorage.getItem("is_dev");
-        
+
         this.load_recognition();
         this.load_obj_version_new();
         this.load_obj_version_cur();
-    };
+
+        this.check_version_data()
+    }
 
     load_all_object_main(){
         var carrot=this;
@@ -140,6 +158,9 @@ class Carrot_Site{
         var btn_mod_host=this.menu.create("btn_mode_host").set_label("Change Mode Host").set_type("setting").set_icon("fa-brands fa-dev");
         $(btn_mod_host).click(function(){carrot.change_host_connection();});
 
+        var btn_server_host=this.menu.create("btn_mode_host").set_label(this.firebaseConfig_mainhost.projectId).set_type("setting").set_icon("fa-solid fa-server");
+        $(btn_server_host).click(function(){carrot.show_list_change_server();});
+
         var btn_setting_ver=this.menu.create("data_version").set_label("Data Version").set_type("setting").set_icon("fa-regular fa-code-compare");
         $(btn_setting_ver).click(function(){carrot.show_edit_version_data_version();});
 
@@ -160,6 +181,14 @@ class Carrot_Site{
                 $('head').append('<script type="text/javascript" src="assets/js/pages/piano.js?ver='+carrot.get_ver_cur("js")+'"></script>');
         });
 
+        var btn_app=this.menu.create("btn_app").set_label("App and Game").set_type("dev").set_icon("fa-solid fa-gamepad");
+        $(btn_app).click(function(){
+            if(carrot.appp!=null)
+                carrot.appp.show();
+            else
+                $('head').append('<script type="text/javascript" src="assets/js/pages/app.js?ver='+carrot.get_ver_cur("js")+'"></script>');
+        });
+
         $("#btn_model_site").click(function(){carrot.change_mode_site();});
 
         if(!this.check_ver_cur("link_store"))this.link_store.get_all_data_link_store();
@@ -177,33 +206,8 @@ class Carrot_Site{
         });
 
         var TodayDate = new Date();
-        var m = TodayDate.getMonth();
-        m++;
+        var m = TodayDate.getMonth();m++;
         $("#logo_carrot").attr("src","images/logo/logo_"+m+".png");
-    }
-
-    setup_sever_db(){
-        this.log("setup_sever_db","warning");
-        if (localStorage.getItem("is_localhost") == null) {
-            this.is_localhost = false;
-        } else {
-            if (localStorage.getItem("is_localhost") == "false")
-                this.is_localhost = false;
-            else
-                this.is_localhost = true;
-        }
-
-        if(this.firebase==null) this.firebase =firebase.initializeApp(this.firebaseConfig_mainhost);
-
-        this.auth=this.firebase.auth();
-        this.storage = this.firebase.storage();
-        this.db = this.firebase.firestore();
-        if(this.is_localhost){
-            this.auth.useEmulator("http://localhost:9099", { disableWarnings: true });
-            this.db.useEmulator('localhost', 8082);
-            this.storage.useEmulator('localhost', 9199);
-        }
-        if(this.db==null) this.show_error_connect_sever();
     }
 
     set_doc(s_collection,s_document,data){
@@ -1225,5 +1229,32 @@ class Carrot_Site{
             $("#btn_model_style_icon").addClass("fa-moon");
             $("#style_obj").attr("href","assets/css/style.css?ver="+this.get_ver_cur("js"));
         }
+    }
+
+    show_list_change_server(){
+        var frm=new Carrot_Form("frm_list_server",this);
+        frm.set_title("Change Server Database");
+        frm.off_btn_done();
+        frm.set_msg_done("Update verion data success");
+
+        var dropdown_server=frm.create_field("server_db");
+        dropdown_server.set_label("Select Server");
+        dropdown_server.set_type("select");
+
+        var index_sel=0;
+        $(this.config.server).each(function(index,server){
+            dropdown_server.add_option(index,server.projectId);
+            if(server.projectId==carrot.firebaseConfig_mainhost.projectId) index_sel=index;
+        });
+        dropdown_server.set_val(index_sel);
+
+        frm.create_btn().set_act("carrot.act_done_change_server()").set_label("Done");
+        frm.show();
+    }
+
+    act_done_change_server(){
+        var index_server=$("#server_db").val();
+        this.setup_sever_db(parseInt(index_server));
+        alert("Change server success");
     }
 }

@@ -1,15 +1,24 @@
 class app_carrot{
     
+    objs=null;
+    status_view='all';
+
     show(){
-        var html="";
-        html+='<div id="all_app" class="row m-0">';
-        html+='</div>';
-        carrot.show(html);
+        carrot.show_loading_page();
         carrot.db.collection("app").where("status","==","publish").limit(200).get().then((querySnapshot) => {
             if(querySnapshot.docs.length>0){
+
+                var html="";
+                html+=this.menu();
+                html+='<div id="all_app" class="row m-0">';
+                html+='</div>';
+                carrot.show(html);
+
+                this.objs=Object();
                 querySnapshot.forEach((doc) => {
                     var data_app=doc.data();
                     data_app["id"]=doc.id;
+                    this.objs[doc.id]=data_app;
                     $("#all_app").append(this.box_app_item(data_app));
                 }); 
             }
@@ -64,7 +73,28 @@ class app_carrot{
         html+="</div>";
         return html;
     }
+
+    menu(){
+        var html='';
+        var s_class='';
+        html+='<div class="row dev mb-2">';
+            html+='<div class="col-md-12">';
+                html+='<div class="btn-group" role="group">';
+                    if(this.status_view=='all') s_class='active'; else s_class='';
+                    html+='<div class="btn btn-sm btn-success '+s_class+'" onclick="carrot.app.get_all_data_app();"><i class="fa-solid fa-table-list"></i> All App</div>';
+                    if(this.status_view=='publish') s_class='active'; else s_class='';
+                    html+='<div class="btn btn-sm btn-success '+s_class+'" onclick="carrot.app.get_public_data_app();"><i class="fa-solid fa-van-shuttle"></i> Public App</div>';
+                    if(this.status_view=='draft') s_class='active'; else s_class='';
+                    html+='<div class="btn btn-sm btn-success '+s_class+'" onclick="carrot.app.get_draft_data_app();"><i class="fa-solid fa-layer-group"></i> Draft App</div>';
+                    html+='<div class="btn btn-sm btn-danger" onclick="carrot.app.delete_all_data();"><i class="fa-solid fa-dumpster-fire"></i> Delete All data</div>';
+                html+='</div>';
+            html+='</div>';
+        html+='</div>';
+        return html;
+    }
+
 }
 
-var ac=new app_carrot();
-ac.show();
+var appp=new app_carrot();
+carrot.appp=appp;
+appp.show();

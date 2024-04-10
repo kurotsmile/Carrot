@@ -98,6 +98,10 @@ class Carrot_Menu{
     }
 
     show(){
+        $("#list_menu_main").html("");
+        $("#list_menu_dev").html("");
+        $("#list_menu_add").html("");
+        $("#list_menu_setting").html("");
         for(var i=0;i<this.list_menu.length;i++){
             $("#"+this.list_menu[i].father).append(this.list_menu[i]);
         }
