@@ -13,6 +13,7 @@ class Carrot_data{
             this.db = event.target.result;
             this.db.createObjectStore("apps",{keyPath: 'id_doc'});
             this.db.createObjectStore("images",{keyPath: 'id_doc'});
+            this.db.createObjectStore("stores",{keyPath: 'id_doc'});
         }
         this.request.onsuccess = () => {
             this.db = this.request.result;
@@ -29,7 +30,10 @@ class Carrot_data{
     get(collection,id_doc,act_done,act_fail){
         var request = this.db.transaction(collection).objectStore(collection).get(id_doc)
         request.onsuccess = (event) => {
-            act_done(event.target.result);
+            if(event.target.result==undefined)
+                act_fail();
+            else
+                act_done(event.target.result);
         }
         request.onerror=()=>{
             act_fail();
@@ -70,7 +74,10 @@ class Carrot_data{
                         items.push(cursor.value);
                         cursor.continue();
                     } else {
-                        resolve(items);
+                        if(items.length==0)
+                            reject();
+                        else
+                            resolve(items);
                     }
             };
 
@@ -78,5 +85,11 @@ class Carrot_data{
                 reject("Error listing items");
             };
         });
+    }
+
+    clear(collection) {
+        let transaction = this.db.transaction([collection], "readwrite");
+        let objectStore = transaction.objectStore(collection);
+        objectStore.clear();
     }
 }

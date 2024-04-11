@@ -6,36 +6,51 @@ class Appp{
     type_view='all';
 
     show(){
-        this.get_data_link_store();
+        carrot.data.list("stores").then((data)=>{
+            this.link_store=data;
+            this.show_all();
+        }).catch(()=>{
+            this.get_data_link_store();
+        })
     }
     
     show_all(){
         this.type_view="all";
         carrot.data.list("apps").then((data)=>{
-            this.load_list_app_by_array(data);
+            carrot.appp.load_list_app_by_array(data);
         }).catch(()=>{
-            this.get_data();
+            carrot.appp.get_data();
         });
     }
 
     show_app(){
         this.type_view="app";
-        this.get_data();
+        carrot.data.list("apps").then((data)=>{
+            carrot.appp.load_list_app_by_array(data);
+        }).catch(()=>{
+            carrot.appp.get_data();
+        });
     }
 
     show_game(){
         this.type_view="game";
-        this.get_data();
+        carrot.data.list("apps").then((data)=>{
+            carrot.appp.load_list_app_by_array(data);
+        }).catch(()=>{
+            carrot.appp.get_data();
+        });
     }
 
     show_app_publish(){
+        this.type_view="all";
         this.status_view="publish";
-        this.get_data();
+        carrot.appp.get_data();
     }
 
     show_app_draft(){
+        this.type_view="all";
         this.status_view="draft";
-        this.get_data();
+        carrot.appp.get_data();
     }
 
     show_for_home(){
@@ -57,6 +72,9 @@ class Appp{
     }
 
     act_get_data_link_store_done(data){
+        $(data).each(function(index,store){
+            carrot.data.add("stores",store);
+        });
         carrot.appp.link_store=data;
         carrot.appp.show_all();
     }
@@ -68,6 +86,7 @@ class Appp{
         q.add_select("name_en");
         q.add_select("icon");
         q.add_select("type");
+        q.add_select("status");
 
         $(carrot.appp.link_store).each(function(index,store){
             q.add_select(store.key);
@@ -98,7 +117,10 @@ class Appp{
         carrot.show(html);
 
         for(var i=0;i<array_app.length;i++){
-            $("#all_app").append(carrot.appp.box_app_item(array_app[i]));
+            if(carrot.appp.type_view!="all"){
+                if(carrot.appp.type_view!=array_app[i].type) continue;
+            }
+            if(carrot.appp.status_view==array_app[i].status) $("#all_app").append(carrot.appp.box_app_item(array_app[i]));
         }
         carrot.check_event();
     }
@@ -156,7 +178,7 @@ class Appp{
     menu(){
         var html='';
         var s_class='';
-        html+='<div class="row dev mb-2">';
+        html+='<div class="row mb-2">';
             html+='<div class="col-12">';
                 html+='<div class="btn-group mr-2" role="group">';
                     if(this.type_view=='all') s_class='active'; else s_class='';
@@ -168,10 +190,10 @@ class Appp{
                 html+='</div>';
                 html+=' <div class="btn-group" role="group">';
                     if(this.status_view=='publish') s_class='active'; else s_class='';
-                    html+='<div class="btn btn-sm btn-success '+s_class+'" onclick="carrot.appp.show_app_publish();"><i class="fa-solid fa-van-shuttle"></i> Public App</div>';
+                    html+='<div class="btn dev btn-sm btn-success '+s_class+'" onclick="carrot.appp.show_app_publish();"><i class="fa-solid fa-van-shuttle"></i> Public App</div>';
                     if(this.status_view=='draft') s_class='active'; else s_class='';
-                    html+='<div class="btn btn-sm btn-success '+s_class+'" onclick="carrot.appp.show_app_draft();"><i class="fa-solid fa-layer-group"></i> Draft App</div>';
-                    html+='<div class="btn btn-sm btn-danger" onclick="carrot.appp.clear_all_data();"><i class="fa-solid fa-dumpster-fire"></i> Delete All data</div>';
+                    html+='<div class="btn dev btn-sm btn-success '+s_class+'" onclick="carrot.appp.show_app_draft();"><i class="fa-solid fa-layer-group"></i> Draft App</div>';
+                    html+='<div class="btn dev btn-sm btn-danger" onclick="carrot.appp.clear_all_data();"><i class="fa-solid fa-dumpster-fire"></i> Delete All data</div>';
                 html+='</div>';
             html+='</div>';
         html+='</div>';
@@ -181,6 +203,7 @@ class Appp{
     clear_all_data(){
         carrot.type_view="all";
         carrot.status_view="publish";
+        carrot.data.clear("apps");
         setTimeout(3000,()=>{carrot.appp.show();});
         carrot.msg("Delete all data app success!","success");
     }
