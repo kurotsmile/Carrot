@@ -53,6 +53,24 @@ class Appp{
         carrot.appp.get_data();
     }
 
+    show_other_store(){
+        this.type_view="stores";
+        var html=this.menu();
+        html+='<div id="all_app" class="row m-0">';
+        $(this.link_store).each(function(index,store){
+            var item_store=new Carrot_List_Item(carrot);
+            console.log(store);
+            item_store.set_icon_font(store.icon);
+            item_store.set_class_icon_col("col-2");
+            item_store.set_class_body("col-10");
+            item_store.set_name(store.name);
+            html+=item_store.html();
+        });
+        html+='</div>';
+        carrot.show(html);
+        this.check_event();
+    }
+
     show_for_home(){
         $("#all_app_contain").html('<div class="col-12 text-center"><i class="fa-solid fa-spinner fa-3x fa-spin"></i></div>');
         if(this.objs!=null){
@@ -122,6 +140,10 @@ class Appp{
             }
             if(carrot.appp.status_view==array_app[i].status) $("#all_app").append(carrot.appp.box_app_item(array_app[i]));
         }
+        carrot.appp.check_event();
+    }
+
+    check_event(){
         carrot.check_event();
     }
 
@@ -195,6 +217,11 @@ class Appp{
                     html+='<div class="btn dev btn-sm btn-success '+s_class+'" onclick="carrot.appp.show_app_draft();"><i class="fa-solid fa-layer-group"></i> Draft App</div>';
                     html+='<div class="btn dev btn-sm btn-danger" onclick="carrot.appp.clear_all_data();"><i class="fa-solid fa-dumpster-fire"></i> Delete All data</div>';
                 html+='</div>';
+
+                html+=' <div class="btn-group" role="group">';
+                    if(this.type_view=="stores") s_class='active'; else s_class='';
+                    html+='<div class="btn btn-sm btn-success '+s_class+'" onclick="carrot.appp.show_other_store();"><i class="fa-solid fa-store"></i> Other Store</div>';
+                html+='</div>';
             html+='</div>';
         html+='</div>';
         return html;
@@ -204,6 +231,7 @@ class Appp{
         carrot.type_view="all";
         carrot.status_view="publish";
         carrot.data.clear("apps");
+        carrot.data.clear("stores");
         setTimeout(3000,()=>{carrot.appp.show();});
         carrot.msg("Delete all data app success!","success");
     }
