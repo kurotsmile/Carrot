@@ -102,9 +102,9 @@ class Carrot_Server{
               return response.json();
             })
             .then((data) => {
-                var obj_data=carrot.server.simplifyDocument(data[i].document.fields);
-                obj_data["id_doc"]=data[i].document.name.split("/").pop();
-                act_done(this.simplifyDocument(obj_data));
+                var obj_data=carrot.server.simplifyDocument(data.fields);
+                obj_data["id_doc"]=data.name.split("/").pop();
+                act_done(obj_data);
             }).catch((error) => {console.log('failed', error);});
     }
 

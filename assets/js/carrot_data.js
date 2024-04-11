@@ -8,10 +8,11 @@ class Carrot_data{
     constructor(databaseName, databaseVersion) {
         this.databaseName = databaseName;
         this.databaseVersion = databaseVersion;
-        this.request = indexedDB.open(this.databaseName , 1);
+        this.request = indexedDB.open(this.databaseName , databaseVersion);
         this.request.onupgradeneeded = (event) => {
             this.db = event.target.result;
             this.db.createObjectStore("apps",{keyPath: 'id_doc'});
+            this.db.createObjectStore("app_info",{keyPath: 'id_doc'});
             this.db.createObjectStore("images",{keyPath: 'id_doc'});
             this.db.createObjectStore("stores",{keyPath: 'id_doc'});
         }
@@ -44,7 +45,8 @@ class Carrot_data{
         this.get("images",id_doc,(d)=>{
             if(d){
                 const imageUrl = URL.createObjectURL(d.data);
-                $("#"+emp).attr("src", imageUrl);
+                if(d.data.size>500) $("#"+emp).attr("src", imageUrl);
+                else $("#"+emp).attr("src","images/150.png");
             }else{
                 $("#"+emp).attr("src", url);
             }
@@ -57,7 +59,7 @@ class Carrot_data{
                 $("#"+emp).attr("src",url);
             })
             .catch(error => {
-                $("#"+emp).attr("src",url);
+                $("#"+emp).attr("src","images/150.png");
             });
         });
     }
