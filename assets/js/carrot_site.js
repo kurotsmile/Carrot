@@ -111,6 +111,7 @@ class Carrot_Site{
             this.paypal_CLIENT_ID=this.paypal_pub_CLIENT_ID;
 
         $('head').append('<script type="text/javascript" src="assets/js/carrot_server.js?ver='+this.get_ver_cur("js")+'"></script>');    
+        $('head').append('<script type="text/javascript" src="assets/js/carrot_data.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_langs.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_link_store.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_app.js?ver='+this.get_ver_cur("js")+'"></script>');
@@ -165,6 +166,7 @@ class Carrot_Site{
         this.file=new Carrot_File(this);
         this.pay=new Carrot_Pay(this);
         this.rate=new Carrot_Rate(this);
+        this.data=new Carrot_data("carrotstore","1.1");
         
         var btn_mod_host=this.menu.create("btn_mode_host").set_label("Change Mode Host").set_type("setting").set_icon("fa-brands fa-dev");
         $(btn_mod_host).click(function(){carrot.change_host_connection();});

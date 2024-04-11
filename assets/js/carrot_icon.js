@@ -184,7 +184,7 @@ class Carrot_Icon{
 
     select_show_category(key_category){
         carrot.icon.cur_show_icon_category=key_category;
-        Swal.showLoading();
+        carrot.loading();
         this.carrot.log("Get list Icon by category from sever","warning");
         if(key_category=="all"){
             carrot.db.collection("icon").limit(200).get().then((querySnapshot) => {

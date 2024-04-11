@@ -96,10 +96,11 @@ class Appp{
         var s_url_icon="";
         if(data_app.icon!=null) s_url_icon=data_app.icon;
         if(s_url_icon=="") s_url_icon="images/150.png";
+        carrot.data.loadImageByUrl(data_app.icon,data_app.name_en,'icon_app_'+data_app.index);
         var html="<div class='box_app "+s_class+"' id=\""+data_app.id+"\" key_search=\""+data_app[key_name]+"\">";
             html+='<div class="app-cover p-2 shadow-md bg-white">';
                 html+='<div class="row">';
-                    html+='<div role="button" class="img-cover pe-0 col-3 app_icon" app_id="'+data_app.id+'"><img class="rounded" src="'+s_url_icon+'" alt="'+data_app[key_name]+'"></div>';
+                    html+='<div role="button" class="img-cover pe-0 col-3 app_icon" app_id="'+data_app.id+'"><img id="icon_app_'+data_app.index+'" class="rounded" src="images/150.png" alt="'+data_app[key_name]+'"></div>';
                     html+='<div class="det mt-2 col-9">';
                         html+="<h5 class='mb-0 fs-6'>"+data_app[key_name]+"</h5>";
                         html+="<span class='fs-8'>"+data_app.name_en+"</span>";
