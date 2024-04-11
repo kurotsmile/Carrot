@@ -11,7 +11,11 @@ class Appp{
     
     show_all(){
         this.type_view="all";
-        this.get_data();
+        carrot.data.list("apps").then((data)=>{
+            this.load_list_app_by_array(data);
+        }).catch(()=>{
+            this.get_data();
+        });
     }
 
     show_app(){
@@ -75,18 +79,27 @@ class Appp{
     }
 
     act_get_data_app_done(data){
+        carrot.appp.objs={};
+        var array_app=[];
+        $(data).each(function(index,data_app){
+            data_app["index"]=index;
+            carrot.appp.objs[data_app.id_doc]=data_app;
+            carrot.data.add("apps",data_app);
+            array_app.push(data_app);
+        });
+        carrot.appp.load_list_app_by_array(array_app);
+    }
+
+    load_list_app_by_array(array_app){
         Swal.close();
         var html="";
         html+=carrot.appp.menu();
         html+='<div id="all_app" class="row m-0"></div>';
         carrot.show(html);
 
-        carrot.appp.objs={};
-        $(data).each(function(index,data_app){
-            data_app["index"]=index;
-            carrot.appp.objs[data_app.id_doc]=data_app;
-            $("#all_app").append(carrot.appp.box_app_item(data_app));
-        });
+        for(var i=0;i<array_app.length;i++){
+            $("#all_app").append(carrot.appp.box_app_item(array_app[i]));
+        }
         carrot.check_event();
     }
 
@@ -96,7 +109,8 @@ class Appp{
         var s_url_icon="";
         if(data_app.icon!=null) s_url_icon=data_app.icon;
         if(s_url_icon=="") s_url_icon="images/150.png";
-        carrot.data.loadImageByUrl(data_app.icon,data_app.name_en,'icon_app_'+data_app.index);
+        
+        carrot.data.load_image(data_app.id_doc,data_app.icon,"icon_app_"+data_app.index);
         var html="<div class='box_app "+s_class+"' id=\""+data_app.id+"\" key_search=\""+data_app[key_name]+"\">";
             html+='<div class="app-cover p-2 shadow-md bg-white">';
                 html+='<div class="row">';

@@ -1,72 +1,82 @@
 class Carrot_data{
+
+    request=null;
+    db=null;
+    databaseName="";
+    databaseVersion=1;
+
     constructor(databaseName, databaseVersion) {
         this.databaseName = databaseName;
         this.databaseVersion = databaseVersion;
-        this.db = null;
-    }
-
-    init() {
-        return new Promise((resolve, reject) => {
-            const request = indexedDB.open(this.databaseName, this.databaseVersion);
-
-            request.onupgradeneeded = function(event) {
-                const db = event.target.result;
-                db.createObjectStore("images", { keyPath: "id" });
-            };
-
-            request.onsuccess = function(event) {
-                this.db = event.target.result;
-                resolve();
-            }.bind(this);
-
-            request.onerror = function(event) {
-                reject("Error opening IndexedDB");
-            };
-        });
-    }
-
-    loadImageOrSaveToIndexedDB(imageUrl,id,id_emp) {
-        const transaction = this.db.transaction(["images"], "readonly");
-        const objectStore = transaction.objectStore("images");
-        const getRequest = objectStore.get(id);
-
-        getRequest.onsuccess = function(event) {
-            const imageData = event.target.result;
-            if (imageData) {
-                const imageBlob = imageData.image;
-                const imageUrl = URL.createObjectURL(imageBlob);
-                $(`#${id_emp}`).attr("src", imageUrl);
-            } else {
-                this.saveImageToIndexedDB(imageUrl, id,id_emp);
-            }
-        }.bind(this);
-
-        getRequest.onerror = function(event) {
-            console.log("Error reading image from IndexedDB ("+id+")");
+        this.request = indexedDB.open(this.databaseName , 1);
+        this.request.onupgradeneeded = (event) => {
+            this.db = event.target.result;
+            this.db.createObjectStore("apps",{keyPath: 'id_doc'});
+            this.db.createObjectStore("images",{keyPath: 'id_doc'});
+        }
+        this.request.onsuccess = () => {
+            this.db = this.request.result;
+        };
+        this.request.onerror = () => {
+            console.log("Connecting IndexDB Error","error");
         };
     }
 
-    saveImageToIndexedDB(imageUrl, id,id_emp) {
-        fetch(imageUrl)
-            .then(response => response.blob())
-            .then(blob => {
-                const transaction = this.db.transaction(["images"], "readwrite");
-                const objectStore = transaction.objectStore("images");
-                objectStore.put({ id: id, image: blob });
-                $(`#${id_emp}`).attr("src", imageUrl);
-            })
-            .catch(error => {
-                console.error('Error fetching image: '+id, error);
-            });
+    add(collection,data){
+       this.db.transaction(collection, "readwrite").objectStore(collection).add(data);
     }
 
-    loadImageByUrl(imageUrl, id,id_emp) {
-        this.init()
-        .then(() => {
-            this.loadImageOrSaveToIndexedDB(imageUrl, id,id_emp);
-        })
-        .catch(error => {
-            console.error(error);
+    get(collection,id_doc,act_done,act_fail){
+        var request = this.db.transaction(collection).objectStore(collection).get(id_doc)
+        request.onsuccess = (event) => {
+            act_done(event.target.result);
+        }
+        request.onerror=()=>{
+            act_fail();
+        }
+    }
+
+    load_image(id_doc,url,emp){
+        this.get("images",id_doc,(d)=>{
+            if(d){
+                const imageUrl = URL.createObjectURL(d.data);
+                $("#"+emp).attr("src", imageUrl);
+            }else{
+                $("#"+emp).attr("src", url);
+            }
+        },()=>{
+            fetch(url)
+            .then(response => response.blob())
+            .then(blob => {
+                var data_img={id_doc:id_doc,data:blob};
+                this.add("images",data_img);
+                $("#"+emp).attr("src",url);
+            })
+            .catch(error => {
+                $("#"+emp).attr("src",url);
+            });
+        });
+    }
+
+    list(collection) {
+        return new Promise((resolve, reject) => {
+            let transaction = this.db.transaction(collection, "readonly");
+            let objectStore = transaction.objectStore(collection);
+            let items = [];
+
+            objectStore.openCursor().onsuccess = (event) => {
+                    let cursor = event.target.result;
+                    if (cursor) {
+                        items.push(cursor.value);
+                        cursor.continue();
+                    } else {
+                        resolve(items);
+                    }
+            };
+
+            transaction.onerror = () => {
+                reject("Error listing items");
+            };
         });
     }
 }

@@ -4,7 +4,10 @@ class Home{
         html+='<div id="all_app_contain" class="row"></div>';
         html+='</div>';
         carrot.show(html);
-        carrot.load_js_page("app","Appp","carrot.appp.show_for_home()");
+        if(carrot.appp==null)
+            carrot.load_js_page("app","Appp","carrot.appp.show_for_home()");
+        else
+            carrot.appp.show_for_home();
         carrot.loading();
     }
 }
