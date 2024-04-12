@@ -141,3 +141,11 @@ class Carrot_List_Item{
         return html;
     }
 }
+
+class Carrot_Info{
+
+    html(){
+        var html='';
+        return html;
+    }
+}

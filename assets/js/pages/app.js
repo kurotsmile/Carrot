@@ -71,15 +71,24 @@ class Appp{
     }
 
     show_for_home(){
-        $("#all_app_contain").html('<div class="col-12 text-center"><i class="fa-solid fa-spinner fa-3x fa-spin"></i></div>');
-        if(this.objs!=null){
-            $("#all_app_contain").html('');
-
-            $(carrot.convert_obj_to_list_array(carrot.appp.objs)).each(function(index,data){
-                if(index>=12) return false;
-                $("#all_app_contain").append(carrot.appp.box_app_item(data));
+        carrot.data.list("stores").then((stores)=>{
+            $("#all_store_contain").html('');
+            $(stores).each(function(index,s){
+                s["index"]=index;
+                $("#all_store_contain").append(carrot.appp.box_store_item(s));
             });
-        }
+            carrot.appp.link_store=stores;
+
+            carrot.data.list("apps").then((data)=>{
+                $("#all_app_contain").html('');
+                $(data).each(function(index,app){
+                    if(index>=12) return false;
+                    app["index"]=index;
+                    $("#all_app_contain").append(carrot.appp.box_app_item(app));
+                });
+            });
+        });
+        carrot.appp.check_event();
     }
 
     get_data_link_store(){
@@ -165,13 +174,14 @@ class Appp{
 
         var html_body='';
         html_body+='<ul class="row">';
-        html_body+='<li class="col-8 ratfac">';
-        html_body+='<i class="bi text-warning fa-solid fa-star"></i>';
-        html_body+='<i class="bi text-warning fa-solid fa-star"></i>';
-        html_body+='<i class="bi text-warning fa-solid fa-star"></i>';
-        html_body+='<i class="bi text-warning fa-solid fa-star"></i>';
-        html_body+='<i class="bi fa-solid fa-star"></i>';
+            html_body+='<li class="col-8 ratfac">';
+            html_body+='<i class="bi text-warning fa-solid fa-star"></i>';
+            html_body+='<i class="bi text-warning fa-solid fa-star"></i>';
+            html_body+='<i class="bi text-warning fa-solid fa-star"></i>';
+            html_body+='<i class="bi text-warning fa-solid fa-star"></i>';
+            html_body+='<i class="bi fa-solid fa-star"></i>';
         html_body+='</li>';
+
         if(data_app.type=="app")
             html_body+='<li class="col-4"><span class="text-secondary float-end"><i class="fa-solid fa-mobile"></i></span></li>';
         else
@@ -195,6 +205,16 @@ class Appp{
         app_item.set_db_collection("app");
         app_item.set_act_click("carrot.appp.show_info(this)");
         return app_item.html();
+    }
+
+    box_store_item(data){
+        var store_item=new Carrot_List_Item(carrot);
+        store_item.set_icon("images/298x168.jpg");
+        store_item.set_class_icon("col-md-12 mb-3 col-12 text-center");
+        store_item.set_name(data.icon+" "+data.name);
+        store_item.set_class("col-md-2 mb-2 col-sm-3");
+        store_item.set_tip(data.id_doc);
+        return store_item.html();
     }
 
     show_info(emp){
@@ -240,7 +260,7 @@ class Appp{
     show_app_info(data,carrot){
         carrot.app.obj_app_cur=data;
         if(data==null) $.MessageBox(carrot.l("no_obj"));
-        carrot.change_title_page(data.name_en,"?p=app&id="+data.id,"app");
+        carrot.change_title_page(data.name_en,"?page=app&id="+data.id_doc,"app");
         var html='<div class="section-container p-2 p-xl-4">';
         html+='<div class="row">';
             html+='<div class="col-md-8 ps-4 ps-lg-3">';
@@ -251,7 +271,7 @@ class Appp{
                     html+='<div class="col-md-8 p-2">';
                         html+='<h4 class="fw-semi fs-4 mb-3">'+data["name_"+carrot.lang]+'</h4>';
 
-                        html+=carrot.btn_dev("app",data.id);
+                        html+=carrot.btn_dev("app",data.id_doc);
 
                         if(carrot.link_store.list_link_store!=null){
                             var html_store_link="";
