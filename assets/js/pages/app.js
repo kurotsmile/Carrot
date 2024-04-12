@@ -58,12 +58,8 @@ class Appp{
         var html=this.menu();
         html+='<div id="all_app" class="row m-0">';
         $(this.link_store).each(function(index,store){
-            var item_store=new Carrot_List_Item(carrot);
-            item_store.set_icon_font(store.icon);
-            item_store.set_class_icon_col("col-2");
-            item_store.set_class_body("col-10");
-            item_store.set_name(store.name);
-            html+=item_store.html();
+            store["index"]=index;
+            html+=carrot.appp.box_store_item(store);
         });
         html+='</div>';
         carrot.show(html);
@@ -208,12 +204,15 @@ class Appp{
     }
 
     box_store_item(data){
+        console.log(data.id_doc);
+        carrot.data.load_image(data.id_doc,data.img,"store_icon_"+data.id_doc);
         var store_item=new Carrot_List_Item(carrot);
         store_item.set_icon("images/298x168.jpg");
+        store_item.set_id_icon("store_icon_"+data.id_doc);
         store_item.set_class_icon("col-md-12 mb-3 col-12 text-center");
-        store_item.set_name(data.icon+" "+data.name);
+        store_item.set_name(data.name);
         store_item.set_class("col-md-2 mb-2 col-sm-3");
-        store_item.set_tip(data.id_doc);
+        store_item.set_tip('<i class="'+data.icon+'"></i> '+data.id_doc);
         return store_item.html();
     }
 
@@ -423,6 +422,7 @@ class Appp{
         carrot.status_view="publish";
         carrot.data.clear("apps");
         carrot.data.clear("stores");
+        carrot.data.clear("images");
         setTimeout(3000,()=>{carrot.appp.show();});
         carrot.msg("Delete all data app success!","success");
     }

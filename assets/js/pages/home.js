@@ -13,6 +13,8 @@ class Home{
             carrot.load_js_page("app","Appp","carrot.appp.show_for_home()");
         else
             carrot.appp.show_for_home();
+
+        carrot.appp.check_event();
     }
 }
 carrot.home=new Home();
