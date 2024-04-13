@@ -213,7 +213,14 @@ class Appp{
         store_item.set_name(data.name);
         store_item.set_class("col-md-2 mb-2 col-sm-3");
         store_item.set_tip('<i class="'+data.icon+'"></i> '+data.id_doc);
+        store_item.set_act_click("carrot.appp.show_store_by_id('"+data.id_doc+"')");
         return store_item.html();
+    }
+
+    show_store_by_id(id_store){
+        carrot.data.get("stores",id_store,(data)=>{
+            window.open(data.link,'_blank');
+        });
     }
 
     show_info(emp){
