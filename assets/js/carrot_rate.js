@@ -70,13 +70,11 @@ class Carrot_Rate{
             html+='<h4 class="fw-semi fs-5"><i class="fa-solid fa-ranking-star"></i> <l class="lang" key_lang="player_rankings">Player rankings</l></h4>';
             html+='<table class="table table-responsive table-striped table-hover">';
             html+='<tbody>';
-
                 var list_rank= data.rank;
                 $(list_rank).each(function (index,rank) {
                     rank["index"] = index;
                     html+=carrot.rate.box_rank_item(rank);
                 });
-
             html+='</tbody>';
             html+='</table>';
             html+='</div>';

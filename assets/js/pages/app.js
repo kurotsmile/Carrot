@@ -11,16 +11,31 @@ class Appp{
             this.show_all();
         }).catch(()=>{
             this.get_data_link_store();
-        })
+        });
     }
     
+    back_show_all(){
+        carrot.change_title_page("App and Game","?page=app","appp");
+        carrot.appp.show();
+    }
+
     show_all(){
-        this.type_view="all";
-        carrot.data.list("apps").then((data)=>{
-            carrot.appp.load_list_app_by_array(data);
-        }).catch(()=>{
-            carrot.appp.get_data();
-        });
+        var id_app=carrot.get_param_url("id");
+        if(id_app!=undefined){
+            id_app=decodeURI(id_app);
+            carrot.data.get("app_info",id_app,(data)=>{
+                carrot.appp.show_app_info(data);
+            },()=>{
+                carrot.server.get_doc("app",id_app,carrot.appp.act_get_data_app_done);
+            });
+        }else{
+            this.type_view="all";
+            carrot.data.list("apps").then((data)=>{
+                carrot.appp.load_list_app_by_array(data);
+            }).catch(()=>{
+                carrot.appp.get_data();
+            });
+        }
     }
 
     show_app(){
@@ -149,6 +164,7 @@ class Appp{
     }
 
     check_event(){
+        $(".owl-carousel").owlCarousel();
         carrot.check_event();
     }
 
@@ -199,7 +215,7 @@ class Appp{
         app_item.set_class(s_class);
         app_item.set_id(data_app.id_doc);
         app_item.set_db_collection("app");
-        app_item.set_act_click("carrot.appp.show_info(this)");
+        app_item.set_act_click("carrot.appp.show_app_by_id('"+data_app.id_doc+"')");
         return app_item.html();
     }
 
@@ -219,20 +235,54 @@ class Appp{
         return store_item.html();
     }
 
+    box_qr(data){
+        var html='';
+        html+='<div class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
+            html+='<div class="col-md-4 text-center">';
+                html+='<h4 class="fw-semi fs-5 lang" key_lang="qr_code">QR Code</h4>';
+                html+='<div id="qr_cdoe" class="rounded m-1"></div>';
+                html+='<small class="m-1">Use other devices capable of scanning and recognizing qr code barcodes to continue using the current link</small>';
+            html+='</div>';
+
+            html+='<div class="col-md-8">';
+                html+='<h4 class="fw-semi fs-5" key_lang="qr_code">Other Link</h4>';
+                if(carrot.link_store.list_link_store!=null){
+                    html+='<table class="table table-responsive table-striped">';
+                    $(carrot.appp.link_store).each(function(index,store){
+                        store["index"]=index;
+                        if(data[store.key]!=null){
+                            var link_store_app=data[store.key];
+                            if(link_store_app.trim()!=""){
+                                html+='<tr>';
+                                    html+='<td><i class="'+store.icon+'"></i></td>';
+                                    html+='<td>'+store.name+'</td>';
+                                    html+='<td class="fs-6">';
+                                        html+='<a class="link_app text-break" title="'+store.name+'" target="_blank" href="'+link_store_app+'">'+link_store_app+'</a>';
+                                    html+='</td>';
+                                html+='</tr>';
+                            }
+                        }
+                    });
+                    html+='</table>';
+                }
+            html+='</div>';
+        html+='</div>';
+        return html;
+    }
+
     show_store_by_id(id_store){
         carrot.data.get("stores",id_store,(data)=>{
             window.open(data.link,'_blank');
         });
     }
 
-    show_info(emp){
+    show_app_by_id(id_app){
         carrot.loading();
-        var id_app=$(emp).attr("obj_id");
         if(carrot.data.get("app_info",id_app,(data)=>{
             carrot.appp.show_app_info(data);
         },()=>{
             carrot.server.get_doc("app",id_app,carrot.appp.act_get_data_info_app_done);
-        }));   
+        })); 
     }
 
     act_get_data_info_app_done(data){
@@ -272,6 +322,7 @@ class Appp{
 
     show_app_info(data){
         carrot.hide_loading();
+        carrot.change_title_page(data.name_en,"/?page=app&id="+data.id_doc,"appp");
         carrot.data.load_image(data.id_doc,data.icon,"app_icon_info");
         var box_info=new Carrot_Info(data.id_doc);
         box_info.set_icon_image("images/512.png");
@@ -281,10 +332,48 @@ class Appp{
 
         $(carrot.appp.link_store).each(function(index,store){
             store["index"]=index;
-            if(data[store.id_doc]!="") box_info.add_attrs(store.id_doc,store.icon,store.name,"","<a href='"+data[store.id_doc]+"' target='_blank'>Viến thăm</a>","");
+            if(data[store.id_doc]!=undefined) box_info.add_attrs(store.icon,store.name,"<a href='"+data[store.id_doc]+"' target='_blank'><img class='w-50' src='"+store.img+"'/></a>","");
         });
 
+        box_info.add_attrs("fa-sharp fa-solid fa-eye",carrot.l_html("count_view","Reviews"),"3.9k");
+        box_info.add_attrs("fa-solid fa-download",carrot.l_html("count_download","Downloads"),"5M+");
+
+        if(data.type=="game")
+            box_info.add_attrs("fa-solid fa-gamepad","Game",carrot.l_html("game","Downloads"));
+        else
+            box_info.add_attrs("fa-solid fa-gamepad","Application",carrot.l_html("app","Application"));
+
+        box_info.add_attrs("fa-solid fa-window-restore",carrot.l_html("ads_in_app","Contains Ads"),"Unity,Admob,Carrot");
+        box_info.add_attrs("fa-solid fa-cart-shopping",carrot.l_html("in_app","In-app purchases"),"In-App");
+
+        var effect_font=["fa-fade", "fa-beat-fade", "fa-bounce", "fa-shake", "fa-flip"];
+        var effect_random = Math.floor(Math.random() * effect_font.length);
+        box_info.add_attrs("fa-solid fa-user-group-simple",carrot.l_html("author","Author"),'<p>Thanh <i class="fa-solid fa-heart '+effect_font[effect_random]+'" style="color: #ff0000;"></i> Nhung</p>');
+
+        if(data["img1"]!=""&&data["img1"]!=undefined){
+                var html_img='<div class="owl-carousel owl-theme">';
+                for(var i=1;i<=8;i++){
+                    var key_img_data="img"+i;
+                    var id_img=key_img_data+"_"+data.id_doc.replace(/[^\w]/gi,'');
+                    if(data[key_img_data]!=""&&data[key_img_data]!=undefined){
+                        carrot.data.load_image(id_img,data[key_img_data],id_img);
+                        html_img+='<img id="'+id_img+'" src="images/512.png"/>';
+                        var id_img=key_img_data+"_"+data.id_doc;
+                    }
+                }
+                html_img+='</div>';
+            box_info.add_body('<h4 class="fw-semi fs-5 lang" key_lang="screenshots">Screenshots</h4>',html_img);
+        }
+
         box_info.add_body('<h4 class="fw-semi fs-5 lang" key_lang="describe">About this App</h4>',data["describe_"+carrot.lang]);
+
+        if(data.youtube_link!=null&&data.youtube_link!=""){
+            var id_ytb=carrot.player_media.get_youtube_id(data.youtube_link);
+            var html_video='<iframe width="100%" height="360" src="https://www.youtube.com/embed/'+id_ytb+'" title="'+data.name_en+'" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>';
+            box_info.add_body('<h4 class="fw-semi fs-5 lang" key_lang="intro_video">Intro video</h4>',html_video);
+        }
+
+        box_info.add_contain(carrot.appp.box_qr(data));
         box_info.add_contain(carrot.rate.box_rank(data));
         box_info.add_contain(carrot.rate.box_comment(data));
 
@@ -293,171 +382,12 @@ class Appp{
         carrot.data.list("apps").then((apps)=>{
             apps=carrot.random(apps);
             $(apps).each(function(index,app){
+                if(index>=12) return false;
                 app["index"]=index;
                 $("#box_related").append(carrot.appp.box_app_item(app,'col-md-12 mb-3'));
             })
         });
         carrot.appp.check_event();
-    }
-
-    show_app_info_2(data,carrot){
-        carrot.app.obj_app_cur=data;
-        if(data==null) $.MessageBox(carrot.l("no_obj"));
-        carrot.change_title_page(data.name_en,"?page=app&id="+data.id_doc,"app");
-        var html='<div class="section-container p-2 p-xl-4">';
-        html+='<div class="row">';
-            html+='<div class="col-md-8 ps-4 ps-lg-3">';
-                html+='<div class="row bg-white shadow-sm">';
-                    html+='<div class="col-md-4 p-3">';
-                        html+='<img class="w-100" src="'+data.icon+'" alt="'+data.name_en+'">';
-                    html+='</div>';
-                    html+='<div class="col-md-8 p-2">';
-                        html+='<h4 class="fw-semi fs-4 mb-3">'+data["name_"+carrot.lang]+'</h4>';
-
-                        html+=carrot.btn_dev("app",data.id_doc);
-
-                        if(carrot.link_store.list_link_store!=null){
-                            var html_store_link="";
-                            var html_store_link_lager="";
-                            $(carrot.link_store.list_link_store).each(function(index,store){
-                                if(data[store.key]!=null){
-                                    var link_store_app=data[store.key];
-                                    if(link_store_app.trim()!=""){
-                                        html_store_link+="<a class='link_app' title=\""+store.name+"\" target=\"_blank\" href=\""+link_store_app+"\"><i class=\""+store.icon+"\"></i></a>";
-                                        html_store_link_lager+="<a title=\""+store.name+"\" target=\"_blank\" href=\""+link_store_app+"\"><img class='m-1' style='width:100px' src='"+store.img+"'></a> ";
-                                    }
-                                }
-                            });
-                            if(html_store_link!="") html+="<div class='row pt-4'><div class='col-md-12 col-12 text-center'>"+html_store_link+"</div></div>";
-                            if(html_store_link_lager!="") html+="<div class='row pt-4'><div class='col-md-12 col-12 text-center'>"+html_store_link_lager+"</div></div>";
-                        }
-
-                        html+='<div class="row pt-4">';
-                            html+='<div class="col-md-4 col-6 text-center">';
-                                html+='<b>3.9 <i class="fa-sharp fa-solid fa-eye"></i></b>';
-                                html+='<p>11.6k <l class="lang"  key_lang="count_view">Reviews</l></p>';
-                            html+='</div>';
-                            html+='<div class="col-md-4 col-6 text-center">';
-                                html+='<b>5M+ <i class="fa-solid fa-download"></i></b>';
-                                html+='<p class="lang" key_lang="count_download">Downloads</p>';
-                            html+='</div>';
-                            html+='<div class="col-md-4 col-6 text-center">';
-                                if(data.type=="game"){
-                                    html+='<b>Game <i class="fa-solid fa-gamepad"></i></b>';
-                                    html+='<p class="lang" key_lang="game">Game</p>';
-                                } 
-                                else{
-                                    html+='<b>App <i class="fa-solid fa-mobile"></i></b>';
-                                    html+='<p class="lang" key_lang="app">Application</p>';
-                                }
-                            html+='</div>';
-                            html+='<div class="col-md-4 col-6 text-center">';
-                                html+='<b>Ads <i class="fa-solid fa-window-restore"></i></b>';
-                                html+='<p class="lang" key_lang="ads_in_app">Contains Ads</p>';
-                            html+='</div>';
-                            html+='<div class="col-md-4 col-6 text-center">';
-                                html+='<b>In-App <i class="fa-solid fa-cart-shopping"></i></b>';
-                                html+='<p class="lang" key_lang="in_app">In-app purchases</p>';
-                            html+='</div>';
-                            html+='<div class="col-md-4 col-6 text-center">';
-                                html+='<b><l class="lang" key_lang="author">Author</l> <i class="fa-solid fa-user-group-simple"></i></b>';
-                                var effect_font=["fa-fade", "fa-beat-fade", "fa-bounce", "fa-shake", "fa-flip"];
-                                var effect_random = Math.floor(Math.random() * effect_font.length);
-                                html+='<p>Thanh <i class="fa-solid fa-heart '+effect_font[effect_random]+'" style="color: #ff0000;"></i> Nhung</p>';
-                            html+='</div>';
-                        html+='</div>';
-
-                        html+='<div class="row pt-4">';
-                            html+='<div class="col-12 text-center">';
-                            html+='<button id="btn_share" type="button" class="btn d-inline btn-success"><i class="fa-solid fa-share-nodes"></i> <l class="lang" key_lang="share">Share</l> </button> ';
-                            html+='<button id="register_protocol_url" type="button"  class="btn d-inline btn-success"><i class="fa-solid fa-rocket"></i> <l class="lang" key_lang="open_with">Open with..</l> </button>';
-                            html+='</div>';
-                        html+='</div>';
-
-                    html+='</div>';
-                html+="</div>";
-
-                if(data["img1"]!=""&&data["img1"]!=undefined){
-                    html+='<div class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
-                    html+='<h4 class="fw-semi fs-5 lang" key_lang="screenshots">Screenshots</h4>';
-                        html+='<div class="owl-carousel owl-theme">';
-                        for(var i=1;i<=8;i++){
-                            var key_img_data="img"+i;
-                            if(data[key_img_data]!=""&&data[key_img_data]!=undefined) html+='<img src="'+data[key_img_data]+'"/>';
-                        }
-                        html+='</div>';
-                    html+='</div>';
-                }
-    
-                html+='<div class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
-                    html+='<h4 class="fw-semi fs-5 lang" key_lang="describe">About this Game</h4>';
-                    html+='<p class="fs-8 text-justify">'+data["describe_"+carrot.lang]+'</p>';
-                html+='</div>';
-
-                if(data.youtube_link!=null&&data.youtube_link!=""){
-                    var id_ytb=carrot.player_media.get_youtube_id(data.youtube_link);
-                    html+='<div class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
-                        html+='<h4 class="fw-semi fs-5 lang" key_lang="intro_video">Intro video</h4>';
-                        html+='<iframe width="100%" height="360" src="https://www.youtube.com/embed/'+id_ytb+'" title="'+data.name_en+'" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>';
-                    html+='</div>';
-                }
-
-                html+='<div class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
-                    html+='<div class="col-md-4 text-center">';
-                        html+='<h4 class="fw-semi fs-5 lang" key_lang="qr_code">QR Code</h4>';
-                        html+='<div id="qr_cdoe" class="rounded m-1"></div>';
-                        html+='<small class="m-1">Use other devices capable of scanning and recognizing qr code barcodes to continue using the current link</small>';
-                    html+='</div>';
-
-                    html+='<div class="col-md-8">';
-                        html+='<h4 class="fw-semi fs-5" key_lang="qr_code">Other Link</h4>';
-                        if(carrot.link_store.list_link_store!=null){
-                            html+='<table class="table table-responsive table-striped">';
-                            $(carrot.link_store.list_link_store).each(function(index,store){
-                                if(data[store.key]!=null){
-                                    var link_store_app=data[store.key];
-                                    if(link_store_app.trim()!=""){
-                                        html+='<tr>';
-                                            html+='<td>';
-                                                html+='<i class="'+store.icon+'"></i>';
-                                            html+='</td>';
-                                            html+='<td>';
-                                                html+=store.name;
-                                            html+='</td>';
-                                            html+='<td class="fs-6">';
-                                                html+='<a class="link_app text-break" title="'+store.name+'" target="_blank" href="'+link_store_app+'">'+link_store_app+'</a>';
-                                            html+='</td>';
-                                        html+='</tr>';
-                                    }
-                                }
-                            });
-                            html+='</table>';
-                        }
-                    html+='</div>';
-                html+='</div>';
-
-                html+=carrot.rate.box_comment(data);
-                html+=carrot.rate.box_rank(data);
-
-            html+="</div>";
-    
-            html+='<div class="col-md-4" id="box_related_app">';
-                html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-3 lang"  key_lang="related_apps">Related Apps</h4>';
-                var list_app=carrot.convert_obj_to_list(carrot.app.obj_app);
-                list_app= list_app.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
-                $(list_app).each(function(index,app_item){
-                    if(index<12) if(data.type==app_item.type&&data.id!=app_item.id) html+=carrot.app.box_app_item(app_item,'col-md-12 mb-3');
-                });
-            html+='</div>';
-    
-        html+="</div>";
-        html+="</div>";
-
-        html+=carrot.app.list_for_home();
-        carrot.app.type_show="all";
-        carrot.show(html);
-        carrot.app.check_btn_for_list_app();
-        if(carrot.app.obj_app==null) carrot.app.get_list_related_apps();
     }
 
     clear_all_data(){

@@ -196,7 +196,12 @@ class Carrot_Site{
         $(btn_home_new).click(function(){carrot.load_js_page("home","Home","carrot.home.show()");});
 
         var btn_app=this.menu.create("btn_app").set_label("App and Game").set_type("dev").set_icon("fa-solid fa-gamepad");
-        $(btn_app).click(function(){carrot.load_js_page("app","Appp","carrot.appp.show()");});
+        $(btn_app).click(function(){
+            if(carrot.appp!=null)
+                window.location.replace(window.location.origin+"?page=app");
+            else
+                carrot.load_js_page("app","Appp","carrot.appp.show()");
+        });
 
         $("#btn_model_site").click(function(){carrot.change_mode_site();});
 
@@ -721,6 +726,15 @@ class Carrot_Site{
             return this.langs.get_val_lang(key,lang_en_default);
         else
             return lang_en_default;
+    }
+
+    l_html(key,lang_en_default=""){
+        var s_val='';
+        if(this.langs!=null)
+            s_val=this.langs.get_val_lang(key,lang_en_default);
+        else
+            s_val=lang_en_default;
+        return '<l class="lang" key_lang="'+key+'">'+s_val+'</l>';
     }
 
     download_json_doc() {

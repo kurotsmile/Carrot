@@ -190,14 +190,11 @@ class Carrot_Info{
         this.list_related.push(data);
     }
 
-    add_attrs(s_id,s_icon_font,s_name,s_name_lang,s_val,s_val_lang){
+    add_attrs(s_icon_font,s_name,s_val){
         var obj_attr={};
-        obj_attr["id"]=s_id;
         obj_attr["icon"]=s_icon_font;
         obj_attr["name"]=s_name;
-        obj_attr["name_lang"]=s_name_lang;
         obj_attr["value"]=s_val;
-        obj_attr["value_lang"]=s_val_lang;
         this.list_attr.push(obj_attr);
     }
 
@@ -229,8 +226,8 @@ class Carrot_Info{
                         if(this.list_attr.length>0){
                             html+='<div class="row">';
                             $(this.list_attr).each(function(index,data){
-                                html+='<div id="'+data.id+'" index="'+index+'" class="col-md-4 col-6 text-center">';
-                                    html+='<b><l class="lang" key_lang="'+data.name_lang+'">'+data.name+'</l> <i class="'+data.icon+'"></i></b>';
+                                html+='<div index="'+index+'" class="col-md-4 col-6 text-center mb-2">';
+                                    html+='<b>'+data.name+' <i class="'+data.icon+'"></i></b>';
                                     html+='<p>'+data.value+'</p>';
                                 html+='</div>';
                             });
@@ -247,19 +244,17 @@ class Carrot_Info{
                     html+='</div>';
                 });
 
-                $(this.list_contain).each(function(index,data){
-                    html+=data;
-                });
+                $(this.list_contain).each(function(index,data){html+=data;});
 
             html+="</div>";
     
-            
-                html+='<div class="col-md-4" id="box_related">';
-                    html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-3">'+this.s_related_title+'</h4>';
-                    $(this.list_related).each(function(index,data){
-                        html+=data;
-                    });
-                 html+='</div>';
+            html+='<div class="col-md-4" id="box_related">';
+                html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-3">'+this.s_related_title+'</h4>';
+                $(this.list_related).each(function(index,data){
+                    data["index"]=index;
+                    html+=data;
+                });
+            html+='</div>';
             
 
         html+="</div>";
