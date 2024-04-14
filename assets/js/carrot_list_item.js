@@ -144,8 +144,127 @@ class Carrot_List_Item{
 
 class Carrot_Info{
 
+    id="";
+    name="";
+
+    s_icon_id="";
+    s_icon_font="";
+    s_icon_image="";
+    s_related_title="";
+
+    s_db="";
+    list_attr=[];
+    list_body=[];
+    list_related=[];
+    list_contain=[];
+
+    constructor(s_id){
+        this.id=s_id;
+    }
+
+    set_name(s_name){
+        this.name=s_name;
+    }
+
+    set_icon_font(icon_font){
+        this.s_icon_font=icon_font;
+    }
+
+    set_icon_image(url_image){
+        this.s_icon_image=url_image;
+    }
+
+    set_icon_id(id){
+        this.s_icon_id=id;
+    }
+    
+    set_db(s_name_db){
+        this.s_db=s_name_db;
+    }
+
+    set_related_title(title){
+        this.s_related_title=title;
+    }
+
+    add_related(data){
+        this.list_related.push(data);
+    }
+
+    add_attrs(s_id,s_icon_font,s_name,s_name_lang,s_val,s_val_lang){
+        var obj_attr={};
+        obj_attr["id"]=s_id;
+        obj_attr["icon"]=s_icon_font;
+        obj_attr["name"]=s_name;
+        obj_attr["name_lang"]=s_name_lang;
+        obj_attr["value"]=s_val;
+        obj_attr["value_lang"]=s_val_lang;
+        this.list_attr.push(obj_attr);
+    }
+
+    add_body(s_title,s_body){
+        var obj_box={};
+        obj_box["title"]=s_title;
+        obj_box["body"]=s_body;
+        this.list_body.push(obj_box);
+    }
+
+    add_contain(contain){
+        this.list_contain.push(contain);
+    }
+
     html(){
-        var html='';
+        var html='<div class="section-container p-2 p-xl-4">';
+        html+='<div class="row">';
+            html+='<div class="col-md-8 ps-4 ps-lg-3">';
+                html+='<div class="row bg-white shadow-sm">';
+
+                    html+='<div class="col-md-4 p-3">';
+                        if(this.s_icon_image!="") html+='<img class="w-100" id="'+this.s_icon_id+'" src="'+this.s_icon_image+'" alt="Info Icon">';
+                    html+='</div>';
+
+                    html+='<div class="col-md-8 p-2">';
+                        if(this.name!="") html+='<h4 class="fw-semi fs-4 mb-3">'+this.name+'</h4>';
+                        if(this.s_db!="") html+=carrot.btn_dev(this.s_db,this.id);
+
+                        if(this.list_attr.length>0){
+                            html+='<div class="row">';
+                            $(this.list_attr).each(function(index,data){
+                                html+='<div id="'+data.id+'" index="'+index+'" class="col-md-4 col-6 text-center">';
+                                    html+='<b><l class="lang" key_lang="'+data.name_lang+'">'+data.name+'</l> <i class="'+data.icon+'"></i></b>';
+                                    html+='<p>'+data.value+'</p>';
+                                html+='</div>';
+                            });
+                            html+='</div>';
+                        }
+
+                    html+='</div>';
+                html+="</div>";
+
+                $(this.list_body).each(function(index,data){
+                    html+='<div index="'+index+'" class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
+                        html+='<h4>'+data.title+'</h4>';
+                        html+='<p class="fs-8 text-justify">'+data.body+'</p>';
+                    html+='</div>';
+                });
+
+                $(this.list_contain).each(function(index,data){
+                    html+=data;
+                });
+
+            html+="</div>";
+    
+            
+                html+='<div class="col-md-4" id="box_related">';
+                    html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-3">'+this.s_related_title+'</h4>';
+                    $(this.list_related).each(function(index,data){
+                        html+=data;
+                    });
+                 html+='</div>';
+            
+
+        html+="</div>";
+        html+="</div>";
+
         return html;
     }
 }

@@ -82,9 +82,9 @@ class Appp{
                     app["index"]=index;
                     $("#all_app_contain").append(carrot.appp.box_app_item(app));
                 });
+                carrot.appp.check_event();
             });
         });
-        carrot.appp.check_event();
     }
 
     get_data_link_store(){
@@ -207,6 +207,8 @@ class Appp{
         console.log(data.id_doc);
         carrot.data.load_image(data.id_doc,data.img,"store_icon_"+data.id_doc);
         var store_item=new Carrot_List_Item(carrot);
+        store_item.set_id(data.id_doc);
+        store_item.set_db("link_store");
         store_item.set_icon("images/298x168.jpg");
         store_item.set_id_icon("store_icon_"+data.id_doc);
         store_item.set_class_icon("col-md-12 mb-3 col-12 text-center");
@@ -224,13 +226,18 @@ class Appp{
     }
 
     show_info(emp){
+        carrot.loading();
         var id_app=$(emp).attr("obj_id");
-        carrot.server.get_doc("app",id_app,this.act_get_data_info_app_done);
+        if(carrot.data.get("app_info",id_app,(data)=>{
+            carrot.appp.show_app_info(data);
+        },()=>{
+            carrot.server.get_doc("app",id_app,carrot.appp.act_get_data_info_app_done);
+        }));   
     }
 
     act_get_data_info_app_done(data){
         carrot.data.add("app_info",data);
-        carrot.appp.show_app_info(data,carrot);
+        carrot.appp.show_app_info(data);
     }
 
     menu(){
@@ -263,7 +270,37 @@ class Appp{
         return html;
     }
 
-    show_app_info(data,carrot){
+    show_app_info(data){
+        carrot.hide_loading();
+        carrot.data.load_image(data.id_doc,data.icon,"app_icon_info");
+        var box_info=new Carrot_Info(data.id_doc);
+        box_info.set_icon_image("images/512.png");
+        box_info.set_icon_id("app_icon_info")
+        box_info.set_db("app");
+        box_info.set_name(data.name_en);
+
+        $(carrot.appp.link_store).each(function(index,store){
+            store["index"]=index;
+            if(data[store.id_doc]!="") box_info.add_attrs(store.id_doc,store.icon,store.name,"","<a href='"+data[store.id_doc]+"' target='_blank'>Viến thăm</a>","");
+        });
+
+        box_info.add_body('<h4 class="fw-semi fs-5 lang" key_lang="describe">About this App</h4>',data["describe_"+carrot.lang]);
+        box_info.add_contain(carrot.rate.box_rank(data));
+        box_info.add_contain(carrot.rate.box_comment(data));
+
+        carrot.show(box_info.html());
+
+        carrot.data.list("apps").then((apps)=>{
+            apps=carrot.random(apps);
+            $(apps).each(function(index,app){
+                app["index"]=index;
+                $("#box_related").append(carrot.appp.box_app_item(app,'col-md-12 mb-3'));
+            })
+        });
+        carrot.appp.check_event();
+    }
+
+    show_app_info_2(data,carrot){
         carrot.app.obj_app_cur=data;
         if(data==null) $.MessageBox(carrot.l("no_obj"));
         carrot.change_title_page(data.name_en,"?page=app&id="+data.id_doc,"app");
@@ -423,13 +460,13 @@ class Appp{
         if(carrot.app.obj_app==null) carrot.app.get_list_related_apps();
     }
 
-
     clear_all_data(){
         carrot.type_view="all";
         carrot.status_view="publish";
         carrot.data.clear("apps");
         carrot.data.clear("stores");
         carrot.data.clear("images");
+        carrot.data.clear("app_info");
         setTimeout(3000,()=>{carrot.appp.show();});
         carrot.msg("Delete all data app success!","success");
     }

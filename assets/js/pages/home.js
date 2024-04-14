@@ -9,12 +9,12 @@ class Home{
             html+='</div>';
         html+='</div>';
         carrot.show(html);
+
         if(carrot.appp==null)
             carrot.load_js_page("app","Appp","carrot.appp.show_for_home()");
         else
             carrot.appp.show_for_home();
-
-        carrot.appp.check_event();
+        carrot.check_event();
     }
 }
 carrot.home=new Home();

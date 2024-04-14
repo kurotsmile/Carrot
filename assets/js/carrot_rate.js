@@ -185,9 +185,10 @@ class Carrot_Rate{
         var url_avatar_user_field='images/avatar_default.png';
         var name_user_field="Incognito";
         if(rank.user!=null){
-            if(rank.user.avatar!=null) url_avatar_user_field=rank.user.avatar;
+            if(rank.user.avatar!="") url_avatar_user_field=rank.user.avatar;
             name_user_field=rank.user.name;
         }
+        
         html+='<tr>';
             html+='<td class="w-20 col-1"><img class="rounder" style="width:24px" src="'+url_avatar_user_field+'"/></td>';
             html+='<td class="w-20 col-2">'+name_user_field+'</td>';

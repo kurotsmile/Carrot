@@ -436,6 +436,10 @@ class Carrot_Site{
         return this.convert_obj_to_list(objs);
     }
 
+    random(arr){
+        return arr.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
+    }
+
     register_page(id_page,event_show_page,event_edit,event_info='',event_reload=''){
         var obj_data=new Object();
         obj_data["edit"]=event_edit;
