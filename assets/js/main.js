@@ -87,16 +87,16 @@ $(document).ready(function () {
     $("#btn_recognition").click(function(){carrot.start_recognition();});
 
     var lang_page=carrot.get_param_url("lang");
-    if(lang_page!=null){
+    if(lang_page!=undefined){
         if(lang_page!=carrot.lang){
             carrot.lang_url=lang_page;
-            carrot.change_lang(lang_page);
-            carrot.get_all_data_lang_web();
+            carrot.langs.change_lang(lang_page);
+            carrot.langs.get_all_data_lang_web();
             carrot.check_show_by_id_page();
         }
     }
     
-    var myMenu = [{
+    var ContextMenu = [{
         icon: 'fa fa-home',
         label: 'Home Page',
         action:function(){carrot.home();},
@@ -118,8 +118,9 @@ $(document).ready(function () {
         disabled: false
       },
     ];
+    
     $('body').on('contextmenu', function(e) {
       e.preventDefault();
-      superCm.createMenu(myMenu, e);
+      superCm.createMenu(ContextMenu, e);
     });
 });

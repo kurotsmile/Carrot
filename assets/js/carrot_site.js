@@ -86,8 +86,7 @@ class Carrot_Site{
             this.db.useEmulator('localhost', 8082);
             this.storage.useEmulator('localhost', 9199);
         }
-        if(this.db==null) this.show_error_connect_sever();
-
+        
         if(localStorage.getItem("mode_site") != null) this.mode_site = localStorage.getItem("mode_site");
         if(localStorage.getItem("is_dev") != null) this.is_dev = localStorage.getItem("is_dev");
 
@@ -200,7 +199,13 @@ class Carrot_Site{
             if(carrot.appp!=null)
                 window.location.replace(window.location.origin+"?page=app");
             else
-                carrot.load_js_page("app","Appp","carrot.appp.show()");
+                carrot.load_js_page("app","Appp","carrot.appp.show_app()");
+        });
+
+        var btn_add_apps=carrot.menu.create("app").set_label("Add App").set_icon("fa-solid fa-mobile").set_type("add");
+        $(btn_add_apps).click(function(){
+            if(carrot.appp!=null) carrot.appp.add();
+            else carrot.load_js_page("app","app","carrot.appp.add()");
         });
 
         $("#btn_model_site").click(function(){carrot.change_mode_site();});
@@ -305,8 +310,6 @@ class Carrot_Site{
             }
         }).catch((error) => {
             this.log(error.message,"error");
-            //this.show_error_connect_sever();
-            //this.load_page();
             this.act_next_server_when_fail();
         });
     }
@@ -407,18 +410,6 @@ class Carrot_Site{
             $("#btn_mode_host").html('<i class="fa-sharp fa-solid fa-database fs-6 me-2"></i> Googlehost');
         }
         this.langs.load_data_lang_web();
-    }
-
-    show_error_connect_sever(){
-        Swal.fire({
-            icon:'error',
-            title: this.l("error_connect_sever","Data server connection failed!"),
-            html: this.l("error_connect_sever_msg","We are doing system maintenance and upgrading in a few hours. But you can use the functions with offline mode when you have previously visited,The site will be back to normal when the upgrade is done!")+"<p><i class='text-secondary'>"+this.l("error_connect_sever_thanks","Sorry for this inconvenience!")+"</i><p>",
-            imageUrl: 'images/upgrade.png',
-            imageWidth: 400,
-            imageHeight: 200,
-            imageAlt: 'Upgrade'
-        });
     }
 
     convert_obj_to_list(obj_carrot){
@@ -957,7 +948,7 @@ class Carrot_Site{
             }else{
                 this.load_bar();
                 $("#load_bar").css("width","100%");
-                this.home();
+                this.load_js_page("home");
             };
         }else{
             var id_page=this.get_param_url("page");
@@ -966,7 +957,7 @@ class Carrot_Site{
             }else{
                 this.load_bar();
                 $("#load_bar").css("width","100%");
-                this.home();
+                this.load_js_page("home");
             }
         }
     }
@@ -1174,56 +1165,47 @@ class Carrot_Site{
     }
 
     show_site_map(){
-        let today = new Date().toISOString();
         var s_xml_app='';
         var s_xml_song='';
-        var s_xml='';
 
-        var html='';
-        html+='<textarea id="data_xml_site_map" name="data_xml_site_map" class="language-xml hljs" rows="4" cols="50" style="width:100%;height:100%"></textarea>';
-        this.show(html);
+        this.show('<textarea id="data_xml_site_map" name="data_xml_site_map" class="language-xml hljs" rows="4" cols="50" style="width:100%;height:100%"></textarea>');
 
-        this.db.collection("app").get().then((querySnapshot) => {
-            var s_val_app='';
-            querySnapshot.forEach((doc) => {
-                var xml_txt="";
-                var url_web="https://carrotstore.web.app/?p=app&id="+doc.id;
-                xml_txt+="<url>\n";
-                xml_txt+="\t<loc>"+url_web+"</loc>\n";
-                xml_txt+="\t<lastmod>"+today+"</lastmod>\n";
-                xml_txt+="\t<changefreq>Daily</changefreq>\n";
-                xml_txt+="\t<priority>1</priority>\n";
-                xml_txt+="</url>\n";
-                s_val_app=s_val_app+xml_txt;
+        var todays = new Date().toISOString().slice(0, 10);
+        var q=new Carrot_Query("app");
+        q.add_select("name_en");
+        carrot.loading();
+        q.get_data((apps)=>{
+            $(apps).each(function(index,app){
+                carrot.hide_loading();
+                s_xml_app+='<url>';
+                s_xml_app+='<loc>https://carrotstore.web.app/?page=app&id='+app.id_doc+'</loc>';
+                s_xml_app+='<lastmod>'+todays+'</lastmod>';
+                s_xml_app+='<changefreq>daily</changefreq>';
+                s_xml_app+='<priority>1</priority>';
+                s_xml_app+='</url>';
             });
-            s_xml_app=s_val_app;
 
-            this.db.collection("song").get().then((querySnapshot2) => {
-                var s_val2='';
-                querySnapshot2.forEach((doc) => {
-                    var xml_txt="";
-                    var url_web="https://carrotstore.web.app/?p=song&id="+doc.id;
-                    xml_txt+="<url>\n";
-                    xml_txt+="\t<loc>"+url_web+"</loc>\n";
-                    xml_txt+="\t<lastmod>"+today+"</lastmod>\n";
-                    xml_txt+="\t<changefreq>Daily</changefreq>\n";
-                    xml_txt+="\t<priority>1</priority>\n";  
-                    xml_txt+="</url>\n";
-                    s_val2=s_val2+xml_txt;  
-                });
-                s_xml_song=s_val2;
-                s_xml+='<?xml version="1.0" encoding="UTF-8"?>\n';
+            var q_song=new Carrot_Query("song");
+            q_song.add_select("name");
+            q_song.get_data((songs)=>{
+                $(songs).each(function(index,song){
+                    s_xml_song+='<url>';
+                    s_xml_song+='<loc>https://carrotstore.web.app/?page=song&id='+song.id_doc+'</loc>';
+                    s_xml_song+='<lastmod>'+todays+'</lastmod>';
+                    s_xml_song+='<changefreq>daily</changefreq>';
+                    s_xml_song+='<priority>0.9</priority>';
+                    s_xml_song+='</url>';
+                }); 
+
+                var s_xml='<?xml version="1.0" encoding="UTF-8"?>\n';
                 s_xml+='<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
                 s_xml+=s_xml_app+"\n"+s_xml_song+"\n";
                 s_xml+='</urlset>';
+
+                carrot.hide_loading();
                 $("#data_xml_site_map").val(s_xml);
                 hljs.highlightAll();
-            }).catch((error) => {
-                this.log_error(error);
             });
-
-        }).catch((error) => {
-            this.log_error(error);
         });
     }
 

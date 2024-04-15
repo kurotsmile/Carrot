@@ -479,10 +479,10 @@ class Carrot_Form{
     }
 
     show(){
-        this.carrot.box(this.html());
-        
         var frm=this;
         var carrot=this.carrot;
+
+        this.carrot.box(this.html());
 
         $(".cr_field").each(function(){
             var id_emp=$(this).attr("id");
