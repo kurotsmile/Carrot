@@ -8,7 +8,27 @@ class Home{
                 html+='<div class="col-12"><div class="row" id="all_store_contain"><div class="col-12 text-center"><i class="fa-solid fa-spinner fa-3x fa-spin"></i></div></div></div>';
             html+='</div>';
         html+='</div>';
+
+        html+=carrot.music.list_for_home();
+        html+=carrot.code.list_for_home();
+        html+=carrot.icon.list_for_home();
+        html+=carrot.user.list_for_home();
+        html+=carrot.audio.list_for_home();
+        html+=carrot.radio.list_for_home();
+        html+=carrot.bible.list_for_home();
+        html+=carrot.ebook.list_for_home();
+
         carrot.show(html);
+
+        carrot.music.check_event();
+        carrot.code.check_event();
+        carrot.icon.check_event();
+        carrot.user.check_event();
+        carrot.audio.check_event();
+        carrot.radio.check_event();
+        carrot.bible.check_event();
+        carrot.ebook.check_event();
+
 
         if(carrot.appp==null)
             carrot.load_js_page("app","Appp","carrot.appp.show_for_home()");

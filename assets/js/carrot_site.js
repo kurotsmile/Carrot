@@ -113,7 +113,6 @@ class Carrot_Site{
         $('head').append('<script type="text/javascript" src="assets/js/carrot_data.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_langs.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_link_store.js?ver='+this.get_ver_cur("js")+'"></script>');
-        $('head').append('<script type="text/javascript" src="assets/js/carrot_app.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_form.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_user.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_music.js?ver='+this.get_ver_cur("js")+'"></script>');
@@ -136,13 +135,12 @@ class Carrot_Site{
         $('head').append('<script type="text/javascript" src="assets/js/carrot_bible.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_about_us.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_privacy_policy.js?ver='+this.get_ver_cur("js")+'"></script>');
-        $('head').append('<script type="text/javascript" src="https://www.paypal.com/sdk/js?client-id='+this.paypal_CLIENT_ID+'"></script>');
+        $('head').append('<script type="text/javascript" src="https://www.paypal.com/sdk/js?client-id='+carrot.config.paypal_CLIENT_ID+'"></script>');
 
         this.server=new Carrot_Server();
         this.menu=new Carrot_Menu(this);
         this.langs=new Carrot_Langs(this);
         this.link_store=new Carrot_Link_Store(this);
-        this.app=new Carrot_App(this);
         this.user=new Carrot_user(this);
         this.music=new Carrot_Music(this);
         this.code=new Carrot_Code(this);
@@ -1085,34 +1083,6 @@ class Carrot_Site{
         }).render('#paypal-button-container');
     }
 
-    home(){
-        var html="";
-        if(this.app.obj_app!=null){
-            this.change_title_page("Carrot store", "?p=home","home");
-            html+=this.app.list_for_home();
-            html+=this.music.list_for_home();
-            html+=this.code.list_for_home();
-            html+=this.icon.list_for_home();
-            html+=this.user.list_for_home();
-            html+=this.audio.list_for_home();
-            html+=this.radio.list_for_home();
-            html+=this.bible.list_for_home();
-            html+=this.ebook.list_for_home();
-            this.show(html);
-            this.app.check_btn_for_list_app();
-            this.music.check_event();
-            this.code.check_event();
-            this.icon.check_event();
-            this.user.check_event();
-            this.audio.check_event();
-            this.radio.check_event();
-            this.bible.check_event();
-            this.ebook.check_event();
-        }else{
-            this.app.list();
-        }
-    }
-
     load_bar(){
         if ($("#load_bar").length > 0){
             this.load_bar_count_data+=2;
@@ -1134,6 +1104,13 @@ class Carrot_Site{
         });
     }
 
+    home_page(){
+        if(carrot.home!=null)
+            carrot.home.show();
+        else
+            carrot.load_js_page("home","Home","carrot.home.show()");
+    }
+
     html_404(list_btn=null){
         var html='';
         html+='<div class="d-flex align-items-center justify-content-center vh-100">';
@@ -1146,7 +1123,7 @@ class Carrot_Site{
         html+='<p class="lead">';
         html+='The page you’re looking for doesn’t exist.';
         html+='</p>';
-        html+='<a role="button" class="btn btn-success" onClick="carrot.home();return false;"><i class="fa-solid fa-house"></i> Go Home</a>';
+        html+='<a role="button" class="btn btn-success" onClick="carrot.home_page();return false;"><i class="fa-solid fa-house"></i> Go Home</a>';
         if(list_btn!=null){
             $(list_btn).each(function(index,btn){
                 html+=btn.html();
@@ -1295,7 +1272,10 @@ class Carrot_Site{
         this.index_server++;
         if(this.index_server>=this.config.server.length) this.index_server=0;
         localStorage.setItem("index_server",this.index_server);
-        location.reload();
+        setTimeout(500,()=>{
+            carrot.msg("Lỗi Rồi","error");
+            location.reload();
+        });
     }
 
     act_delete_all_data(){
