@@ -234,6 +234,13 @@ class Carrot_Info{
                             html+='</div>';
                         }
 
+                        html+='<div class="row pt-4">';
+                            html+='<div class="col-12 text-center">';
+                            html+='<button id="btn_share" type="button" class="btn d-inline btn-success"><i class="fa-solid fa-share-nodes"></i> <l class="lang" key_lang="share">Share</l> </button> ';
+                            html+='<button id="register_protocol_url" type="button"  class="btn d-inline btn-success"><i class="fa-solid fa-rocket"></i> <l class="lang" key_lang="open_with">Open with..</l> </button>';
+                            html+='</div>';
+                        html+='</div>';
+
                     html+='</div>';
                 html+="</div>";
 
