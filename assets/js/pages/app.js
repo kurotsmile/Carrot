@@ -316,7 +316,6 @@ class Appp{
     }
 
     box_store_item(data){
-        console.log(data.id_doc);
         carrot.data.load_image(data.id_doc,data.img,"store_icon_"+data.id_doc);
         var store_item=new Carrot_List_Item(carrot);
         store_item.set_id(data.id_doc);

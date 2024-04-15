@@ -135,11 +135,29 @@ class Carrot_Site{
         $('head').append('<script type="text/javascript" src="assets/js/carrot_bible.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_about_us.js?ver='+this.get_ver_cur("js")+'"></script>');
         $('head').append('<script type="text/javascript" src="assets/js/carrot_privacy_policy.js?ver='+this.get_ver_cur("js")+'"></script>');
-        $('head').append('<script type="text/javascript" src="https://www.paypal.com/sdk/js?client-id='+carrot.config.paypal_CLIENT_ID+'"></script>');
+        $('head').append('<script type="text/javascript" src="https://www.paypal.com/sdk/js?client-id='+this.paypal_CLIENT_ID+'"></script>');
 
         this.server=new Carrot_Server();
         this.menu=new Carrot_Menu(this);
         this.langs=new Carrot_Langs(this);
+
+        var btn_home_new=this.menu.create("btn_home_new").set_label("Home new").set_icon("fa-solid fa-home");
+        $(btn_home_new).click(function(){carrot.home_page();});
+
+        var btn_app=this.menu.create("btn_app").set_label("App and Game").set_icon("fa-solid fa-gamepad");
+        $(btn_app).click(function(){
+            if(carrot.appp!=null)
+                carrot.appp.back_show_all();
+            else
+                carrot.load_js_page("app","Appp","carrot.appp.back_show_all()");
+        });
+
+        var btn_add_apps=carrot.menu.create("app").set_label("Add App").set_icon("fa-solid fa-mobile").set_type("add");
+        $(btn_add_apps).click(function(){
+            if(carrot.appp!=null) carrot.appp.add();
+            else carrot.load_js_page("app","app","carrot.appp.add()");
+        });
+
         this.link_store=new Carrot_Link_Store(this);
         this.user=new Carrot_user(this);
         this.music=new Carrot_Music(this);
@@ -188,23 +206,6 @@ class Carrot_Site{
 
         var btn_del_all=this.menu.create("btn_del_all").set_label("Delete all data cache").set_type("setting").set_icon("fa-solid fa-trash-can");
         $(btn_del_all).click(function(){carrot.act_delete_all_data();});
-
-        var btn_home_new=this.menu.create("btn_home_new").set_label("Home new").set_type("dev").set_icon("fa-solid fa-home");
-        $(btn_home_new).click(function(){carrot.load_js_page("home","Home","carrot.home.show()");});
-
-        var btn_app=this.menu.create("btn_app").set_label("App and Game").set_type("dev").set_icon("fa-solid fa-gamepad");
-        $(btn_app).click(function(){
-            if(carrot.appp!=null)
-                window.location.replace(window.location.origin+"?page=app");
-            else
-                carrot.load_js_page("app","Appp","carrot.appp.show_app()");
-        });
-
-        var btn_add_apps=carrot.menu.create("app").set_label("Add App").set_icon("fa-solid fa-mobile").set_type("add");
-        $(btn_add_apps).click(function(){
-            if(carrot.appp!=null) carrot.appp.add();
-            else carrot.load_js_page("app","app","carrot.appp.add()");
-        });
 
         $("#btn_model_site").click(function(){carrot.change_mode_site();});
 
