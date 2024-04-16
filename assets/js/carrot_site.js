@@ -52,6 +52,7 @@ class Carrot_Site{
     rate;
     ebook;
     config;
+    server;
 
     call_show_on_load_pagejs=true;
     
@@ -94,10 +95,6 @@ class Carrot_Site{
         this.load_obj_version_new();
         this.load_obj_version_cur();
 
-        this.check_version_data()
-    }
-
-    load_all_object_main(){
         var carrot=this;
         this.update_new_ver_cur("js",true);
         this.update_new_ver_cur("page",true);
@@ -141,10 +138,10 @@ class Carrot_Site{
         this.menu=new Carrot_Menu(this);
         this.langs=new Carrot_Langs(this);
 
-        var btn_home_new=this.menu.create("btn_home_new").set_label("Home new").set_icon("fa-solid fa-home");
+        var btn_home_new=this.menu.create("btn_home_new").set_label("Home new").set_lang("home").set_icon("fa-solid fa-home");
         $(btn_home_new).click(function(){carrot.home_page();});
 
-        var btn_app=this.menu.create("btn_app").set_label("App and Game").set_icon("fa-solid fa-gamepad");
+        var btn_app=this.menu.create("btn_app").set_label("App and Game").set_lang("app").set_icon("fa-solid fa-gamepad");
         $(btn_app).click(function(){
             if(carrot.appp!=null)
                 carrot.appp.back_show_all();
@@ -226,6 +223,9 @@ class Carrot_Site{
         var TodayDate = new Date();
         var m = TodayDate.getMonth();m++;
         $("#logo_carrot").attr("src","images/logo/logo_"+m+".png");
+
+        this.check_version_data();
+        this.check_show_by_id_page();
     }
 
     set_doc(s_collection,s_document,data){
@@ -294,22 +294,15 @@ class Carrot_Site{
     }
 
     check_version_data(){
-        this.load_bar();
-        this.db.collection("setting_web").doc("version").get().then((doc) => {
-            if (doc.exists) {
-                var ver_data_new=doc.data();
-                this.obj_version_new=ver_data_new;
-                this.save_obj_version_new();
-                this.save_obj_version_cur();
-                this.load_page();
-                this.load_bar();
-            } else {
-                this.log("No new verstion data","error");
-                this.load_page();
-            }
-        }).catch((error) => {
-            this.log(error.message,"error");
-            this.act_next_server_when_fail();
+        carrot.load_bar();
+        carrot.server.get_doc("setting_web","version",(data)=>{
+            carrot.obj_version_new=data;
+            carrot.save_obj_version_new();
+            carrot.save_obj_version_cur();
+            carrot.load_page();
+            carrot.load_bar();
+        },()=>{
+            carrot.act_next_server_when_fail();
         });
     }
 
@@ -474,7 +467,6 @@ class Carrot_Site{
         this.obj_version_cur=null;
         this.save_obj_version_new();;
         this.save_obj_version_cur();
-        //location.reload();
     }
 
     load_obj_version_new(){
@@ -921,11 +913,6 @@ class Carrot_Site{
         }
     }
 
-    load_page(){
-        this.load_all_object_main();
-        this.check_show_by_id_page();
-    }
-
     check_show_by_id_page() {
         this.load_bar();
         $("#head").show();
@@ -1274,7 +1261,6 @@ class Carrot_Site{
         if(this.index_server>=this.config.server.length) this.index_server=0;
         localStorage.setItem("index_server",this.index_server);
         setTimeout(500,()=>{
-            carrot.msg("Lỗi Rồi","error");
             location.reload();
         });
     }
@@ -1315,5 +1301,14 @@ class Carrot_Site{
         .catch(error => {
             console.error('Error loading script:', error);
         });
+    }
+
+    url(){
+        var base_url=window.location.origin;
+        if(base_url=="kurotsmile.github.io"){
+            return base_url+"/Carrot";
+        }else{
+            return window.location.origin;
+        }
     }
 }

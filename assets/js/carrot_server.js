@@ -74,7 +74,7 @@ class Carrot_Query{
 }
 
 class Carrot_Server{
-    get_collection(collection,act_done){
+    get_collection(collection,act_done,act_fail=null){
         fetch(carrot.config.url_server_rest_api[carrot.index_server]+"/"+collection)
             .then((response) => {
                 if (!response.ok) {
@@ -90,10 +90,10 @@ class Carrot_Server{
                     list.push(obj_data);
                 }
                 act_done(list);
-            }).catch((error) => {console.log('failed', error);});
+            }).catch((error) => {if(act_fail!=null) act_fail();});
     }
 
-    get_doc(collection,document,act_done){
+    get_doc(collection,document,act_done,act_fail=null){
         fetch(carrot.config.url_server_rest_api[carrot.index_server]+"/"+collection+"/"+document)
             .then((response) => {
                 if (!response.ok) {
@@ -105,7 +105,7 @@ class Carrot_Server{
                 var obj_data=carrot.server.simplifyDocument(data.fields);
                 obj_data["id_doc"]=data.name.split("/").pop();
                 act_done(obj_data);
-            }).catch((error) => {console.log('failed', error);});
+            }).catch((error) => {if(act_fail!=null) act_fail();});
     }
 
     simplifyDocument(fields) {

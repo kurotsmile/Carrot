@@ -77,8 +77,8 @@ function delete_file(emp){
         if (result.isConfirmed) carrot.del_file(emp);
     });
 }
-
 var carrot=new Carrot_Site();
+
 $(document).ready(function () {
     $("#load_bar").css("width","0%");
     $("#head").hide();
@@ -86,16 +86,6 @@ $(document).ready(function () {
     $("#logo_carrot").on("contextmenu", function () { carrot.act_mode_dev(); return false; });
     $("#btn_recognition").click(function(){carrot.start_recognition();});
 
-    var lang_page=carrot.get_param_url("lang");
-    if(lang_page!=undefined){
-        if(lang_page!=carrot.lang){
-            carrot.lang_url=lang_page;
-            carrot.langs.change_lang(lang_page);
-            carrot.langs.get_all_data_lang_web();
-            carrot.check_show_by_id_page();
-        }
-    }
-    
     var ContextMenu = [{
         icon: 'fa fa-home',
         label: 'Home Page',

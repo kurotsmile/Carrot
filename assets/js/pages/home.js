@@ -29,7 +29,6 @@ class Home{
         carrot.bible.check_event();
         carrot.ebook.check_event();
 
-
         if(carrot.appp==null)
             carrot.load_js_page("app","Appp","carrot.appp.show_for_home()");
         else
