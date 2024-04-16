@@ -6,16 +6,20 @@ class Appp{
     type_view='all';
 
     show(){
-        carrot.data.list("stores").then((data)=>{
-            this.link_store=data;
-            this.show_all();
-        }).catch(()=>{
+        if(!carrot.check_ver_cur("link_store")){
             this.get_data_link_store(carrot.appp.act_get_data_link_store_done);
-        });
+        }else{
+            carrot.data.list("stores").then((data)=>{
+                this.link_store=data;
+                this.show_all();
+            }).catch(()=>{
+                this.get_data_link_store(carrot.appp.act_get_data_link_store_done);
+            });
+        }
     }
     
     back_show_all(){
-        carrot.change_title_page("App and Game","?page=app","appp");
+        carrot.change_title_page(carrot.l("app","App and Game"),"?page=app","appp");
         carrot.appp.show();
     }
 
