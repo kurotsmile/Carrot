@@ -80,8 +80,8 @@ class Carrot_Langs{
         carrot.server.get_collection("lang",(langs)=>{
             carrot.langs.list_lang=langs;
             carrot.langs.save_list_lang();
-            carrot.update_new_ver_cur("lang");
         });
+        carrot.update_new_ver_cur("lang",true);
     };
 
     change_lang(s_key){

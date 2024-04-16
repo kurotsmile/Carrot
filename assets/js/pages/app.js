@@ -6,7 +6,9 @@ class Appp{
     type_view='all';
 
     show(){
-        if(!carrot.check_ver_cur("link_store")){
+        if(carrot.check_ver_cur("link_store")==false){
+            carrot.log("Get link store new version "+carrot.get_ver_cur("link_store"));
+            carrot.update_new_ver_cur("link_store",true);
             this.get_data_link_store(carrot.appp.act_get_data_link_store_done);
         }else{
             carrot.data.list("stores").then((data)=>{
@@ -30,46 +32,34 @@ class Appp{
             carrot.data.get("app_info",id_app,(data)=>{
                 carrot.appp.show_app_info(data);
             },()=>{
-                carrot.server.get_doc("app",id_app,carrot.appp.act_get_data_app_done);
+                carrot.server.get_doc("app",id_app,carrot.appp.show_app_info);
             });
         }else{
             this.type_view="all";
-            carrot.data.list("apps").then((data)=>{
-                carrot.appp.load_list_app_by_array(data);
-            }).catch(()=>{
-                carrot.appp.get_data(carrot.appp.act_get_data_app_done);
-            });
+            carrot.appp.get_data(carrot.appp.act_get_data_app_done);
         }
     }
 
     show_app(){
         this.type_view="app";
-        carrot.data.list("apps").then((data)=>{
-            carrot.appp.load_list_app_by_array(data);
-        }).catch(()=>{
-            carrot.appp.get_data(carrot.appp.act_get_data_app_done);
-        });
+        carrot.appp.get_data(carrot.appp.act_get_data_app_done);
     }
 
     show_game(){
         this.type_view="game";
-        carrot.data.list("apps").then((data)=>{
-            carrot.appp.load_list_app_by_array(data);
-        }).catch(()=>{
-            carrot.appp.get_data(carrot.appp.act_get_data_app_done);
-        });
+        carrot.appp.get_data(carrot.appp.act_get_data_app_done);
     }
 
     show_app_publish(){
         this.type_view="all";
         this.status_view="publish";
-        carrot.appp.get_data(carrot.appp.act_get_data_app_done);
+        carrot.appp.get_data_from_server(carrot.appp.act_get_data_app_done);
     }
 
     show_app_draft(){
         this.type_view="all";
         this.status_view="draft";
-        carrot.appp.get_data(carrot.appp.act_get_data_app_done);
+        carrot.appp.get_data_from_server(carrot.appp.act_get_data_app_done);
     }
 
     show_other_store(){
@@ -154,6 +144,20 @@ class Appp{
 
     get_data(act_done){
         carrot.loading("Get data app and game");
+        if(carrot.check_ver_cur("app")==false){
+            carrot.log("Get data app new version "+carrot.get_ver_cur("app"));
+            carrot.appp.get_data_from_server(act_done);
+            carrot.update_new_ver_cur("app",true);
+        }else{
+            carrot.data.list("apps").then((data)=>{
+                carrot.appp.load_list_app_by_array(data);
+            }).catch(()=>{
+                carrot.appp.get_data_from_server(act_done);
+            });
+        }
+    }
+
+    get_data_from_server(act_done){
         var q=new Carrot_Query("app");
         q.add_select("name_"+carrot.lang);
         q.add_select("name_en");
@@ -278,6 +282,7 @@ class Appp{
         carrot.data.load_image(data_app.id_doc,data_app.icon,"icon_app_"+data_app.index);
         var app_item=new Carrot_List_Item(carrot);
         app_item.set_icon("images/150.png");
+        app_item.set_id(data_app.id_doc);
         app_item.set_id_icon("icon_app_"+data_app.index);
         app_item.set_class_icon_col("col-3");
         app_item.set_class_body("col-9");

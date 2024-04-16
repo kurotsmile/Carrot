@@ -170,7 +170,10 @@ class Carrot_Site{
         this.server=new Carrot_Server();
         carrot.load_bar();
         carrot.server.get_doc("setting_web","version",(data)=>{
+            
             carrot.obj_version_new=data;
+            console.log(carrot.obj_version_new);
+            console.log(carrot.obj_version_cur);
             carrot.save_obj_version_new();
             carrot.save_obj_version_cur();
             carrot.load_bar();
@@ -283,9 +286,8 @@ class Carrot_Site{
     
             $("#btn_model_site").click(function(){carrot.change_mode_site();});
     
-            if(!this.check_ver_cur("link_store"))this.link_store.get_all_data_link_store();
-            if(!this.check_ver_cur("lang")) this.langs.get_all_data_lang();
-            if(!this.check_ver_cur("lang_web")) this.langs.get_data_lang_web();
+            if(carrot.check_ver_cur("lang")==false) carrot.langs.get_all_data_lang();
+            if(carrot.check_ver_cur("lang_web")==false) carrot.langs.get_data_lang_web();
     
             this.user.show_info_user_login_in_header();
             this.menu.show();
@@ -301,7 +303,17 @@ class Carrot_Site{
             var m = TodayDate.getMonth();m++;
             $("#logo_carrot").attr("src",this.url()+"/images/logo/logo_"+m+".png");
     
-            this.check_show_by_id_page();
+            if(carrot.check_ver_cur("lang")==false){
+                carrot.log("Get lang new version "+carrot.get_ver_cur("lang"));
+                carrot.server.get_collection("lang",(data)=>{
+                    carrot.langs.list_lang=data;
+                    carrot.check_show_by_id_page();
+                });
+                carrot.update_new_ver_cur("lang",true);
+            }
+            else{
+                carrot.check_show_by_id_page();
+            }
         },()=>{
             carrot.act_next_server_when_fail();
         });
