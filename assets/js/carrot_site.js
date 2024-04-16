@@ -96,136 +96,7 @@ class Carrot_Site{
         this.load_obj_version_cur();
 
         var carrot=this;
-        this.update_new_ver_cur("js",true);
-        this.update_new_ver_cur("page",true);
-        this.log("Load js ..."+this.get_ver_cur("js"),"null");
-        this.body=$("#main_contain");
-
-        if(this.is_dev)
-            this.paypal_CLIENT_ID=this.paypal_dev_CLIENT_ID;
-        else
-            this.paypal_CLIENT_ID=this.paypal_pub_CLIENT_ID;
-
-        $('head').append('<script type="text/javascript" src="assets/js/carrot_server.js?ver='+this.get_ver_cur("js")+'"></script>');    
-        $('head').append('<script type="text/javascript" src="assets/js/carrot_data.js?ver='+this.get_ver_cur("js")+'"></script>');
-        $('head').append('<script type="text/javascript" src="assets/js/carrot_langs.js?ver='+this.get_ver_cur("js")+'"></script>');
-        $('head').append('<script type="text/javascript" src="assets/js/carrot_link_store.js?ver='+this.get_ver_cur("js")+'"></script>');
-        $('head').append('<script type="text/javascript" src="assets/js/carrot_form.js?ver='+this.get_ver_cur("js")+'"></script>');
-        $('head').append('<script type="text/javascript" src="assets/js/carrot_user.js?ver='+this.get_ver_cur("js")+'"></script>');
-        $('head').append('<script type="text/javascript" src="assets/js/carrot_music.js?ver='+this.get_ver_cur("js")+'"></script>');
-        $('head').append('<script type="text/javascript" src="assets/js/carrot_code.js?ver='+this.get_ver_cur("js")+'"></script>');
-        $('head').append('<script type="text/javascript" src="assets/js/carrot_icon.js?ver='+this.get_ver_cur("js")+'"></script>');
-        $('head').append('<script type="text/javascript" src="assets/js/carrot_background.js?ver='+this.get_ver_cur("js")+'"></script>');
-        $('head').append('<script type="text/javascript" src="assets/js/carrot_radio.js?ver='+this.get_ver_cur("js")+'"></script>');
-        $('head').append('<script type="text/javascript" src="assets/js/carrot_ebook.js?ver='+this.get_ver_cur("js")+'"></script>');
-        $('head').append('<script type="text/javascript" src="assets/js/carrot_rate.js?ver='+this.get_ver_cur("js")+'"></script>');
-        $('head').append('<script type="text/javascript" src="assets/js/ai_lover.js?ver='+this.get_ver_cur("js")+'"></script>');
-        $('head').append('<script type="text/javascript" src="assets/js/ai_chat.js?ver='+this.get_ver_cur("js")+'"></script>');
-        $('head').append('<script type="text/javascript" src="assets/js/carrot_menu.js?ver='+this.get_ver_cur("js")+'"></script>');
-        $('head').append('<script type="text/javascript" src="assets/js/carrot_list_item.js?ver='+this.get_ver_cur("js")+'"></script>');
-        $('head').append('<script type="text/javascript" src="assets/js/carrot_pay.js?ver='+this.get_ver_cur("js")+'"></script>');
-        $('head').append('<script type="text/javascript" src="assets/js/carrot_player_media.js?ver='+this.get_ver_cur("js")+'"></script>');
-        $('head').append('<script type="text/javascript" src="assets/js/carrot_file.js?ver='+this.get_ver_cur("js")+'"></script>');
-        $('head').append('<script type="text/javascript" src="assets/js/carrot_audio.js?ver='+this.get_ver_cur("js")+'"></script>');
-        $('head').append('<script type="text/javascript" src="assets/js/carrot_avatar.js?ver='+this.get_ver_cur("js")+'"></script>');
-        $('head').append('<script type="text/javascript" src="assets/js/ai_key_block.js?ver='+this.get_ver_cur("js")+'sd"></script>');
-        $('head').append('<script type="text/javascript" src="assets/js/carrot_bible.js?ver='+this.get_ver_cur("js")+'"></script>');
-        $('head').append('<script type="text/javascript" src="assets/js/carrot_about_us.js?ver='+this.get_ver_cur("js")+'"></script>');
-        $('head').append('<script type="text/javascript" src="assets/js/carrot_privacy_policy.js?ver='+this.get_ver_cur("js")+'"></script>');
-        $('head').append('<script type="text/javascript" src="https://www.paypal.com/sdk/js?client-id='+this.paypal_CLIENT_ID+'"></script>');
-
-        this.server=new Carrot_Server();
-        this.menu=new Carrot_Menu(this);
-        this.langs=new Carrot_Langs(this);
-
-        var btn_home_new=this.menu.create("btn_home_new").set_label("Home new").set_lang("home").set_icon("fa-solid fa-home");
-        $(btn_home_new).click(function(){carrot.home_page();});
-
-        var btn_app=this.menu.create("btn_app").set_label("App and Game").set_lang("app").set_icon("fa-solid fa-gamepad");
-        $(btn_app).click(function(){
-            if(carrot.appp!=null)
-                carrot.appp.back_show_all();
-            else
-                carrot.load_js_page("app","Appp","carrot.appp.back_show_all()");
-        });
-
-        var btn_add_apps=carrot.menu.create("app").set_label("Add App").set_icon("fa-solid fa-mobile").set_type("add");
-        $(btn_add_apps).click(function(){
-            if(carrot.appp!=null) carrot.appp.add();
-            else carrot.load_js_page("app","app","carrot.appp.add()");
-        });
-
-        this.link_store=new Carrot_Link_Store(this);
-        this.user=new Carrot_user(this);
-        this.music=new Carrot_Music(this);
-        this.code=new Carrot_Code(this);
-
-        var btn_midi=this.menu.create("btn_midi_piano").set_label("Midi").set_icon("fa-solid fa-drum");
-        $(btn_midi).click(function(){carrot.load_js_page("piano","Midi","carrot.midi.show_list()");});
-
-        this.icon=new Carrot_Icon(this); 
-        this.audio=new Carrot_Audio(this);
-        this.radio=new Carrot_Radio(this);
-        this.background=new Carrot_Background(this);
-        this.bible=new Carrot_Bible(this);
-        this.ebook=new Carrot_Ebook(this);
-        this.avatar=new Carrot_Avatar(this);
-        this.ai_lover=new Ai_Lover(this);
-        this.ai=this.ai_lover;
-        this.privacy_policy=new Carrot_Privacy_Policy(this);
-        this.about_us=new Carrot_About_Us(this);
-        this.player_media=new Carrot_Player_Media(this);
-        this.file=new Carrot_File(this);
-        this.pay=new Carrot_Pay(this);
-        this.rate=new Carrot_Rate(this);
-        this.data=new Carrot_data("carrotstore1","1.1");
-        
-        var btn_mod_host=this.menu.create("btn_mode_host").set_label("Change Mode Host").set_type("setting").set_icon("fa-brands fa-dev");
-        $(btn_mod_host).click(function(){carrot.change_host_connection();});
-
-        var btn_server_host=this.menu.create("btn_mode_host").set_label(this.firebaseConfig_mainhost.projectId).set_type("setting").set_icon("fa-solid fa-server");
-        $(btn_server_host).click(function(){carrot.show_list_change_server();});
-
-        var btn_setting_ver=this.menu.create("data_version").set_label("Data Version").set_type("setting").set_icon("fa-regular fa-code-compare");
-        $(btn_setting_ver).click(function(){carrot.show_edit_version_data_version();});
-
-        var btn_export_file_json=this.menu.create("btn_export_file_json").set_label("Export Collection").set_type("setting").set_icon("fa-solid fa-file-export");
-        $(btn_export_file_json).click(function(){carrot.download_json();});
-
-        var btn_import_file_json=this.menu.create("btn_import_file_json").set_label("Import Collection (File)").set_type("setting").set_icon("fa-solid fa-file-import");
-        $(btn_import_file_json).click(function(){carrot.show_import_json_file();});
-
-        var btn_site_map=this.menu.create("btn_site_map").set_label("Site Map").set_type("setting").set_icon("fa-solid fa-sitemap");
-        $(btn_site_map).click(function(){carrot.show_site_map();});
-
-        var btn_update_config=this.menu.create("btn_update_config").set_label("Update File Config").set_type("setting").set_icon("fa-solid fa-file");
-        $(btn_update_config).click(function(){carrot.act_update_file_config();});
-
-        var btn_del_all=this.menu.create("btn_del_all").set_label("Delete all data cache").set_type("setting").set_icon("fa-solid fa-trash-can");
-        $(btn_del_all).click(function(){carrot.act_delete_all_data();});
-
-        $("#btn_model_site").click(function(){carrot.change_mode_site();});
-
-        if(!this.check_ver_cur("link_store"))this.link_store.get_all_data_link_store();
-        if(!this.check_ver_cur("lang")) this.langs.get_all_data_lang();
-        if(!this.check_ver_cur("lang_web")) this.langs.get_data_lang_web();
-
-        this.user.show_info_user_login_in_header();
-        this.menu.show();
-
-        $(".btn-menu").click(function () {
-            $(".btn-menu").removeClass("active");
-            $(".btn-menu i").removeClass("fa-bounce");
-            $(this).addClass("active");
-            $(this).find("i").addClass("fa-bounce");
-        });
-
-        var TodayDate = new Date();
-        var m = TodayDate.getMonth();m++;
-        $("#logo_carrot").attr("src","images/logo/logo_"+m+".png");
-
         this.check_version_data();
-        this.check_show_by_id_page();
     }
 
     set_doc(s_collection,s_document,data){
@@ -294,13 +165,143 @@ class Carrot_Site{
     }
 
     check_version_data(){
+        this.log("Load js version:"+this.get_ver_cur("js"),"null");
+        $('head').append('<script type="text/javascript" src="assets/js/carrot_server.js?ver='+this.get_ver_cur("js")+'"></script>'); 
+        this.server=new Carrot_Server();
         carrot.load_bar();
         carrot.server.get_doc("setting_web","version",(data)=>{
             carrot.obj_version_new=data;
             carrot.save_obj_version_new();
             carrot.save_obj_version_cur();
-            carrot.load_page();
             carrot.load_bar();
+
+            this.update_new_ver_cur("js",true);
+            this.update_new_ver_cur("page",true);
+            
+            this.body=$("#main_contain");
+    
+            if(this.is_dev)
+                this.paypal_CLIENT_ID=this.paypal_dev_CLIENT_ID;
+            else
+                this.paypal_CLIENT_ID=this.paypal_pub_CLIENT_ID;
+    
+            $('head').append('<script type="text/javascript" src="assets/js/carrot_data.js?ver='+this.get_ver_cur("js")+'"></script>');
+            $('head').append('<script type="text/javascript" src="assets/js/carrot_langs.js?ver='+this.get_ver_cur("js")+'"></script>');
+            $('head').append('<script type="text/javascript" src="assets/js/carrot_link_store.js?ver='+this.get_ver_cur("js")+'"></script>');
+            $('head').append('<script type="text/javascript" src="assets/js/carrot_form.js?ver='+this.get_ver_cur("js")+'"></script>');
+            $('head').append('<script type="text/javascript" src="assets/js/carrot_user.js?ver='+this.get_ver_cur("js")+'"></script>');
+            $('head').append('<script type="text/javascript" src="assets/js/carrot_music.js?ver='+this.get_ver_cur("js")+'"></script>');
+            $('head').append('<script type="text/javascript" src="assets/js/carrot_code.js?ver='+this.get_ver_cur("js")+'"></script>');
+            $('head').append('<script type="text/javascript" src="assets/js/carrot_icon.js?ver='+this.get_ver_cur("js")+'"></script>');
+            $('head').append('<script type="text/javascript" src="assets/js/carrot_background.js?ver='+this.get_ver_cur("js")+'"></script>');
+            $('head').append('<script type="text/javascript" src="assets/js/carrot_radio.js?ver='+this.get_ver_cur("js")+'"></script>');
+            $('head').append('<script type="text/javascript" src="assets/js/carrot_ebook.js?ver='+this.get_ver_cur("js")+'"></script>');
+            $('head').append('<script type="text/javascript" src="assets/js/carrot_rate.js?ver='+this.get_ver_cur("js")+'"></script>');
+            $('head').append('<script type="text/javascript" src="assets/js/ai_lover.js?ver='+this.get_ver_cur("js")+'"></script>');
+            $('head').append('<script type="text/javascript" src="assets/js/ai_chat.js?ver='+this.get_ver_cur("js")+'"></script>');
+            $('head').append('<script type="text/javascript" src="assets/js/carrot_menu.js?ver='+this.get_ver_cur("js")+'"></script>');
+            $('head').append('<script type="text/javascript" src="assets/js/carrot_list_item.js?ver='+this.get_ver_cur("js")+'"></script>');
+            $('head').append('<script type="text/javascript" src="assets/js/carrot_pay.js?ver='+this.get_ver_cur("js")+'"></script>');
+            $('head').append('<script type="text/javascript" src="assets/js/carrot_player_media.js?ver='+this.get_ver_cur("js")+'"></script>');
+            $('head').append('<script type="text/javascript" src="assets/js/carrot_file.js?ver='+this.get_ver_cur("js")+'"></script>');
+            $('head').append('<script type="text/javascript" src="assets/js/carrot_audio.js?ver='+this.get_ver_cur("js")+'"></script>');
+            $('head').append('<script type="text/javascript" src="assets/js/carrot_avatar.js?ver='+this.get_ver_cur("js")+'"></script>');
+            $('head').append('<script type="text/javascript" src="assets/js/ai_key_block.js?ver='+this.get_ver_cur("js")+'sd"></script>');
+            $('head').append('<script type="text/javascript" src="assets/js/carrot_bible.js?ver='+this.get_ver_cur("js")+'"></script>');
+            $('head').append('<script type="text/javascript" src="assets/js/carrot_about_us.js?ver='+this.get_ver_cur("js")+'"></script>');
+            $('head').append('<script type="text/javascript" src="assets/js/carrot_privacy_policy.js?ver='+this.get_ver_cur("js")+'"></script>');
+            $('head').append('<script type="text/javascript" src="https://www.paypal.com/sdk/js?client-id='+this.paypal_CLIENT_ID+'"></script>');
+    
+            this.menu=new Carrot_Menu(this);
+            this.langs=new Carrot_Langs(this);
+    
+            var btn_home_new=this.menu.create("btn_home_new").set_label("Home new").set_lang("home").set_icon("fa-solid fa-home");
+            $(btn_home_new).click(function(){carrot.home_page();});
+    
+            var btn_app=this.menu.create("btn_app").set_label("App and Game").set_lang("app").set_icon("fa-solid fa-gamepad");
+            $(btn_app).click(function(){
+                if(carrot.appp!=null)
+                    carrot.appp.back_show_all();
+                else
+                    carrot.load_js_page("app","Appp","carrot.appp.back_show_all()");
+            });
+    
+            var btn_add_apps=carrot.menu.create("app").set_label("Add App").set_icon("fa-solid fa-mobile").set_type("add");
+            $(btn_add_apps).click(function(){
+                if(carrot.appp!=null) carrot.appp.add();
+                else carrot.load_js_page("app","app","carrot.appp.add()");
+            });
+    
+            this.link_store=new Carrot_Link_Store(this);
+            this.user=new Carrot_user(this);
+            this.music=new Carrot_Music(this);
+            this.code=new Carrot_Code(this);
+    
+            var btn_midi=this.menu.create("btn_midi_piano").set_label("Midi").set_icon("fa-solid fa-drum");
+            $(btn_midi).click(function(){carrot.load_js_page("piano","Midi","carrot.midi.show_list()");});
+    
+            this.icon=new Carrot_Icon(this); 
+            this.audio=new Carrot_Audio(this);
+            this.radio=new Carrot_Radio(this);
+            this.background=new Carrot_Background(this);
+            this.bible=new Carrot_Bible(this);
+            this.ebook=new Carrot_Ebook(this);
+            this.avatar=new Carrot_Avatar(this);
+            this.ai_lover=new Ai_Lover(this);
+            this.ai=this.ai_lover;
+            this.privacy_policy=new Carrot_Privacy_Policy(this);
+            this.about_us=new Carrot_About_Us(this);
+            this.player_media=new Carrot_Player_Media(this);
+            this.file=new Carrot_File(this);
+            this.pay=new Carrot_Pay(this);
+            this.rate=new Carrot_Rate(this);
+            this.data=new Carrot_data("carrotstore1","1.1");
+            
+            var btn_mod_host=this.menu.create("btn_mode_host").set_label("Change Mode Host").set_type("setting").set_icon("fa-brands fa-dev");
+            $(btn_mod_host).click(function(){carrot.change_host_connection();});
+    
+            var btn_server_host=this.menu.create("btn_mode_host").set_label(this.firebaseConfig_mainhost.projectId).set_type("setting").set_icon("fa-solid fa-server");
+            $(btn_server_host).click(function(){carrot.show_list_change_server();});
+    
+            var btn_setting_ver=this.menu.create("data_version").set_label("Data Version").set_type("setting").set_icon("fa-regular fa-code-compare");
+            $(btn_setting_ver).click(function(){carrot.show_edit_version_data_version();});
+    
+            var btn_export_file_json=this.menu.create("btn_export_file_json").set_label("Export Collection").set_type("setting").set_icon("fa-solid fa-file-export");
+            $(btn_export_file_json).click(function(){carrot.download_json();});
+    
+            var btn_import_file_json=this.menu.create("btn_import_file_json").set_label("Import Collection (File)").set_type("setting").set_icon("fa-solid fa-file-import");
+            $(btn_import_file_json).click(function(){carrot.show_import_json_file();});
+    
+            var btn_site_map=this.menu.create("btn_site_map").set_label("Site Map").set_type("setting").set_icon("fa-solid fa-sitemap");
+            $(btn_site_map).click(function(){carrot.show_site_map();});
+    
+            var btn_update_config=this.menu.create("btn_update_config").set_label("Update File Config").set_type("setting").set_icon("fa-solid fa-file");
+            $(btn_update_config).click(function(){carrot.act_update_file_config();});
+    
+            var btn_del_all=this.menu.create("btn_del_all").set_label("Delete all data cache").set_type("setting").set_icon("fa-solid fa-trash-can");
+            $(btn_del_all).click(function(){carrot.act_delete_all_data();});
+    
+            $("#btn_model_site").click(function(){carrot.change_mode_site();});
+    
+            if(!this.check_ver_cur("link_store"))this.link_store.get_all_data_link_store();
+            if(!this.check_ver_cur("lang")) this.langs.get_all_data_lang();
+            if(!this.check_ver_cur("lang_web")) this.langs.get_data_lang_web();
+    
+            this.user.show_info_user_login_in_header();
+            this.menu.show();
+    
+            $(".btn-menu").click(function () {
+                $(".btn-menu").removeClass("active");
+                $(".btn-menu i").removeClass("fa-bounce");
+                $(this).addClass("active");
+                $(this).find("i").addClass("fa-bounce");
+            });
+    
+            var TodayDate = new Date();
+            var m = TodayDate.getMonth();m++;
+            $("#logo_carrot").attr("src",this.url()+"/images/logo/logo_"+m+".png");
+    
+            this.check_show_by_id_page();
         },()=>{
             carrot.act_next_server_when_fail();
         });

@@ -311,7 +311,7 @@ class Appp{
         app_item.set_class(s_class);
         app_item.set_id(data_app.id_doc);
         app_item.set_db_collection("app");
-        app_item.set_obj_js("apps");
+        app_item.set_obj_js("appp");
         app_item.set_act_click("carrot.appp.show_app_by_id('"+data_app.id_doc+"')");
         return app_item.html();
     }
