@@ -10,7 +10,7 @@ class Carrot_Radio{
         var btn_add=carrot.menu.create_menu("add_radio").set_label("Add Radio").set_icon(this.icon).set_type("add");
         $(btn_add).click(function(){carrot.radio.add();});
 
-        var btn_list=carrot.menu.create_menu("list_radio").set_label("Radio").set_icon(this.icon).set_type("main");
+        var btn_list=carrot.menu.create_menu("list_radio").set_label("Radio").set_lang("radio").set_icon(this.icon).set_type("main");
         $(btn_list).click(function(){carrot.radio.list();});
     }
 

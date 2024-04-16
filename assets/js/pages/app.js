@@ -351,7 +351,7 @@ class Appp{
 
             html+='<div class="col-md-8">';
                 html+='<h4 class="fw-semi fs-5" key_lang="qr_code">Other Link</h4>';
-                if(carrot.link_store.list_link_store!=null){
+                if(carrot.appp.link_store!=null){
                     html+='<table class="table table-responsive table-striped">';
                     $(carrot.appp.link_store).each(function(index,store){
                         store["index"]=index;

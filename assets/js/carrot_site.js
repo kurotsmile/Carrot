@@ -240,7 +240,7 @@ class Carrot_Site{
             this.music=new Carrot_Music(this);
             this.code=new Carrot_Code(this);
     
-            var btn_midi=this.menu.create("btn_midi_piano").set_label("Midi").set_icon("fa-solid fa-drum");
+            var btn_midi=this.menu.create("btn_midi_piano").set_label("Midi").set_lang("midi").set_icon("fa-solid fa-drum");
             $(btn_midi).click(function(){carrot.load_js_page("piano","Midi","carrot.midi.show_list()");});
     
             this.icon=new Carrot_Icon(this); 
