@@ -151,6 +151,7 @@ class Carrot_Info{
     s_icon_font="";
     s_icon_image="";
     s_related_title="";
+    s_obj_js="";
 
     s_db="";
     list_attr=[];
@@ -180,6 +181,10 @@ class Carrot_Info{
     
     set_db(s_name_db){
         this.s_db=s_name_db;
+    }
+
+    set_obj_js(obj_js){
+        this.s_obj_js=obj_js;
     }
 
     set_related_title(title){
@@ -221,7 +226,7 @@ class Carrot_Info{
 
                     html+='<div class="col-md-8 p-2">';
                         if(this.name!="") html+='<h4 class="fw-semi fs-4 mb-3">'+this.name+'</h4>';
-                        if(this.s_db!="") html+=carrot.btn_dev(this.s_db,this.id);
+                        if(this.s_db!="") html+=carrot.btn_dev(this.s_db,this.id,this.s_obj_js);
 
                         if(this.list_attr.length>0){
                             html+='<div class="row">';

@@ -369,26 +369,22 @@ class Carrot_Langs{
     }
 
     show_list_change_lang(){
-        var carrot=this.carrot;
-        var langs=this;
         var userLang = navigator.language || navigator.userLanguage; 
         var n_lang=userLang.split("-")[0];
         var html='';
-
-        console.log(carrot.server);
         var q=new Carrot_Query("lang");
         carrot.loading();
         q.get_data((data)=>{
-            langs.list_lang=data;
+            carrot.langs.list_lang=data;
             carrot.hide_loading();
-            $(langs.list_lang).each(function(index,lang){
+            $(carrot.langs.list_lang).each(function(index,lang){
                 var m_activer_color='';
                 if(lang.key==carrot.lang)
                     m_activer_color='btn-primary';
                 else{
-                    if(langs.obj_lang_web!=null)
+                    if(carrot.langs.obj_lang_web!=null)
                         m_activer_color='btn-secondary';
-                    else if(n_lang==lang.key) 
+                    else if(n_lang==carrot.lang.key) 
                         m_activer_color='btn-info';
                     else
                         m_activer_color='btn-dark';
@@ -405,8 +401,8 @@ class Carrot_Langs{
             $(".item_lang").click(function(){
                 var key_lang = $(this).attr("key");
                 if (key_lang != carrot.lang) {
-                    langs.change_lang(key_lang);
-                    langs.get_data_lang_web();
+                    carrot.langs.change_lang(key_lang);
+                    carrot.langs.get_data_lang_web();
                     carrot.user.delete_obj_phone_book();
                     carrot.check_show_by_id_page();
                     Swal.close();

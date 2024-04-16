@@ -228,8 +228,8 @@ class Appp{
     }
 
     edit(data,carrot){
-        carrot.app.frm_add_or_edit(data).set_title("Edit App").set_msg_done("Edit app success!").set_type("update").show();
-    }
+        carrot.appp.frm_add_or_edit(data).set_title("Edit App").set_msg_done("Edit app success!").set_type("update").show();
+    } 
 
     frm_add_or_edit(data){
         var frm=new Carrot_Form("frm_app",carrot);
@@ -424,6 +424,7 @@ class Appp{
         box_info.set_icon_image("images/512.png");
         box_info.set_icon_id("app_icon_info")
         box_info.set_db("app");
+        box_info.set_obj_js("appp");
         box_info.set_name(data.name_en);
 
         $(carrot.appp.link_store).each(function(index,store){
