@@ -1,6 +1,6 @@
 class Carrot_Langs{
     carrot;
-    list_lang=Array();
+    list_lang=null;
     icon="fa-sharp fa-solid fa-language";
     lang_setting="en";
     lang_setting_db_collection="";
@@ -369,47 +369,56 @@ class Carrot_Langs{
     }
 
     show_list_change_lang(){
+        if(carrot.langs.list_lang==null){
+            carrot.loading();
+            var q=new Carrot_Query("lang");
+            q.get_data((data)=>{
+                carrot.langs.list_lang=data;
+                carrot.langs.save_list_lang();
+                carrot.hide_loading();
+                carrot.langs.load_list_change_lang();
+            })
+        }else{
+            carrot.langs.load_list_change_lang();
+        }
+    }
+
+    load_list_change_lang(){
         var userLang = navigator.language || navigator.userLanguage; 
         var n_lang=userLang.split("-")[0];
         var html='';
-        var q=new Carrot_Query("lang");
-        carrot.loading();
-        q.get_data((data)=>{
-            carrot.langs.list_lang=data;
-            carrot.hide_loading();
-            $(carrot.langs.list_lang).each(function(index,lang){
-                var m_activer_color='';
-                if(lang.key==carrot.lang)
-                    m_activer_color='btn-primary';
-                else{
-                    if(carrot.langs.obj_lang_web!=null)
-                        m_activer_color='btn-secondary';
-                    else if(n_lang==carrot.lang.key) 
-                        m_activer_color='btn-info';
-                    else
-                        m_activer_color='btn-dark';
-                }
-                html+="<div role='button' style='margin:3px;float:left' class='item_lang btn d-inline btn-sm text-left "+m_activer_color+"' key='"+lang.key+"'><img src='"+lang.icon+"' width='20px'/> "+lang.name+"</div>";
-            });
+        carrot.hide_loading();
+        $(carrot.langs.list_lang).each(function(index,lang){
+            var m_activer_color='';
+            if(lang.key==carrot.lang)
+                m_activer_color='btn-primary';
+            else{
+                if(carrot.langs.obj_lang_web!=null)
+                    m_activer_color='btn-secondary';
+                else if(n_lang==lang.key)
+                    m_activer_color='btn-info';
+                else
+                    m_activer_color='btn-dark';
+            }
+            html+="<div role='button' style='margin:3px;float:left' class='item_lang btn d-inline btn-sm text-left "+m_activer_color+"' key='"+lang.key+"'><img src='"+lang.icon+"' width='20px'/> "+lang.name+"</div>";
+        });
 
-            Swal.fire({
-                title:carrot.l("select_lang","Select language"),
-                html:html,
-                showCloseButton: true
-            });
+        Swal.fire({
+            title:carrot.l("select_lang","Select language"),
+            html:html,
+            showCloseButton: true
+        });
 
-            $(".item_lang").click(function(){
-                var key_lang = $(this).attr("key");
-                if (key_lang != carrot.lang) {
-                    carrot.langs.change_lang(key_lang);
-                    carrot.langs.get_data_lang_web();
-                    carrot.user.delete_obj_phone_book();
-                    carrot.check_show_by_id_page();
-                    Swal.close();
-                };
-            });
-
-        })
+        $(".item_lang").click(function(){
+            var key_lang = $(this).attr("key");
+            if (key_lang != carrot.lang) {
+                carrot.langs.change_lang(key_lang);
+                carrot.langs.get_data_lang_web();
+                carrot.user.delete_obj_phone_book();
+                carrot.check_show_by_id_page();
+                Swal.close();
+            };
+        });
     }
 
     get_val_lang(key,lang_en_default=""){
