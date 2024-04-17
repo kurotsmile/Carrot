@@ -7,6 +7,7 @@ class Appp{
 
     show(){
         if(carrot.check_ver_cur("link_store")==false){
+            carrot.data.clear("stores");
             carrot.log("Get link store new version "+carrot.get_ver_cur("link_store"));
             carrot.update_new_ver_cur("link_store",true);
             this.get_data_link_store(carrot.appp.act_get_data_link_store_done);
@@ -145,6 +146,8 @@ class Appp{
     get_data(act_done){
         carrot.loading("Get data app and game");
         if(carrot.check_ver_cur("app")==false){
+            carrot.data.clear("apps");
+            carrot.data.clear("app_info");
             carrot.log("Get data app new version "+carrot.get_ver_cur("app"));
             carrot.appp.get_data_from_server(act_done);
             carrot.update_new_ver_cur("app",true);
@@ -350,7 +353,7 @@ class Appp{
             html+='</div>';
 
             html+='<div class="col-md-8">';
-                html+='<h4 class="fw-semi fs-5" key_lang="qr_code">Other Link</h4>';
+                html+='<h4 class="fw-semi fs-5"><l class="lang" key_lang="other_store">Other Link</l></h4>';
                 if(carrot.appp.link_store!=null){
                     html+='<table class="table table-responsive table-striped">';
                     $(carrot.appp.link_store).each(function(index,store){
@@ -402,11 +405,11 @@ class Appp{
             html+='<div class="col-12">';
                 html+='<div class="btn-group mr-2" role="group">';
                     if(this.type_view=='all') s_class='active'; else s_class='';
-                    html+='<div class="btn btn-sm btn-success '+s_class+'" onclick="carrot.appp.show_all();"><i class="fa-solid fa-table-list"></i> All</div>';
+                    html+='<div class="btn btn-sm btn-success '+s_class+'" onclick="carrot.appp.show_all();"><i class="fa-solid fa-table-list"></i> <l class="lang" key_lang="view_all">All</l></div>';
                     if(this.type_view=='app') s_class='active'; else s_class='';
-                    html+='<div class="btn btn-sm btn-success '+s_class+'" onclick="carrot.appp.show_app();"><i class="fa-solid fa-mobile"></i> App</div>';
+                    html+='<div class="btn btn-sm btn-success '+s_class+'" onclick="carrot.appp.show_app();"><i class="fa-solid fa-mobile"></i> <l class="lang" key_lang="app">App</l></div>';
                     if(this.type_view=='game') s_class='active'; else s_class='';
-                    html+='<div class="btn btn-sm btn-success '+s_class+'" onclick="carrot.appp.show_game();"><i class="fa-solid fa-gamepad"></i> Game</div>';
+                    html+='<div class="btn btn-sm btn-success '+s_class+'" onclick="carrot.appp.show_game();"><i class="fa-solid fa-gamepad"></i> <l class="lang" key_lang="game">Game</l></div>';
                 html+='</div>';
                 html+=' <div class="btn-group" role="group">';
                     if(this.status_view=='publish') s_class='active'; else s_class='';
@@ -418,7 +421,7 @@ class Appp{
 
                 html+=' <div class="btn-group" role="group">';
                     if(this.type_view=="stores") s_class='active'; else s_class='';
-                    html+='<div class="btn btn-sm btn-success '+s_class+'" onclick="carrot.appp.show_other_store();"><i class="fa-solid fa-store"></i> Other Store</div>';
+                    html+='<div class="btn btn-sm btn-success '+s_class+'" onclick="carrot.appp.show_other_store();"><i class="fa-solid fa-store"></i> <l class="lang" key_lang="other_store">Other Store</l></div>';
                 html+='</div>';
             html+='</div>';
         html+='</div>';

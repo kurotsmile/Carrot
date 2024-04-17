@@ -1,9 +1,6 @@
 class Sync{
-
     show(){
         carrot.loading();
-        var imageUrl = "https://firebasestorage.googleapis.com/v0/b/carrotstore.appspot.com/o/app%2Fimage%2Fjpeg%2F1688281471671_icon.jpg?alt=media&token=35ca9ef2-f42c-46f8-9210-871c9368bb90";
-        this.saveImageToIndexedDB(imageUrl,"thanh");
     }
 
     info(data){

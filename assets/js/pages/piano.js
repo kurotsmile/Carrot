@@ -8,7 +8,8 @@ class Midi{
     intervalID_midi_play=null;
     length_note_midi_play=-1;
     oscillators=[];
-
+    type_view="all";
+    
     constructor(){
         $('head').append('<link id="style_obj_midi" href="assets/css/piano_midi.css?'+carrot.get_ver_cur("js")+'" rel="stylesheet" type="text/css"/>');
         this.objs=JSON.parse(localStorage.getItem("objs_midi"));
@@ -16,44 +17,87 @@ class Midi{
         this.footnotes_frequency=[69.29566,77.78175,92.49861,103.8262,116.5409,138.5913,155.5635,184.9972,207.6523,233.0819,277.1826,311.1270,369.9944,415.3047,466.1638,1108.731,1244.508,1479.978,1661.219,1864.655];
     }
 
+    show_public(){
+        carrot.midi.type_view="public";
+        var q=new Carrot_Query("Midi Piano Editor");
+        q.add_where("status","public");
+        q.get_data((data)=>{
+            carrot.midi.objs=data;
+            carrot.midi.show_list_by_objs(data);
+        });
+    }
+
+    show_pending(){
+        carrot.midi.type_view="pending";
+        var q=new Carrot_Query("Midi Piano Editor");
+        q.add_where("status","pending");
+        q.get_data((data)=>{
+            carrot.midi.objs=data;
+            carrot.midi.show_list_by_objs(data);
+        });
+    }
+
     show(){
         var id_midi=carrot.get_param_url("id");
         if(id_midi!=undefined)
-            this.show_midi_by_id(id_midi);
+            carrot.midi.show_midi_by_id(id_midi);
         else
-            this.show_list();
+            carrot.midi.show_list();
     }
 
     show_list(){
         carrot.loading("Get data list midi");
         carrot.change_title_page("List Midi","?page=piano","midi");
-
-        if(this.objs!=null)
-            this.show_list_by_objs(this.objs);
-        else
-            this.Get_list_from_server_and_show();
+        if(carrot.check_ver_cur("midi")==false){
+            carrot.midi.Get_list_from_server_and_show();
+            carrot.update_new_ver_cur("midi",true);
+        }else{
+            if(carrot.midi.objs!=null)
+                carrot.midi.show_list_by_objs(carrot.midi.objs);
+            else
+                carrot.midi.Get_list_from_server_and_show();
+        }
     }
 
     Get_list_from_server_and_show(){
-        carrot.db.collection("Midi Piano Editor").limit(200).get().then((querySnapshot) => {
-            if(querySnapshot.docs.length>0){
-                carrot.midi.objs=Object();
-                querySnapshot.forEach((doc) => {
-                    var data=doc.data();
-                    data["id"]=doc.id;
-                    carrot.midi.objs[doc.id]=data;
-                }); 
-
-                localStorage.setItem("objs_midi",JSON.stringify(carrot.midi.objs));
-                carrot.midi.show_list_by_objs(carrot.midi.objs);
-            }
+        carrot.loading();
+        var q=new Carrot_Query("Midi Piano Editor");
+        q.get_data((data)=>{
+            carrot.midi.objs=data;
+            localStorage.setItem("objs_midi",JSON.stringify(carrot.midi.objs));
+            carrot.midi.show_list_by_objs(data);
         });
     }
 
+    menu(){
+        var html='';
+        var s_class='';
+        html+='<div class="row mb-2">';
+            html+='<div class="col-12">';
+                html+='<div class="btn-group mr-2" role="group">';
+                    if(this.type_view=='all') s_class='active'; else s_class='';
+                    html+='<div class="btn btn-sm btn-success '+s_class+'" onclick="carrot.midi.show_list();"><i class="fa-solid fa-table-list"></i> <l key_lang="view_all" class="lang">All</l></div>';
+                    if(this.type_view=='public') s_class='active'; else s_class='';
+                    html+='<div class="btn btn-sm btn-success '+s_class+'" onclick="carrot.midi.show_public();"><i class="fa-solid fa-earth-americas"></i> Published</div>';
+                    if(this.type_view=='pending') s_class='active'; else s_class='';
+                    html+='<div class="btn btn-sm btn-success '+s_class+'" onclick="carrot.midi.show_pending();"><i class="fa-solid fa-hourglass-end"></i> Awaiting Approval</div>';
+                html+='</div>';
+            
+                html+=' <div class="btn-group" role="group">';
+                    if(this.type_view=="stores") s_class='active'; else s_class='';
+                    html+='<div class="btn btn-sm btn-success '+s_class+'" onclick="carrot.appp.show_other_store();"><i class="fa-solid fa-circle-plus"></i> Create New Midi</div>';
+                html+='</div>';
+            html+='</div>';
+        html+='</div>';
+        return html;
+    }
+
     show_list_by_objs(midis){
+        var html='';
         carrot.hide_loading();
-        midis=carrot.convert_obj_to_list_array(midis);
-        carrot.show('<div id="all_item" class="row m-0"></div>');
+        html+=carrot.midi.menu();
+        html+='<div id="all_item" class="row m-0"></div>';
+        carrot.show(html);
         $(midis).each(function(index,midi){
             midi["index"]=index;
             $("#all_item").append(carrot.midi.box_item(midi).html());
@@ -74,7 +118,6 @@ class Midi{
     }
 
     box_item(data){
-        var  data_index=data.data_index;
         var s_icon="";
         var s_color_status="";
         var html="";
@@ -91,7 +134,7 @@ class Midi{
         html+='<div class="fs-9 "><i class="fa-solid fa-gauge-high"></i> Speed: '+data.speed;
         if(data.category!=null) html+='  <i class="fa-solid fa-music"></i> Category: '+data.category;
         html+='</div>';
-        html+='<div class="fs-9"><i class="fa-solid fa-music"></i> Note: '+data_index.length+'</div>';
+        if(data.data_index!=null) html+='<div class="fs-9"><i class="fa-solid fa-music"></i> Note: '+data.data_index.length+'</div>';
         
         var item_obj=new Carrot_List_Item(carrot);
         item_obj.set_db("Midi Piano Editor");
@@ -102,6 +145,7 @@ class Midi{
         item_obj.set_class_icon_col("col-2");
         item_obj.set_body(html);
         item_obj.set_act_edit("carrot.midi.edit");
+        item_obj.set_act_click("carrot.midi.show_midi_by_id('"+data.id+"')");
         return item_obj;
     }
 
@@ -123,106 +167,80 @@ class Midi{
     }
 
     info(data,carrot){
+        var s_icon="";
+        var s_color_status="";
         carrot.change_title_page(data.name,"?page=piano&id="+data.id,"Midi");
-        var html='<div class="section-container p-2 p-xl-4">';
+        var box_info=new Carrot_Info();
+        box_info.set_name(data.name);
+        
+        if(data.status=="public"){
+            s_icon="fa-solid fa-guitar";
+            s_color_status="text-success";
+        }else{
+            s_icon="fa-brands fa-hashnode";
+            s_color_status="text-warning";
+        }
+
+        box_info.set_icon_font(s_icon);
+        box_info.add_attrs("fa-solid fa-file-code",'<l class="lang" key_lang="file">File</l>',data.name+".midi");
+        if(data.category!="") box_info.add_attrs("fa-solid fa-boxes-packing",'<l class="lang" key_lang="category">Category</l>',data.category);
+        if(data.speed!="") box_info.add_attrs("fa-solid fa-gauge-high",'<l class="lang" key_lang="speed">Speed</l>',data.speed);
+        if(data.user_id!=null){
+            box_info.add_attrs("fa-solid fa-user-nurse",'<l class="lang" key_lang="author">Author</l>',data.user_id);
+        }
+        box_info.add_contain(carrot.midi.box_midi(data));
+
+        $(carrot.midi.objs).each(function(index,m){
+            if(index>=12) return false;
+            m["index"]=index;
+            var box_item=carrot.midi.box_item(m);
+            box_item.set_class('col-md-12 mb-3');
+            box_info.add_related(box_item.html());
+        });
+        
+        carrot.show(box_info.html());
+        carrot.check_event();
+    }
+
+    box_midi(data){
+        var midi_notes=JSON.parse(data.data_index);
+        var type_notes=JSON.parse(data.data_type);
+        carrot.midi.length_note_midi_play=midi_notes[0].length;
+        var html='';
+        html+='<div class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
+        html+='<div class="col-12">';
+            html+='<div class="row mb-2">';
+                html+='<div class="col-4">';
+                    html+='<i role="button" onclick="carrot.midi.playMidi()" class="fa-sharp fa-solid fa-circle-play fa-3x text-success mt-2 mr-2"></i>';
+                html+='</div>';
+                html+='<div class="col-4">';
+                    html+='<i class="fa-solid fa-dice-one"></i> : '+midi_notes[0].length+"</br>";
+                    html+='<i class="fa-solid fa-grip-lines"></i> : '+midi_notes.length+"</br>";
+                    html+='<i class="fa-solid fa-music"></i> : '+(midi_notes[0].length*midi_notes.length);
+                html+='</div>';
+                html+='<div class="col-4">';
+                    html+='<i class="fa-solid fa-2x fa-volume-high"></i>';
+                html+='</div>';
+            html+='</div>';
             html+='<div class="row">';
-                html+='<div class="col-md-8 ps-4 ps-lg-3">';
-                    html+='<div class="row bg-white shadow-sm">';
-
-                        html+='<div class="col-md-4 p-3 text-center">';
-                            html+='<i class="fa-solid fa-guitar fa-5x"></i><br/>';
-                        html+='</div>';
-
-                        html+='<div class="col-md-8 p-2">';
-                            html+='<h4 class="fw-semi fs-4 mb-3">'+data.name+'</h4>';
-                        html+='</div>';
-
-                        html+='<div class="row pt-4">';
-                            html+='<div class="col-md-4 col-6 text-center">';
-                                html+='<b><l class="lang" key_lang="file">File</l> <i class="fa-solid fa-file-code"></i></b>';
-                                html+='<p id="filename_code">'+data.name+'.midi</p>';
-                            html+='</div>';
-                            html+='<div class="col-md-4 col-6 text-center">';
-                                html+='<b><l class="lang" key_lang="category">Category</l> <i class="fa-solid fa-boxes-packing"></i></b>';
-                                html+='<p>'+data.category+'</p>';
-                            html+='</div>';
-                            html+='<div class="col-md-4 col-6 text-center">';
-                                html+='<b><l class="lang" key_lang="speed">Interface</l> <i class="fa-solid fa-brush"></i></b>';
-                                html+='<p>'+data.speed+'</p>';
-                            html+='</div>';
-                            if(data.user_id!=null){
-                                html+='<div class="col-md-4 col-6 text-center">';
-                                html+='<b><l class="lang" key_lang="author">Author</l> <i class="fa-solid fa-user-nurse"></i></b>';
-                                html+='<p>'+data.user_id+'</p>';
-                                html+='</div>';
-                            }
-                        html+='</div>';
-
-                        html+='<div class="row pt-4 pb-4">';
-                            html+='<div class="col-12 text-center">';
-                            html+='<button id="btn_share" type="button" class="btn d-inline btn-success"><i class="fa-solid fa-share-nodes"></i> <l class="lang" key_lang="share">Share</l> </button> ';
-                            html+='<a id="register_protocol_url" href="midi://show/'+data.id+'" type="button"  class="btn d-inline btn-success" ><i class="fa-solid fa-rocket"></i> <l class="lang" key_lang="open_with">Open with..</l> </a> ';
-                            if(carrot.midi.check_pay(data.id))
-                                html+='<button id="btn_download" type="button" class="btn d-inline btn-success"><i class="fa-solid fa-download"></i> <l class="lang" key_lang="download">Download</l> </button> ';
-                            else
-                                html+='<button id="btn_download" type="button" class="btn d-inline btn-info"><i class="fa-brands fa-paypal"></i> <l class="lang" key_lang="download">Download</l> </button> ';
-                            html+='</div>';
-                        html+='</div>';
-
+                html+='<div id="midi" class="text-break">';
+                for(var i=0;i<midi_notes.length;i++){
+                    var notes=midi_notes[i];
+                    var types=type_notes[i];
+                    html+='<div class="midi_line">';
+                    for(var y=0;y<notes.length;y++){
+                        if(notes[y]==-1)
+                        html+='<div class="midi_note none midi_note_'+y+'" note_index="'+notes[y]+'" note_type="'+types[y]+'" onclick="carrot.midi.playNote('+notes[y]+',0)"><i class="fa-brands fa-ethereum"></i></div>';
+                        else
+                        html+='<div class="midi_note midi_note_'+y+'" note_index="'+notes[y]+'" note_type="'+types[y]+'"  onclick="carrot.midi.playNote('+notes[y]+','+types[y]+')">'+notes[y]+'</div>';
+                    }
                     html+='</div>';
-
-                    var midi_notes=JSON.parse(data.data_index);
-                    var type_notes=JSON.parse(data.data_type);
-                    carrot.midi.length_note_midi_play=midi_notes[0].length;
-                    html+='<div class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
-                    html+='<div class="col-12">';
-                        html+='<div class="row mb-2">';
-                            html+='<div class="col-4">';
-                                html+='<i role="button" onclick="carrot.midi.playMidi()" class="fa-sharp fa-solid fa-circle-play fa-3x text-success mt-2 mr-2"></i>';
-                            html+='</div>';
-                            html+='<div class="col-4">';
-                                html+='<i class="fa-solid fa-dice-one"></i> : '+midi_notes[0].length+"</br>";
-                                html+='<i class="fa-solid fa-grip-lines"></i> : '+midi_notes.length+"</br>";
-                                html+='<i class="fa-solid fa-music"></i> : '+(midi_notes[0].length*midi_notes.length);
-                            html+='</div>';
-                            html+='<div class="col-4">';
-                                html+='<i class="fa-solid fa-2x fa-volume-high"></i>';
-                            html+='</div>';
-                        html+='</div>';
-                        html+='<div class="row">';
-                            html+='<div id="midi" class="text-break">';
-                            for(var i=0;i<midi_notes.length;i++){
-                                var notes=midi_notes[i];
-                                var types=type_notes[i];
-                                html+='<div class="midi_line">';
-                                for(var y=0;y<notes.length;y++){
-                                    if(notes[y]==-1)
-                                    html+='<div class="midi_note none midi_note_'+y+'" note_index="'+notes[y]+'" note_type="'+types[y]+'" onclick="carrot.midi.playNote('+notes[y]+',0)"><i class="fa-brands fa-ethereum"></i></div>';
-                                    else
-                                    html+='<div class="midi_note midi_note_'+y+'" note_index="'+notes[y]+'" note_type="'+types[y]+'"  onclick="carrot.midi.playNote('+notes[y]+','+types[y]+')">'+notes[y]+'</div>';
-                                }
-                                html+='</div>';
-                            }
-                            html+='</div>';
-                        html+='</div>';
-                    html+='</div>';
-                    html+='</div>';
-
+                }
                 html+='</div>';
-
-                html+='<div class="col-md-4">';
-                html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-3 lang"  key_lang="related_midi">Related Midi</h4>';
-                var list_midi_other= carrot.convert_obj_to_list_array(carrot.midi.objs).map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
-                for(var i=0;i<list_midi_other.length;i++){
-                    if(i>=10) break;
-                    if(data.id!=list_midi_other[i].id) html+=carrot.midi.box_item(list_midi_other[i]).set_class('col-md-12 mb-3').html();
-                };
-                html+='</div>';
-
             html+='</div>';
         html+='</div>';
-        carrot.show(html);
-        carrot.midi.check_event();
+        html+='</div>';
+        return html;
     }
 
     check_event(){

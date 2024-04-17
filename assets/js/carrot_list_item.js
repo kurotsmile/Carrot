@@ -220,8 +220,9 @@ class Carrot_Info{
             html+='<div class="col-md-8 ps-4 ps-lg-3">';
                 html+='<div class="row bg-white shadow-sm">';
 
-                    html+='<div class="col-md-4 p-3">';
+                    html+='<div class="col-md-4 p-3 text-center">';
                         if(this.s_icon_image!="") html+='<img class="w-100" id="'+this.s_icon_id+'" src="'+this.s_icon_image+'" alt="Info Icon">';
+                        if(this.s_icon_font!="") html+='<i class="w-100 '+this.s_icon_font+' fa-5x" id="'+this.s_icon_id+'" alt="Info Icon"></i>';
                     html+='</div>';
 
                     html+='<div class="col-md-8 p-2">';
@@ -263,7 +264,6 @@ class Carrot_Info{
             html+='<div class="col-md-4" id="box_related">';
                 html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-3">'+this.s_related_title+'</h4>';
                 $(this.list_related).each(function(index,data){
-                    data["index"]=index;
                     html+=data;
                 });
             html+='</div>';
