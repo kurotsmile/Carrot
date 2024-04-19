@@ -19,9 +19,11 @@ class Midi{
 
     show_public(){
         carrot.midi.type_view="public";
+        carrot.loading();
         var q=new Carrot_Query("Midi Piano Editor");
         q.add_where("status","public");
         q.get_data((data)=>{
+            carrot.hide_loading();
             carrot.midi.objs=data;
             carrot.midi.show_list_by_objs(data);
         });
@@ -29,9 +31,22 @@ class Midi{
 
     show_pending(){
         carrot.midi.type_view="pending";
+        carrot.loading();
         var q=new Carrot_Query("Midi Piano Editor");
         q.add_where("status","pending");
         q.get_data((data)=>{
+            carrot.hide_loading();
+            carrot.midi.objs=data;
+            carrot.midi.show_list_by_objs(data);
+        });
+    }
+
+    show_all(){
+        carrot.midi.type_view="all";
+        carrot.loading();
+        var q=new Carrot_Query("Midi Piano Editor");
+        q.get_data((data)=>{
+            carrot.hide_loading();
             carrot.midi.objs=data;
             carrot.midi.show_list_by_objs(data);
         });
@@ -76,7 +91,7 @@ class Midi{
             html+='<div class="col-12">';
                 html+='<div class="btn-group mr-2" role="group">';
                     if(this.type_view=='all') s_class='active'; else s_class='';
-                    html+='<div class="btn btn-sm btn-success '+s_class+'" onclick="carrot.midi.show_list();"><i class="fa-solid fa-table-list"></i> <l key_lang="view_all" class="lang">All</l></div>';
+                    html+='<div class="btn btn-sm btn-success '+s_class+'" onclick="carrot.midi.show_all();"><i class="fa-solid fa-table-list"></i> <l key_lang="view_all" class="lang">All</l></div>';
                     if(this.type_view=='public') s_class='active'; else s_class='';
                     html+='<div class="btn btn-sm btn-success '+s_class+'" onclick="carrot.midi.show_public();"><i class="fa-solid fa-earth-americas"></i> Published</div>';
                     if(this.type_view=='pending') s_class='active'; else s_class='';
@@ -120,7 +135,6 @@ class Midi{
     box_item(data){
         var s_icon="";
         var s_color_status="";
-        var html="";
 
         if(data.status=="public"){
             s_icon="fa-solid fa-guitar";
@@ -130,12 +144,19 @@ class Midi{
             s_color_status="text-warning";
         }
 
-        html+='<div class="fs-9 '+s_color_status+'"><i class="fa-solid fa-dice-d6"></i> status: '+data.status+'</div>';
-        html+='<div class="fs-9 "><i class="fa-solid fa-gauge-high"></i> Speed: '+data.speed;
-        if(data.category!=null) html+='  <i class="fa-solid fa-music"></i> Category: '+data.category;
-        html+='</div>';
-        if(data.data_index!=null) html+='<div class="fs-9"><i class="fa-solid fa-music"></i> Note: '+data.data_index.length+'</div>';
-        
+        var html_body='';
+        html_body+='<li class="col-8 ratfac">';
+                html_body+='<div class="fs-9 '+s_color_status+'"><i class="fa-solid fa-dice-d6"></i> status: '+data.status+'</div>';
+                html_body+='<div class="fs-9 "><i class="fa-solid fa-gauge-high"></i> Speed: '+data.speed;
+                if(data.category!=null) html_body+='  <i class="fa-solid fa-music"></i> Category: '+data.category;
+                html_body+='</div>';
+            if(data.data_index!=null) html_body+='<div class="fs-9"><i class="fa-solid fa-music"></i> Note: '+data.data_index.length+'</div>';
+        html_body+='</li>';
+
+        html_body+='<div class="col-4 text-end">'; 
+            html_body+='<span role="button" onclick="carrot.midi.play_mini(\''+data.index+'\')" class="status_music float-end text-success btn-play-music m-1"><i class="fa-sharp fa-solid fa-circle-play fa-2x"></i></span> ';
+        html_body+='</div>';
+
         var item_obj=new Carrot_List_Item(carrot);
         item_obj.set_db("Midi Piano Editor");
         item_obj.set_icon_font(s_icon+" "+s_color_status+" fa-3x midi_icon");
@@ -143,10 +164,27 @@ class Midi{
         item_obj.set_title(data.name);
         item_obj.set_class_body("col-10");
         item_obj.set_class_icon_col("col-2");
-        item_obj.set_body(html);
+        item_obj.set_body(html_body);
         item_obj.set_act_edit("carrot.midi.edit");
         item_obj.set_act_click("carrot.midi.show_midi_by_id('"+data.id+"')");
         return item_obj;
+    }
+
+    play_mini(index){
+        var midi_data=carrot.midi.objs[index];
+        var frm_play=new Carrot_Form("frm_play",carrot);
+        var midi_body=frm_play.create_field("midi");
+        var html='<div class="row">';
+        html+='<div class="col-1 text-center">&nbsp</div>';
+        html+='<div class="col-10 text-center">';
+            html+=carrot.midi.box_midi(midi_data);
+        html+='</div>';
+        html+='<div class="col-1 text-center">&nbsp</div>';
+        html+='</div>';
+        midi_body.set_type("msg").set_value(html);
+        frm_play.set_title(midi_data.name)
+        frm_play.off_btn_done();
+        frm_play.show();
     }
 
     edit(data,carrot){

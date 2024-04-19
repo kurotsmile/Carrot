@@ -614,7 +614,7 @@ class Carrot_Form{
     display_name_Location(latitude,longitude){
         var request = new XMLHttpRequest();
         var method = 'GET';
-        var url = 'https://maps.googleapis.com/maps/api/geocode/json?latlng='+latitude+','+longitude+'&sensor=true&key=AIzaSyDtrxOBgBfiRLaxKP0p_UzfE2-hsjHNKBw';
+        var url = 'https://maps.googleapis.com/maps/api/geocode/json?latlng='+latitude+','+longitude+'&sensor=true&key='+carrot.config.key_api_google_location;
         var async = true;
 
         request.open(method, url, async);

@@ -62,6 +62,8 @@ class Carrot_Site{
         fetch('rabbit.data?=2.2').then(response => response.text()).then((text) => {
             var data_text=atob(text);
             this.config=JSON.parse(data_text);
+            console.log(carrot.config);
+            console.log(carrot.config.key_api_google_youtube);
             this.setup_sever_db(this.index_server);
         }); 
     };
@@ -258,7 +260,7 @@ class Carrot_Site{
             this.file=new Carrot_File(this);
             this.pay=new Carrot_Pay(this);
             this.rate=new Carrot_Rate(this);
-            this.data=new Carrot_data("carrotstore1","1.1");
+            this.data=new Carrot_data("carrotstore2","1.2");
             
             var btn_mod_host=this.menu.create("btn_mode_host").set_label("Change Mode Host").set_type("setting").set_icon("fa-brands fa-dev");
             $(btn_mod_host).click(function(){carrot.change_host_connection();});

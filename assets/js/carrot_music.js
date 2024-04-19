@@ -451,7 +451,7 @@ class Carrot_Music{
         }
         var id_ytb=this.carrot.player_media.get_youtube_id(link_ytb);
         $("#link_ytb").val("https://www.youtube.com/watch?v="+id_ytb);
-        $.get("https://www.googleapis.com/youtube/v3/videos?part=snippet&id=" + id_ytb + "&key=AIzaSyDtrxOBgBfiRLaxKP0p_UzfE2-hsjHNKBw", function(data) {
+        $.get("https://www.googleapis.com/youtube/v3/videos?part=snippet&id=" + id_ytb + "&key="+carrot.config.key_api_google_youtube, function(data) {
             console.log(data);
             $("#name").val(data.items[0].snippet.title);
             if(data.items[0].snippet.defaultLanguage!=null){
