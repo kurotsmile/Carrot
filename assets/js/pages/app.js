@@ -442,7 +442,7 @@ class Appp{
 
         $(carrot.appp.link_store).each(function(index,store){
             store["index"]=index;
-            if(data[store.id_doc]!=undefined) box_info.add_attrs(store.icon,store.name,"<a href='"+data[store.id_doc]+"' target='_blank'><img class='w-50' src='"+store.img+"'/></a>","");
+            if(data[store.id_doc]!=undefined&&data[store.id_doc]!="") box_info.add_attrs(store.icon,store.name,"<a href='"+data[store.id_doc]+"' target='_blank'><img class='w-50' src='"+store.img+"'/></a>","");
         });
 
         box_info.add_attrs("fa-sharp fa-solid fa-eye",carrot.l_html("count_view","Reviews"),"3.9k");
