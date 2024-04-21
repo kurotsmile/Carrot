@@ -663,31 +663,18 @@ html {
   bottom: 12px;
 }
 .controls--actions i {
-    font-size: 20px;
-    color: #BCBECA;
-    cursor: pointer;
-}
-.controls--actions .actions--repeat {
-  position:relative;
-  top: 2px;
-  margin: 3px;
-}
-.controls--actions .actions--repeat:hover {
-  color: #444
+  color: #000000;
+  cursor: pointer;
+  margin: 1px;
+  background-color: #c5c5c5;
+  padding: 4px;
+  border-radius: 16px;
+  font-size: 12px;
 }
 
-.controls--actions .fa-backward, .controls--actions .fa-forward ,.controls--actions .fa-circle-stop{
-  border-radius: 50%;
-  background: #BCBECA;
-  color: white;
-  font-size: 9px;
-  padding: 5px 4px 5px 7px;
-}
-.controls--actions .fa-backward:hover, .controls--actions .fa-forward:hover, .controls--actions .fa-circle-stop:hover  {
-  background: #444;
-}
-.controls--actions .fa-backward {
-  padding: 5px 6px 5px 5px;
+.controls--actions i:hover{
+  background-color: black;
+  color: #c5c5c5;
 }
 
 .btn-menu{
