@@ -62,8 +62,6 @@ class Carrot_Site{
         fetch('rabbit.data?=2.2').then(response => response.text()).then((text) => {
             var data_text=atob(text);
             this.config=JSON.parse(data_text);
-            console.log(carrot.config);
-            console.log(carrot.config.key_api_google_youtube);
             this.setup_sever_db(this.index_server);
         }); 
     };
@@ -96,8 +94,6 @@ class Carrot_Site{
         this.load_recognition();
         this.load_obj_version_new();
         this.load_obj_version_cur();
-
-        var carrot=this;
         this.check_version_data();
     }
 
@@ -174,8 +170,6 @@ class Carrot_Site{
         carrot.server.get_doc("setting_web","version",(data)=>{
             
             carrot.obj_version_new=data;
-            console.log(carrot.obj_version_new);
-            console.log(carrot.obj_version_cur);
             carrot.save_obj_version_new();
             carrot.save_obj_version_cur();
             carrot.load_bar();
@@ -243,7 +237,12 @@ class Carrot_Site{
             this.code=new Carrot_Code(this);
     
             var btn_midi=this.menu.create("btn_midi_piano").set_label("Midi").set_lang("midi").set_icon("fa-solid fa-drum");
-            $(btn_midi).click(function(){carrot.load_js_page("piano","Midi","carrot.midi.show_list()");});
+            $(btn_midi).click(function(){
+                if(carrot.midi!=null)
+                    carrot.midi.show_list();
+                else
+                    carrot.load_js_page("piano","Midi","carrot.midi.show_list()");
+            });
     
             this.icon=new Carrot_Icon(this); 
             this.audio=new Carrot_Audio(this);

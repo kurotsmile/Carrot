@@ -77,33 +77,74 @@ class Carrot_About_Us{
             html+='<div class="col-md-6">';
                 html+='<div class="shadow-md p-4 rounded bg-white">';
                 html+='<h4 class="fs-6 fw-bolder mb-3">Comments</h4>';
-                html+='<form action="">';
+                html+='<div>';
                     html+='<div class="mb-3">';
                         html+='<label for="exampleFormControlInput1" class="form-label fw-bolder fs-8">Your e-mail</label>';
-                        html+='<input type="email" class="form-control" id="exampleFormControlInput1" placeholder="Enter Email Address">';
+                        html+='<input type="email" class="form-control" id="contact_us_mail" placeholder="Enter Email Address">';
                     html+='</div>';
 
                     html+='<div class="mb-3">';
                         html+='<label for="exampleFormControlInput1" class="form-label fw-bolder fs-8">Mailbox title</label>';
-                        html+='<input type="email" class="form-control" id="exampleFormControlInput1" placeholder="Enter Subject">';
+                        html+='<input type="email" class="form-control" id="contact_us_subject" placeholder="Enter Subject">';
                     html+='</div>';
 
                     html+='<div class="mb-3">';
                         html+='<label for="exampleFormControlTextarea1" class="form-label fw-bolder fs-8">Content</label>';
-                        html+='<textarea class="form-control" placeholder="Enter Message" id="exampleFormControlTextarea1" rows="3"></textarea>';
+                        html+='<textarea class="form-control" placeholder="Enter Message" id="contact_us_content" rows="3"></textarea>';
                     html+='</div>';
-                html+='</form>';
+
+                    html+='<div class="mb-3">';
+                        html+='<button class="form-control btn btn-success bg-success text-white" onclick="carrot.about_us.contact_done();return false;"><i class="fa-solid fa-paper-plane"></i> Done</button>';
+                    html+='</div>';
+
+                html+='</div>';
                 html+='</div>';
             html+='</div>';
 
             html+='<div class="col-md-6">';
                 html+='<div class="shadow-md p-4 rounded bg-white">';
-                html+='<iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d9097.414285908948!2d107.52464417996707!3d16.526525218812548!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3141a71c8ea9125d%3A0x98d4603894583159!2zVGjhu4t0IENow7MgVGhp4buHbiBUdXnhur9uIOG7nyBodeG6vyBtdWEgYsOhbiBjaMOzIHRo4buLdA!5e0!3m2!1spt-PT!2s!4v1686244019774!5m2!1spt-PT!2s" style="width:100%" height="340" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>';
+                    html+='<iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d9097.414285908948!2d107.52464417996707!3d16.526525218812548!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3141a71c8ea9125d%3A0x98d4603894583159!2zVGjhu4t0IENow7MgVGhp4buHbiBUdXnhur9uIOG7nyBodeG6vyBtdWEgYsOhbiBjaMOzIHRo4buLdA!5e0!3m2!1spt-PT!2s!4v1686244019774!5m2!1spt-PT!2s" style="width:100%" height="340" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>';
                 html+='</div>';
                 html+='</div>';
                 html+='</div>';
             html+='</div>';
         html+='</div>';
         return html;
+    }
+
+    contact_done(){
+        var is_error=false;
+        var contact_us_mail=$("#contact_us_mail").val();
+        var contact_us_subject=$("#contact_us_subject").val();
+        var contact_us_content=$("#contact_us_content").val();
+        
+        if(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact_us_mail)==false){
+            is_error=true;
+            carrot.msg("Email is formatted wrong and cannot be blank!","alert");
+        }
+
+        if(contact_us_subject.trim()==""&&is_error==false){
+            is_error=true;
+            carrot.msg("subject cannot be empty!","alert");
+        }
+
+        if(contact_us_content.trim()==""&&is_error==false){
+            is_error=true;
+            carrot.msg("Content cannot be empty!","alert");
+        }
+
+        if(is_error==false){
+            var obj_contact={};
+            obj_contact["mail"]=contact_us_mail;
+            obj_contact["subject"]=contact_us_subject;
+            obj_contact["content"]=contact_us_content;
+            carrot.loading();
+            carrot.server.add_doc("about_us",carrot.server.convertToFirestoreData(obj_contact),(data)=>{
+                carrot.msg("Send successs!","success");
+                $("#contact_us_mail").val('');
+                $("#contact_us_subject").val('');
+                $("#contact_us_content").val('');
+            });
+        }
     }
 }

@@ -49,8 +49,7 @@ class Carrot_Query{
     get_data(act_done){
         fetch(carrot.config.url_server_rest_api[carrot.index_server]+":runQuery", {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: this.toJson()
+            headers: {'Content-Type': 'application/json'}
           })
           .then(response => {
             if (!response.ok) {
@@ -94,8 +93,12 @@ class Carrot_Server{
     }
 
     get_doc(collection,document,act_done,act_fail=null){
-        fetch(carrot.config.url_server_rest_api[carrot.index_server]+"/"+collection+"/"+document)
-            .then((response) => {
+        fetch(carrot.config.url_server_rest_api[carrot.index_server]+"/"+collection+"/"+document,{
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            }
+            }).then((response) => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
@@ -106,6 +109,26 @@ class Carrot_Server{
                 obj_data["id_doc"]=data.name.split("/").pop();
                 act_done(obj_data);
             }).catch((error) => {if(act_fail!=null) act_fail();});
+    }
+
+    add_doc(collection,document_data,act_done=null,act_fail=null){
+        fetch(carrot.config.url_server_rest_api[carrot.index_server]+"/"+collection,{
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(document_data)
+        }).then((response) => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+              return response.json();
+            })
+            .then((data) => {
+                var obj_data=carrot.server.simplifyDocument(data.fields);
+                obj_data["id_doc"]=data.name.split("/").pop();
+                if(act_done!=null) act_done(obj_data);
+        }).catch((error) => {if(act_fail!=null) act_fail();});
     }
 
     simplifyDocument(fields) {
@@ -186,7 +209,8 @@ class Carrot_Server{
             };
           }
         }
-      
-        return firestoreData;
+        var obj={};
+        obj["fields"]=firestoreData;
+        return obj;
     }
 }
