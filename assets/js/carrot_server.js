@@ -49,7 +49,8 @@ class Carrot_Query{
     get_data(act_done){
         fetch(carrot.config.url_server_rest_api[carrot.index_server]+":runQuery", {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'}
+            headers: {'Content-Type': 'application/json'},
+            body: this.toJson()
           })
           .then(response => {
             if (!response.ok) {
@@ -209,6 +210,7 @@ class Carrot_Server{
             };
           }
         }
+
         var obj={};
         obj["fields"]=firestoreData;
         return obj;

@@ -1,5 +1,5 @@
 /* =======================================================================
-Template Name: Store Sun
+Template Name: Youtubers
 Author:  SmartEye Technologies
 Author URI: www.smarteyeapps.com
 Version: 1.0
@@ -7,6 +7,8 @@ coder name:Prabin Raja
 Description: This Template is created for Youtubers
 ======================================================================= */
 /* ===================================== Import Variables ================================== */
+@import url(https://fonts.googleapis.com/css?family=Montserrat:300,400,600,700);
+@import url(https://fonts.googleapis.com/css?family=Arimo:300,400,400italic,600,700,700italic);
 .bg-primary {
   background-color: #1563eb !important;
 }
@@ -15,7 +17,6 @@ Description: This Template is created for Youtubers
   color: #8119f5;
 }
 
-/* ===================================== Basic CSS ==================================== */
 * {
   margin: 0px;
   padding: 0px;
@@ -67,7 +68,8 @@ textarea {
 
 html, body {
   height: 100%;
-  font-family: "Poppins";
+  /*font-family: "Poppins";*/
+  font-family: system-ui;
 }
 
 p {
@@ -95,6 +97,12 @@ p {
   height: 100%;
 }
 
+::-moz-placeholder {
+  color: #747f8a !important;
+  font-size: 13px;
+  opacity: 0.5 !important;
+}
+
 ::placeholder {
   color: #747f8a !important;
   font-size: 13px;
@@ -110,7 +118,6 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 body {
-  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   background-color: #f5f8fc !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -154,7 +161,7 @@ body {
   margin: 0px;
   margin-bottom: 10px;
   padding-bottom: 0px;
-  border-bottom: 1px solid #ccccccc4;
+  border-bottom: 1px solid rgba(204, 204, 204, 0.768627451);
   display: block;
   padding-right: 0px;
 }
@@ -432,7 +439,6 @@ body {
 }
 
 .sticky-top-90 {
-  position: -webkit-sticky;
   position: sticky;
   top: 85px;
   z-index: 1020;
@@ -451,6 +457,7 @@ body {
 }
 
 .width-fit {
+  width: -moz-fit-content;
   width: fit-content;
 }
 
@@ -466,13 +473,13 @@ body {
   width: 45%;
 }
 
+/* ===================================== Main Style ================================== */
 .head {
   position: fixed;
   background-color: #fff;
   width: 260px;
   height: 100vh;
   box-shadow: 0 2px 6px 0 rgba(218, 218, 253, 0.65), 0 2px 6px 0 rgba(206, 206, 238, 0.54);
-  overflow: hidden auto;
 }
 @media screen and (max-width: 991px) {
   .head {
@@ -500,6 +507,7 @@ body {
   text-transform: uppercase;
   font-weight: 600;
   font-size: 0.9rem;
+  cursor: pointer;
 }
 .head .navbar-toggler {
   float: right;
@@ -534,172 +542,4 @@ html {
 
 .ratfac {
   font-size: 0.9rem;
-}
-
-.link_app{
-  margin-right: 5px;
-}
-
-.btn-menu{
-  cursor: pointer;
-}
-
-.btn-menu:hover{
-  background-color: aliceblue;
-}
-
-.dev{
-  display: none;
-}
-
-.btn-menu.dev{
-  background-color: #f3f0f0;
-}
-/*# sourceMappingURL=style.css.map */
-
-*::-webkit-scrollbar,
-*::-webkit-scrollbar-thumb {
-  width: 26px;
-  border-radius: 13px;
-  background-clip: padding-box;
-  border: 12px solid transparent;
-}
-
-*::-webkit-scrollbar-thumb {        
-  box-shadow: inset 0 0 0 10px;
-}
-
-.music-player {
-  background: white;
-  border-radius: 15px;
-  box-shadow: 0 0 14px 0px #233507;
-  width: 300px;
-  overflow: hidden;
-  margin: 50px auto;
-  position: fixed;
-  bottom: -29px;
-  right: 10px;
-  z-index: 1000;
-}
-.music-player--banner {
-  background-image: url('../../images/logo.jpg');
-  background-size: 100% auto !important;
-  background-repeat: no-repeat;
-  background-position: center;
-  height: 150px;
-  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
-  position:relative;
-  z-index:1;
-}
-.music-player--main {
-  /* height: 100px; */
-}
-.music-player--progress {
-  position: relative;
-  overflow:auto;
-  padding: 5px;
-
-}
-.progress--progress-bar {
-  position: absolute;
-  width: 100%;
-  top: -1px;
-  left: 0;
-  -webkit-appearance: none;
-  height: 3px;
-  z-index:2
-}
-.progress--progress-bar::-webkit-progress-bar {
-    height: 4px;
-    background: transparent;
- }
-.progress--progress-bar::-webkit-progress-value {
-  background: #ED5483;
- }
-
-.progress--time {
-  color: #A9A9A9;
-  font-size: 10px;
-  float: left;
-}
-.progress--time__end {
-  float: right;
-}
-
-.music-player--controls {
-  padding: 0px 20px 20px;
-}
-.controls--play-button {
-  display:inline-block;
-  border-radius: 50%;
-  color: white;
-  font-size: 18px;
-  cursor: pointer;
-}
-
-.song-info {
-  display:inline-block;
-  position:relative;
-  top:5px;
-  margin-left:5px;
-  width: 208px;
-  font-size: xx-small;
-}
-.song-info--title {
-  font-size: 13px;
-  color: #444;
-}
-.song-info--artist {
-  font-size: 12px;
-  color: #8E8E8E;
-}
-
-.controls--actions {
-  display: block;
-  z-index: 100;
-  position: absolute;
-  width: 200px;
-  right: -105px;
-  bottom: 12px;
-}
-.controls--actions i {
-  color: #000000;
-  cursor: pointer;
-  margin: 1px;
-  background-color: #c5c5c5;
-  padding: 4px;
-  border-radius: 16px;
-  font-size: 12px;
-}
-
-.controls--actions i:hover{
-  background-color: black;
-  color: #c5c5c5;
-}
-
-.btn-menu{
-  font-weight: bold !important;
-}
-
-#btn_mm_play{
-  display: inline-block;
-  width: 46px;
-  font-size: 33px;
-  color: yellowgreen;
-  text-align: center;
-}
-
-#btn_mm_play:hover{
-  color: black;
-}
-
-.ui-effects-transfer {
-  border: 3px solid yellowgreen;
-  border-radius: 15px;
-  background-color: #89c52927;
-}
-
-body:not(.modal-open){
-  padding-right: 0px !important;
-}
-/*# sourceMappingURL=style.css.map */
+}/*# sourceMappingURL=style.css.map */
