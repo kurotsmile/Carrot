@@ -1319,7 +1319,8 @@ class Carrot_Site{
 
     url(){
         var base_url=window.location.origin;
-        if(base_url=="kurotsmile.github.io"){
+        console.log("url:"+base_url);
+        if(base_url=="http://kurotsmile.github.io"){
             return base_url+"/Carrot";
         }else{
             return window.location.origin;
