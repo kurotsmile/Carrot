@@ -243,6 +243,14 @@ class Carrot_Site{
                 else
                     carrot.load_js_page("piano","Midi","carrot.midi.show_list()");
             });
+
+            var btn_ico=this.menu.create("btn_ico").set_label("Icon").set_lang("icon").set_icon("fa-solid fa-face-smile");
+            $(btn_ico).click(function(){
+                if(carrot.ico!=null)
+                    carrot.ico.show();
+                else
+                    carrot.load_js_page("ico","ico","carrot.ico.show()");
+            });
     
             this.icon=new Carrot_Icon(this); 
             this.audio=new Carrot_Audio(this);

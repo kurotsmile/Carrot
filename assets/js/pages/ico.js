@@ -47,7 +47,7 @@ class Carrot_Ico{
 
     info(data){
         var box=new Carrot_Info();
-        box.set_title("sdsd");
+        box.set_title(data.name);
         carrot.show(box.html());
     }
 
@@ -56,9 +56,9 @@ class Carrot_Ico{
         html+='<div class="row mb-2">';
         html+='<div class="col-12">';
             html+='<div class="btn-group mr-2 btn-sm" role="group" aria-label="First group">';
-                html+='<button onclick="carrot.icon.add();" class="btn btn-sm dev btn-success"><i class="fa-solid fa-square-plus"></i> Add Icon</button>';
-                html+='<button onclick="carrot.icon.add_category();" class="btn dev btn-sm btn-success"><i class="fa-solid fa-square-plus"></i> Add Category</button>';
-                html+='<button onclick="carrot.icon.delete_all_data();return false;" class="btn btn-danger dev btn-sm"><i class="fa-solid fa-dumpster-fire"></i> Delete All data</button>';
+                html+='<button onclick="carrot.ico.add();" class="btn btn-sm dev btn-success"><i class="fa-solid fa-square-plus"></i> Add Icon</button>';
+                html+='<button onclick="carrot.ico.add_category();" class="btn dev btn-sm btn-success"><i class="fa-solid fa-square-plus"></i> Add Category</button>';
+                html+='<button onclick="carrot.ico.delete_all_data();return false;" class="btn btn-danger dev btn-sm"><i class="fa-solid fa-dumpster-fire"></i> Delete All data</button>';
                 html+='<div class="btn-group" role="group">';
                     html+='<button class="btn btn-secondary dropdown-toggle btn-sm" type="button" id="btn_list_icon_category" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-rectangle-list"></i> Category ('+carrot.icon.cur_show_icon_category+')</button>';
                     html+='<div class="dropdown-menu" aria-labelledby="btn_list_ebook_category" id="list_icon_category">';
@@ -67,7 +67,7 @@ class Carrot_Ico{
                         $(carrot.ico.obj_icon_category).each(function(index,cat){
                             if(cat.key==carrot.ico.cur_show_icon_category) css_active="btn-success";
                             else css_active="btn-secondary";
-                            html+='<button role="button" onclick="carrot.icon.select_show_category(\''+cat.key+'\')" class="dropdown-item btn '+css_active+'"><i class="'+cat.icon+'"></i> '+cat.key+'</button>';
+                            html+='<button role="button" onclick="carrot.ico.select_show_category(\''+cat.key+'\')" class="dropdown-item btn '+css_active+'"><i class="'+cat.icon+'"></i> '+cat.key+'</button>';
                         });
                     html+='</div>';
                 html+='</div>';
@@ -76,7 +76,7 @@ class Carrot_Ico{
             html+='<div class="btn-group mr-2 btn-sm float-end" role="group" aria-label="Last group">';
                 var css_active="";
                 if(this.type_show=="list_icon") css_active="active"; else css_active="";
-                html+='<button onclick="carrot.icon.list();" class="btn btn-sm btn-success '+css_active+'"><i class="fa-regular fa-rectangle-list"></i> List Icon</button>';
+                html+='<button onclick="carrot.ico.show();" class="btn btn-sm btn-success '+css_active+'"><i class="fa-regular fa-rectangle-list"></i> List Icon</button>';
                 if(this.type_show=="list_category") css_active="active"; else css_active="";
                 html+='<button onclick="carrot.icon.list_category();" class="btn btn-sm btn-success '+css_active+'"><i class="fa-solid fa-rectangle-list"></i> List Category</button>';
             html+='</div>';
@@ -84,6 +84,67 @@ class Carrot_Ico{
         html+='</div>';
         html+='</div>';
         return html;
+    }
+
+    add(){
+        var data_icon=new Object();
+        data_icon["id"]="icon"+this.carrot.create_id();
+        data_icon["name"]="";
+        data_icon["icon"]="";
+        data_icon["color"]="";
+        data_icon["category"]="";
+        data_icon["date_create"]=new Date().toISOString();
+        this.add_or_edit(data_icon).set_title("Add icon").set_msg_done("Add icon success!").show();
+    }
+
+    edit(data_icon,carrot){
+        carrot.icon.add_or_edit(data_icon).set_title("Update icon").set_msg_done("Update icon success!").show();
+    }
+
+    add_or_edit(data){
+        var frm=new Carrot_Form("frm_icon",carrot);
+        frm.set_db("icon","id");
+        frm.set_icon_font(this.icon);
+        frm.create_field("id").set_label("ID").set_val(data["id"]).set_type("id").set_main();
+        frm.create_field("name").set_label("Name").set_val(data["name"]);
+        frm.create_field("icon").set_label("Icon").set_val(data["icon"]).set_type("file").set_type_file("image/*");
+        frm.create_field("color").set_label("Color").set_val(data["color"]).set_type("color");
+        var category_field=frm.create_field("category").set_label("Category").set_val(data["category"]).set_type("select");
+        category_field.add_option("","Unknown");
+        var list_category=this.carrot.obj_to_array(this.obj_icon_category);
+        $(list_category).each(function(index,category){
+            category_field.add_option(category.key,category.key);
+        });
+        frm.create_field("date_create").set_label("Date Create").set_val(data["date_create"]);
+        return frm;
+    }
+
+    add_category(){
+        var data_new=new Object();
+        data_new["key"]="";
+        data_new["icon"]="";
+        data_new["buy"]="free";
+        this.add_or_edit_category(data_new).set_title("Add Category").set_msg_done("Add Icon Category Success!!!").show();
+    }
+
+    edit_category(data,carrot){
+        carrot.ico.add_or_edit_category(data).set_title("Edit Category").set_msg_done("Update Icon Category Success!!!").show();
+    }
+
+    add_or_edit_category(data){
+        var frm=new Carrot_Form("frm_icon_category",carrot);
+        frm.set_db("icon_category","key");
+        frm.set_icon_font("fa-solid fa-rectangle-list");
+        frm.create_field("key").set_label("Name Key").set_val(data["key"]).set_main();
+        frm.create_field("icon").set_label("Icon (Font)").set_val(data["icon"]);
+        var field_buy=frm.create_field("buy").set_label("Status Buy").set_val(data["buy"]).set_type("select");
+        field_buy.add_option("free","Free");
+        field_buy.add_option("buy","buy");
+        return frm;
+    }
+
+    delete_all_data(){
+        carrot.msg("Delete all data success!");
     }
 }
 carrot.ico=new Carrot_Ico();
