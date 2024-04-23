@@ -16,8 +16,14 @@ class Carrot_Ico{
                 data["index"]=index;
                 $("#all_icon").append(carrot.ico.box_icon_item(data));
             });
-            carrot.check_event();
+            carrot.ico.check_event();
         });
+    }
+
+    check_event(){
+        console.log(carrot.ico.obj_icon_category);
+        if(carrot.ico.obj_icon_category.length==0) carrot.ico.get_all_data_category();
+        carrot.check_event();
     }
 
     box_icon_item(data_icon,s_class="col-md-2 mb-2 col-sm-3"){
@@ -61,15 +67,7 @@ class Carrot_Ico{
                 html+='<button onclick="carrot.ico.delete_all_data();return false;" class="btn btn-danger dev btn-sm"><i class="fa-solid fa-dumpster-fire"></i> Delete All data</button>';
                 html+='<div class="btn-group" role="group">';
                     html+='<button class="btn btn-secondary dropdown-toggle btn-sm" type="button" id="btn_list_icon_category" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-rectangle-list"></i> Category ('+carrot.icon.cur_show_icon_category+')</button>';
-                    html+='<div class="dropdown-menu" aria-labelledby="btn_list_ebook_category" id="list_icon_category">';
-                        var css_active='';
-                        carrot.ico.obj_icon_category.push({key:"all",icon:"fa-solid fa-rectangle-list"});
-                        $(carrot.ico.obj_icon_category).each(function(index,cat){
-                            if(cat.key==carrot.ico.cur_show_icon_category) css_active="btn-success";
-                            else css_active="btn-secondary";
-                            html+='<button role="button" onclick="carrot.ico.select_show_category(\''+cat.key+'\')" class="dropdown-item btn '+css_active+'"><i class="'+cat.icon+'"></i> '+cat.key+'</button>';
-                        });
-                    html+='</div>';
+                    html+='<div class="dropdown-menu" aria-labelledby="btn_list_ebook_category" id="list_icon_category"></div>';
                 html+='</div>';
             html+='</div>';
 
@@ -141,6 +139,30 @@ class Carrot_Ico{
         field_buy.add_option("free","Free");
         field_buy.add_option("buy","buy");
         return frm;
+    }
+
+    get_all_data_category(){
+        carrot.server.get_collection("icon_category",carrot.ico.get_all_data_category_done);
+    }
+
+    get_all_data_category_done(icons){
+        console.log(icons);
+        carrot.ico.obj_icon_category=icons;
+        carrot.ico.show_data_to_dropdown_category_icon();
+    }
+
+    show_data_to_dropdown_category_icon(){
+        console.log(carrot.ico.obj_icon_category);
+        var html='';
+        var css_active='';
+        carrot.ico.obj_icon_category.push({key:"all",icon:"fa-solid fa-rectangle-list"});
+        $(carrot.ico.obj_icon_category).each(function(index,cat){
+            cat.index=index;
+            if(cat.key==carrot.ico.cur_show_icon_category) css_active="btn-success";
+            else css_active="btn-secondary";
+            html+='<button role="button" onclick="carrot.icon.select_show_category(\''+cat.key+'\')" class="dropdown-item btn '+css_active+'"><i class="'+cat.icon+'"></i> '+cat.key+'</button>';
+        });
+        $("#list_icon_category").html(html);
     }
 
     delete_all_data(){
