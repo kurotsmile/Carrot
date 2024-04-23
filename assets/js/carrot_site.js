@@ -1202,8 +1202,6 @@ class Carrot_Site{
         Swal.fire({
             title: 'Please wait...',
             html: msg+'<i class="fa-solid fa-ghost fa-bounce"></i> <i class="fa-solid fa-ghost fa-beat-fade" style="color: green;"></i> <i class="fa-solid fa-ghost fa-bounce"></i> <i class="fa-solid fa-ghost fa-beat-fade" style="color: green;"></i> <i class="fa-solid fa-ghost fa-flip" style="color: #63E6BE;"></i>',
-            allowEscapeKey: false,
-            allowOutsideClick: false,
             didOpen: () => {
               Swal.showLoading()
             }
@@ -1319,7 +1317,6 @@ class Carrot_Site{
 
     url(){
         var base_url=window.location.origin;
-        console.log("url:"+base_url);
         if(base_url=="https://kurotsmile.github.io"){
             return base_url+"/Carrot";
         }else{
