@@ -163,6 +163,10 @@ class Carrot_Info{
         this.id=s_id;
     }
 
+    set_title(s_title){
+        this.name=s_title;
+    }
+
     set_name(s_name){
         this.name=s_name;
     }
