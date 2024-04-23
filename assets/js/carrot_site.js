@@ -954,9 +954,7 @@ class Carrot_Site{
                 }
                 $("#load_bar").css("width","100%");
             }else{
-                this.load_bar();
-                $("#load_bar").css("width","100%");
-                this.load_js_page("home");
+                this.load_js_page(this.id_page);
             };
         }else{
             var id_page=this.get_param_url("page");
