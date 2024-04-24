@@ -9,6 +9,7 @@ class Carrot_Ico{
         q.set_limit(54);
         q.get_data((icons)=>{
             carrot.hide_loading();
+            carrot.change_title_page("Icon", "?page=ico","icon");
             var  html=carrot.ico.menu();
             html+='<div id="all_icon" class="row m-0"></div>';
             carrot.show(html);
