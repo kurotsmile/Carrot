@@ -157,10 +157,9 @@ class Carrot_Ico{
     }
 
     show_data_to_dropdown_category_icon(){
-        console.log(carrot.ico.obj_icon_category);
         var html='';
         var css_active='';
-        carrot.ico.obj_icon_category.push({key:"all",icon:"fa-solid fa-rectangle-list"});
+        if(carrot.ico.obj_icon_category.length==0) carrot.ico.obj_icon_category.push({key:"all",icon:"fa-solid fa-rectangle-list"});
         $(carrot.ico.obj_icon_category).each(function(index,cat){
             cat.index=index;
             if(cat.key==carrot.ico.cur_show_icon_category) css_active="btn-success";
