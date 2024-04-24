@@ -2,14 +2,16 @@ class Carrot_Ico{
 
     obj_icon_category=[];
     cur_show_icon_category="all";
-    
+    type_show="list_icon";
+
     show(){
         carrot.loading("Get all icon data");
         var q=new Carrot_Query("icon");
+        if(carrot.ico.cur_show_icon_category!="all") q.add_where("category",carrot.ico.cur_show_icon_category);
         q.set_limit(54);
         q.get_data((icons)=>{
             carrot.hide_loading();
-            carrot.change_title_page("Icon", "?page=ico","icon");
+            carrot.change_title_page("Icon -"+carrot.ico.cur_show_icon_category, "?page=ico","icon");
             var  html=carrot.ico.menu();
             html+='<div id="all_icon" class="row m-0"></div>';
             carrot.show(html);
@@ -77,7 +79,7 @@ class Carrot_Ico{
                 if(this.type_show=="list_icon") css_active="active"; else css_active="";
                 html+='<button onclick="carrot.ico.show();" class="btn btn-sm btn-success '+css_active+'"><i class="fa-regular fa-rectangle-list"></i> List Icon</button>';
                 if(this.type_show=="list_category") css_active="active"; else css_active="";
-                html+='<button onclick="carrot.icon.list_category();" class="btn btn-sm btn-success '+css_active+'"><i class="fa-solid fa-rectangle-list"></i> List Category</button>';
+                html+='<button onclick="carrot.ico.show_list_category();" class="btn btn-sm btn-success '+css_active+'"><i class="fa-solid fa-rectangle-list"></i> List Category</button>';
             html+='</div>';
 
         html+='</div>';
@@ -143,7 +145,10 @@ class Carrot_Ico{
     }
 
     get_all_data_category(){
-        carrot.server.get_collection("icon_category",carrot.ico.get_all_data_category_done);
+        var q=new Carrot_Query("icon_category");
+        q.get_data((datas)=>{
+            carrot.ico.get_all_data_category_done(datas);
+        });
     }
 
     get_all_data_category_done(icons){
@@ -164,6 +169,39 @@ class Carrot_Ico{
             html+='<button role="button" onclick="carrot.icon.select_show_category(\''+cat.key+'\')" class="dropdown-item btn '+css_active+'"><i class="'+cat.icon+'"></i> '+cat.key+'</button>';
         });
         $("#list_icon_category").html(html);
+    }
+
+    show_list_category(){
+        var html='';
+        carrot.change_title_page("Icon Catgeory","?page=icon_category","icon_category");
+        carrot.ico.type_show="list_category";
+
+        html+=carrot.ico.menu();
+        html+='<div class="row">';
+        $(carrot.ico.obj_icon_category).each(function(index,category){
+            var item_cat_icon=new Carrot_List_Item(carrot);
+            item_cat_icon.set_title(category.key);
+            item_cat_icon.set_index(index);
+            item_cat_icon.set_db("icon_category");
+            if(category.icon!=null) item_cat_icon.set_icon_font(category.icon+" icon_catgeory");
+            item_cat_icon.set_obj_js("icon");
+            item_cat_icon.set_id(category.key);
+            item_cat_icon.set_act_edit("carrot.ico.edit_category");
+            item_cat_icon.set_class("col-md-4 mb-3");
+            item_cat_icon.set_class_icon("col-2");
+            item_cat_icon.set_class_body("col-10");
+            if(category.buy=="buy") item_cat_icon.set_body('<i class="fa-solid fa-cart-shopping text-success text-end"></i>');
+            item_cat_icon.set_act_click("carrot.ico.select_show_category('"+category.id_doc+"')");
+            html+=item_cat_icon.html();
+        });
+        html+='</div>';
+        carrot.show(html);
+        carrot.check_event();
+    }
+
+    select_show_category(key_category){
+        carrot.ico.cur_show_icon_category=key_category;
+        carrot.ico.show();
     }
 
     delete_all_data(){
