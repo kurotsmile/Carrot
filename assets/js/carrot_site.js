@@ -1290,7 +1290,6 @@ class Carrot_Site{
     }
 
     load_js_page(file_name_js_page, className=null, callback=null) {
-
         var url="assets/js/pages/"+file_name_js_page+".js?ver="+this.get_ver_cur("js");
         if(className!=null){
             if (window.hasOwnProperty(className)) {
@@ -1317,7 +1316,7 @@ class Carrot_Site{
             }
         })
         .catch(error => {
-            console.error('Error loading script:', error);
+            carrot.home_page();
         });
     }
 
