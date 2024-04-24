@@ -24,8 +24,8 @@ class Carrot_Ico{
     }
 
     check_event(){
-        console.log(carrot.ico.obj_icon_category);
-        if(carrot.ico.obj_icon_category.length==0) carrot.ico.get_all_data_category();
+        if(carrot.ico.obj_icon_category.length<=1) carrot.ico.get_all_data_category();
+        else carrot.ico.show_data_to_dropdown_category_icon();
         carrot.check_event();
     }
 
@@ -152,7 +152,6 @@ class Carrot_Ico{
     }
 
     get_all_data_category_done(icons){
-        console.log(icons);
         carrot.ico.obj_icon_category=icons;
         carrot.ico.show_data_to_dropdown_category_icon();
     }
@@ -166,7 +165,7 @@ class Carrot_Ico{
             cat.index=index;
             if(cat.key==carrot.ico.cur_show_icon_category) css_active="btn-success";
             else css_active="btn-secondary";
-            html+='<button role="button" onclick="carrot.icon.select_show_category(\''+cat.key+'\')" class="dropdown-item btn '+css_active+'"><i class="'+cat.icon+'"></i> '+cat.key+'</button>';
+            html+='<button role="button" onclick="carrot.ico.select_show_category(\''+cat.key+'\')" class="dropdown-item btn '+css_active+'"><i class="'+cat.icon+'"></i> '+cat.key+'</button>';
         });
         $("#list_icon_category").html(html);
     }
@@ -196,7 +195,7 @@ class Carrot_Ico{
         });
         html+='</div>';
         carrot.show(html);
-        carrot.check_event();
+        carrot.ico.check_event();
     }
 
     select_show_category(key_category){
