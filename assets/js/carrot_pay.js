@@ -206,8 +206,8 @@ class Carrot_Pay{
         var attr_limit_api_chat=new Carrot_Product_Attribute(this.carrot.ai.chat.icon,"Limit Api chat").limit();
         var attr_unlimit_api_chat=new Carrot_Product_Attribute(this.carrot.ai.chat.icon,"UnLimit Api chat").unlimit();
 
-        var attr_none_public_app=new Carrot_Product_Attribute(this.carrot.app.icon,"No Public App").none();
-        var attr_dev_public_app=new Carrot_Product_Attribute(this.carrot.app.icon,"Public Your App").unlimit();
+        var attr_none_public_app=new Carrot_Product_Attribute("fa-solid fa-tablet-screen-button","No Public App").none();
+        var attr_dev_public_app=new Carrot_Product_Attribute("fa-solid fa-tablet-screen-button","Public Your App").unlimit();
 
         //Product Item
         var free_package=new Carrot_Product(this.carrot);
