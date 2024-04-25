@@ -150,8 +150,10 @@ class Carrot_Info{
     s_icon_id="";
     s_icon_font="";
     s_icon_image="";
+    s_icon_col_class="col-md-4";
     s_related_title="";
     s_obj_js="";
+    s_protocol_url="";
 
     s_db="";
     list_attr=[];
@@ -182,6 +184,10 @@ class Carrot_Info{
     set_icon_id(id){
         this.s_icon_id=id;
     }
+
+    set_icon_col_class(s_class){
+        this.s_icon_col_class=s_class;
+    }
     
     set_db(s_name_db){
         this.s_db=s_name_db;
@@ -193,6 +199,10 @@ class Carrot_Info{
 
     set_related_title(title){
         this.s_related_title=title;
+    }
+
+    set_protocol_url(url){
+        this.s_protocol_url=url;
     }
 
     add_related(data){
@@ -224,7 +234,7 @@ class Carrot_Info{
             html+='<div class="col-md-8 ps-4 ps-lg-3">';
                 html+='<div class="row bg-white shadow-sm">';
 
-                    html+='<div class="col-md-4 p-3 text-center">';
+                    html+='<div class="'+this.s_icon_col_class+' p-3 text-center">';
                         if(this.s_icon_image!="") html+='<img class="w-100" id="'+this.s_icon_id+'" src="'+this.s_icon_image+'" alt="Info Icon">';
                         if(this.s_icon_font!="") html+='<i class="w-100 '+this.s_icon_font+' fa-5x" id="'+this.s_icon_id+'" alt="Info Icon"></i>';
                     html+='</div>';
@@ -247,7 +257,7 @@ class Carrot_Info{
                         html+='<div class="row pt-4">';
                             html+='<div class="col-12 text-center">';
                             html+='<button id="btn_share" type="button" class="btn d-inline btn-success"><i class="fa-solid fa-share-nodes"></i> <l class="lang" key_lang="share">Share</l> </button> ';
-                            html+='<button id="register_protocol_url" type="button"  class="btn d-inline btn-success"><i class="fa-solid fa-rocket"></i> <l class="lang" key_lang="open_with">Open with..</l> </button>';
+                            if(this.s_protocol_url!="") html+='<a href="'+this.s_protocol_url+'" id="register_protocol_url" type="button"  class="btn d-inline btn-success"><i class="fa-solid fa-rocket"></i> <l class="lang" key_lang="open_with">Open with..</l> </a>';
                             html+='</div>';
                         html+='</div>';
 

@@ -5,6 +5,10 @@ class Carrot_Ico{
     type_show="list_icon";
 
     show(){
+        carrot.ico.show_list_icon();
+    }
+
+    show_list_icon(){
         carrot.loading("Get all icon data");
         var q=new Carrot_Query("icon");
         if(carrot.ico.cur_show_icon_category!="all") q.add_where("category",carrot.ico.cur_show_icon_category);
@@ -16,6 +20,7 @@ class Carrot_Ico{
             html+='<div id="all_icon" class="row m-0"></div>';
             carrot.show(html);
             $(icons).each(function(index,data){
+                carrot.data.add("icons",data);
                 data["index"]=index;
                 $("#all_icon").append(carrot.ico.box_icon_item(data));
             });
@@ -55,9 +60,22 @@ class Carrot_Ico{
     }
 
     info(data){
-        var box=new Carrot_Info();
+        carrot.change_title_page(data.id_doc,"?page=icon&id="+data.id_doc,"ico");
+        var html='';
+        html+=carrot.ico.menu();
+        var box=new Carrot_Info(data.id_doc);
+        box.set_db("icon");
+        box.set_obj_js("ico");
         box.set_title(data.name);
-        carrot.show(box.html());
+        box.set_icon_image(data.icon);
+        box.set_icon_col_class("col-1");
+        box.add_attrs("fa-solid fa-guitar",'<l class="lang" key_lang="genre">Category</l>',data.category);
+        box.add_attrs("fa-solid fa-file",'<l class="lang" key_lang="file">File</l>',data.name+".zip");
+        box.add_attrs("fa-solid fa-palette",'Color',data.color);
+
+        html+=box.html();
+        carrot.show(html);
+        carrot.ico.check_event();
     }
 
     menu(){
@@ -77,7 +95,7 @@ class Carrot_Ico{
             html+='<div class="btn-group mr-2 btn-sm float-end" role="group" aria-label="Last group">';
                 var css_active="";
                 if(this.type_show=="list_icon") css_active="active"; else css_active="";
-                html+='<button onclick="carrot.ico.show();" class="btn btn-sm btn-success '+css_active+'"><i class="fa-regular fa-rectangle-list"></i> List Icon</button>';
+                html+='<button onclick="carrot.ico.show_list_icon();" class="btn btn-sm btn-success '+css_active+'"><i class="fa-regular fa-rectangle-list"></i> List Icon</button>';
                 if(this.type_show=="list_category") css_active="active"; else css_active="";
                 html+='<button onclick="carrot.ico.show_list_category();" class="btn btn-sm btn-success '+css_active+'"><i class="fa-solid fa-rectangle-list"></i> List Category</button>';
             html+='</div>';
@@ -147,6 +165,9 @@ class Carrot_Ico{
     get_all_data_category(){
         var q=new Carrot_Query("icon_category");
         q.get_data((datas)=>{
+            $(datas).each(function(index,cat){
+                carrot.data.add("icon_category",cat);
+            });
             carrot.ico.get_all_data_category_done(datas);
         });
     }

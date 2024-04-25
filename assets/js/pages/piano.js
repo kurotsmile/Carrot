@@ -206,19 +206,15 @@ class Midi{
 
     info(data,carrot){
         var s_icon="";
-        var s_color_status="";
         carrot.change_title_page(data.name,"?page=piano&id="+data.id,"Midi");
         var box_info=new Carrot_Info();
         box_info.set_name(data.name);
         
-        if(data.status=="public"){
+        if(data.status=="public")
             s_icon="fa-solid fa-guitar";
-            s_color_status="text-success";
-        }else{
+        else
             s_icon="fa-brands fa-hashnode";
-            s_color_status="text-warning";
-        }
-
+           
         box_info.set_icon_font(s_icon);
         box_info.add_attrs("fa-solid fa-file-code",'<l class="lang" key_lang="file">File</l>',data.name+".midi");
         if(data.category!="") box_info.add_attrs("fa-solid fa-boxes-packing",'<l class="lang" key_lang="category">Category</l>',data.category);
@@ -227,6 +223,7 @@ class Midi{
             box_info.add_attrs("fa-solid fa-user-nurse",'<l class="lang" key_lang="author">Author</l>',data.user_id);
         }
         box_info.add_contain(carrot.midi.box_midi(data));
+        box_info.set_protocol_url("midi://show/"+data.id);
 
         $(carrot.midi.objs).each(function(index,m){
             if(index>=12) return false;
