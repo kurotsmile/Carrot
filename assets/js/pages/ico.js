@@ -62,7 +62,7 @@ class Carrot_Ico{
 
     info(data){
         carrot.ico.obj_icon_info_cur=data;
-        carrot.change_title_page(data.id_doc,"?page=icon&id="+data.id_doc,"ico");
+        carrot.change_title_page(data.id_doc,"?page=ico&id="+data.id_doc,"ico");
         var html='';
         html+=carrot.ico.menu();
         var box=new Carrot_Info(data.id_doc);
@@ -76,10 +76,8 @@ class Carrot_Ico{
         box.add_attrs("fa-solid fa-palette",'Color',data.color);
         box.add_attrs("fa-regular fa-calendar-check",'Date create',data.date_create);
 
-        if(carrot.ico.check_pay(data.id_doc))
-            box.add_btn("btn_download","fa-solid fa-file-arrow-down","Download","carrot.ico.act_download()");
-        else
-            box.add_btn("btn_pay","fa-brands fa-paypal","Download","carrot.ico.act_download()");
+        box.add_btn("btn_download","fa-solid fa-file-arrow-down","Download","carrot.ico.act_download()");
+        box.add_btn("btn_pay","fa-brands fa-paypal","Download","carrot.ico.pay()");
 
         var html_previewImage="";
         html_previewImage+='<div id="previewImage" class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
@@ -111,7 +109,16 @@ class Carrot_Ico{
 
         html+=box.html();
         carrot.show(html);
-        carrot.file.get_base64data_file(data.ico).then((data_img)=>{
+
+        if(carrot.ico.check_pay(data.id_doc)){
+            $("#btn_download").show();
+            $("#btn_pay").hide();
+        }else{
+            $("#btn_download").hide();
+            $("#btn_pay").show();
+        }
+
+        carrot.file.get_base64data_file(data.icon).then((data_img)=>{
 
             carrot.ico.resizeImage(data_img, 64, 64).then((result) => {
                 carrot.ico.data_icon_64=carrot.ico.makeblob(result);
@@ -130,7 +137,19 @@ class Carrot_Ico{
             });
 
         });
+
         carrot.ico.check_event();
+    }
+
+    pay(){
+        carrot.show_pay("icon","Download Icon ("+carrot.ico.obj_icon_info_cur.name+")","Get file icon","1.99",carrot.ico.pay_success);
+    }
+
+    pay_success(carrot){
+        $("#btn_download").show();
+        $("#btn_pay").hide();
+        localStorage.setItem("buy_icon_"+carrot.ico.obj_icon_info_cur.id_doc,"1");
+        carrot.ico.act_download();
     }
 
     makeblob(dataURL) {
@@ -227,18 +246,18 @@ class Carrot_Ico{
     }
 
     add(){
-        var data_icon=new Object();
-        data_icon["id"]="icon"+this.carrot.create_id();
+        var data_icon={};
+        data_icon["id"]="icon"+carrot.create_id();
         data_icon["name"]="";
         data_icon["icon"]="";
         data_icon["color"]="";
         data_icon["category"]="";
         data_icon["date_create"]=new Date().toISOString();
-        this.add_or_edit(data_icon).set_title("Add icon").set_msg_done("Add icon success!").show();
+        carrot.ico.add_or_edit(data_icon).set_title("Add icon").set_msg_done("Add icon success!").show();
     }
 
     edit(data_icon,carrot){
-        carrot.icon.add_or_edit(data_icon).set_title("Update icon").set_msg_done("Update icon success!").show();
+        carrot.ico.add_or_edit(data_icon).set_title("Update icon").set_msg_done("Update icon success!").show();
     }
 
     add_or_edit(data){
