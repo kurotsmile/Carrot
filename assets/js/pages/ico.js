@@ -3,6 +3,7 @@ class Carrot_Ico{
     obj_icon_category=[];
     cur_show_icon_category="all";
     type_show="list_icon";
+    obj_icon_info_cur=null;
 
     show(){
         carrot.ico.show_list_icon();
@@ -60,6 +61,7 @@ class Carrot_Ico{
     }
 
     info(data){
+        carrot.ico.obj_icon_info_cur=data;
         carrot.change_title_page(data.id_doc,"?page=icon&id="+data.id_doc,"ico");
         var html='';
         html+=carrot.ico.menu();
@@ -75,9 +77,9 @@ class Carrot_Ico{
         box.add_attrs("fa-regular fa-calendar-check",'Date create',data.date_create);
 
         if(carrot.ico.check_pay(data.id_doc))
-            box.add_btn("btn_download","fa-solid fa-file-arrow-down","Download","alert('1');");
+            box.add_btn("btn_download","fa-solid fa-file-arrow-down","Download","carrot.ico.act_download()");
         else
-            box.add_btn("btn_pay","fa-brands fa-paypal","Download","alert('1');");
+            box.add_btn("btn_pay","fa-brands fa-paypal","Download","carrot.ico.act_download()");
 
         var html_previewImage="";
         html_previewImage+='<div id="previewImage" class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
@@ -88,19 +90,113 @@ class Carrot_Ico{
             html_previewImage+='<div class="col-3 text-center">24x24<br/><img src="'+data.icon+'" style="width:24px;"/></div>';
             html_previewImage+='<div class="col-3 text-center">16x16<br/><img src="'+data.icon+'" style="width:16px;"/></div>';
         html_previewImage+='</div>';
+
+        html_previewImage+='<div class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
+            html_previewImage+='<h4 class="fw-semi fs-5 lang" key_lang="describe_folder">Directory structure and extended functions</h4>';
+            html_previewImage+='<div class="treeview w-20 border">';
+            html_previewImage+='<h6 class="pt-3 pl-3">Folders</h6>';
+            html_previewImage+='<hr>';
+            html_previewImage+='<ul class="mb-1 pl-3 pb-2">';
+                html_previewImage+='<li><i class="fa-solid fa-file-zipper"></i> '+data.name+'.zip</li>';
+                html_previewImage+='<li>&nbsp;<i class="fa-solid fa-folder"></i> png</li>';
+                html_previewImage+='<li>&nbsp;&nbsp;<i class="fa-solid fa-caret-right"></i> <i class="fa-solid fa-file"></i> 64.png</li>';
+                html_previewImage+='<li>&nbsp;&nbsp;<i class="fa-solid fa-caret-right"></i> <i class="fa-solid fa-file"></i> 32.png</li>';
+                html_previewImage+='<li>&nbsp;&nbsp;<i class="fa-solid fa-caret-right"></i> <i class="fa-solid fa-file"></i> 24.png</li>';
+                html_previewImage+='<li>&nbsp;&nbsp;<i class="fa-solid fa-caret-right"></i> <i class="fa-solid fa-file"></i> 16.png</li>';
+            html_previewImage+='</ul>';
+            html_previewImage+='</div>';
+        html_previewImage+='</div>';
         
         box.add_contain(html_previewImage);
 
         html+=box.html();
         carrot.show(html);
+        carrot.file.get_base64data_file(data.ico).then((data_img)=>{
+
+            carrot.ico.resizeImage(data_img, 64, 64).then((result) => {
+                carrot.ico.data_icon_64=carrot.ico.makeblob(result);
+            });
+
+            carrot.ico.resizeImage(data_img, 32, 32).then((result) => {
+                carrot.ico.data_icon_32=carrot.ico.makeblob(result);
+            });
+
+            carrot.ico.resizeImage(data_img, 24, 24).then((result) => {
+                carrot.ico.data_icon_24=carrot.ico.makeblob(result);
+            });
+
+            carrot.ico.resizeImage(data_img, 16, 16).then((result) => {
+                carrot.ico.data_icon_16=carrot.ico.makeblob(result);
+            });
+
+        });
         carrot.ico.check_event();
     }
+
+    makeblob(dataURL) {
+        const BASE64_MARKER = ';base64,';
+        const parts = dataURL.split(BASE64_MARKER);
+        const contentType = parts[0].split(':')[1];
+        const raw = window.atob(parts[1]);
+        const rawLength = raw.length;
+        const uInt8Array = new Uint8Array(rawLength);
+    
+        for (let i = 0; i < rawLength; ++i) {
+            uInt8Array[i] = raw.charCodeAt(i);
+        }
+    
+        return new Blob([uInt8Array], { type: contentType });
+    }
+
+    resizeImage(base64Str, maxWidth = 400, maxHeight = 350) {
+        return new Promise((resolve) => {
+          let img = new Image()
+          img.src = base64Str
+          img.onload = () => {
+            let canvas = document.createElement('canvas')
+            const MAX_WIDTH = maxWidth
+            const MAX_HEIGHT = maxHeight
+            let width = img.width
+            let height = img.height
+      
+            if (width > height) {
+              if (width > MAX_WIDTH) {
+                height *= MAX_WIDTH / width
+                width = MAX_WIDTH
+              }
+            } else {
+              if (height > MAX_HEIGHT) {
+                width *= MAX_HEIGHT / height
+                height = MAX_HEIGHT
+              }
+            }
+            canvas.width = width
+            canvas.height = height
+            let ctx = canvas.getContext('2d')
+            ctx.drawImage(img, 0, 0, width, height)
+            resolve(canvas.toDataURL())
+          }
+        })
+    }
+
 
     check_pay(id_icon){
         if(localStorage.getItem("buy_icon_"+id_icon)!=null)
             return true;
         else
             return false;
+    }
+
+    act_download(){
+        var name_icon=carrot.ico.obj_icon_info_cur.name;
+        const zip = new JSZip();
+        zip.file(name_icon+"/png/64.png",carrot.ico.data_icon_64);
+        zip.file(name_icon+"/png/32.png",carrot.ico.data_icon_32);
+        zip.file(name_icon+"/png/24.png",carrot.ico.data_icon_24);
+        zip.file(name_icon+"/png/16.png",carrot.ico.data_icon_16);
+        zip.generateAsync({type:"blob"}).then(function(content) {
+            saveAs(content, name_icon+".zip");
+        });
     }
 
     menu(){
