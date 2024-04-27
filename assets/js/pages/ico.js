@@ -72,10 +72,35 @@ class Carrot_Ico{
         box.add_attrs("fa-solid fa-guitar",'<l class="lang" key_lang="genre">Category</l>',data.category);
         box.add_attrs("fa-solid fa-file",'<l class="lang" key_lang="file">File</l>',data.name+".zip");
         box.add_attrs("fa-solid fa-palette",'Color',data.color);
+        box.add_attrs("fa-regular fa-calendar-check",'Date create',data.date_create);
+
+        if(carrot.ico.check_pay(data.id_doc))
+            box.add_btn("btn_download","fa-solid fa-file-arrow-down","Download","alert('1');");
+        else
+            box.add_btn("btn_pay","fa-brands fa-paypal","Download","alert('1');");
+
+        var html_previewImage="";
+        html_previewImage+='<div id="previewImage" class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
+            html_previewImage+='<h4 class="fw-semi fs-5 lang" key_lang="describe">Editor</h4>';
+            html_previewImage+='<p class="fs-8 text-justify">All Size Icon</p>';
+            html_previewImage+='<div class="col-3 text-center">64x64<br/><img src="'+data.icon+'" style="width:64px;"/></div>';
+            html_previewImage+='<div class="col-3 text-center">32x32<br/><img src="'+data.icon+'" style="width:32px;"/></div>';
+            html_previewImage+='<div class="col-3 text-center">24x24<br/><img src="'+data.icon+'" style="width:24px;"/></div>';
+            html_previewImage+='<div class="col-3 text-center">16x16<br/><img src="'+data.icon+'" style="width:16px;"/></div>';
+        html_previewImage+='</div>';
+        
+        box.add_contain(html_previewImage);
 
         html+=box.html();
         carrot.show(html);
         carrot.ico.check_event();
+    }
+
+    check_pay(id_icon){
+        if(localStorage.getItem("buy_icon_"+id_icon)!=null)
+            return true;
+        else
+            return false;
     }
 
     menu(){
