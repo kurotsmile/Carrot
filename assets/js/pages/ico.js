@@ -1,5 +1,6 @@
 class Carrot_Ico{
 
+    objs=[];
     obj_icon_category=[];
     cur_show_icon_category="all";
     type_show="list_icon";
@@ -23,8 +24,10 @@ class Carrot_Ico{
             $(icons).each(function(index,data){
                 carrot.data.add("icons",data);
                 data["index"]=index;
-                $("#all_icon").append(carrot.ico.box_icon_item(data));
+                $("#all_icon").append(carrot.ico.box_item(data).html());
             });
+
+            carrot.ico.objs=icons;
             carrot.ico.check_event();
         });
     }
@@ -35,7 +38,7 @@ class Carrot_Ico{
         carrot.check_event();
     }
 
-    box_icon_item(data_icon,s_class="col-md-2 mb-2 col-sm-3"){
+    box_item(data_icon,s_class="col-md-2 mb-2 col-sm-3"){
         if(data_icon["name"]==null) data_icon["name"]=data_icon.id_doc;
         var s_url_icon="";
         if(data_icon.icon!=null) s_url_icon=data_icon.icon;
@@ -49,7 +52,7 @@ class Carrot_Ico{
         item_icon.set_name(data_icon.name);
         item_icon.set_body("<span class='fs-8' style='color:"+data_icon.color+"'>"+data_icon.color+"</span>");
         item_icon.set_act_click("carrot.ico.get_info('"+data_icon.id_doc+"');");
-        return item_icon.html();
+        return item_icon;
     }
 
     get_info(id){
@@ -106,6 +109,13 @@ class Carrot_Ico{
         html_previewImage+='</div>';
         
         box.add_contain(html_previewImage);
+
+        $(carrot.ico.objs).each(function(index,icon_data){
+            if(index>=12) return false;
+            var box_item_icon=carrot.ico.box_item(icon_data);
+            box_item_icon.set_class('col-md-6 mb-3 col-6');
+            box.add_related(box_item_icon.html());
+        });
 
         html+=box.html();
         carrot.show(html);
@@ -270,8 +280,7 @@ class Carrot_Ico{
         frm.create_field("color").set_label("Color").set_val(data["color"]).set_type("color");
         var category_field=frm.create_field("category").set_label("Category").set_val(data["category"]).set_type("select");
         category_field.add_option("","Unknown");
-        var list_category=this.carrot.obj_to_array(this.obj_icon_category);
-        $(list_category).each(function(index,category){
+        $(carrot.ico.obj_icon_category).each(function(index,category){
             category_field.add_option(category.key,category.key);
         });
         frm.create_field("date_create").set_label("Date Create").set_val(data["date_create"]);
@@ -354,6 +363,7 @@ class Carrot_Ico{
             html+=item_cat_icon.html();
         });
         html+='</div>';
+
         carrot.show(html);
         carrot.ico.check_event();
     }

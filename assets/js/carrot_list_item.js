@@ -290,9 +290,11 @@ class Carrot_Info{
     
             html+='<div class="col-md-4" id="box_related">';
                 html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-3">'+this.s_related_title+'</h4>';
+                html+='<div class="row">';
                 $(this.list_related).each(function(index,data){
                     html+=data;
                 });
+                html+='</div>';
             html+='</div>';
             
 
