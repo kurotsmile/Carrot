@@ -293,12 +293,12 @@ class Carrot_Info{
 
             html+="</div>";
     
-            html+='<div class="col-md-4" id="box_related">';
+            html+='<div class="col-md-4" id="box_related_contain">';
                 if(this.s_related_title!="") html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-3">'+this.s_related_title+'</h4>';
-                html+='<div class="row">';
+                html+='<div class="row" id="box_related">';
                 $(this.list_related).each(function(index,data){
                     html+=data;
-                });
+                }); 
                 html+='</div>';
             html+='</div>';
             
@@ -306,9 +306,15 @@ class Carrot_Info{
         html+="</div>";
         html+="</div>";
 
-        $(this.list_footer).each(function(index,footer){
-            html+=footer;
-        });
+        if(this.list_footer.length>0){
+            html+='<div class="row">';
+                html+='<div class="col-12" id="box_footer">';
+                $(this.list_footer).each(function(index,footer){
+                    html+=footer;
+                });
+                html+='</div>';
+            html+='</div>';
+        }
         return html;
     }
 }

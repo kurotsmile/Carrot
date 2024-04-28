@@ -1201,11 +1201,15 @@ class Carrot_Site{
         $("#box_input_search").val("");
     }
 
+    loading_html(){
+        return '<div class="col-12 text-center"><i class="fa-solid fa-ghost fa-bounce"></i> <i class="fa-solid fa-ghost fa-beat-fade" style="color: green;"></i> <i class="fa-solid fa-ghost fa-bounce"></i> <i class="fa-solid fa-ghost fa-beat-fade" style="color: green;"></i> <i class="fa-solid fa-ghost fa-flip" style="color: #63E6BE;"></i></div>';
+    }
+
     loading(msg=''){
         if(msg!='') msg=msg+'<br/><br/>';
         Swal.fire({
             title: 'Please wait...',
-            html: msg+'<i class="fa-solid fa-ghost fa-bounce"></i> <i class="fa-solid fa-ghost fa-beat-fade" style="color: green;"></i> <i class="fa-solid fa-ghost fa-bounce"></i> <i class="fa-solid fa-ghost fa-beat-fade" style="color: green;"></i> <i class="fa-solid fa-ghost fa-flip" style="color: #63E6BE;"></i>',
+            html: msg+carrot.loading_html(),
             didOpen: () => {
               Swal.showLoading()
             }

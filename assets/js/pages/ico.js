@@ -15,24 +15,37 @@ class Carrot_Ico{
 
     show_list_icon(){
         carrot.change_title_page("Icon -"+carrot.ico.cur_show_icon_category, "?page=ico","icon");
-        carrot.loading("Get all icon data");
+        carrot.loading("Get all icon data from IndexDB");
+        carrot.data.list("icons").then(function(data){
+            carrot.ico.objs=data;
+            carrot.ico.load_list_icon(data);
+        }).catch(function(){
+            carrot.loading("Get all icon data from server");
+            carrot.ico.get_icons_from_server();
+        });
+    }
+
+    get_icons_from_server(){
         var q=new Carrot_Query("icon");
         if(carrot.ico.cur_show_icon_category!="all") q.add_where("category",carrot.ico.cur_show_icon_category);
-        q.set_limit(54);
+        q.set_limit(45);
         q.get_data((icons)=>{
-            carrot.hide_loading();
-            var  html=carrot.ico.menu();
-            html+='<div id="all_icon" class="row m-0"></div>';
-            carrot.show(html);
-            $(icons).each(function(index,data){
-                carrot.data.add("icons",data);
-                data["index"]=index;
-                $("#all_icon").append(carrot.ico.box_item(data).html());
-            });
-
-            carrot.ico.objs=icons;
-            carrot.ico.check_event();
+            carrot.ico.load_list_icon(icons);
         });
+    }
+
+    load_list_icon(icons){
+        carrot.hide_loading();
+        var  html=carrot.ico.menu();
+        html+='<div id="all_icon" class="row m-0"></div>';
+        carrot.show(html);
+        $(icons).each(function(index,data){
+            carrot.data.add("icons",data);
+            data["index"]=index;
+            $("#all_icon").append(carrot.ico.box_item(data).html());
+        });
+        carrot.ico.objs=icons;
+        carrot.ico.check_event();
     }
 
     check_event(){
@@ -135,26 +148,39 @@ class Carrot_Ico{
         }
 
         carrot.file.get_base64data_file(data.icon).then((data_img)=>{
-
             carrot.ico.resizeImage(data_img, 64, 64).then((result) => {
                 carrot.ico.data_icon_64=carrot.ico.makeblob(result);
             });
-
             carrot.ico.resizeImage(data_img, 32, 32).then((result) => {
                 carrot.ico.data_icon_32=carrot.ico.makeblob(result);
             });
-
             carrot.ico.resizeImage(data_img, 24, 24).then((result) => {
                 carrot.ico.data_icon_24=carrot.ico.makeblob(result);
             });
-
             carrot.ico.resizeImage(data_img, 16, 16).then((result) => {
                 carrot.ico.data_icon_16=carrot.ico.makeblob(result);
             });
-
         });
 
         carrot.ico.check_event();
+
+        if(carrot.ico.objs.length==0){
+            $("#box_related").html(carrot.loading_html());
+            $("#box_footer").html(carrot.loading_html());
+            var q=new Carrot_Query("icon");
+            q.set_limit(20);
+            q.get_data(function(data){
+                carrot.ico.objs=data;
+                $("#box_related").html('');
+                $("#box_footer").html('');
+                $(data).each(function(index,icon_data){
+                    var box_item_icon=carrot.ico.box_item(icon_data);
+                    box_item_icon.set_class('col-md-6 mb-3 col-6');
+                    $("#box_related").append(box_item_icon.html());
+                });
+                $("#box_footer").html(carrot.ico.list_for_home());
+            });
+        }
     }
 
     pay(){

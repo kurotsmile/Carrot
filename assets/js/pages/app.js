@@ -245,8 +245,8 @@ class Appp{
     frm_add_or_edit(data){
         var frm=new Carrot_Form("frm_app",carrot);
         frm.set_icon("fa-solid fa-mobile-button");
-        frm.set_db("app",data["name_en"]);
-        frm.on_db_doc();
+        frm.set_collection("app");
+        frm.set_document("name_en");
         var list_lang=carrot.langs.list_lang;
         frm.create_field("icon").set_label("Icon").set_value(data.icon).set_type("file").set_type_file("image/*");
         frm.create_field("type").set_label("Type").add_option("app","App").add_option("game","Game").set_value(data.type).set_type("select");

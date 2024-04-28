@@ -74,6 +74,11 @@ class Carrot_Query{
 }
 
 class Carrot_Server{
+
+    list(collection,act_done,act_fail=null){
+      this.get_collection(collection,act_done,act_fail);
+    }
+
     get_collection(collection,act_done,act_fail=null){
         fetch(carrot.config.url_server_rest_api[carrot.index_server]+"/"+collection)
             .then((response) => {

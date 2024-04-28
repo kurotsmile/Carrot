@@ -245,12 +245,12 @@ class Carrot_Field{
             }
             html+='<div class="input-group mb-3">';
                 html+='<img id="'+this.name+'" type="icon" onclick="carrot.icon.msg_list_select(this)" data-emp-id="'+field.name+'" data-category-key="all" value="'+this.value+'" class="btn btn-sm rounded btn-info cr_field m-1" style="width:64px;" role="button" src="'+url_icon+'"/>';
-                var list_cat_icon=carrot.obj_to_array(carrot.icon.obj_icon_category);
+                var list_cat_icon=carrot.obj_to_array(carrot.ico.obj_icon_category);
                 $(list_cat_icon).each(function(index,cat){
                     cat.index=index;
-                    html+='<div onclick="carrot.icon.msg_list_select(this);return false;" data-emp-id="'+field.name+'" data-category-key="'+cat.key+'" class="btn btn-sm btn-secondary rounded text-white m-1"><i class="'+cat.icon+'"></i> '+cat.key+'</div>';
+                    html+='<div onclick="carrot.ico.msg_list_select(this);return false;" data-emp-id="'+field.name+'" data-category-key="'+cat.key+'" class="btn btn-sm btn-secondary rounded text-white m-1"><i class="'+cat.icon+'"></i> '+cat.key+'</div>';
                 });
-                html+='<div onclick="carrot.icon.msg_list_select_random();return false;" data-emp-id="random" data-category-key="random_icon" class="btn btn-sm btn-light rounded m-1"><i class="fa-solid fa-shuffle"></i> Random</div>';
+                html+='<div onclick="carrot.ico.msg_list_select_random();return false;" data-emp-id="random" data-category-key="random_icon" class="btn btn-sm btn-light rounded m-1"><i class="fa-solid fa-shuffle"></i> Random</div>';
             html+='</div>';
         }
         else if(this.type=='textarea'){
