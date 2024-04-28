@@ -160,6 +160,7 @@ class Carrot_Info{
     list_body=[];
     list_related=[];
     list_contain=[];
+    list_footer=[];
     list_btn=[];
 
     constructor(s_id){
@@ -238,6 +239,10 @@ class Carrot_Info{
         this.list_contain.push(contain);
     }
 
+    add_footer(footer){
+        this.list_footer.push(footer);
+    }
+
     html(){
         var html='<div class="section-container p-2 p-xl-4">';
         html+='<div class="row">';
@@ -301,6 +306,9 @@ class Carrot_Info{
         html+="</div>";
         html+="</div>";
 
+        $(this.list_footer).each(function(index,footer){
+            html+=footer;
+        });
         return html;
     }
 }

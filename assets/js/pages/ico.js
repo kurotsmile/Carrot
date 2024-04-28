@@ -1,5 +1,4 @@
 class Carrot_Ico{
-
     objs=[];
     obj_icon_category=[];
     cur_show_icon_category="all";
@@ -7,17 +6,21 @@ class Carrot_Ico{
     obj_icon_info_cur=null;
 
     show(){
-        carrot.ico.show_list_icon();
+        var id_icon=carrot.get_param_url("id");
+        if(id_icon!=undefined)
+            carrot.ico.get_info(id_icon);
+        else
+            carrot.ico.show_list_icon();
     }
 
     show_list_icon(){
+        carrot.change_title_page("Icon -"+carrot.ico.cur_show_icon_category, "?page=ico","icon");
         carrot.loading("Get all icon data");
         var q=new Carrot_Query("icon");
         if(carrot.ico.cur_show_icon_category!="all") q.add_where("category",carrot.ico.cur_show_icon_category);
         q.set_limit(54);
         q.get_data((icons)=>{
             carrot.hide_loading();
-            carrot.change_title_page("Icon -"+carrot.ico.cur_show_icon_category, "?page=ico","icon");
             var  html=carrot.ico.menu();
             html+='<div id="all_icon" class="row m-0"></div>';
             carrot.show(html);
@@ -109,6 +112,7 @@ class Carrot_Ico{
         html_previewImage+='</div>';
         
         box.add_contain(html_previewImage);
+        box.add_contain(carrot.rate.box_qr());
 
         $(carrot.ico.objs).each(function(index,icon_data){
             if(index>=12) return false;
@@ -116,6 +120,8 @@ class Carrot_Ico{
             box_item_icon.set_class('col-md-6 mb-3 col-6');
             box.add_related(box_item_icon.html());
         });
+
+        box.add_footer(carrot.ico.list_for_home());
 
         html+=box.html();
         carrot.show(html);
@@ -237,7 +243,7 @@ class Carrot_Ico{
                 html+='<button onclick="carrot.ico.add_category();" class="btn dev btn-sm btn-success"><i class="fa-solid fa-square-plus"></i> Add Category</button>';
                 html+='<button onclick="carrot.ico.delete_all_data();return false;" class="btn btn-danger dev btn-sm"><i class="fa-solid fa-dumpster-fire"></i> Delete All data</button>';
                 html+='<div class="btn-group" role="group">';
-                    html+='<button class="btn btn-secondary dropdown-toggle btn-sm" type="button" id="btn_list_icon_category" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-rectangle-list"></i> Category ('+carrot.icon.cur_show_icon_category+')</button>';
+                    html+='<button class="btn btn-secondary dropdown-toggle btn-sm" type="button" id="btn_list_icon_category" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-rectangle-list"></i> Category ('+carrot.ico.cur_show_icon_category+')</button>';
                     html+='<div class="dropdown-menu" aria-labelledby="btn_list_ebook_category" id="list_icon_category"></div>';
                 html+='</div>';
             html+='</div>';
@@ -371,6 +377,28 @@ class Carrot_Ico{
     select_show_category(key_category){
         carrot.ico.cur_show_icon_category=key_category;
         carrot.ico.show();
+    }
+
+    list_for_home(){
+        var html='';
+        if(carrot.ico.objs!=null){
+            var list_icon=carrot.random(carrot.ico.objs);
+            list_icon= list_icon.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
+            html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-4">';
+            html+='<i class="fa-solid fa-face-grin-wink fs-6 me-2"></i> <l class="lang" key_lang="other_icon">Other Icon</l>';
+            html+='<span role="button" onclick="carrot.ico.show_list_icon()" class="btn float-end btn-sm btn-light"><i class="fa-solid fa-square-caret-right"></i> <l class="lang" key_lang="view_all">View All</l></span></h4>';
+            html+='<div id="other_icon" class="row m-0">';
+            $(list_icon).each(function(index,icon){
+                if(index<12){
+                    icon["index"]=index;
+                    html+=carrot.ico.box_item(icon).html();
+                }else{
+                    return false;
+                }
+            });
+            html+='</div>';
+        }
+        return html;
     }
 
     delete_all_data(){

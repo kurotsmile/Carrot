@@ -11,7 +11,7 @@ class Home{
 
         html+=carrot.music.list_for_home();
         html+=carrot.code.list_for_home();
-        html+=carrot.icon.list_for_home();
+        if(carrot.ico!=null) html+=carrot.ico.list_for_home();
         html+=carrot.user.list_for_home();
         html+=carrot.audio.list_for_home();
         html+=carrot.radio.list_for_home();
@@ -22,7 +22,7 @@ class Home{
 
         carrot.music.check_event();
         carrot.code.check_event();
-        carrot.icon.check_event();
+        if(carrot.ico!=null) carrot.ico.check_event();
         carrot.user.check_event();
         carrot.audio.check_event();
         carrot.radio.check_event();

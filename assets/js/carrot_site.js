@@ -191,7 +191,6 @@ class Carrot_Site{
             $('head').append('<script type="text/javascript" src="assets/js/carrot_user.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_music.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_code.js?ver='+this.get_ver_cur("js")+'"></script>');
-            $('head').append('<script type="text/javascript" src="assets/js/carrot_icon.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_background.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_radio.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_ebook.js?ver='+this.get_ver_cur("js")+'"></script>');
@@ -251,8 +250,7 @@ class Carrot_Site{
                 else
                     carrot.load_js_page("ico","ico","carrot.ico.show()");
             });
-    
-            this.icon=new Carrot_Icon(this); 
+
             this.audio=new Carrot_Audio(this);
             this.radio=new Carrot_Radio(this);
             this.background=new Carrot_Background(this);
@@ -267,7 +265,7 @@ class Carrot_Site{
             this.file=new Carrot_File(this);
             this.pay=new Carrot_Pay(this);
             this.rate=new Carrot_Rate(this);
-            this.data=new Carrot_data("carrotstore3","1.3");
+            this.data=new Carrot_data("carrotstore5","1.5");
             
             var btn_mod_host=this.menu.create("btn_mode_host").set_label("Change Mode Host").set_type("setting").set_icon("fa-brands fa-dev");
             $(btn_mod_host).click(function(){carrot.change_host_connection();});
