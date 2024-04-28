@@ -11,7 +11,6 @@ class Carrot_data{
         this.request = indexedDB.open(this.databaseName , databaseVersion);
         this.request.onupgradeneeded = (event) => {
             this.db = event.target.result;
-            this.db.createObjectStore("carrot_obj",{keyPath: 'id_doc'});
             this.db.createObjectStore("apps",{keyPath: 'id_doc'});
             this.db.createObjectStore("app_info",{keyPath: 'id_doc'});
             this.db.createObjectStore("images",{keyPath: 'id_doc'});

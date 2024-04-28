@@ -402,6 +402,8 @@ class Carrot_Ico{
     }
 
     delete_all_data(){
+        carrot.data.clear("icons");
+        carrot.data.clear("icon_category");
         carrot.msg("Delete all data success!");
     }
 }

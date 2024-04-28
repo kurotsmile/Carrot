@@ -246,9 +246,9 @@ class Carrot_Site{
             var btn_ico=this.menu.create("btn_ico").set_label("Icon").set_type("main").set_lang("icon").set_icon("fa-solid fa-face-smile");
             $(btn_ico).click(function(){
                 if(carrot.ico!=null)
-                    carrot.ico.show();
+                    carrot.ico.show_list_icon();
                 else
-                    carrot.load_js_page("ico","ico","carrot.ico.show()");
+                    carrot.load_js_page("ico","ico","carrot.ico.show_list_icon()");
             });
 
             this.audio=new Carrot_Audio(this);
