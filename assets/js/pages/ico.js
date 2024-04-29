@@ -344,6 +344,14 @@ class Carrot_Ico{
     }
 
     get_all_data_category(){
+        carrot.data.list("icon_category").then((datas)=>{
+            carrot.ico.get_all_data_category_done(datas);
+        }).catch(()=>{
+            carrot.ico.get_all_data_category_from_server();
+        });
+    }
+
+    get_all_data_category_from_server(){
         var q=new Carrot_Query("icon_category");
         q.get_data((datas)=>{
             $(datas).each(function(index,cat){
