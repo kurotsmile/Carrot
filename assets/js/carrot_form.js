@@ -358,11 +358,20 @@ class Carrot_Field{
         carrot.loading("Get Icon by "+id_cat+"category ");
         var q=new Carrot_Query("icon");
         q.add_where("category",id_cat);
-        q.set_limit(30);
+        q.set_limit(28);
         q.get_data((icons)=>{
             carrot.hide_loading();
             carrot.icon_field.done_msg_list_select(icons);
         });
+    }
+
+    select_icon_for_field(emp){
+        var id_icon=$(emp).attr("data-id-icon");
+        var url_icon=$(emp).attr("src");
+        $("#"+carrot.icon_field.emp_id).attr("src",url_icon);
+        $("#"+carrot.icon_field.emp_id).attr("value",id_icon);
+        $("#"+carrot.icon_field.emp_id+"_val").html(id_icon);
+        Swal.close();
     }
 
     done_msg_list_select(icons){
@@ -393,8 +402,7 @@ class Carrot_Field{
         $(icons).each(function(index,icon){
             icon.index=index;
             if(id_icon==icon.id_doc) color_bg='bg-info'; else color_bg='';
-            html+="<img role='button' title='"+icon.name+"' data-id-icon='"+icon.id+"' data-color='"+icon.color+"' file_url='"+icon.icon+"' onclick='carrot.icon.select_icon_for_msg(this);return false;' style='width:50px' class='rounded m-1 "+color_bg+"' src='"+icon.icon+"'/>";
-            if(index>19) return false;
+            html+="<img role='button' title='"+icon.name+"' data-id-icon='"+icon.id+"' data-color='"+icon.color+"' file_url='"+icon.icon+"' onclick='carrot.icon_field.select_icon_for_field(this);return false;' style='width:50px' class='rounded m-1 "+color_bg+"' src='"+icon.icon+"'/>";
         });
 
         Swal.fire({

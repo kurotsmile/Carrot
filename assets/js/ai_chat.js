@@ -933,16 +933,11 @@ class AI_Chat{
                                     html+='</div>';
                                 }
 
-                                if(data.icon!=null&&carrot.icon.obj_icon!=null){
-                                    var icon=carrot.icon.obj_icon[data.icon];
-                                    if(icon!=null){
-                                        icon=JSON.parse(icon);
-                                        html+='<div class="col-md-4 col-6 text-center">';
-                                            html+='<b><l class="lang" key_lang="icon">Icon</l> <i class="fa-solid fa-smile"></i></b>';
-                                            html+='<p><img style="width:32px;" src="'+icon.icon+'"/></p>';
-                                        html+='</div>';
-                                    }
-                                }
+                                html+='<div class="col-md-4 col-6 text-center">';
+                                    html+='<b><l class="lang" key_lang="icon">Icon</l> <i class="fa-solid fa-smile"></i></b>';
+                                    html+='<p><img style="width:32px;" src="'+data.icon+'"/></p>';
+                                html+='</div>';
+                                    
 
                                 html+='<div class="col-md-4 col-6 text-center">';
                                     html+='<b><l class="lang" key_lang="date_create">Date Create</l> <i class="fa-regular fa-calendar"></i></b>';
@@ -987,7 +982,7 @@ class AI_Chat{
                     data["collection"]="chat-"+carrot.langs.lang_setting;
                     html+=carrot.rate.box_report(data);
                     html+=carrot.rate.box_comment(data);
-                    html+=carrot.link_store.box_qrdoce();
+                    html+=carrot.rate.box_qr();
 
                 html+='</div>';
 

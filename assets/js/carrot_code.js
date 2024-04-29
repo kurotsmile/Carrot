@@ -311,7 +311,7 @@ class Carrot_Code{
                 html+='</div>';
     
                 html+=carrot.rate.box_comment(data);
-                html+=carrot.link_store.box_qrdoce();
+                html+=carrot.rate.box_qr();
 
             html+="</div>";
     
