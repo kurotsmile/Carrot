@@ -89,7 +89,7 @@ $(document).ready(function () {
     var ContextMenu = [{
         icon: 'fa fa-home',
         label: 'Home Page',
-        action:function(){carrot.home();},
+        action:function(){carrot.home_page();},
         submenu: null,
         disabled: false
       },
