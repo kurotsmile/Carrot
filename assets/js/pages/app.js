@@ -492,6 +492,7 @@ class Appp{
                 app["index"]=index;
                 $("#box_related").append(carrot.appp.box_app_item(app,'col-md-12 mb-3'));
             })
+            carrot.check_event();
         });
         carrot.appp.check_event();
     }

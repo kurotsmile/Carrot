@@ -251,6 +251,14 @@ class Carrot_Site{
                     carrot.load_js_page("ico","ico","carrot.ico.show_list_icon()");
             });
 
+            var btn_football=this.menu.create("btn_ico").set_label("Football").set_type("dev").set_icon("fa-solid fa-futbol");
+            $(btn_football).click(function(){
+                if(carrot.football!=null)
+                    carrot.football.show();
+                else
+                    carrot.load_js_page("football","FootBall","carrot.football.show()");
+            });
+
             this.audio=new Carrot_Audio(this);
             this.radio=new Carrot_Radio(this);
             this.background=new Carrot_Background(this);
