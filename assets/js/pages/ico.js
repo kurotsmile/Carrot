@@ -56,15 +56,15 @@ class Carrot_Ico{
 
     box_item(data_icon,s_class="col-md-2 mb-2 col-sm-3"){
         if(data_icon["name"]==null) data_icon["name"]=data_icon.id_doc;
-        var s_url_icon="";
-        if(data_icon.icon!=null) s_url_icon=data_icon.icon;
-        if(s_url_icon=="") s_url_icon="images/64.png";
         var item_icon=new Carrot_List_Item(carrot);
+        carrot.data.load_image(data_icon.id_doc,data_icon.icon,"icon_ico_"+data_icon.index);
         item_icon.set_db("icon");
+        item_icon.set_obj_js("ico");
         item_icon.set_id(data_icon.id_doc);
+        item_icon.set_id_icon("icon_ico_"+data_icon.index);
         item_icon.set_class(s_class);
         item_icon.set_class_icon("col-md-12 mb-3 col-12 text-center icon_info");
-        item_icon.set_icon(s_url_icon);
+        item_icon.set_icon("images/64.png");
         item_icon.set_name(data_icon.name);
         item_icon.set_body("<span class='fs-8' style='color:"+data_icon.color+"'>"+data_icon.color+"</span>");
         item_icon.set_act_click("carrot.ico.get_info('"+data_icon.id_doc+"');");
@@ -82,14 +82,16 @@ class Carrot_Ico{
     info(data){
         carrot.ico.obj_icon_info_cur=data;
         carrot.change_title_page(data.id_doc,"?page=ico&id="+data.id_doc,"ico");
+        carrot.data.load_image(data.id_doc,data.icon,"icon_info_ico");
         var html='';
         html+=carrot.ico.menu();
         var box=new Carrot_Info(data.id_doc);
         box.set_db("icon");
         box.set_obj_js("ico");
         box.set_title(data.name);
-        box.set_icon_image(data.icon);
+        box.set_icon_image("images/64.png");
         box.set_icon_col_class("col-1");
+        box.set_icon_id("icon_info_ico");
         box.add_attrs("fa-solid fa-guitar",'<l class="lang" key_lang="genre">Category</l>',data.category);
         box.add_attrs("fa-solid fa-file",'<l class="lang" key_lang="file">File</l>',data.name+".zip");
         box.add_attrs("fa-solid fa-palette",'Color',data.color);
@@ -129,6 +131,7 @@ class Carrot_Ico{
 
         $(carrot.ico.objs).each(function(index,icon_data){
             if(index>=12) return false;
+            icon_data["index"]=index+200;
             var box_item_icon=carrot.ico.box_item(icon_data);
             box_item_icon.set_class('col-md-6 mb-3 col-6');
             box.add_related(box_item_icon.html());
@@ -417,14 +420,13 @@ class Carrot_Ico{
         var html='';
         if(carrot.ico.objs!=null){
             var list_icon=carrot.random(carrot.ico.objs);
-            list_icon= list_icon.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
             html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-4">';
             html+='<i class="fa-solid fa-face-grin-wink fs-6 me-2"></i> <l class="lang" key_lang="other_icon">Other Icon</l>';
             html+='<span role="button" onclick="carrot.ico.show_list_icon()" class="btn float-end btn-sm btn-light"><i class="fa-solid fa-square-caret-right"></i> <l class="lang" key_lang="view_all">View All</l></span></h4>';
             html+='<div id="other_icon" class="row m-0">';
             $(list_icon).each(function(index,icon){
                 if(index<12){
-                    icon["index"]=index;
+                    icon["index"]=index+100;
                     html+=carrot.ico.box_item(icon).html();
                 }else{
                     return false;

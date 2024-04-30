@@ -279,10 +279,6 @@ class Appp{
     box_app_item(data_app,s_class='col-md-4 mb-3'){
         if(data_app==null) return '';
         var key_name="name_"+carrot.lang;
-        var s_url_icon="";
-        if(data_app.icon!=null) s_url_icon=data_app.icon;
-        if(s_url_icon=="") s_url_icon="images/150.png";
-        
         carrot.data.load_image(data_app.id_doc,data_app.icon,"icon_app_"+data_app.index);
         var app_item=new Carrot_List_Item(carrot);
         app_item.set_icon("images/150.png");
