@@ -46,6 +46,7 @@ class FootBall{
         box.set_obj_js("football");
         box.set_class_icon_col("col-3");
         box.set_class_body("col-9");
+        box.set_act_click("carrot.football.get_info('"+data.id_doc+"');");
         var html_body='';
         html_body+=carrot.football.star('<i class="fa-solid fa-arrows-to-circle"></i> Force',parseInt(data.ball_force));
         html_body+=carrot.football.star('<i class="fa-solid fa-person-running"></i> Control',parseInt(data.ball_control));
@@ -138,6 +139,28 @@ class FootBall{
 
     field_select_star(field){
         for(var i=1;i<=10;i++) field.add_option(i,i+" Point");
+    }
+
+    get_info(id){
+        carrot.loading("Get data "+id);
+        carrot.server.get_doc("football",id,(data)=>{
+            carrot.football.info(data);
+        });
+    }
+
+    info(data){
+        carrot.change_title_page(data.name,"?page=football&id="+data.id_doc,"football");
+        carrot.hide_loading();
+        var box_info=new Carrot_Info(data.id_doc);
+        box_info.set_title(data.name);
+        box_info.set_icon_image(data.icon);
+
+        box_info.add_attrs("fa-solid fa-arrows-to-circle","Force",data.ball_force);
+        box_info.add_attrs("fa-solid fa-person-running","Control",data.ball_control);
+        box_info.add_attrs("fa-solid fa-shoe-prints","Cutting",data.ball_cutting);
+
+        box_info.add_contain(carrot.rate.box_qr());
+        carrot.show(box_info.html());
     }
 }
 carrot.football=new FootBall();

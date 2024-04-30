@@ -3,6 +3,11 @@ class Chat{
     show(){
         
     }
+
+    box_item(data){
+
+    }
+    
 }
 
 carrot.chat=new Chat();

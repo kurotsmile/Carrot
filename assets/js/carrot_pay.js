@@ -192,8 +192,8 @@ class Carrot_Pay{
         var attr_limit_download_code=new Carrot_Product_Attribute(this.carrot.code.icon,"Limit Download Code").limit();
         var attr_unlimit_download_code=new Carrot_Product_Attribute(this.carrot.code.icon,"Unlimit Download Code").unlimit();
 
-        var attr_limit_download_icon=new Carrot_Product_Attribute(this.carrot.icon.icon,"Limit Download Icon").limit();
-        var attr_unlimit_download_icon=new Carrot_Product_Attribute(this.carrot.icon.icon,"Unlimit Download Icon").unlimit();
+        var attr_limit_download_icon=new Carrot_Product_Attribute("fa-solid fa-face-smile-wink","Limit Download Icon").limit();
+        var attr_unlimit_download_icon=new Carrot_Product_Attribute("fa-solid fa-face-smile-wink","Unlimit Download Icon").unlimit();
 
         var attr_limit_download_bible=new Carrot_Product_Attribute(this.carrot.bible.icon,"Limit Download Bible").limit();
         var attr_unlimit_download_bible=new Carrot_Product_Attribute(this.carrot.bible.icon,"Unlimit Download Bible").unlimit();

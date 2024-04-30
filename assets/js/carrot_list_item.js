@@ -228,6 +228,10 @@ class Carrot_Info{
         this.list_attr.push(obj_attr);
     }
 
+    add_attr(s_icon_font,s_name,s_val){
+        this.add_attrs(s_icon_font,s_name,s_val);
+    }
+
     add_body(s_title,s_body){
         var obj_box={};
         obj_box["title"]=s_title;
