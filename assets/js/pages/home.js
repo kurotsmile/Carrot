@@ -17,6 +17,7 @@ class Home{
         html+=carrot.radio.list_for_home();
         html+=carrot.bible.list_for_home();
         html+=carrot.ebook.list_for_home();
+        if(carrot.football!=null) html+=carrot.football.list_for_home();
 
         carrot.show(html);
 

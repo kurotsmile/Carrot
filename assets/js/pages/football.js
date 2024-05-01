@@ -1,5 +1,6 @@
 class FootBall{
 
+    objs=null;
     playing_position=["tiền đạo","tiền vệ","hậu vệ","thủ môn"];
     index_player_position=-1;
 
@@ -8,6 +9,7 @@ class FootBall{
         carrot.loading("Get and load all player");
         var q=new Carrot_Query("football");
         q.get_data((players)=>{
+            carrot.football.objs=players;
             carrot.football.load_list_by_data(players);
         });
     }
@@ -108,6 +110,7 @@ class FootBall{
         data_player["ball_control"]="1";
         data_player["ball_cutting"]="1";
         data_player["playing_position"]="1";
+        data_player["buy"]="0";
         data_player["date_create"]=new Date().toISOString();
         carrot.football.add_or_edit(data_player).set_title("Add new football players").set_msg_done("Add icon success!").show();
     }
@@ -117,6 +120,7 @@ class FootBall{
     }
 
     add_or_edit(data){
+        if(data["buy"]==null) data["buy"]="0";
         var frm=new Carrot_Form("frm_player",carrot);
         frm.set_db("football","id");
         frm.set_icon_font("fa-solid fa-futbol");
@@ -133,6 +137,9 @@ class FootBall{
         $(carrot.football.playing_position).each(function(index,p){
             field_pos.add_option(index,p+" - "+index);
         })
+        var field_buy=frm.create_field("buy").set_label("ball_cutting").set_val(data["buy"]).set_type("select");
+        field_buy.add_option("0","Free");
+        field_buy.add_option("1","Buy");
         frm.create_field("date_create").set_label("Date Create").set_val(data["date_create"]);
         return frm;
     }
@@ -154,13 +161,50 @@ class FootBall{
         var box_info=new Carrot_Info(data.id_doc);
         box_info.set_title(data.name);
         box_info.set_icon_image(data.icon);
+        box_info.set_icon_col_class("col-2");
 
+        var index_pos=parseInt(data.playing_position);
         box_info.add_attrs("fa-solid fa-arrows-to-circle","Force",data.ball_force);
         box_info.add_attrs("fa-solid fa-person-running","Control",data.ball_control);
         box_info.add_attrs("fa-solid fa-shoe-prints","Cutting",data.ball_cutting);
-
+        box_info.add_attrs("fa-solid fa-street-view","Playing position",carrot.football.playing_position[index_pos]);
+        box_info.set_protocol_url("tablesoccer://show/"+data.id_doc);
         box_info.add_contain(carrot.rate.box_qr());
+
+        var list_player=carrot.random(carrot.football.objs);
+        $(list_player).each(function(index,player){
+            if(index>=12) return false;
+            player["index"]=index+200;
+            var box_item=carrot.football.box_item(player);
+            box_item.set_class('col-md-12 mb-3 col-12');
+            box_info.add_related(box_item.html());
+        });
+
+        box_info.add_footer(carrot.football.list_for_home());
+        
         carrot.show(box_info.html());
+        carrot.check_event();
+    }
+
+    list_for_home(){
+        var html='';
+        if(carrot.football.objs!=null){
+            var list_player=carrot.random(carrot.football.objs);
+            html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-4">';
+            html+='<i class="fa-solid fa-futbol"></i> <l class="lang" key_lang="other_player_football">Other Player Football</l>';
+            html+='<span role="button" onclick="carrot.football.show()" class="btn float-end btn-sm btn-light"><i class="fa-solid fa-square-caret-right"></i> <l class="lang" key_lang="view_all">View All</l></span></h4>';
+            html+='<div id="other_football" class="row m-0">';
+            $(list_player).each(function(index,player){
+                if(index<12){
+                    player["index"]=index+100;
+                    html+=carrot.football.box_item(player).html();
+                }else{
+                    return false;
+                }
+            });
+            html+='</div>';
+        }
+        return html;
     }
 }
 carrot.football=new FootBall();

@@ -251,7 +251,7 @@ class Carrot_Site{
                     carrot.load_js_page("ico","ico","carrot.ico.show_list_icon()");
             });
 
-            var btn_football=this.menu.create("btn_ico").set_label("Football").set_type("dev").set_icon("fa-solid fa-futbol");
+            var btn_football=this.menu.create("btn_ico").set_label("Football").set_type("main").set_icon("fa-solid fa-futbol");
             $(btn_football).click(function(){
                 if(carrot.football!=null)
                     carrot.football.show();
