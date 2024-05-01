@@ -149,6 +149,9 @@ class Carrot_Ico{
             $("#btn_download").hide();
             $("#btn_pay").show();
         }
+        
+        $("#btn_download").show();
+        $("#btn_pay").hide();
 
         carrot.file.get_base64data_file(data.icon).then((data_img)=>{
             carrot.ico.resizeImage(data_img, 64, 64).then((result) => {

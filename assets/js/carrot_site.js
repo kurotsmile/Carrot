@@ -41,7 +41,6 @@ class Carrot_Site{
     code;
     icon;
     audio;
-    background;
     bible;
     menu;
     avatar;
@@ -191,7 +190,6 @@ class Carrot_Site{
             $('head').append('<script type="text/javascript" src="assets/js/carrot_user.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_music.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_code.js?ver='+this.get_ver_cur("js")+'"></script>');
-            $('head').append('<script type="text/javascript" src="assets/js/carrot_background.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_radio.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_ebook.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_rate.js?ver='+this.get_ver_cur("js")+'"></script>');
@@ -240,7 +238,7 @@ class Carrot_Site{
                 if(carrot.midi!=null)
                     carrot.midi.show_list();
                 else
-                    carrot.load_js_page("piano","Midi","carrot.midi.show_list()");
+                    carrot.load_js_page("piano","midi","carrot.midi.show_list()");
             });
 
             var btn_ico=this.menu.create("btn_ico").set_label("Icon").set_type("main").set_lang("icon").set_icon("fa-solid fa-face-smile");
@@ -256,12 +254,27 @@ class Carrot_Site{
                 if(carrot.football!=null)
                     carrot.football.show();
                 else
-                    carrot.load_js_page("football","FootBall","carrot.football.show()");
+                    carrot.load_js_page("football","football","carrot.football.show()");
             });
 
             this.audio=new Carrot_Audio(this);
             this.radio=new Carrot_Radio(this);
-            this.background=new Carrot_Background(this);
+            var btn_bk=this.menu.create("btn_bk").set_label("List Background").set_lang("wallpaper").set_type("main").set_icon("fa-image fa-solid");
+            $(btn_bk).click(function(){
+                if(carrot.background!=null)
+                    carrot.background.show();
+                else
+                    carrot.load_js_page("background","background","carrot.background.show()");
+            });
+
+            var btn_add_bk=this.menu.create("btn_add_bk").set_label("Add Background").set_type("add").set_icon("fa-image fa-solid");
+            $(btn_add_bk).click(function(){
+                if(carrot.background!=null)
+                    carrot.background.add();
+                else
+                    carrot.load_js_page("background","background","carrot.background.add()");
+            });
+
             this.bible=new Carrot_Bible(this);
             this.ebook=new Carrot_Ebook(this);
             this.avatar=new Carrot_Avatar(this);
@@ -1299,10 +1312,10 @@ class Carrot_Site{
         location.reload();
     }
 
-    load_js_page(file_name_js_page, className=null, callback=null) {
+    load_js_page(file_name_js_page, obj_js=null, callback=null) {
         var url="assets/js/pages/"+file_name_js_page+".js?ver="+this.get_ver_cur("js");
-        if(className!=null){
-            if (window.hasOwnProperty(className)) {
+        if(obj_js!=null){
+            if (window.hasOwnProperty(obj_js)) {
                 eval(callback);
                 return;
             }
