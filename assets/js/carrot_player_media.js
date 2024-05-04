@@ -13,35 +13,36 @@ class Carrot_Player_Media{
     }
 
     create(){
-        if(this.audio_player==null){
-            this.carrot.log("Create Audio Media Player");
-            this.audio_player=new Audio();
-            this.audio_player.addEventListener("loadeddata", () => {
-                let duration = this.audio_player.duration;
+        if(carrot.player_media.audio_player==null){
+            carrot.log("Create Audio Media Player");
+            carrot.player_media.audio_player=new Audio();
+            
+            carrot.player_media.audio_player.addEventListener("loadeddata", () => {
+                let duration = carrot.player_media.audio_player.duration;
                 $("#m_timeStamp").attr('max',duration.toFixed(2));
-                $("#m_time_end").html(this.formatTime(duration));
-                if (this.audio_player.readyState >= 2){
-                    if(this.type!="video"){
+                $("#m_time_end").html(carrot.player_media.formatTime(duration));
+                if (carrot.player_media.audio_player.readyState >= 2){
+                    if(carrot.player_media.type!="video"){
                         $("#music_player_mini").effect("bounce","fast");
-                        this.audio_player.play();
-                        this.check_status_mm_player();
+                        carrot.player_media.audio_player.play();
+                        carrot.player_media.check_status_mm_player();
                     }
                 }
             });
     
-            this.audio_player.addEventListener("timeupdate", (event) => {
-                $("#m_timeStamp").attr('value',this.audio_player.currentTime.toFixed(2));
-                $("#m_time_play").html(this.formatTime(this.audio_player.currentTime));
+            carrot.player_media.audio_player.addEventListener("timeupdate", (event) => {
+                $("#m_timeStamp").attr('value',carrot.player_media.audio_player.currentTime.toFixed(2));
+                $("#m_time_play").html(carrot.player_media.formatTime(carrot.player_media.audio_player.currentTime));
             });
     
-            this.carrot.body.parent().parent().append(this.ui_player());
-            this.emp_player=$("#music_player_mini");
+            carrot.player_media.carrot.body.parent().parent().append(this.ui_player());
+            carrot.player_media.emp_player=$("#music_player_mini");
             $("#music_player_mini").draggable({scroll: true,axis: "x",cursor: "crosshair", handle: ".fa-up-down-left-right"});
+            
         }
     }
 
     set_mediaSession(s_title,s_artist,s_album,s_url_avatar){
-        var player_media=this;
         if ("mediaSession" in navigator) {
             navigator.mediaSession.metadata = new MediaMetadata({
               title: s_title,
@@ -57,13 +58,13 @@ class Carrot_Player_Media{
             });
           
             navigator.mediaSession.setActionHandler("play", () => {
-                player_media.play();
+                carrot.player_media.play();
             });
             navigator.mediaSession.setActionHandler("pause", () => {
-                player_media.pause();
+                carrot.player_media.pause();
             });
             navigator.mediaSession.setActionHandler("stop", () => {
-                player_media.stop();
+                carrot.player_media.stop();
             });
             navigator.mediaSession.setActionHandler("seekbackward", () => {
               /* Code excerpted. */
@@ -75,10 +76,10 @@ class Carrot_Player_Media{
               /* Code excerpted. */
             });
             navigator.mediaSession.setActionHandler("previoustrack", () => {
-                player_media.prev();
+                carrot.player_media.prev();
             });
             navigator.mediaSession.setActionHandler("nexttrack", () => {
-                player_media.next();
+                carrot.player_media.next();
             });
         }
     }
@@ -155,23 +156,23 @@ class Carrot_Player_Media{
     }
 
     play_or_pause(){
-        if(this.audio_player.paused)
-            this.audio_player.play();
+        if(carrot.player_media.audio_player.paused)
+            carrot.player_media.audio_player.play();
         else
-            this.audio_player.pause();
-        this.check_status_mm_player();
+            carrot.player_media.audio_player.pause();
+        carrot.player_media.check_status_mm_player();
     }
 
     play(){
         $("#music_player_mini").show(100);
-        this.audio_player.play();
-        this.check_status_mm_player();
+        carrot.player_media.audio_player.play();
+        carrot.player_media.check_status_mm_player();
         return this;
     }
 
     pause(){
-        this.audio_player.pause();
-        this.check_status_mm_player();
+        carrot.player_media.audio_player.pause();
+        carrot.player_media.check_status_mm_player();
         return this;
     }
 
@@ -218,56 +219,56 @@ class Carrot_Player_Media{
     }
 
     set_link_ytb(link_ytb){
-        var id_ytb=this.get_youtube_id(link_ytb);
+        var id_ytb=carrot.player_media.get_youtube_id(link_ytb);
         $('#carrot_player_video').html('');
         $('#carrot_player_video').html('<iframe width="100%" height="169" src="https://www.youtube.com/embed/'+id_ytb+'?autoplay=1&controls=0" title="Carrot video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>');
     }
 
     check_status_mm_player(){
-        if(this.audio_player.paused){
-            this.set_icon_play("play");
+        if(carrot.player_media.audio_player.paused){
+            carrot.player_media.set_icon_play("play");
         }else{
-            this.set_icon_play("pause");
+            carrot.player_media.set_icon_play("pause");
         }
     }
 
     play_audio(name,artist,mp3){
-        this.type="audio";
-        this.set_name(name);
-        this.set_artist(artist);
-        this.set_mp3(mp3).play();
-        this.off_avatar();
-        this.set_icon_play("loading");
+        carrot.player_media.type="audio";
+        carrot.player_media.set_name(name);
+        carrot.player_media.set_artist(artist);
+        carrot.player_media.set_mp3(mp3).play();
+        carrot.player_media.off_avatar();
+        carrot.player_media.set_icon_play("loading");
         $("#m_progress").show();
         $("#btn_mm_play").show();
-        this.set_mediaSession(name,artist,"Carrot Audio",this.carrot.get_url()+"/images/298x168.jpg");
+        carrot.player_media.set_mediaSession(name,artist,"Carrot Audio",carrot.player_media.carrot.get_url()+"/images/298x168.jpg");
     }
 
     play_music(name,artist,album,mp3,avatar){
-        this.type="music";
-        this.set_name(name);
-        this.set_artist(artist);
-        this.set_mp3(mp3).play();
-        this.on_avatar();
-        this.set_avatar(avatar);
-        this.set_icon_play("loading");
+        carrot.player_media.type="music";
+        carrot.player_media.set_name(name);
+        carrot.player_media.set_artist(artist);
+        carrot.player_media.set_mp3(mp3).play();
+        carrot.player_media.on_avatar();
+        carrot.player_media.set_avatar(avatar);
+        carrot.player_media.set_icon_play("loading");
         $("#m_progress").show();
         $("#btn_mm_play").show();
-        this.set_mediaSession(name,artist,album,avatar);
+        carrot.player_media.set_mediaSession(name,artist,album,avatar);
     }
 
     play_youtube(name,artist,album,mp3,avatar,link_ytb){
-        this.type="video";
-        this.set_name(name);
-        this.set_artist(artist);
-        this.set_mp3(mp3).pause();
-        this.off_avatar();
-        this.on_video();
-        this.set_avatar(avatar);
-        this.set_link_ytb(link_ytb);
+        carrot.player_media.type="video";
+        carrot.player_media.set_name(name);
+        carrot.player_media.set_artist(artist);
+        carrot.player_media.set_mp3(mp3).pause();
+        carrot.player_media.off_avatar();
+        carrot.player_media.on_video();
+        carrot.player_media.set_avatar(avatar);
+        carrot.player_media.set_link_ytb(link_ytb);
         $("#m_progress").hide();
         $("#btn_mm_play").hide();
-        this.set_mediaSession(name,artist,album,avatar);
+        carrot.player_media.set_mediaSession(name,artist,album,avatar);
     }
 
     formatTime(seconds) {

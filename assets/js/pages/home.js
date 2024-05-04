@@ -13,7 +13,7 @@ class Home{
         html+=carrot.code.list_for_home();
         if(carrot.ico!=null) html+=carrot.ico.list_for_home();
         html+=carrot.user.list_for_home();
-        html+=carrot.audio.list_for_home();
+        if(carrot.audio!=null) html+=carrot.audio.list_for_home();
         html+=carrot.radio.list_for_home();
         html+=carrot.bible.list_for_home();
         html+=carrot.ebook.list_for_home();
@@ -25,7 +25,7 @@ class Home{
         carrot.code.check_event();
         if(carrot.ico!=null) carrot.ico.check_event();
         carrot.user.check_event();
-        carrot.audio.check_event();
+        if(carrot.audio!=null) carrot.audio.check_event();
         carrot.radio.check_event();
         carrot.bible.check_event();
         carrot.ebook.check_event();

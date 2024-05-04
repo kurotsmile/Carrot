@@ -79,15 +79,15 @@ class Appp{
     show_for_home(){
         carrot.data.list("stores").then((stores)=>{
             $("#all_store_contain").html('');
-            $(stores).each(function(index,s){
+            $(carrot.random(stores)).each(function(index,s){
                 s["index"]=index;
                 $("#all_store_contain").append(carrot.appp.box_store_item(s));
             });
             carrot.appp.link_store=stores;
-
             carrot.data.list("apps").then((data)=>{
                 $("#all_app_contain").html('');
-                $(data).each(function(index,app){
+                var list_app=carrot.random(data);
+                $(list_app).each(function(index,app){
                     if(index>=12) return false;
                     app["index"]=index;
                     $("#all_app_contain").append(carrot.appp.box_app_item(app));
@@ -104,7 +104,7 @@ class Appp{
     act_get_data_link_store_done_home(stores){
         carrot.hide_loading();
         $("#all_store_contain").html('');
-        $(stores).each(function(index,s){
+        $(carrot.random(stores)).each(function(index,s){
             carrot.data.add("stores",s);
             s["index"]=index;
             $("#all_store_contain").append(carrot.appp.box_store_item(s));
@@ -116,16 +116,17 @@ class Appp{
     act_get_data_app_done_home(data){
         carrot.hide_loading();
         $("#all_app_contain").html('');
-            $(data).each(function(index,app){
-                app["index"]=index;
-                carrot.data.add("apps",app);
-            });
+        $(data).each(function(index,app){
+            app["index"]=index;
+            carrot.data.add("apps",app);
+        });
 
-            $(data).each(function(index,app){
-                if(index>=12) return false;
-                app["index"]=index;
-                $("#all_app_contain").append(carrot.appp.box_app_item(app));
-            });
+        var list_app=carrot.random(data);
+        $(list_app).each(function(index,app){
+            if(index>=12) return false;
+            app["index"]=index;
+            $("#all_app_contain").append(carrot.appp.box_app_item(app));
+        });
         carrot.appp.check_event();
     }
 

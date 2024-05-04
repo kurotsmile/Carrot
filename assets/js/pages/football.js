@@ -137,7 +137,7 @@ class FootBall{
         $(carrot.football.playing_position).each(function(index,p){
             field_pos.add_option(index,p+" - "+index);
         })
-        var field_buy=frm.create_field("buy").set_label("ball_cutting").set_val(data["buy"]).set_type("select");
+        var field_buy=frm.create_field("buy").set_label("Sell status").set_val(data["buy"]).set_type("select");
         field_buy.add_option("0","Free");
         field_buy.add_option("1","Buy");
         frm.create_field("date_create").set_label("Date Create").set_val(data["date_create"]);

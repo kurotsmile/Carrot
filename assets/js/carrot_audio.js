@@ -119,7 +119,7 @@ class Carrot_Audio{
             var au=JSON.parse(audio.obj_audios[audio_id]);
             $(this).effect( "bounce","fast");
             audio.index_audio_cur=parseInt(audio_index);
-            audio.carrot.player_media.open(this,audio.carrot.player_media.play_audio(au.name,au.author,au.mp3))
+            audio.carrot.player_media.open(this,audio.carrot.player_media.play_audio(au.name,au.author,au.mp3));
         });
         this.carrot.check_event();
     }

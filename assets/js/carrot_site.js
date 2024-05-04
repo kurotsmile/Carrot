@@ -40,11 +40,9 @@ class Carrot_Site{
     ai_lover;ai;
     code;
     icon;
-    audio;
     bible;
     menu;
     avatar;
-    player_media;
     file;
     pay;
     radio;
@@ -200,7 +198,6 @@ class Carrot_Site{
             $('head').append('<script type="text/javascript" src="assets/js/carrot_pay.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_player_media.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_file.js?ver='+this.get_ver_cur("js")+'"></script>');
-            $('head').append('<script type="text/javascript" src="assets/js/carrot_audio.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_avatar.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/ai_key_block.js?ver='+this.get_ver_cur("js")+'sd"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_bible.js?ver='+this.get_ver_cur("js")+'"></script>');
@@ -257,7 +254,14 @@ class Carrot_Site{
                     carrot.load_js_page("football","football","carrot.football.show()");
             });
 
-            this.audio=new Carrot_Audio(this);
+            var btn_audio=this.menu.create("btn_audio").set_label("Audio").set_type("main").set_lang("audio").set_icon("fa-solid fa-guitar");
+            $(btn_audio).click(function(){
+                if(carrot.audio!=null)
+                    carrot.audio.show();
+                else
+                    carrot.load_js_page("audio","audio","carrot.audio.show()");
+            });
+
             this.radio=new Carrot_Radio(this);
             var btn_bk=this.menu.create("btn_bk").set_label("List Background").set_lang("wallpaper").set_type("main").set_icon("fa-image fa-solid");
             $(btn_bk).click(function(){
@@ -286,7 +290,7 @@ class Carrot_Site{
             this.file=new Carrot_File(this);
             this.pay=new Carrot_Pay(this);
             this.rate=new Carrot_Rate(this);
-            this.data=new Carrot_data("carrotstore5","1.5");
+            this.data=new Carrot_data("carrotstore7","7");
             
             var btn_mod_host=this.menu.create("btn_mode_host").set_label("Change Mode Host").set_type("setting").set_icon("fa-brands fa-dev");
             $(btn_mod_host).click(function(){carrot.change_host_connection();});
