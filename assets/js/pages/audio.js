@@ -5,27 +5,38 @@ class Carrot_Audio{
 
     show(){
         carrot.loading("Get all audio and load");
-        var q=new Carrot_Query("audio");
-        q.set_limit(50);
-        q.get_data((audios)=>{
-            carrot.audio.objs=audios;
-            carrot.player_media.create();
-            carrot.player_media.set_act_next(carrot.audio.next);
-            carrot.player_media.set_act_prev(carrot.audio.prev);
-            carrot.change_title_page("Audio","?page=audio","audio");
-            carrot.hide_loading();
-            var html='';
-            html+=carrot.audio.menu();
-            html+='<div class="row">';
-            $(audios).each(function(index,audio){
-                audio.index=index;
-                carrot.data.add("audio",audio);
-                html+=carrot.audio.box_item(audio).html();
+        carrot.data.list("audio").then((audios)=>{
+            carrot.audio.load_and_show_list_by_data(audios);
+        }).catch(()=>{
+            var q=new Carrot_Query("audio");
+            q.set_limit(50);
+            q.get_data((audios)=>{
+                $(audios).each(function(index,audio){
+                    audio.index=index;
+                    carrot.data.add("audio",audio);
+                });
+                carrot.audio.load_and_show_list_by_data(audios);
             });
-            html+='</div>';
-            carrot.show(html);
-            carrot.check_event();
         });
+    }
+
+    load_and_show_list_by_data(audios){
+        carrot.audio.objs=audios;
+        carrot.player_media.create();
+        carrot.player_media.set_act_next(carrot.audio.next);
+        carrot.player_media.set_act_prev(carrot.audio.prev);
+        carrot.change_title_page("Audio","?page=audio","audio");
+        carrot.hide_loading();
+        var html='';
+        html+=carrot.audio.menu();
+        html+='<div class="row">';
+        $(audios).each(function(index,audio){
+            audio.index=index;
+            html+=carrot.audio.box_item(audio).html();
+        });
+        html+='</div>';
+        carrot.show(html);
+        carrot.check_event();
     }
 
     menu(){
@@ -33,7 +44,7 @@ class Carrot_Audio{
         html+='<div class="row mb-2">';
         html+='<div class="col-12">';
             html+='<div class="btn-group mr-2 btn-sm" role="group" aria-label="First group">';
-                html+='<button onclick="carrot.audio.add();" class="btn btn-sm dev btn-success"><i class="fa-solid fa-square-plus"></i> Add Icon</button>';
+                html+='<button onclick="carrot.audio.add();" class="btn btn-sm dev btn-success"><i class="fa-solid fa-square-plus"></i> Add Audio</button>';
                 html+='<button onclick="carrot.audio.delete_all_data();return false;" class="btn btn-danger dev btn-sm"><i class="fa-solid fa-dumpster-fire"></i> Delete All data</button>';
             html+='</div>';
         html+='</div>';
@@ -87,7 +98,7 @@ class Carrot_Audio{
     list_for_home(){
         var html='';
         if(carrot.audio.objs!=null){
-            arrot.player_media.create();
+            carrot.player_media.create();
             var list_audio=carrot.random(carrot.audio.objs);
             html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-4">';
             html+='<i class="'+carrot.audio.icon+' fs-6 me-2"></i> <l class="lang" key_lang="other_audio">Other Audio</l>';
