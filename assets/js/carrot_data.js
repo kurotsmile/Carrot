@@ -46,6 +46,10 @@ class Carrot_data{
         }
     }
 
+    get_doc(collection,id_doc,act_done,act_fail){
+        this.get(collection,id_doc,act_done,act_fail);
+    }
+
     load_image(id_doc,url,emp){
         this.get("images",id_doc,(d)=>{
             if(d){
