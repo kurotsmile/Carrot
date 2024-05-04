@@ -65,9 +65,9 @@ class Carrot_Audio{
         html_body+='<div class="col-10">'+data.author+'</div>';
         html_body+='<div class="col-2 text-end">';
         if(data.buy=="0")
-            html_body+='<i role="button" class="audio_icon fa-solid fa-play fa-2x text-success" obj_id="'+data.id_doc+'"></i>';
+            html_body+='<i role="button" onclick="carrot.audio.play(\''+data.id_doc+'\');return false;" class="audio_icon fa-solid fa-play fa-2x text-success" obj_id="'+data.id_doc+'"></i>';
         else
-            html_body+='<i role="button" class="audio_icon fa-solid fa-cart-shopping fa-2x text-info" obj_id="'+data.id_doc+'"></i>';
+            html_body+='<i role="button" onclick="carrot.audio.play(\''+data.id_doc+'\');return false;" class="audio_icon fa-solid fa-cart-shopping fa-2x text-info" obj_id="'+data.id_doc+'"></i>';
         html_body+='</div>';
         item_au.set_body(html_body);
         return item_au;
