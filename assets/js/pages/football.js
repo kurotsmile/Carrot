@@ -7,19 +7,29 @@ class FootBall{
     show(){
         carrot.football.index_player_position=-1;
         carrot.loading("Get and load all player");
-        carrot.data.list("football").then((players)=>{
-            carrot.football.objs=players;
-            carrot.football.load_list_by_data(players);
-        }).catch(()=>{
-            var q=new Carrot_Query("football");
-            q.get_data((players)=>{
+        if(carrot.check_ver_cur("football")==false){
+            carrot.update_new_ver_cur("football",true);
+            carrot.data.clear("football");
+            carrot.football.get_list_data_from_server();
+        }else{
+            carrot.data.list("football").then((players)=>{
                 carrot.football.objs=players;
-                $(players).each(function(index,p){
-                    p["index"]=index;
-                    carrot.data.add("football",p);
-                });
                 carrot.football.load_list_by_data(players);
+            }).catch(()=>{
+                carrot.football.get_list_data_from_server();
             });
+        }
+    }
+
+    get_list_data_from_server(){
+        var q=new Carrot_Query("football");
+        q.get_data((players)=>{
+            carrot.football.objs=players;
+            $(players).each(function(index,p){
+                p["index"]=index;
+                carrot.data.add("football",p);
+            });
+            carrot.football.load_list_by_data(players);
         });
     }
 
