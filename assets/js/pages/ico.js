@@ -131,7 +131,7 @@ class Carrot_Ico{
 
         $(carrot.ico.objs).each(function(index,icon_data){
             if(index>=12) return false;
-            icon_data["index"]=index+200;
+            icon_data["index"]=(index+200);
             var box_item_icon=carrot.ico.box_item(icon_data);
             box_item_icon.set_class('col-md-6 mb-3 col-6');
             box.add_related(box_item_icon.html());
@@ -142,6 +142,9 @@ class Carrot_Ico{
         html+=box.html();
         carrot.show(html);
 
+        $("#btn_download").removeClass("d-inline");
+        $("#btn_pay").removeClass("d-inline");
+
         if(carrot.ico.check_pay(data.id_doc)){
             $("#btn_download").show();
             $("#btn_pay").hide();
@@ -149,9 +152,8 @@ class Carrot_Ico{
             $("#btn_download").hide();
             $("#btn_pay").show();
         }
-        
-        $("#btn_download").show();
-        $("#btn_pay").hide();
+
+        carrot.check_event();
 
         carrot.file.get_base64data_file(data.icon).then((data_img)=>{
             carrot.ico.resizeImage(data_img, 64, 64).then((result) => {
@@ -168,8 +170,6 @@ class Carrot_Ico{
             });
         });
 
-        carrot.ico.check_event();
-
         if(carrot.ico.objs.length==0){
             $("#box_related").html(carrot.loading_html());
             $("#box_footer").html(carrot.loading_html());
@@ -180,6 +180,7 @@ class Carrot_Ico{
                 $("#box_related").html('');
                 $("#box_footer").html('');
                 $(data).each(function(index,icon_data){
+                    icon_data["index"]=(index+200);
                     var box_item_icon=carrot.ico.box_item(icon_data);
                     box_item_icon.set_class('col-md-6 mb-3 col-6');
                     $("#box_related").append(box_item_icon.html());
@@ -187,6 +188,8 @@ class Carrot_Ico{
                 $("#box_footer").html(carrot.ico.list_for_home());
             });
         }
+
+        carrot.ico.check_event();
     }
 
     pay(){
@@ -429,7 +432,7 @@ class Carrot_Ico{
             html+='<div id="other_icon" class="row m-0">';
             $(list_icon).each(function(index,icon){
                 if(index<12){
-                    icon["index"]=index+100;
+                    icon["index"]=index;
                     html+=carrot.ico.box_item(icon).html();
                 }else{
                     return false;

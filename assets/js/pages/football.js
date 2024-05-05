@@ -57,11 +57,13 @@ class FootBall{
     }
 
     box_item(data){
+        carrot.data.load_image(data.id_doc,data.icon,"football_icon_"+data.id_doc);
         var box=new Carrot_List_Item(carrot);
         var index_pos=parseInt(data.playing_position);
         box.set_tip(carrot.football.playing_position[index_pos]);
         box.set_id(data.id_doc);
-        box.set_icon(data.icon);
+        box.set_icon(carrot.get_url()+"/images/128.png");
+        box.set_id_icon("football_icon_"+data.id_doc);
         box.set_name(data.name);
         box.set_db_collection("football");
         box.set_obj_js("football");
@@ -173,6 +175,7 @@ class FootBall{
             carrot.football.info(data);
         },()=>{
             carrot.server.get_doc("football",id,(data)=>{
+                carrot.data.add("football",data);
                 carrot.football.info(data);
             });
         });
@@ -181,9 +184,11 @@ class FootBall{
     info(data){
         carrot.change_title_page(data.name,"?page=football&id="+data.id_doc,"football");
         carrot.hide_loading();
+        carrot.data.img(data.id_doc,data.icon,"football_icon_"+data.id_doc);
         var box_info=new Carrot_Info(data.id_doc);
         box_info.set_title(data.name);
-        box_info.set_icon_image(data.icon);
+        box_info.set_icon_image(carrot.get_url()+"/images/128.png");
+        box_info.set_icon_id("football_icon_"+data.id_doc);
         box_info.set_icon_col_class("col-2");
 
         var index_pos=parseInt(data.playing_position);

@@ -50,14 +50,18 @@ class Carrot_data{
         this.get(collection,id_doc,act_done,act_fail);
     }
 
+    img(id_doc,url,emp){
+        carrot.data.load_image(id_doc,url,emp);
+    }
+
     load_image(id_doc,url,emp){
         this.get("images",id_doc,(d)=>{
             if(d){
                 const imageUrl = URL.createObjectURL(d.data);
-                if(d.data.size>500) $("#"+emp).attr("src", imageUrl);
-                else $("#"+emp).attr("src","images/150.png");
+                if(d.data.size>500) $("."+emp).attr("src", imageUrl);
+                else $("."+emp).attr("src","images/150.png");
             }else{
-                $("#"+emp).attr("src", url);
+                $("."+emp).attr("src", url);
             }
         },()=>{
             fetch(url)
@@ -65,10 +69,10 @@ class Carrot_data{
             .then(blob => {
                 var data_img={id_doc:id_doc,data:blob};
                 this.add("images",data_img);
-                $("#"+emp).attr("src",url);
+                $("."+emp).attr("src",url);
             })
             .catch(error => {
-                $("#"+emp).attr("src","images/150.png");
+                $("."+emp).attr("src","images/150.png");
             });
         });
     }

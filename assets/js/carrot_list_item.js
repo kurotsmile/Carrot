@@ -33,7 +33,7 @@ class Carrot_List_Item{
     }
 
     set_id_icon(id_icon){
-        this.id_icon='id="'+id_icon+'"';
+        this.id_icon=id_icon;
     }
 
     set_name(name){
@@ -121,7 +121,7 @@ class Carrot_List_Item{
             html+='<div class="app-cover p-2 shadow-md bg-white">';
             html+='<div class="row">';
                 if(this.icon_img!=null) 
-                    html+='<div role="button" '+s_htm_act_click+' class="img-cover '+this.class_icon+' '+this.db_collection+'_icon" db_collection="'+this.db_collection+'" app_id="'+this.id+'"  obj_id="'+this.id+'" obj_index="'+this.index+'"><img '+this.id_icon+' class="rounded" src="'+this.icon_img+'" alt="'+this.name+'"></div>';
+                    html+='<div role="button" '+s_htm_act_click+' class="img-cover '+this.class_icon+' '+this.db_collection+'_icon" db_collection="'+this.db_collection+'" app_id="'+this.id+'"  obj_id="'+this.id+'" obj_index="'+this.index+'"><img  class="rounded '+this.id_icon+'" src="'+this.icon_img+'" alt="'+this.name+'"></div>';
                 else 
                     html+='<div class="pe-0 '+this.class_icon_col+' text-center"><i id="'+this.id_icon+'" role="button" '+s_htm_act_click+' class="'+this.icon_font+' fa-2x" obj_id="'+this.id+'" obj_index="'+this.index+'"></i></div>';
 
@@ -184,6 +184,10 @@ class Carrot_Info{
     }
 
     set_icon_id(id){
+        this.s_icon_id=id;
+    }
+
+    set_id_icon(id){
         this.s_icon_id=id;
     }
 
@@ -254,7 +258,7 @@ class Carrot_Info{
                 html+='<div class="row bg-white shadow-sm">';
 
                     html+='<div class="'+this.s_icon_col_class+' p-3 text-center">';
-                        if(this.s_icon_image!="") html+='<img class="w-100" id="'+this.s_icon_id+'" src="'+this.s_icon_image+'" alt="Info Icon">';
+                        if(this.s_icon_image!="") html+='<img class="w-100 '+this.s_icon_id+'" src="'+this.s_icon_image+'" alt="Info Icon">';
                         if(this.s_icon_font!="") html+='<i class="w-100 '+this.s_icon_font+' fa-5x" id="'+this.s_icon_id+'" alt="Info Icon"></i>';
                     html+='</div>';
 
