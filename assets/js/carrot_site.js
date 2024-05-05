@@ -5,8 +5,6 @@ class Carrot_Site{
     mode_site = "nomal";
     is_dev=false;
     is_localhost=false;
-    paypal_pub_CLIENT_ID="AYgLieFpLUDxi_LBdzDqT2ucT4MIa-O0vwX7w3CKGfQgMGROOHu-xz2y5Jes77owCYQ1eLmOII_ch2VZ";
-    paypal_dev_CLIENT_ID="AcW86yX1h7Mae8ofqkhDol9d9kq5zI4fVY5jKuRT45uTwQw52aYYDNI5AwjrKw7tAExqW5N128z1qLF1";
     paypal_CLIENT_ID="";
     index_server=0;
 
@@ -35,7 +33,6 @@ class Carrot_Site{
 
     /*Obj Main*/
     user;
-    link_store;
     music;
     ai_lover;ai;
     code;
@@ -177,13 +174,12 @@ class Carrot_Site{
             this.body=$("#main_contain");
     
             if(this.is_dev)
-                this.paypal_CLIENT_ID=this.paypal_dev_CLIENT_ID;
+                this.paypal_CLIENT_ID=carrot.config.paypal_dev_CLIENT_ID;
             else
-                this.paypal_CLIENT_ID=this.paypal_pub_CLIENT_ID;
+                this.paypal_CLIENT_ID=carrot.config.paypal_pub_CLIENT_ID;
     
             $('head').append('<script type="text/javascript" src="assets/js/carrot_data.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_langs.js?ver='+this.get_ver_cur("js")+'"></script>');
-            $('head').append('<script type="text/javascript" src="assets/js/carrot_link_store.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_form.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_user.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_music.js?ver='+this.get_ver_cur("js")+'"></script>');
@@ -224,8 +220,13 @@ class Carrot_Site{
                 if(carrot.appp!=null) carrot.appp.add();
                 else carrot.load_js_page("app","app","carrot.appp.add()");
             });
+
+            var btn_add_link_store=carrot.menu.create("app").set_label("Add Link Store").set_icon("fa-solid fa-store").set_type("add");
+            $(btn_add_link_store).click(function(){
+                if(carrot.appp!=null) carrot.appp.add_link_store();
+                else carrot.load_js_page("app","app","carrot.appp.add_link_store()");
+            });
     
-            this.link_store=new Carrot_Link_Store(this);
             this.user=new Carrot_user(this);
             this.music=new Carrot_Music(this);
             this.code=new Carrot_Code(this);

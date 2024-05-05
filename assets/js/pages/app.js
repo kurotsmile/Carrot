@@ -221,12 +221,7 @@ class Appp{
             new_data_app["describe_"+lang.key]="";
         });
         new_data_app["youtube_link"]="";
-        new_data_app["google_play"]="";
-        new_data_app["amazon_app_store"]="";
-        new_data_app["microsoft_store"]="";
-        new_data_app["uptodown"]="";
-        new_data_app["itch"]="";
-        $(carrot.link_store.list_link_store).each(function(index,store){
+        $(carrot.appp.link_store).each(function(index,store){
             var key_val=store.key;
             new_data_app[key_val]="";
         });
@@ -326,6 +321,32 @@ class Appp{
         return app_item.html();
     }
 
+    add_link_store(){
+        var data_new={};
+        data_new["icon"]="";
+        data_new["img"]="";
+        data_new["key"]="";
+        data_new["name"]="";
+        data_new["link"]="";
+        carrot.appp.frm_add_or_edit_link_store(data_new).set_title("Add Store").show();
+    }
+
+    edit_link_store(data,carrot){
+        carrot.appp.frm_add_or_edit_link_store(data).set_title("Update Store").show();
+    }
+
+    frm_add_or_edit_link_store(data){
+        var frm=new Carrot_Form("frm_link_store",carrot);
+        frm.set_icon("fa-solid fa-store");
+        frm.set_db("link_store","key");
+        frm.create_field("key").set_label("Key").set_val(data["key"]);
+        frm.create_field("name").set_label("Name").set_val(data["name"]);
+        frm.create_field("icon").set_label("Icon (Font)").set_val(data["icon"]);
+        frm.create_field("img").set_label("Image (Url)").set_val(data["img"]).set_type("file").set_type_file("image/*");
+        frm.create_field("link").set_label("Link All App").set_val(data["link"]);
+        return frm;
+    }
+
     box_store_item(data){
         carrot.data.load_image(data.id_doc,data.img,"store_icon_"+data.id_doc);
         var store_item=new Carrot_List_Item(carrot);
@@ -337,9 +358,11 @@ class Appp{
         store_item.set_name(data.name);
         store_item.set_class("col-md-2 mb-2 col-sm-3");
         store_item.set_tip('<i class="'+data.icon+'"></i> '+data.id_doc);
+        store_item.set_act_edit("appp.edit_link_store");
         store_item.set_act_click("carrot.appp.show_store_by_id('"+data.id_doc+"')");
         return store_item.html();
     }
+    
 
     box_qr(data){
         var html='';

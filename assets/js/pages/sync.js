@@ -1,6 +1,7 @@
 class Sync{
     show(){
         carrot.loading();
+        carrot.html("sdsd");
     }
 
     info(data){

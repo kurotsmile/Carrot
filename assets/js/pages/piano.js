@@ -17,6 +17,10 @@ class Midi{
         this.footnotes_frequency=[69.29566,77.78175,92.49861,103.8262,116.5409,138.5913,155.5635,184.9972,207.6523,233.0819,277.1826,311.1270,369.9944,415.3047,466.1638,1108.731,1244.508,1479.978,1661.219,1864.655];
     }
 
+    add(){
+        alert("Add midi");
+    }
+
     show_public(){
         carrot.midi.type_view="public";
         carrot.loading();
@@ -100,7 +104,7 @@ class Midi{
             
                 html+=' <div class="btn-group" role="group">';
                     if(this.type_view=="stores") s_class='active'; else s_class='';
-                    html+='<div class="btn btn-sm btn-success '+s_class+'" onclick="carrot.appp.show_other_store();"><i class="fa-solid fa-circle-plus"></i> Create New Midi</div>';
+                    html+='<div class="btn btn-sm btn-success '+s_class+'" onclick="carrot.midi.add();"><i class="fa-solid fa-circle-plus"></i> Create New Midi</div>';
                 html+='</div>';
             html+='</div>';
         html+='</div>';
