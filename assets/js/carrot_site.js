@@ -208,77 +208,39 @@ class Carrot_Site{
             $(btn_home_new).click(function(){carrot.home_page();});
     
             var btn_app=this.menu.create("btn_app").set_label("App and Game").set_lang("app").set_icon("fa-solid fa-gamepad");
-            $(btn_app).click(function(){
-                if(carrot.appp!=null)
-                    carrot.appp.back_show_all();
-                else
-                    carrot.load_js_page("app","Appp","carrot.appp.back_show_all()");
-            });
+            $(btn_app).click(function(){carrot.load_js_page("app","appp","carrot.appp.back_show_all()");});
     
             var btn_add_apps=carrot.menu.create("app").set_label("Add App").set_icon("fa-solid fa-mobile").set_type("add");
-            $(btn_add_apps).click(function(){
-                if(carrot.appp!=null) carrot.appp.add();
-                else carrot.load_js_page("app","app","carrot.appp.add()");
-            });
+            $(btn_add_apps).click(function(){carrot.load_js_page("app","appp","carrot.appp.add()");});
 
             var btn_add_link_store=carrot.menu.create("app").set_label("Add Link Store").set_icon("fa-solid fa-store").set_type("add");
-            $(btn_add_link_store).click(function(){
-                if(carrot.appp!=null) carrot.appp.add_link_store();
-                else carrot.load_js_page("app","app","carrot.appp.add_link_store()");
-            });
+            $(btn_add_link_store).click(function(){carrot.load_js_page("app","app","carrot.appp.add_link_store()");});
+
+            var btn_list_link_store=carrot.menu.create("app").set_label("List Store").set_icon("fa-solid fa-store").set_type("dev");
+            $(btn_list_link_store).click(function(){carrot.load_js_page("app","app","carrot.appp.show_other_store()");});
     
             this.user=new Carrot_user(this);
             this.music=new Carrot_Music(this);
             this.code=new Carrot_Code(this);
     
             var btn_midi=this.menu.create("btn_midi_piano").set_label("Midi").set_lang("midi").set_icon("fa-solid fa-drum");
-            $(btn_midi).click(function(){
-                if(carrot.midi!=null)
-                    carrot.midi.show_list();
-                else
-                    carrot.load_js_page("piano","midi","carrot.midi.show_list()");
-            });
+            $(btn_midi).click(function(){carrot.load_js_page("piano","midi","carrot.midi.show_list()");});
 
             var btn_ico=this.menu.create("btn_ico").set_label("Icon").set_type("main").set_lang("icon").set_icon("fa-solid fa-face-smile");
-            $(btn_ico).click(function(){
-                if(carrot.ico!=null)
-                    carrot.ico.show_list_icon();
-                else
-                    carrot.load_js_page("ico","ico","carrot.ico.show_list_icon()");
-            });
+            $(btn_ico).click(function(){carrot.load_js_page("ico","ico","carrot.ico.show_list_icon()");});
 
             var btn_football=this.menu.create("btn_ico").set_label("Football").set_type("main").set_icon("fa-solid fa-futbol");
-            $(btn_football).click(function(){
-                if(carrot.football!=null)
-                    carrot.football.show();
-                else
-                    carrot.load_js_page("football","football","carrot.football.show()");
-            });
+            $(btn_football).click(function(){carrot.load_js_page("football","football","carrot.football.show()");});
 
             var btn_audio=this.menu.create("btn_audio").set_label("Audio").set_type("main").set_lang("audio").set_icon("fa-solid fa-guitar");
-            $(btn_audio).click(function(){
-                if(carrot.audio!=null)
-                    carrot.audio.show();
-                else
-                    carrot.load_js_page("audio","audio","carrot.audio.show()");
-            });
+            $(btn_audio).click(function(){carrot.load_js_page("audio","audio","carrot.audio.show()");});
 
             this.radio=new Carrot_Radio(this);
             var btn_bk=this.menu.create("btn_bk").set_label("List Background").set_lang("wallpaper").set_type("main").set_icon("fa-image fa-solid");
-            $(btn_bk).click(function(){
-                if(carrot.background!=null)
-                    carrot.background.show();
-                else
-                    carrot.load_js_page("background","background","carrot.background.show()");
-            });
+            $(btn_bk).click(function(){carrot.load_js_page("background","background","carrot.background.show()");});
 
             var btn_add_bk=this.menu.create("btn_add_bk").set_label("Add Background").set_type("add").set_icon("fa-image fa-solid");
-            $(btn_add_bk).click(function(){
-                if(carrot.background!=null)
-                    carrot.background.add();
-                else
-                    carrot.load_js_page("background","background","carrot.background.add()");
-            });
+            $(btn_add_bk).click(function(){carrot.load_js_page("background","background","carrot.background.add()");});
 
             this.bible=new Carrot_Bible(this);
             this.ebook=new Carrot_Ebook(this);
@@ -291,6 +253,7 @@ class Carrot_Site{
             this.file=new Carrot_File(this);
             this.pay=new Carrot_Pay(this);
             this.rate=new Carrot_Rate(this);
+            this.tool=this.rate;
             this.data=new Carrot_data("carrotstore7","7");
             
             var btn_mod_host=this.menu.create("btn_mode_host").set_label("Change Mode Host").set_type("setting").set_icon("fa-brands fa-dev");
@@ -549,10 +512,16 @@ class Carrot_Site{
     download_json() {
         var name_collection = prompt("Enter collection json", "Enter name collection");
         if (name_collection == "") return;
+        carrot.export(name_collection);
+    }
+
+    export(name_collection){
+        this.loading("Processing export data ("+name_collection+")");
         var data_json = Object();
         data_json["all_item"] = Array();
         data_json["collection"] = name_collection;
         this.db.collection(name_collection).get().then((querySnapshot) => {
+            carrot.hide_loading();
             querySnapshot.forEach((doc) => {
                 var data_app = doc.data();
                 data_app["id_import"] = doc.id;
@@ -1320,11 +1289,11 @@ class Carrot_Site{
     load_js_page(file_name_js_page, obj_js=null, callback=null) {
         var url="assets/js/pages/"+file_name_js_page+".js?ver="+this.get_ver_cur("js");
         if(obj_js!=null){
-            if (window.hasOwnProperty(obj_js)) {
+            this.call_show_on_load_pagejs=false;
+            if (carrot[obj_js]!=null) {
                 eval(callback);
                 return;
             }
-            this.call_show_on_load_pagejs=false;
         }else{
             this.call_show_on_load_pagejs=true;
         }

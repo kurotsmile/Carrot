@@ -100,6 +100,7 @@ class FootBall{
         html+='<div class="col-12">';
             html+='<div class="btn-group mr-2 btn-sm" role="group" aria-label="First group">';
                 html+='<button onclick="carrot.football.add();" class="btn btn-sm dev btn-success"><i class="fa-solid fa-square-plus"></i> Add new players</button>';
+                html+=carrot.tool.btn_export("football");
                 html+='<button onclick="carrot.football.delete_all_data();return false;" class="btn btn-danger dev btn-sm"><i class="fa-solid fa-dumpster-fire"></i> Delete All data</button>';
                 html+='<div class="btn-group" role="group">';
                     html+='<button class="btn btn-secondary dropdown-toggle btn-sm" type="button" id="btn_list_player_category" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-rectangle-list"></i> Category</button>';

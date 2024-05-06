@@ -296,9 +296,9 @@ class Appp{
         html_body+='</li>';
 
         if(data_app.type=="app")
-            html_body+='<li class="col-4"><span class="text-secondary float-end"><i class="fa-solid fa-mobile"></i></span></li>';
+            html_body+='<li class="col-4 btn" onclick="carrot.appp.show_app();"><span class="text-secondary float-end"><i class="fa-solid fa-mobile"></i></span></li>';
         else
-            html_body+='<li class="col-4"><span class="text-secondary float-end"><i class="fa-solid fa-gamepad"></i></span></li>';
+            html_body+='<li class="col-4 btn" onclick="carrot.appp.show_game();"><span class="text-secondary float-end"><i class="fa-solid fa-gamepad"></i></span></li>';
         html_body+='</ul>';
 
         if(carrot.appp.link_store!=null){
@@ -437,6 +437,7 @@ class Appp{
                     html+='<div class="btn dev btn-sm btn-success '+s_class+'" onclick="carrot.appp.show_app_publish();"><i class="fa-solid fa-van-shuttle"></i> Public App</div>';
                     if(this.status_view=='draft') s_class='active'; else s_class='';
                     html+='<div class="btn dev btn-sm btn-success '+s_class+'" onclick="carrot.appp.show_app_draft();"><i class="fa-solid fa-layer-group"></i> Draft App</div>';
+                    html+=carrot.tool.btn_export("app");
                     html+='<div class="btn dev btn-sm btn-danger" onclick="carrot.appp.clear_all_data();"><i class="fa-solid fa-dumpster-fire"></i> Delete All data</div>';
                 html+='</div>';
 

@@ -334,4 +334,10 @@ class Carrot_Rate{
         html+='</div>';
         return html;
     }
+
+    btn_export(collection){
+        var html='';
+        html+='<div class="btn btn-sm dev btn-dark" onclick="carrot.export(\''+collection+'\');"><i class=\"fa-solid fa-download\"></i> Export</div>';
+        return html;
+    }
 }
