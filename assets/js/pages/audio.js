@@ -45,6 +45,7 @@ class Carrot_Audio{
         html+='<div class="col-12">';
             html+='<div class="btn-group mr-2 btn-sm" role="group" aria-label="First group">';
                 html+='<button onclick="carrot.audio.add();" class="btn btn-sm dev btn-success"><i class="fa-solid fa-square-plus"></i> Add Audio</button>';
+                html+=carrot.tool.btn_export("audio");
                 html+='<button onclick="carrot.audio.delete_all_data();return false;" class="btn btn-danger dev btn-sm"><i class="fa-solid fa-dumpster-fire"></i> Delete All data</button>';
             html+='</div>';
         html+='</div>';

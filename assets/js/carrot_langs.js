@@ -65,6 +65,7 @@ class Carrot_Langs{
             html+='<div class="col-12 m-0 btn-toolba" role="toolbar" aria-label="Toolbar with button groups">';
                 html+='<div role="group" aria-label="First group"  class="btn-group mr-2">';
                     html+='<button onclick="carrot.langs.list_category_setting_lang();" type="button" class="btn btn-dark btn-sm"><i class="fa-solid fa-rectangle-list"></i> Category Lang Setting</button>';
+                    html+=carrot.tool.btn_export("lang_data");
                     html+='<button onclick="carrot.langs.add_setting_lang()" class="btn btn-sm btn-success"><i class="fa-solid fa-square-plus"></i> Add setting lang</button>';
                     html+=btn_extension;
                     if(this.lang_setting_db_collection!="") html+=carrot.langs.list_btn_lang_select();

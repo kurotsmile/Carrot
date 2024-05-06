@@ -104,6 +104,7 @@ class Midi{
             
                 html+=' <div class="btn-group" role="group">';
                     if(this.type_view=="stores") s_class='active'; else s_class='';
+                    html+=carrot.btn_export("midi");
                     html+='<div class="btn btn-sm btn-success '+s_class+'" onclick="carrot.midi.add();"><i class="fa-solid fa-circle-plus"></i> Create New Midi</div>';
                 html+='</div>';
             html+='</div>';

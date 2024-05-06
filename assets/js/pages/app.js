@@ -231,6 +231,7 @@ class Appp{
         new_data_app["img4"]="";
         new_data_app["img5"]="";
         new_data_app["status"]="";
+        new_data_app["data_extension"]="";
         this.frm_add_or_edit(new_data_app).set_title("Add App").set_msg_done("Add app success!").set_type("add").show();
     }
 
@@ -269,6 +270,12 @@ class Appp{
         var field_status=frm.create_field("status").set_label("Status").set_value(data.status).set_type("select");
         field_status.add_option("draft","Draft");
         field_status.add_option("publish","Publish");
+        frm.create_field("hr2").set_type("line");
+        var field_data_extension=frm.create_field("data_extension").set_label("Link Page Other").set_value(data['data_extension']);
+        var btn_data=new Carrot_Btn();
+        btn_data.set_icon("fa-solid fa-object-group");
+        btn_data.set_act("alert('Thie ke data')");
+        field_data_extension.add_btn(btn_data);
         return frm;
     }
 
@@ -480,6 +487,10 @@ class Appp{
         var effect_font=["fa-fade", "fa-beat-fade", "fa-bounce", "fa-shake", "fa-flip"];
         var effect_random = Math.floor(Math.random() * effect_font.length);
         box_info.add_attrs("fa-solid fa-user-group-simple",carrot.l_html("author","Author"),'<p>Thanh <i class="fa-solid fa-heart '+effect_font[effect_random]+'" style="color: #ff0000;"></i> Nhung</p>');
+
+        if(data["data_extension"]!=null){
+            if(data["data_extension"]!="") box_info.add_btn('btn_extension_1','fa-solid fa-square-up-right',"Football","carrot.football.show()");
+        }
 
         if(data["img1"]!=""&&data["img1"]!=undefined){
                 var html_img='<div class="owl-carousel owl-theme">';
