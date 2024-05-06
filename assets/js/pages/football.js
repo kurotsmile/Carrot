@@ -105,8 +105,8 @@ class FootBall{
             html_body+=carrot.football.star('<i class="fa-solid fa-shoe-prints"></i> Cutting',parseInt(data.ball_cutting));
         html_body+='</div>';
 
-        html_body+='<div class="col-2">';
-            html_body+='<div class="rounded-circle bg-secondary text-white text-center fs-5 p-20">'+(parseInt(data.ball_force)+parseInt(data.ball_control)+parseInt(data.ball_cutting))+'</div>';
+        html_body+='<div class="col-2 text-white">';
+            html_body+='<p class="fs-7 bg-secondary rounded p-3 pr-3">'+(parseInt(data.ball_force)+parseInt(data.ball_control)+parseInt(data.ball_cutting))+' <i class="fa-solid fa-medal"></i></p>';
         html_body+='</div>';
 
         html_body+='</div>';
