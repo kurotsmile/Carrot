@@ -98,10 +98,18 @@ class FootBall{
         box.set_class_icon_col("col-3");
         box.set_class_body("col-9");
         box.set_act_click("carrot.football.get_info('"+data.id_doc+"');");
-        var html_body='';
-        html_body+=carrot.football.star('<i class="fa-solid fa-arrows-to-circle"></i> Force',parseInt(data.ball_force));
-        html_body+=carrot.football.star('<i class="fa-solid fa-person-running"></i> Control',parseInt(data.ball_control));
-        html_body+=carrot.football.star('<i class="fa-solid fa-shoe-prints"></i> Cutting',parseInt(data.ball_cutting));
+        var html_body='<div class="row">';
+        html_body+='<div class="col-10">';
+            html_body+=carrot.football.star('<i class="fa-solid fa-arrows-to-circle"></i> Force',parseInt(data.ball_force));
+            html_body+=carrot.football.star('<i class="fa-solid fa-person-running"></i> Control',parseInt(data.ball_control));
+            html_body+=carrot.football.star('<i class="fa-solid fa-shoe-prints"></i> Cutting',parseInt(data.ball_cutting));
+        html_body+='</div>';
+
+        html_body+='<div class="col-2">';
+            html_body+='<div class="rounded-circle bg-secondary text-white text-center fs-5 p-20">'+(parseInt(data.ball_force)+parseInt(data.ball_control)+parseInt(data.ball_cutting))+'</div>';
+        html_body+='</div>';
+
+        html_body+='</div>';
         box.set_body(html_body);
         return box;
     }
