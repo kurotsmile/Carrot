@@ -35,6 +35,7 @@ class FootBall{
 
     get_list_data_from_db(act_done,act_fail=null){
         carrot.data.list("football").then((players)=>{
+            carrot.football.objs=players;
             act_done(players);
         }).catch(()=>{
             if(act_fail!=null) act_fail();
@@ -81,7 +82,13 @@ class FootBall{
         carrot.data.load_image(data.id_doc,data.icon,"football_icon_"+data.id_doc);
         var box=new Carrot_List_Item(carrot);
         var index_pos=parseInt(data.playing_position);
-        box.set_tip(carrot.football.playing_position[index_pos]);
+        var html_status_buy='';
+        if(data["buy"]=="1")
+            html_status_buy='<i class="fa-solid fa-cart-shopping"></i> Pay fees';
+        else
+            html_status_buy='<i class="fa-brands fa-creative-commons-by"></i> Free';
+
+        box.set_tip(carrot.football.playing_position[index_pos]+" . "+html_status_buy);
         box.set_id(data.id_doc);
         box.set_icon(carrot.get_url()+"/images/128.png");
         box.set_id_icon("football_icon_"+data.id_doc);
@@ -141,6 +148,7 @@ class FootBall{
     }
 
     delete_all_data(){
+        carrot.data.clear("football");
         carrot.msg("Delete all data cache success!!");
     }
 
@@ -154,6 +162,7 @@ class FootBall{
         data_player["ball_cutting"]="1";
         data_player["playing_position"]=carrot.football.index_player_position;
         data_player["buy"]="0";
+        data_player["tip"]="";
         data_player["date_create"]=new Date().toISOString();
         carrot.football.add_or_edit(data_player).set_title("Add new football players").set_msg_done("Add icon success!").show();
     }
@@ -183,6 +192,7 @@ class FootBall{
         var field_buy=frm.create_field("buy").set_label("Sell status").set_val(data["buy"]).set_type("select");
         field_buy.add_option("0","Free");
         field_buy.add_option("1","Buy");
+        frm.create_field("tip").set_label("Tip").set_val(data["tip"]).set_type("textarea");
         frm.create_field("date_create").set_label("Date Create").set_val(data["date_create"]);
         return frm;
     }
@@ -223,6 +233,7 @@ class FootBall{
         box_info.add_attrs("fa-solid fa-shoe-prints","Cutting",data.ball_cutting);
         box_info.add_attrs("fa-solid fa-street-view","Playing position",carrot.football.playing_position[index_pos]);
         box_info.set_protocol_url("tablesoccer://show/"+data.id_doc);
+        if(data["tip"]!=null) box_info.add_body('<h4 class="fw-semi fs-5 lang" key_lang="describe">Short introduction</h4>',data["tip"]);
         box_info.add_contain(carrot.rate.box_qr());
         box_info.add_footer(carrot.football.list_for_home());
         carrot.show(box_info.html());

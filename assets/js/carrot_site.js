@@ -229,13 +229,14 @@ class Carrot_Site{
             var btn_ico=this.menu.create("btn_ico").set_label("Icon").set_type("main").set_lang("icon").set_icon("fa-solid fa-face-smile");
             $(btn_ico).click(function(){carrot.load_js_page("ico","ico","carrot.ico.show_list_icon()");});
 
-            var btn_football=this.menu.create("btn_ico").set_label("Football").set_type("main").set_icon("fa-solid fa-futbol");
-            $(btn_football).click(function(){carrot.load_js_page("football","football","carrot.football.show()");});
+            var btn_football=this.menu.create("btn_football").set_label("Football").set_type("main").set_icon("fa-solid fa-futbol");
+            $(btn_football).click(function(){carrot.load_js_page("football","football","carrot.football.list()");});
 
             var btn_audio=this.menu.create("btn_audio").set_label("Audio").set_type("main").set_lang("audio").set_icon("fa-solid fa-guitar");
             $(btn_audio).click(function(){carrot.load_js_page("audio","audio","carrot.audio.show()");});
 
             this.radio=new Carrot_Radio(this);
+            
             var btn_bk=this.menu.create("btn_bk").set_label("List Background").set_lang("wallpaper").set_type("main").set_icon("fa-image fa-solid");
             $(btn_bk).click(function(){carrot.load_js_page("background","background","carrot.background.show()");});
 
