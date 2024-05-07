@@ -241,10 +241,16 @@ class FootBall{
 
         var index_pos=parseInt(data.playing_position);
         carrot.football.index_player_position=data.playing_position;
-        box_info.add_attrs("fa-solid fa-arrows-to-circle","Force",data.ball_force);
-        box_info.add_attrs("fa-solid fa-person-running","Control",data.ball_control);
-        box_info.add_attrs("fa-solid fa-shoe-prints","Cutting",data.ball_cutting);
+        var total_skill=parseInt(data.ball_force)+parseInt(data.ball_control)+parseInt(data.ball_cutting);
+        box_info.add_attrs("fa-solid fa-medal","Total skill score",total_skill +' <i class="fa-solid fa-circle-dot"></i>');
+        box_info.add_attrs("fa-solid fa-arrows-to-circle","Force",data.ball_force +' <i class="fa-solid fa-circle-dot"></i>');
+        box_info.add_attrs("fa-solid fa-person-running","Control",data.ball_control +' <i class="fa-solid fa-circle-dot"></i>');
+        box_info.add_attrs("fa-solid fa-shoe-prints","Cutting",data.ball_cutting +' <i class="fa-solid fa-circle-dot"></i>');
         box_info.add_attrs("fa-solid fa-street-view","Playing position",carrot.football.playing_position[index_pos]);
+        if(data.buy=="1")
+            box_info.add_attrs("fa-solid fa-cart-shopping","Commercial status","Pay fees");
+        else
+            box_info.add_attrs("fa-brands fa-creative-commons-by","Commercial status","Free");
         box_info.set_protocol_url("tablesoccer://show/"+data.id_doc);
         if(data["tip"]!=null) box_info.add_body('<h4 class="fw-semi fs-5 lang" key_lang="describe">Short introduction</h4>',data["tip"]);
         box_info.add_contain(carrot.rate.box_qr());
