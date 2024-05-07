@@ -4,10 +4,6 @@ class FootBall{
     playing_position=["tiền đạo","tiền vệ","hậu vệ","thủ môn"];
     index_player_position=-1;
 
-    constructor(){
-
-    }
-
     show(){
         var id=carrot.get_param_url("id");
         if(id!=undefined)
@@ -19,16 +15,18 @@ class FootBall{
     list(){
         carrot.football.index_player_position=-1;
         carrot.loading("Get and load all player");
+        carrot.football.get_list_data(carrot.football.load_list_by_data);
+    }
+
+    get_list_data(act_done){
         if(carrot.check_ver_cur("football")==false){
             carrot.update_new_ver_cur("football",true);
             carrot.data.clear("football");
-            carrot.football.get_list_data_from_server();
+            carrot.data.clear("football_info");
+            carrot.football.get_list_data_from_server(act_done);
         }else{
-            carrot.data.list("football").then((players)=>{
-                carrot.football.objs=players;
-                carrot.football.load_list_by_data(players);
-            }).catch(()=>{
-                carrot.football.get_list_data_from_server();
+            carrot.football.get_list_data_from_db(act_done,()=>{
+                carrot.football.get_list_data_from_server(act_done);
             });
         }
     }
@@ -42,8 +40,16 @@ class FootBall{
         });
     }
 
-    get_list_data_from_server(){
+    get_list_data_from_server(act_done){
         var q=new Carrot_Query("football");
+        q.add_select("name");
+        q.add_select("ball_force");
+        q.add_select("ball_control");
+        q.add_select("ball_cutting");
+        q.add_select("icon");
+        q.add_select("playing_position");
+        q.add_select("buy");
+        if(carrot.football.index_player_position!=-1) q.add_where("playing_position",carrot.football.index_player_position);
         q.set_limit(50);
         q.get_data((players)=>{
             carrot.football.objs=players;
@@ -51,24 +57,21 @@ class FootBall{
                 p["index"]=index;
                 carrot.data.add("football",p);
             });
-            carrot.football.load_list_by_data(players);
+            act_done(players);
         });
     }
 
     show_by_category(index){
+        carrot.data.clear("football");
         carrot.football.index_player_position=index;
         carrot.loading("Show list by category ("+carrot.football.playing_position[index]+")");
-        var q=new Carrot_Query("football");
-        q.add_where("playing_position",index);
-        q.get_data((players)=>{
-            carrot.football.load_list_by_data(players);
-        });
+        carrot.football.get_list_data(carrot.football.load_list_by_data);
     }
 
     load_list_by_data(players){
         carrot.hide_loading();
         carrot.change_title_page("Football","?page=football","football");
-        var html=this.menu();
+        var html=carrot.football.menu();
         html+='<div id="all_player" class="row m-0"></div>';
         carrot.show(html);
         $(players).each(function(index,player){
@@ -157,6 +160,7 @@ class FootBall{
 
     delete_all_data(){
         carrot.data.clear("football");
+        carrot.data.clear("football_info");
         carrot.msg("Delete all data cache success!!");
     }
 
@@ -211,11 +215,11 @@ class FootBall{
 
     get_info(id){
         carrot.loading("Get data "+id);
-        carrot.data.get("football",id,(data)=>{
+        carrot.data.get("football_info",id,(data)=>{
             carrot.football.info(data);
         },()=>{
             carrot.server.get_doc("football",id,(data)=>{
-                carrot.data.add("football",data);
+                carrot.data.add("football_info",data);
                 carrot.football.info(data);
             });
         });
@@ -236,6 +240,7 @@ class FootBall{
         box_info.set_icon_col_class("col-2");
 
         var index_pos=parseInt(data.playing_position);
+        carrot.football.index_player_position=data.playing_position;
         box_info.add_attrs("fa-solid fa-arrows-to-circle","Force",data.ball_force);
         box_info.add_attrs("fa-solid fa-person-running","Control",data.ball_control);
         box_info.add_attrs("fa-solid fa-shoe-prints","Cutting",data.ball_cutting);
@@ -251,21 +256,41 @@ class FootBall{
     check_event(){
         if($("#box_related_contain").length>0){
             $("#box_related_contain").html(carrot.loading_html());
+            $("#box_footer").html(carrot.loading_html());
             if(carrot.football.objs!=null){
-                $("#box_related_contain").html("");
-                var list_player=carrot.random(carrot.football.objs);
-                $(list_player).each(function(index,player){
-                    if(index>=12) return false;
-                    player["index"]=index+200;
-                    var box_item=carrot.football.box_item(player);
-                    box_item.set_class('col-md-12 mb-3 col-12');
-                    $("#box_related_contain").append(box_item.html());
-                });
+                carrot.football.load_list_related(carrot.football.objs);
             }else{
-                $("#box_related_contain").html("chưa có dữ liệu");
+                carrot.football.get_list_data((playser)=>{
+                    carrot.football.load_list_related(playser);
+                });
             }
         }
         carrot.check_event();
+    }
+
+    load_list_related(playsers){
+        $("#box_related_contain").html("");
+        $("#box_footer").html("");
+        var list_player_related=carrot.random(playsers);
+        var count_show=0;
+        $(list_player_related).each(function(index,player){
+            if(player.playing_position==carrot.football.index_player_position){
+                count_show++;
+                if(count_show>=12) return false;
+                player["index"]=index+200;
+                var box_item=carrot.football.box_item(player);
+                box_item.set_class('col-md-12 mb-3 col-12');
+                $("#box_related_contain").append(box_item.html());
+            }
+        });
+
+        var list_player_footer=carrot.random(playsers);
+        $(list_player_footer).each(function(index,player){
+            if(index>=12) return false;
+            player["index"]=index;
+            var box_item=carrot.football.box_item(player);
+            $("#box_footer").append(box_item.html());
+        });
     }
 
     list_for_home(){

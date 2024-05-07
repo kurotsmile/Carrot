@@ -315,12 +315,10 @@ class Carrot_Info{
         html+="</div>";
 
         if(this.list_footer.length>0){
-            html+='<div class="row">';
-                html+='<div class="col-12" id="box_footer">';
+            html+='<div class="row" id="box_footer">';
                 $(this.list_footer).each(function(index,footer){
                     html+=footer;
                 });
-                html+='</div>';
             html+='</div>';
         }
         return html;
