@@ -252,7 +252,7 @@ class Carrot_Info{
     }
 
     html(){
-        var html='<div class="section-container p-2 p-xl-4">';
+        var html='<div class="section-container pl-2 pr-2 p-xl-2 pt-0">';
         html+='<div class="row">';
             html+='<div class="col-md-8 ps-4 ps-lg-3">';
                 html+='<div class="row bg-white shadow-sm">';

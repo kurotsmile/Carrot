@@ -1,12 +1,18 @@
 class Code{
 
     icon="fa-solid fa-code";
+    info_code_cur=null;
 
     show(){
-        carrot.coder.list();
+        var id=carrot.get_param_url("id");
+        if(id!=undefined)
+            carrot.coder.get_info(id);
+        else
+            carrot.coder.list();
     }
 
     list(){
+        carrot.change_title_page("All Code","?page=code","coder");
         carrot.loading("Get all data code");
         carrot.coder.get_data(carrot.coder.load_list_by_data);
     }
@@ -16,7 +22,7 @@ class Code{
         html+='<div class="row mb-2">';
         html+='<div class="col-12">';
             html+='<div class="btn-group mr-2 btn-sm" role="group" aria-label="First group">';
-                html+='<button onclick="carrot.coder.add();" class="btn btn-sm dev btn-success"><i class="fa-solid fa-square-plus"></i> Add Code</button>';
+                html+='<button onclick="carrot.coder.add();" class="btn btn-sm btn-success"><i class="fa-solid fa-square-plus"></i> Add Code</button>';
                 html+=carrot.tool.btn_export("code");
                 html+='<button onclick="carrot.coder.delete_all_data();return false;" class="btn btn-danger dev btn-sm"><i class="fa-solid fa-dumpster-fire"></i> Delete All data</button>';
             html+='</div>';
@@ -78,7 +84,7 @@ class Code{
         box.set_tip(data.code_type);
         box.set_class_icon_col("col-1");
         box.set_class_body("col-11");
-        box.set_act_click("alert(1)");
+        box.set_act_click("carrot.coder.get_info('"+data.id_doc+"')");
         box.set_id(data.id_doc);
         box.set_db("code");
         box.set_obj_js("coder");
@@ -162,8 +168,69 @@ class Code{
         $(".editor").addClass("language-"+type_code);
     }
 
-    info(data){
+    get_info(id){
+        carrot.loading("Get info code ("+id+")");
+        carrot.data.get("code_info",id,(data)=>{
+            carrot.coder.info(data);
+        },()=>{
+            carrot.server.get_doc("code",id,(data)=>{
+                carrot.coder.info(data);
+            });
+        });
+    }
 
+    info(data){
+        carrot.coder.info_code_cur=data;
+        carrot.change_title(data.title,"?page=code&id="+data.id_doc,"coder");
+        carrot.hide_loading();
+        var html='';
+        var box_info=new Carrot_Info(data.id_doc);
+        box_info.set_title(data.title);
+        box_info.set_icon_font(carrot.coder.get_icon_by_type(data.code_type));
+        box_info.set_icon_col_class("col-2");
+        box_info.set_db("code");
+        box_info.set_obj_js("coder");
+
+        box_info.add_attr("fa-solid fa-file-code",'<l class="lang" key_lang="file">File</l>',data.title+'.'+carrot.coder.get_file_extension_by_type(data.code_type));
+        box_info.add_attr("fa-solid fa-boxes-packing",'<l class="lang" key_lang="category">Category</l>',data.code_type);
+        box_info.add_attr("fa-solid fa-boxes-packing",'<l class="lang" key_lang="interface">Interface</l>',data.code_theme);
+        if(data.user!=null) box_info.add_attr("fa-solid fa-user-nurse",'<l class="lang" key_lang="author">Author</l>',data.user.name);
+
+        box_info.add_btn("btn_download","fa-solid fa-file-arrow-down","Download","carrot.coder.act_download()");
+        box_info.add_btn("btn_pay","fa-brands fa-paypal","Download","carrot.coder.pay()");
+
+        box_info.set_protocol_url('code'+data.code_type+'://show/'+data.id);
+
+        if(data.describe!=''&&data.describe!='undefined'&&data.describe!=undefined) box_info.add_body('<h4 class="fw-semi fs-5 lang" key_lang="describe">Describe</h4>','<p class="fs-8 text-justify mb-2">'+data.describe+'</p><br/>');
+        if(data.code!=''&&data.code!='undefined'&&data.code!=undefined) box_info.add_body('<h4 class="fw-semi fs-5 lang" key_lang="code">Code</h4>','<pre><code id="code_txt" class="'+data.code_type+'">'+data.code+'</code></pre>');
+
+        html+=carrot.coder.menu();
+        html+=box_info.html();
+        carrot.show(html);
+        carrot.coder.check_event();
+
+        $("#btn_download").removeClass("d-inline");
+        $("#btn_pay").removeClass("d-inline");
+
+        if(carrot.coder.check_pay(data.id_doc)){
+            $("#btn_download").show();
+            $("#btn_pay").hide();
+        }else{
+            $("#btn_download").hide();
+            $("#btn_pay").show();
+        }
+
+        $("#editor_code_theme").attr("href","assets/plugins/highlight/styles/"+data.code_theme);
+        hljs.highlightAll();
+    }
+
+    get_file_extension_by_type(code_type){
+        var file_extension="";
+        if(code_type=="javascript") file_extension="js";
+        else if(code_type=="powershell") file_extension="ps1";
+        else if(code_type=="vbscript") file_extension="vbs";
+        else file_extension=code_type;
+        return file_extension;
     }
 
     list_for_home(){
@@ -172,6 +239,51 @@ class Code{
 
     check_event(){
         carrot.check_event();
+        $("#box_related_contain").html(carrot.loading_html());
+        if($("#box_related_contain").length>0){
+            $("#box_related_contain").html('');
+            carrot.coder.get_data((codes)=>{
+                $(codes).each(function(index,code){
+                    var box_item=carrot.coder.box_item(code);
+                    box_item.set_class('col-md-12 mb-3 col-12');
+                    $("#box_related_contain").append(box_item.html());
+                });
+            });
+        }
+    }
+
+    check_pay(id_code){
+        if(localStorage.getItem("buy_code_"+id_code)!=null)
+            return true;
+        else
+            return false;
+    }
+
+    pay(){
+        carrot.show_pay("code","Download Code ("+carrot.coder.info_code_cur.title+")","Download the source code file to use","2.00",carrot.coder.pay_success);
+    }
+
+    pay_success(carrot){
+        $("#btn_download").removeClass("btn-info").addClass("btn-success").html('<i class="fa-solid fa-download"></i> <l class="lang" key_lang="download">Download</l>');
+        localStorage.setItem("buy_code_"+carrot.coder.info_code_cur.id_doc,"1");
+        carrot.coder.act_download(carrot);
+    }
+
+    act_download(carrot){
+        var txt_code=$("#code_txt").text();
+        var file_code=$("#filename_code").text();
+        carrot.coder.download_code(file_code,txt_code);
+    }
+
+    download_code(filename, text) {
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+        element.setAttribute('download', filename);
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+        carrot.msg("Download Success!","success");
     }
 
     delete_all_data(){
