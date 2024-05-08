@@ -133,7 +133,7 @@ class Appp{
         $(list_app).each(function(index,app){
             if(index>=12) return false;
             app["index"]=index;
-            $("#all_app_contain").append(carrot.appp.box_app(app).html());
+            $("#all_app_contain").append(carrot.appp.box_item(app).html());
         });
         carrot.appp.check_event();
     }

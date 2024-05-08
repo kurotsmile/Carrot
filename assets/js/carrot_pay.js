@@ -189,8 +189,8 @@ class Carrot_Pay{
         var attr_limit_download_song=new Carrot_Product_Attribute(this.carrot.music.icon,"Limit Download Song").limit();
         var attr_unlimit_download_song=new Carrot_Product_Attribute(this.carrot.music.icon,"Unlimit Download Song").unlimit();
 
-        var attr_limit_download_code=new Carrot_Product_Attribute(this.carrot.code.icon,"Limit Download Code").limit();
-        var attr_unlimit_download_code=new Carrot_Product_Attribute(this.carrot.code.icon,"Unlimit Download Code").unlimit();
+        var attr_limit_download_code=new Carrot_Product_Attribute("fa-solid fa-code","Limit Download Code").limit();
+        var attr_unlimit_download_code=new Carrot_Product_Attribute("fa-solid fa-code","Unlimit Download Code").unlimit();
 
         var attr_limit_download_icon=new Carrot_Product_Attribute("fa-solid fa-face-smile-wink","Limit Download Icon").limit();
         var attr_unlimit_download_icon=new Carrot_Product_Attribute("fa-solid fa-face-smile-wink","Unlimit Download Icon").unlimit();

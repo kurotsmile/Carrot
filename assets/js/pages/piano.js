@@ -384,6 +384,27 @@ class Midi{
         this.oscillators.length = 0;
     }
 
+    list_for_home(){
+        var html='';
+        if(carrot.midi.objs!=null){
+            var list_midi=carrot.random(carrot.midi.objs);
+            html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-4">';
+            html+='<i class="fa-solid fa-drum"></i> <l class="lang" key_lang="other_midi">Other Midi</l>';
+            html+='<span role="button" onclick="carrot.midi.list()" class="btn float-end btn-sm btn-light"><i class="fa-solid fa-square-caret-right"></i> <l class="lang" key_lang="view_all">View All</l></span></h4>';
+            html+='<div id="other_code" class="row m-0">';
+            $(list_midi).each(function(index,m){
+                if(index<12){
+                    m["index"]=index;
+                    html+=carrot.midi.box_item(m).html();
+                }else{
+                    return false;
+                }
+            });
+            html+='</div>';
+        }
+        return html;
+    }
+
     clear_all_data(){
         carrot.midi.objs=null;
         carrot.msg("Delete all data","Delete all data midi success!","success");
