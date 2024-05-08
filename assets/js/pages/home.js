@@ -10,7 +10,7 @@ class Home{
         html+='</div>';
 
         html+=carrot.music.list_for_home();
-        html+=carrot.code.list_for_home();
+        if(carrot.coder!=null) html+=carrot.coder.list_for_home();
         if(carrot.ico!=null) html+=carrot.ico.list_for_home();
         html+=carrot.user.list_for_home();
         if(carrot.audio!=null) html+=carrot.audio.list_for_home();
@@ -22,7 +22,7 @@ class Home{
         carrot.show(html);
 
         carrot.music.check_event();
-        carrot.code.check_event();
+        if(carrot.coder!=null) carrot.coder.check_event();
         if(carrot.ico!=null) carrot.ico.check_event();
         carrot.user.check_event();
         if(carrot.audio!=null) carrot.audio.check_event();

@@ -1,7 +1,13 @@
 class Code{
+
+    icon="fa-solid fa-code";
+
     show(){
+        carrot.coder.list();
+    }
+
+    list(){
         carrot.loading("Get all data code");
-        carrot.coder.get_data_from_db()
         carrot.coder.get_data(carrot.coder.load_list_by_data);
     }
 
@@ -73,33 +79,35 @@ class Code{
         box.set_class_icon_col("col-1");
         box.set_class_body("col-11");
         box.set_act_click("alert(1)");
+        box.set_id(data.id_doc);
+        box.set_db("code");
+        box.set_obj_js("coder");
         return box;
     }
 
     add(){
-        var new_data=new Object();
-        new_data["id"]="code"+this.carrot.uniq();
+        var new_data={};
+        new_data["id"]="code"+carrot.create_id();
         new_data["title"]="";
         new_data["describe"]="";
         new_data["code"]="";
         new_data["code_type"]="javascript";
         new_data["code_theme"]="default.min.css";
         new_data["date"]=$.datepicker.formatDate('yy-mm-dd', new Date());
-        new_data["user"]=this.carrot.user.get_user_login();
+        new_data["user"]=carrot.user.get_user_login();
         new_data["status"]="pending";
-        this.show_add_or_edit_code(new_data).set_title("Add code").set_msg_done("Add code success!").show();
-        this.reload_code_editor_field();
+        carrot.coder.show_add_or_edit_code(new_data).set_title("Add code").set_msg_done("Add code success!").show();
+        carrot.coder.reload_code_editor_field();
     }
 
     edit(data,carrot){
-        carrot.code.show_add_or_edit_code(data).set_title("Edit code").set_msg_done("Edit code success!").show();
-        carrot.code.reload_code_editor_field();
+        carrot.coder.show_add_or_edit_code(data).set_title("Edit code").set_msg_done("Edit code success!").show();
+        carrot.coder.reload_code_editor_field();
     }
 
     show_add_or_edit_code(data_code){
-        var carrot=this.carrot;
         var frm=new Carrot_Form('add_code',carrot);
-        frm.set_icon(this.icon);
+        frm.set_icon(carrot.coder.icon);
         frm.set_db("code","id");
         frm.create_field("id").set_label("ID").set_val(data_code.id).set_type("id").set_main();
 
@@ -132,12 +140,44 @@ class Code{
         return frm;
     }
 
+    reload_code_editor_field(){
+        carrot.coder.sel_code_type($("#code_type"));
+
+        $("#code_type").change(function(){
+            carrot.coder.sel_code_type(this);
+        });
+
+        $("#code_theme").change(function(){
+            var val_theme=$(this).val();
+            $("#editor_code_theme").attr("href","assets/plugins/highlight/styles/"+val_theme);
+        });
+    }
+
+    sel_code_type(emp){
+        var type_code=$(emp).val();
+        var lis_lang_code=hljs.listLanguages();
+        carrot.log("Select Code type:"+type_code,"null");
+        $(".editor").removeClass("language-undefined");
+        for(var i=0;i<lis_lang_code.length;i++) $(".editor").removeClass("language-"+lis_lang_code[i]);
+        $(".editor").addClass("language-"+type_code);
+    }
+
+    info(data){
+
+    }
+
+    list_for_home(){
+        return '';
+    }
+
     check_event(){
         carrot.check_event();
     }
 
     delete_all_data(){
-        carrot.msg("Delete All Data","Delete All data code successs!","success");
+        carrot.data.clear("code");
+        carrot.data.clear("code_info");
+        carrot.msg("Delete All data code successs!","success");
     }
 }
 

@@ -35,7 +35,6 @@ class Carrot_Site{
     user;
     music;
     ai_lover;ai;
-    code;
     icon;
     bible;
     menu;
@@ -183,7 +182,6 @@ class Carrot_Site{
             $('head').append('<script type="text/javascript" src="assets/js/carrot_form.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_user.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_music.js?ver='+this.get_ver_cur("js")+'"></script>');
-            $('head').append('<script type="text/javascript" src="assets/js/carrot_code.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_radio.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_ebook.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_rate.js?ver='+this.get_ver_cur("js")+'"></script>');
@@ -221,8 +219,10 @@ class Carrot_Site{
     
             this.user=new Carrot_user(this);
             this.music=new Carrot_Music(this);
-            this.code=new Carrot_Code(this);
-    
+            
+            var btn_code=this.menu.create("btn_code").set_label("Coder").set_lang("code").set_icon("fa-solid fa-code");
+            $(btn_code).click(function(){carrot.load_js_page("code","coder","carrot.coder.list()");});
+
             var btn_midi=this.menu.create("btn_midi_piano").set_label("Midi").set_lang("midi").set_icon("fa-solid fa-drum");
             $(btn_midi).click(function(){carrot.load_js_page("piano","midi","carrot.midi.show_list()");});
 
