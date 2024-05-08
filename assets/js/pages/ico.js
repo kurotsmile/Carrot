@@ -1,5 +1,5 @@
 class Carrot_Ico{
-    objs=[];
+    objs=null;
     obj_icon_category=[];
     cur_show_icon_category="all";
     type_show="list_icon";
@@ -10,28 +10,51 @@ class Carrot_Ico{
         if(id_icon!=undefined)
             carrot.ico.get_info(id_icon);
         else
-            carrot.ico.show_list_icon();
+            carrot.ico.list();
+    }
+
+    list(){
+        carrot.loading("Get all data icon and show");
+        carrot.change_title_page("Icon -"+carrot.ico.cur_show_icon_category, "?page=ico","icon");
+        carrot.ico.get_data(carrot.ico.load_list_icon);
     }
 
     show_list_icon(){
-        carrot.change_title_page("Icon -"+carrot.ico.cur_show_icon_category, "?page=ico","icon");
-        carrot.loading("Get all icon data from IndexDB");
-        carrot.data.list("icons").then(function(data){
-            carrot.ico.objs=data;
-            carrot.ico.load_list_icon(data);
-        }).catch(function(){
-            carrot.loading("Get all icon data from server");
-            carrot.ico.get_icons_from_server();
+        carrot.ico.cur_show_icon_category="all";
+        carrot.data.clear("icons");
+        carrot.ico.list();
+    }
+
+    get_data(act_done){
+        if(carrot.check_ver_cur("icon")==false){
+            carrot.update_new_ver_cur("icon",true);
+            carrot.data.clear("icon");
+            carrot.ico.get_data_from_server(act_done);
+        }else{
+            carrot.ico.get_data_from_db(act_done,()=>{
+                carrot.ico.get_data_from_server(act_done);
+            });
+        }
+    }
+
+    get_data_from_server(act_done){
+        var q=new Carrot_Query("icon");
+        if(carrot.ico.cur_show_icon_category!="all") q.add_where("category",carrot.ico.cur_show_icon_category);
+        q.set_limit(54);
+        q.get_data((icons)=>{
+            carrot.ico.objs=icons;
+            $(icons).each(function(index,icon){
+                carrot.data.add("icons",icon);
+            })
+            act_done(icons);
         });
     }
 
-    get_icons_from_server(){
-        var q=new Carrot_Query("icon");
-        if(carrot.ico.cur_show_icon_category!="all") q.add_where("category",carrot.ico.cur_show_icon_category);
-        q.set_limit(45);
-        q.get_data((icons)=>{
-            carrot.ico.load_list_icon(icons);
-        });
+    get_data_from_db(act_done,act_fail){
+        carrot.data.list("icons").then((icons)=>{
+            carrot.ico.objs=icons;
+            act_done(icons);
+        }).catch(act_fail);
     }
 
     load_list_icon(icons){
@@ -40,17 +63,16 @@ class Carrot_Ico{
         html+='<div id="all_icon" class="row m-0"></div>';
         carrot.show(html);
         $(icons).each(function(index,data){
-            carrot.data.add("icons",data);
             data["index"]=index;
             $("#all_icon").append(carrot.ico.box_item(data).html());
         });
-        carrot.ico.objs=icons;
         carrot.ico.check_event();
     }
 
     check_event(){
         if(carrot.ico.obj_icon_category.length<=1) carrot.ico.get_all_data_category();
         else carrot.ico.show_data_to_dropdown_category_icon();
+        carrot.tool.list_other_and_footer("ico",'category',carrot.ico.obj_icon_info_cur.category,'col-md-6 mb-2 col-sm-6 ','col-md-2 mb-2 col-sm-3');
         carrot.check_event();
     }
 
@@ -168,25 +190,6 @@ class Carrot_Ico{
                 carrot.ico.data_icon_16=carrot.ico.makeblob(result);
             });
         });
-
-        if(carrot.ico.objs.length==0){
-            $("#box_related").html(carrot.loading_html());
-            $("#box_footer").html(carrot.loading_html());
-            var q=new Carrot_Query("icon");
-            q.set_limit(20);
-            q.get_data(function(data){
-                carrot.ico.objs=data;
-                $("#box_related").html('');
-                $("#box_footer").html('');
-                $(data).each(function(index,icon_data){
-                    icon_data["index"]=(index+200);
-                    var box_item_icon=carrot.ico.box_item(icon_data);
-                    box_item_icon.set_class('col-md-6 mb-3 col-6');
-                    $("#box_related").append(box_item_icon.html());
-                });
-                $("#box_footer").html(carrot.ico.list_for_home());
-            });
-        }
 
         carrot.ico.check_event();
     }

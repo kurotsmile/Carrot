@@ -303,7 +303,7 @@ class Carrot_Info{
             html+="</div>";
     
             html+='<div class="col-md-4" id="box_related_contain">';
-                html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-3 lang" key_lang="same_category">Same Category</h4>';
+                html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-3"><i class="fa-solid fa-dice-d6"></i> <l class="lang" key_lang="same_category">Same Category</l></h4>';
                 html+='<div class="row" id="box_related">';
                 $(this.list_related).each(function(index,data){
                     html+=data;
@@ -314,12 +314,15 @@ class Carrot_Info{
         html+="</div>";
         html+="</div>";
 
+        html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-4">';
+        html+='<i class="fa-solid fa-boxes-stacked fs-6 me-2"></i> <l class="lang" key_lang="other_category">Other Category</l>';
+        html+='<span role="button" onclick="carrot.'+this.s_obj_js+'.list()" class="btn float-end btn-sm btn-light"><i class="fa-solid fa-square-caret-right"></i> <l class="lang" key_lang="view_all">View All</l></span></h4>';
         html+='<div class="row" id="box_footer">';
-            if(this.list_footer.length>0){
-                $(this.list_footer).each(function(index,footer){
-                    html+=footer;
-                });
-            }
+                if(this.list_footer.length>0){
+                    $(this.list_footer).each(function(index,footer){
+                        html+=footer;
+                    });
+                }
         html+='</div>';
         return html;
     }

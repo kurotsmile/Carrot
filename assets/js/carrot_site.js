@@ -227,7 +227,7 @@ class Carrot_Site{
             $(btn_midi).click(function(){carrot.load_js_page("piano","midi","carrot.midi.show_list()");});
 
             var btn_ico=this.menu.create("btn_ico").set_label("Icon").set_type("main").set_lang("icon").set_icon("fa-solid fa-face-smile");
-            $(btn_ico).click(function(){carrot.load_js_page("ico","ico","carrot.ico.show_list_icon()");});
+            $(btn_ico).click(function(){carrot.load_js_page("ico","ico","carrot.ico.list()");});
 
             var btn_football=this.menu.create("btn_football").set_label("Football").set_type("main").set_lang("football").set_icon("fa-solid fa-futbol");
             $(btn_football).click(function(){carrot.load_js_page("football","football","carrot.football.list()");});

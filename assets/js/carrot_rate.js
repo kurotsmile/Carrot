@@ -356,7 +356,7 @@ class Carrot_Rate{
                     }else{
                         count_item++;
                         var box_item=carrot[obj_js].box_item(data_item);
-                        box_item.set_class('col-md-12 mb-3 col-12');
+                        box_item.set_class(class_col_other);
                         $("#box_related").append(box_item.html());
                     }
                     if(count_item>=12) return false;
