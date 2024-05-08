@@ -467,6 +467,7 @@ class Appp{
         box_info.set_db("app");
         box_info.set_obj_js("appp");
         box_info.set_name(data.name_en);
+        box_info.off_qr();
 
         $(carrot.appp.link_store).each(function(index,store){
             store["index"]=index;

@@ -227,10 +227,9 @@ class Midi{
         if(data.user_id!=null){
             box_info.add_attrs("fa-solid fa-user-nurse",'<l class="lang" key_lang="author">Author</l>',data.user_id);
         }
-        box_info.add_contain(carrot.midi.box_midi(data));
-        box_info.add_contain(carrot.rate.box_qr());
         box_info.set_protocol_url("midi://show/"+data.id);
-
+        box_info.add_contain(carrot.midi.box_midi(data));
+        
         $(carrot.midi.objs).each(function(index,m){
             if(index>=12) return false;
             m["index"]=index;

@@ -127,7 +127,6 @@ class Carrot_Ico{
         html_previewImage+='</div>';
         
         box.add_contain(html_previewImage);
-        box.add_contain(carrot.rate.box_qr());
 
         $(carrot.ico.objs).each(function(index,icon_data){
             if(index>=12) return false;

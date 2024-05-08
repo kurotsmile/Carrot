@@ -238,18 +238,7 @@ class Code{
 
     check_event(){
         carrot.check_event();
-        $("#box_related_contain").html(carrot.loading_html());
-        if($("#box_related_contain").length>0){
-            $("#box_related_contain").html('');
-            carrot.coder.get_data((codes)=>{
-                $(codes).each(function(index,code){
-                    code["index"]=index;
-                    var box_item=carrot.coder.box_item(code);
-                    box_item.set_class('col-md-12 mb-3 col-12');
-                    $("#box_related_contain").append(box_item.html());
-                });
-            });
-        }
+        carrot.tool.list_other_and_footer("coder",'code_type',carrot.coder.info_code_cur.code_type);
     }
 
     check_pay(id_code){

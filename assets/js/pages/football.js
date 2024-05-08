@@ -15,10 +15,10 @@ class FootBall{
     list(){
         carrot.football.index_player_position=-1;
         carrot.loading("Get and load all player");
-        carrot.football.get_list_data(carrot.football.load_list_by_data);
+        carrot.football.get_data(carrot.football.load_list_by_data);
     }
 
-    get_list_data(act_done){
+    get_data(act_done){
         if(carrot.check_ver_cur("football")==false){
             carrot.update_new_ver_cur("football",true);
             carrot.data.clear("football");
@@ -65,7 +65,7 @@ class FootBall{
         carrot.data.clear("football");
         carrot.football.index_player_position=index;
         carrot.loading("Show list by category ("+carrot.football.playing_position[index]+")");
-        carrot.football.get_list_data(carrot.football.load_list_by_data);
+        carrot.football.get_data(carrot.football.load_list_by_data);
     }
 
     load_list_by_data(players){
@@ -253,24 +253,12 @@ class FootBall{
             box_info.add_attrs("fa-brands fa-creative-commons-by","Commercial status","Free");
         box_info.set_protocol_url("tablesoccer://show/"+data.id_doc);
         if(data["tip"]!=null) box_info.add_body('<h4 class="fw-semi fs-5 lang" key_lang="describe">Short introduction</h4>',data["tip"]);
-        box_info.add_contain(carrot.rate.box_qr());
-        box_info.add_footer(carrot.football.list_for_home());
         carrot.show(box_info.html());
         carrot.football.check_event();
     }
 
     check_event(){
-        if($("#box_related_contain").length>0){
-            $("#box_related_contain").html(carrot.loading_html());
-            $("#box_footer").html(carrot.loading_html());
-            if(carrot.football.objs!=null){
-                carrot.football.load_list_related(carrot.football.objs);
-            }else{
-                carrot.football.get_list_data((playser)=>{
-                    carrot.football.load_list_related(playser);
-                });
-            }
-        }
+        carrot.tool.list_other_and_footer('football','playing_position',carrot.football.index_player_position);
         carrot.check_event();
     }
 

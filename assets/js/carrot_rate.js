@@ -335,6 +335,46 @@ class Carrot_Rate{
         return html;
     }
 
+    list_other_and_footer(obj_js,field_compare='',field_val='',class_col_other='col-md-12 mb-3 col-12',class_col_footer='col-md-4 mb-3 col-12'){
+        if($("#box_related").length>0){
+            $("#box_related").html(carrot.loading_html());
+            $("#box_footer").html(carrot.loading_html());
+            carrot[obj_js].get_data((datas)=>{
+                $("#box_related").html("");
+                $("#box_footer").html("");
+                var list_other=carrot.random(datas);
+                var count_item=0;
+                $(list_other).each(function(index,data_item){
+                    data_item["index"]=index;
+                    if(field_compare!=''){
+                        if(data_item[field_compare]==field_val){
+                            count_item++;
+                            var box_item=carrot[obj_js].box_item(data_item);
+                            box_item.set_class(class_col_other);
+                            $("#box_related").append(box_item.html());
+                        }
+                    }else{
+                        count_item++;
+                        var box_item=carrot[obj_js].box_item(data_item);
+                        box_item.set_class('col-md-12 mb-3 col-12');
+                        $("#box_related").append(box_item.html());
+                    }
+                    if(count_item>=12) return false;
+                });
+
+                var list_footer=carrot.random(datas);
+                $(list_footer).each(function(index,data_item){
+                    if(index>=12) return false;
+                    data_item["index"]=index;
+                    var box_item=carrot[obj_js].box_item(data_item);
+                    box_item.set_class(class_col_footer);
+                    $("#box_footer").append(box_item.html());
+                });
+
+            });
+        }
+    }
+
     btn_export(collection){
         var html='';
         html+='<div class="btn btn-sm dev btn-dark" onclick="carrot.export(\''+collection+'\');"><i class=\"fa-solid fa-download\"></i> Export</div>';

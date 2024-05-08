@@ -151,7 +151,6 @@ class Carrot_Info{
     s_icon_font="";
     s_icon_image="";
     s_icon_col_class="col-md-4";
-    s_related_title="";
     s_obj_js="";
     s_protocol_url="";
 
@@ -162,6 +161,7 @@ class Carrot_Info{
     list_contain=[];
     list_footer=[];
     list_btn=[];
+    is_show_qr=true;
 
     constructor(s_id){
         this.id=s_id;
@@ -201,10 +201,6 @@ class Carrot_Info{
 
     set_obj_js(obj_js){
         this.s_obj_js=obj_js;
-    }
-
-    set_related_title(title){
-        this.s_related_title=title;
     }
 
     set_protocol_url(url){
@@ -251,8 +247,12 @@ class Carrot_Info{
         this.list_footer.push(footer);
     }
 
+    off_qr(){
+        this.is_show_qr=false;
+    }
+
     html(){
-        var html='<div class="section-container pl-2 pr-2 p-xl-2 pt-0">';
+        var html='<div class="section-container p-2 p-xl-2 pt-0">';
         html+='<div class="row">';
             html+='<div class="col-md-8 ps-4 ps-lg-3">';
                 html+='<div class="row bg-white shadow-sm">';
@@ -299,28 +299,28 @@ class Carrot_Info{
 
                 $(this.list_contain).each(function(index,data){html+=data;});
 
+                if(this.is_show_qr) html+=carrot.tool.box_qr();
             html+="</div>";
     
             html+='<div class="col-md-4" id="box_related_contain">';
-                if(this.s_related_title!="") html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-3">'+this.s_related_title+'</h4>';
+                html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-3 lang" key_lang="same_category">Same Category</h4>';
                 html+='<div class="row" id="box_related">';
                 $(this.list_related).each(function(index,data){
                     html+=data;
                 }); 
                 html+='</div>';
             html+='</div>';
-            
-
+        
         html+="</div>";
         html+="</div>";
 
-        if(this.list_footer.length>0){
-            html+='<div class="row" id="box_footer">';
+        html+='<div class="row" id="box_footer">';
+            if(this.list_footer.length>0){
                 $(this.list_footer).each(function(index,footer){
                     html+=footer;
                 });
-            html+='</div>';
-        }
+            }
+        html+='</div>';
         return html;
     }
 }
