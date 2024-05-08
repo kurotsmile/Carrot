@@ -21,6 +21,25 @@ class Midi{
         alert("Add midi");
     }
 
+    list(){
+        carrot.midi.type_view="all";
+        carrot.midi.get_data(carrot.midi.show_list_by_objs);
+    }
+
+    get_data(act_done){
+        if(carrot.midi.objs!=null){
+            act_done(carrot.midi.objs);
+        }else{
+            carrot.midi.get_data_from_server(act_done);
+        }
+    }
+
+    get_data_from_server(act_done){
+        var q=new Carrot_Query("midi");
+        q.set_limit(100);
+        q.get_data(act_done);
+    }
+
     show_public(){
         carrot.midi.type_view="public";
         carrot.loading();
@@ -105,6 +124,7 @@ class Midi{
                 html+=' <div class="btn-group" role="group">';
                     if(this.type_view=="stores") s_class='active'; else s_class='';
                     html+=carrot.tool.btn_export("midi");
+                    html+='<div class="btn dev btn-sm btn-danger" onclick="carrot.midi.clear_all_data();"><i class="fa-solid fa-dumpster-fire"></i> Delete All data</div>';
                     html+='<div class="btn btn-sm btn-success '+s_class+'" onclick="carrot.midi.add();"><i class="fa-solid fa-circle-plus"></i> Create New Midi</div>';
                 html+='</div>';
             html+='</div>';
@@ -212,8 +232,10 @@ class Midi{
     info(data,carrot){
         var s_icon="";
         carrot.change_title_page(data.name,"?page=piano&id="+data.id,"Midi");
-        var box_info=new Carrot_Info();
+        var box_info=new Carrot_Info(data.id_doc);
         box_info.set_name(data.name);
+        box_info.set_db("midi");
+        box_info.set_obj_js("midi");
         
         if(data.status=="public")
             s_icon="fa-solid fa-guitar";
@@ -229,17 +251,9 @@ class Midi{
         }
         box_info.set_protocol_url("midi://show/"+data.id);
         box_info.add_contain(carrot.midi.box_midi(data));
-        
-        $(carrot.midi.objs).each(function(index,m){
-            if(index>=12) return false;
-            m["index"]=index;
-            var box_item=carrot.midi.box_item(m);
-            box_item.set_class('col-md-12 mb-3');
-            box_info.add_related(box_item.html());
-        });
-        
+
         carrot.show(box_info.html());
-        carrot.check_event();
+        carrot.midi.check_event();
     }
 
     box_midi(data){
@@ -288,6 +302,7 @@ class Midi{
             var obj_id=$(this).attr("obj_id");
             carrot.midi.show_midi_by_id(obj_id);
         });
+        carrot.tool.list_other_and_footer("midi");
         carrot.check_event();
     }
 
@@ -367,6 +382,11 @@ class Midi{
             oscillator.stop();
         });
         this.oscillators.length = 0;
+    }
+
+    clear_all_data(){
+        carrot.midi.objs=null;
+        carrot.msg("Delete all data","Delete all data midi success!","success");
     }
 }
 
