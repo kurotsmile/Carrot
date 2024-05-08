@@ -3,6 +3,7 @@ class Code{
     objs=null;
     icon="fa-solid fa-code";
     info_code_cur=null;
+    type="all";
 
     show(){
         var id=carrot.get_param_url("id");
@@ -19,6 +20,9 @@ class Code{
     }
 
     menu(){
+        var lis_lang_code=hljs.listLanguages();
+        lis_lang_code.push("all");
+
         var html='';
         html+='<div class="row mb-2">';
         html+='<div class="col-12">';
@@ -26,10 +30,25 @@ class Code{
                 html+='<button onclick="carrot.coder.add();" class="btn btn-sm btn-success"><i class="fa-solid fa-square-plus"></i> Add Code</button>';
                 html+=carrot.tool.btn_export("code");
                 html+='<button onclick="carrot.coder.delete_all_data();return false;" class="btn btn-danger dev btn-sm"><i class="fa-solid fa-dumpster-fire"></i> Delete All data</button>';
+                html+='<button class="btn btn-secondary dropdown-toggle btn-sm" type="button" id="btn_list_type_code" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-rectangle-list"></i> Select source code type ('+carrot.coder.type+')</button>';
+                html+='<div class="dropdown-menu" aria-labelledby="btn_list_type_code">';
+                    for(var i=0;i<lis_lang_code.length;i++){
+                        var css_active='';
+                        if(lis_lang_code[i]==carrot.coder.type) css_active="btn-success";
+                        else css_active="btn-secondary";
+                        html+='<button onclick="carrot.coder.list_code_by_type(\''+lis_lang_code[i]+'\')" role="button" class="btn  btn-sm m-1 '+css_active+'"><i class="fa-brands fa-codepen"></i> '+lis_lang_code[i]+'</button>';
+                    }
+                html+='</div>';
             html+='</div>';
         html+='</div>';
         html+='</div>';
         return html;
+    }
+
+    list_code_by_type(type){
+        carrot.coder.type=type;
+        carrot.data.clear("code");
+        carrot.coder.get_data_from_server(carrot.coder.load_list_by_data);
     }
 
     get_data(act_done){
@@ -51,6 +70,7 @@ class Code{
         var q=new Carrot_Query("code");
         q.add_select("title");
         q.add_select("code_type");
+        if(carrot.coder.type!="all") q.add_where("code_type",carrot.coder.type);
         q.set_limit(50);
         q.get_data((codes)=>{
             carrot.coder.objs=codes;
@@ -238,7 +258,7 @@ class Code{
 
     check_event(){
         carrot.check_event();
-        carrot.tool.list_other_and_footer("coder",'code_type',carrot.coder.info_code_cur.code_type);
+        if(carrot.coder.info_code_cur!=null) carrot.tool.list_other_and_footer("coder",'code_type',carrot.coder.info_code_cur.code_type);
     }
 
     check_pay(id_code){
