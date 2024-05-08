@@ -1,5 +1,6 @@
 class Code{
 
+    objs=null;
     icon="fa-solid fa-code";
     info_code_cur=null;
 
@@ -39,6 +40,7 @@ class Code{
 
     get_data_from_db(act_done,act_fail){
         carrot.data.list("code").then((codes)=>{
+            carrot.coder.objs=codes;
             act_done(codes);
         }).catch(()=>{
             act_fail();
@@ -51,6 +53,7 @@ class Code{
         q.add_select("code_type");
         q.set_limit(50);
         q.get_data((codes)=>{
+            carrot.coder.objs=codes;
             act_done(codes);
         });
     }
@@ -233,10 +236,6 @@ class Code{
         return file_extension;
     }
 
-    list_for_home(){
-        return '';
-    }
-
     check_event(){
         carrot.check_event();
         $("#box_related_contain").html(carrot.loading_html());
@@ -244,6 +243,7 @@ class Code{
             $("#box_related_contain").html('');
             carrot.coder.get_data((codes)=>{
                 $(codes).each(function(index,code){
+                    code["index"]=index;
                     var box_item=carrot.coder.box_item(code);
                     box_item.set_class('col-md-12 mb-3 col-12');
                     $("#box_related_contain").append(box_item.html());
@@ -284,6 +284,27 @@ class Code{
         element.click();
         document.body.removeChild(element);
         carrot.msg("Download Success!","success");
+    }
+
+    list_for_home(){
+        var html='';
+        if(carrot.coder.objs!=null){
+            var list_code=carrot.random(carrot.coder.objs);
+            html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-4">';
+            html+='<i class="'+carrot.coder.icon+'"></i> <l class="lang" key_lang="other_code">Other Code</l>';
+            html+='<span role="button" onclick="carrot.coder.list()" class="btn float-end btn-sm btn-light"><i class="fa-solid fa-square-caret-right"></i> <l class="lang" key_lang="view_all">View All</l></span></h4>';
+            html+='<div id="other_code" class="row m-0">';
+            $(list_code).each(function(index,code){
+                if(index<12){
+                    code["index"]=index;
+                    html+=carrot.coder.box_item(code).html();
+                }else{
+                    return false;
+                }
+            });
+            html+='</div>';
+        }
+        return html;
     }
 
     delete_all_data(){
