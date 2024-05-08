@@ -26,6 +26,13 @@ class Appp{
         carrot.appp.show();
     }
 
+    list(){
+        carrot.appp.type_view='all';
+        carrot.data.clear("apps");
+        carrot.data.clear("app_info");
+        carrot.appp.get_data(carrot.appp.load_list_app_by_array);
+    }
+
     show_all(){
         var id_app=carrot.get_param_url("id");
         if(id_app!=undefined){
@@ -36,6 +43,7 @@ class Appp{
                 carrot.server.get_doc("app",id_app,carrot.appp.show_app_info);
             });
         }else{
+            carrot.loading("Get data app and game");
             this.type_view="all";
             carrot.appp.get_data(carrot.appp.act_get_data_app_done);
         }
@@ -90,7 +98,7 @@ class Appp{
                 $(list_app).each(function(index,app){
                     if(index>=12) return false;
                     app["index"]=index;
-                    $("#all_app_contain").append(carrot.appp.box_app_item(app));
+                    $("#all_app_contain").append(carrot.appp.box_item(app).html());
                 });
                 carrot.appp.check_event();
             },()=>{
@@ -125,7 +133,7 @@ class Appp{
         $(list_app).each(function(index,app){
             if(index>=12) return false;
             app["index"]=index;
-            $("#all_app_contain").append(carrot.appp.box_app_item(app));
+            $("#all_app_contain").append(carrot.appp.box_app(app).html());
         });
         carrot.appp.check_event();
     }
@@ -145,7 +153,6 @@ class Appp{
     }
 
     get_data(act_done){
-        carrot.loading("Get data app and game");
         if(carrot.check_ver_cur("app")==false){
             carrot.data.clear("apps");
             carrot.data.clear("app_info");
@@ -154,7 +161,7 @@ class Appp{
             carrot.update_new_ver_cur("app",true);
         }else{
             carrot.data.list("apps").then((data)=>{
-                carrot.appp.load_list_app_by_array(data);
+                act_done(data);
             }).catch(()=>{
                 carrot.appp.get_data_from_server(act_done);
             });
@@ -179,15 +186,12 @@ class Appp{
     }
 
     act_get_data_app_done(data){
-        carrot.appp.objs={};
-        var array_app=[];
+        carrot.appp.objs=data;
         $(data).each(function(index,data_app){
             data_app["index"]=index;
-            carrot.appp.objs[data_app.id_doc]=data_app;
             carrot.data.add("apps",data_app);
-            array_app.push(data_app);
         });
-        carrot.appp.load_list_app_by_array(array_app);
+        carrot.appp.load_list_app_by_array(data);
     }
 
     load_list_app_by_array(array_app){
@@ -202,13 +206,15 @@ class Appp{
             if(carrot.appp.type_view!="all"){
                 if(carrot.appp.type_view!=array_app[i].type) continue;
             }
-            if(carrot.appp.status_view==array_app[i].status) $("#all_app").append(carrot.appp.box_app_item(array_app[i]));
+            if(carrot.appp.status_view==array_app[i].status) $("#all_app").append(carrot.appp.box_item(array_app[i]).html());
         }
         carrot.appp.check_event();
     }
 
     check_event(){
         $(".owl-carousel").owlCarousel();
+        if(carrot.appp.type_view=='all') carrot.tool.list_other_and_footer("appp");
+        else carrot.tool.list_other_and_footer("appp",'type',carrot.appp.type_view);
         carrot.check_event();
     }
 
@@ -279,14 +285,14 @@ class Appp{
         return frm;
     }
 
-    box_app_item(data_app,s_class='col-md-4 mb-3'){
+    box_item(data_app){
         if(data_app==null) return '';
         var key_name="name_"+carrot.lang;
-        carrot.data.load_image(data_app.id_doc,data_app.icon,"icon_app_"+data_app.index);
+        carrot.data.load_image(data_app.id_doc,data_app.icon,"icon_app_"+data_app.id_doc.replace(/[\s!@#$%^&*()]/g, ''));
         var app_item=new Carrot_List_Item(carrot);
         app_item.set_icon("images/150.png");
         app_item.set_id(data_app.id_doc);
-        app_item.set_id_icon("icon_app_"+data_app.index);
+        app_item.set_id_icon("icon_app_"+data_app.id_doc.replace(/[\s!@#$%^&*()]/g, ''));
         app_item.set_class_icon_col("col-3");
         app_item.set_class_body("col-9");
         app_item.set_name(data_app[key_name]);
@@ -320,12 +326,12 @@ class Appp{
         }
 
         app_item.set_body(html_body);
-        app_item.set_class(s_class);
+        app_item.set_class('col-md-4 mb-3');
         app_item.set_id(data_app.id_doc);
         app_item.set_db_collection("app");
         app_item.set_obj_js("appp");
         app_item.set_act_click("carrot.appp.show_app_by_id('"+data_app.id_doc+"')");
-        return app_item.html();
+        return app_item;
     }
 
     add_link_store(){
@@ -461,6 +467,7 @@ class Appp{
         carrot.hide_loading();
         carrot.change_title_page(data.name_en,"/?page=app&id="+data.id_doc,"appp");
         carrot.data.load_image(data.id_doc,data.icon,"app_icon_info");
+        carrot.appp.type_view=data.type;
         var box_info=new Carrot_Info(data.id_doc);
         box_info.set_icon_image("images/512.png");
         box_info.set_icon_id("app_icon_info")
@@ -521,16 +528,6 @@ class Appp{
         box_info.add_contain(carrot.rate.box_comment(data));
 
         carrot.show(box_info.html());
-
-        carrot.data.list("apps").then((apps)=>{
-            apps=carrot.random(apps);
-            $(apps).each(function(index,app){
-                if(index>=12) return false;
-                app["index"]=index;
-                $("#box_related").append(carrot.appp.box_app_item(app,'col-md-12 mb-3'));
-            })
-            carrot.check_event();
-        });
         carrot.appp.check_event();
     }
 

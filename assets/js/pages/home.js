@@ -22,10 +22,7 @@ class Home{
         carrot.show(html);
 
         carrot.music.check_event();
-        if(carrot.coder!=null) carrot.coder.check_event();
-        if(carrot.ico!=null) carrot.ico.check_event();
         carrot.user.check_event();
-        if(carrot.audio!=null) carrot.audio.check_event();
         carrot.radio.check_event();
         carrot.bible.check_event();
         carrot.ebook.check_event();

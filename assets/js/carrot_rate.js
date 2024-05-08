@@ -370,7 +370,7 @@ class Carrot_Rate{
                     box_item.set_class(class_col_footer);
                     $("#box_footer").append(box_item.html());
                 });
-
+                carrot.check_event();
             });
         }
     }
