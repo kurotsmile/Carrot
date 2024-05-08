@@ -72,7 +72,7 @@ class Carrot_Ico{
     check_event(){
         if(carrot.ico.obj_icon_category.length<=1) carrot.ico.get_all_data_category();
         else carrot.ico.show_data_to_dropdown_category_icon();
-        carrot.tool.list_other_and_footer("ico",'category',carrot.ico.obj_icon_info_cur.category,'col-md-6 mb-2 col-sm-6 ','col-md-2 mb-2 col-sm-3');
+        if(carrot.ico.obj_icon_info_cur!=null) carrot.tool.list_other_and_footer("ico",'category',carrot.ico.obj_icon_info_cur.category,'col-md-6 mb-2 col-sm-6 ','col-md-2 mb-2 col-sm-3');
         carrot.check_event();
     }
 
