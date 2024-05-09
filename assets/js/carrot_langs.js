@@ -64,7 +64,8 @@ class Carrot_Langs{
         html+='<div class="row mb-3">';
             html+='<div class="col-12 m-0 btn-toolba" role="toolbar" aria-label="Toolbar with button groups">';
                 html+='<div role="group" aria-label="First group"  class="btn-group mr-2">';
-                    html+='<button onclick="carrot.langs.list_category_setting_lang();" type="button" class="btn btn-dark btn-sm"><i class="fa-solid fa-rectangle-list"></i> Category Lang Setting</button>';
+                    html+='<button onclick="carrot.langs.list_category_setting_lang();" type="button" class="btn btn-success btn-sm"><i class="fa-solid fa-rectangle-list"></i> Category Lang Setting</button>';
+                    html+='<button onclick="carrot.langs.list();" type="button" class="btn btn-info btn-sm"><i class="fa-solid fa-rectangle-list"></i> List Lang</button>';
                     html+=carrot.tool.btn_export("lang_data");
                     html+=carrot.tool.btn_export("setting_web","setting_web (lang,version)");
                     html+='<button onclick="carrot.langs.add_setting_lang()" class="btn btn-sm btn-success"><i class="fa-solid fa-square-plus"></i> Add setting lang</button>';
@@ -161,6 +162,7 @@ class Carrot_Langs{
         var carrot=this.carrot;
         var html='';
         carrot.change_title_page("All Lang","?p=lang","lang");
+        html+=carrot.langs.menu();
         html+='<div class="row">';
         $(this.carrot.langs.list_lang).each(function(index,lang){
             lang["id"]=lang["key"];
