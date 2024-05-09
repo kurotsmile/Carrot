@@ -28,7 +28,6 @@ class Carrot_Ico{
     get_data(act_done){
         if(carrot.check_ver_cur("icon")==false){
             carrot.update_new_ver_cur("icon",true);
-            carrot.data.clear("icon");
             carrot.ico.get_data_from_server(act_done);
         }else{
             carrot.ico.get_data_from_db(act_done,()=>{
