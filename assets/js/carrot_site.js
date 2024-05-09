@@ -41,7 +41,6 @@ class Carrot_Site{
     avatar;
     file;
     pay;
-    radio;
     rate;
     ebook;
     config;
@@ -182,7 +181,6 @@ class Carrot_Site{
             $('head').append('<script type="text/javascript" src="assets/js/carrot_form.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_user.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_music.js?ver='+this.get_ver_cur("js")+'"></script>');
-            $('head').append('<script type="text/javascript" src="assets/js/carrot_radio.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_ebook.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_rate.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/ai_lover.js?ver='+this.get_ver_cur("js")+'"></script>');
@@ -235,13 +233,17 @@ class Carrot_Site{
             var btn_audio=this.menu.create("btn_audio").set_label("Audio").set_type("main").set_lang("audio").set_icon("fa-solid fa-guitar");
             $(btn_audio).click(function(){carrot.load_js_page("audio","audio","carrot.audio.show()");});
 
-            this.radio=new Carrot_Radio(this);
+            var btn_radio=this.menu.create("btn_radio").set_label("Radio").set_type("main").set_lang("radio").set_icon("fa-solid fa-radio");
+            $(btn_radio).click(function(){carrot.load_js_page("radio","radio","carrot.radio.list()");});
             
             var btn_bk=this.menu.create("btn_bk").set_label("List Background").set_lang("wallpaper").set_type("main").set_icon("fa-image fa-solid");
             $(btn_bk).click(function(){carrot.load_js_page("background","background","carrot.background.show()");});
 
             var btn_add_bk=this.menu.create("btn_add_bk").set_label("Add Background").set_type("add").set_icon("fa-image fa-solid");
             $(btn_add_bk).click(function(){carrot.load_js_page("background","background","carrot.background.add()");});
+
+            var btn_list_share=this.menu.create("btn_list_share").set_label("List Share").set_type("dev").set_lang("share").set_icon("fa-solid fa-share-nodes");
+            $(btn_list_share).click(function(){carrot.load_js_page("share","share","carrot.share.list()");});
 
             this.bible=new Carrot_Bible(this);
             this.ebook=new Carrot_Ebook(this);
@@ -255,7 +257,7 @@ class Carrot_Site{
             this.pay=new Carrot_Pay(this);
             this.rate=new Carrot_Rate(this);
             this.tool=this.rate;
-            this.data=new Carrot_data("carrotstore9","9");
+            this.data=new Carrot_data("carrotstore11","11");
             
             var btn_mod_host=this.menu.create("btn_mode_host").set_label("Change Mode Host").set_type("setting").set_icon("fa-brands fa-dev");
             $(btn_mod_host).click(function(){carrot.change_host_connection();});

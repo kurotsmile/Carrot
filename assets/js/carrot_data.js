@@ -11,6 +11,7 @@ class Carrot_data{
         this.request = indexedDB.open(this.databaseName , databaseVersion);
         this.request.onupgradeneeded = (event) => {
             this.db = event.target.result;
+            this.db.createObjectStore("home",{keyPath: 'id_doc'});
             this.db.createObjectStore("apps",{keyPath: 'id_doc'});
             this.db.createObjectStore("app_info",{keyPath: 'id_doc'});
             this.db.createObjectStore("images",{keyPath: 'id_doc'});
@@ -24,6 +25,13 @@ class Carrot_data{
             this.db.createObjectStore("code",{keyPath: 'id_doc'});
             this.db.createObjectStore("code_info",{keyPath: 'id_doc'});
             this.db.createObjectStore("midi",{keyPath: 'id_doc'});
+            this.db.createObjectStore("radio",{keyPath: 'id_doc'});
+            this.db.createObjectStore("share",{keyPath: 'id_doc'});
+            this.db.createObjectStore("floor",{keyPath: 'id_doc'});
+            this.db.createObjectStore("ebook",{keyPath: 'id_doc'});
+            this.db.createObjectStore("bible",{keyPath: 'id_doc'});
+            this.db.createObjectStore("song",{keyPath: 'id_doc'});
+            this.db.createObjectStore("character_fashion",{keyPath: 'id_doc'});
         }
         this.request.onsuccess = () => {
             this.db = this.request.result;

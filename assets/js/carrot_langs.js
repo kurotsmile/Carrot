@@ -417,6 +417,7 @@ class Carrot_Langs{
                 carrot.langs.get_data_lang_web();
                 carrot.user.delete_obj_phone_book();
                 carrot.check_show_by_id_page();
+                carrot.data.clear("apps");
                 Swal.close();
             };
         });
