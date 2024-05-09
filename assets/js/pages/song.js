@@ -1,41 +1,85 @@
 class Song{
 
     objs=null;
+    orderBy_at="publishedAt";
+    orderBy_type="DESCENDING";
+    data_info_cur=null;
 
     menu(){
         var html='';
         html+='<div class="row mb-2">';
-        html+='<div class="col-12">';
-            html+='<div class="btn-group mr-2 btn-sm" role="group" aria-label="First group">';
-                html+='<button onclick="carrot.song.add();" class="btn btn-sm dev btn-success"><i class="fa-solid fa-square-plus"></i> Add</button>';
-                html+=carrot.tool.btn_export("song");
-                html+='<button onclick="carrot.song.delete_all_data();return false;" class="btn btn-danger dev btn-sm"><i class="fa-solid fa-dumpster-fire"></i> Delete All data</button>';
-            html+='</div>';
+                html+='<div class="col-8">';
+                    html+='<div class="btn-group mr-2 btn-sm" role="group" aria-label="First group">';
+                        var s_active="active";
+                        if(carrot.song.orderBy_at=="publishedAt"&&carrot.song.orderBy_type=="DESCENDING") s_active="active";
+                        else s_active="";
+                        html+='<button id="btn-add-code" class="btn btn-success btn-sm '+s_active+'" onclick="carrot.song.get_list_orderBy(\'publishedAt\',\'DESCENDING\');return false;"><i class="fa-solid fa-arrow-up-9-1"></i> Date</button>';
+                        if(carrot.song.orderBy_at=="publishedAt"&&carrot.song.orderBy_type=="ASCENDING") s_active="active";
+                        else s_active="";
+                        html+='<button id="btn-add-code" class="btn btn-success btn-sm '+s_active+'" onclick="carrot.song.get_list_orderBy(\'publishedAt\',\'ASCENDING\');return false;"><i class="fa-solid fa-arrow-down-1-9"></i> Date</button>';
+                    html+='</div>';
+
+                    html+='<div class="btn-group mr-2 btn-sm" role="group" aria-label="Last group">';
+                        if(carrot.song.orderBy_at=="name"&&carrot.song.orderBy_type=="DESCENDING") s_active="active";
+                        else s_active="";
+                        html+='<button id="btn-add-code" class="btn btn-success btn-sm '+s_active+'" onclick="carrot.song.get_list_orderBy(\'name\',\'DESCENDING\');return false;"><i class="fa-solid fa-arrow-up-a-z"></i> Name</button>';
+                        if(carrot.song.orderBy_at=="name"&&carrot.song.orderBy_type=="ASCENDING") s_active="active";
+                        else s_active="";
+                        html+='<button id="btn-add-code" class="btn btn-success btn-sm '+s_active+'" onclick="carrot.song.get_list_orderBy(\'name\',\'ASCENDING\');return false;"><i class="fa-solid fa-arrow-down-z-a"></i> Name</button>';
+                    html+='</div>';
+
+                    html+='<div class="btn-group mr-2 btn-sm" role="group" aria-label="First group">';
+                        html+='<button onclick="carrot.song.add();" class="btn btn-sm dev btn-success"><i class="fa-solid fa-square-plus"></i> Add</button>';
+                        html+=carrot.tool.btn_export("song");
+                        html+='<button onclick="carrot.song.delete_all_data();return false;" class="btn btn-danger dev btn-sm"><i class="fa-solid fa-dumpster-fire"></i> Delete All data</button>';
+                    html+='</div>';
+                html+='</div>';
+
+                html+='<div class="col-4">';
+                    html+='<div class="btn-group mr-2 btn-sm float-end" role="group" aria-label="End group">';
+                    html+=carrot.langs.list_btn_lang_select('btn-success');
+                    html+='</div>';
+                html+='</div>'
+
         html+='</div>';
-        html+='</div>';
+     
         return html;
     }
-
+    
     show(){
-        carrot.song.list();
+        var id=carrot.get_param_url("id");
+        if(id!=undefined)
+            carrot.song.get_info(id);
+        else
+            carrot.song.list();
     }
 
     list(){
         carrot.loading("Get all data song and show");
         carrot.change_title("All Song","?page=song","song");
+        carrot.song.get_data(carrot.song.load_list_by_data);
+    }
+
+    get_list_orderBy(filed,type){
+        carrot.loading("Load OrderBy "+filed+" -> "+type);
+        carrot.song.orderBy_at=filed;
+        carrot.song.orderBy_type=type;
+        carrot.song.get_data_from_server(carrot.song.load_list_by_data);
+    }
+
+    load_list_by_data(datas){
         var html='';
         html+=carrot.song.menu();
         html+='<div class="row" id="all_song"></div>';
         carrot.show(html);
-        carrot.song.get_data((datas)=>{
-            carrot.hide_loading();
-            $(datas).each(function(index,song){
-                song["index"]=index;
-                $("#all_song").append(carrot.song.box_item(song).html());
-            })
-            carrot.check_event();
-        });
+        carrot.hide_loading();
+        $(datas).each(function(index,song){
+            song["index"]=index;
+            $("#all_song").append(carrot.song.box_item(song).html());
+        })
+        carrot.song.check_event();
     }
+
     get_data(act_done){
         if(carrot.check_ver_cur("song")==false){
             carrot.update_new_ver_cur("song",true);
@@ -59,9 +103,10 @@ class Song{
         q.add_select("name");
         q.add_select("artist");
         q.add_select("avatar");
+        q.add_select("genre");
         q.set_limit(30);
-        q.set_order('name','ASCENDING');
-        q.add_where("lang",carrot.lang);
+        q.set_order(carrot.song.orderBy_at,carrot.song.orderBy_type);
+        q.add_where("lang",carrot.langs.lang_setting);
         q.get_data((songs)=>{
             carrot.song.objs=songs;
             $(songs).each(function(index,song){
@@ -119,6 +164,8 @@ class Song{
     }
 
     info(data){
+        carrot.change_title(data.name,"?page=song&id="+data.id_doc,"song");
+        carrot.song.data_info_cur=data;
         var box_info=new Carrot_Info(data.id_doc);
         box_info.set_name(data.name);
         box_info.set_icon_image(carrot.url()+"/images/150.png");
@@ -127,8 +174,18 @@ class Song{
     }
 
     check_event(){
-        carrot.tool.list_other_and_footer("song");
+        if(carrot.song.data_info_cur==null)
+            carrot.tool.list_other_and_footer("song");
+        else
+            carrot.tool.list_other_and_footer("song","genre",carrot.song.data_info_cur.genre);
+
         carrot.check_event();
+        
+        $(".btn-setting-lang-change").click(function(){
+            var key_change=$(this).attr("key_change");
+            carrot.langs.lang_setting=key_change;
+            carrot.song.get_data_from_server(carrot.song.load_list_by_data);
+        });
     }
 
     delete_all_data(){
