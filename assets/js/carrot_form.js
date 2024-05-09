@@ -338,10 +338,21 @@ class Carrot_Field{
                 $(cats).each(function(index,cat){
                     html+='<div onclick="carrot.icon_field.show_list_icon_by_cat(\''+cat.key+'\');return false;" data-emp-id="'+carrot.icon_field.name+'" data-category-key="'+cat.key+'" class="btn btn-sm btn-secondary rounded text-white m-1"><i class="'+cat.icon+'"></i> '+cat.key+'</div>';
                 });
-                html+='<div onclick="carrot.ico.msg_list_select_random();return false;" data-emp-id="random" data-category-key="random_icon" class="btn btn-sm btn-light rounded m-1"><i class="fa-solid fa-shuffle"></i> Random</div>';
+                html+='<div onclick="carrot.icon_field.msg_list_select_random();return false;" data-emp-id="random" data-category-key="random_icon" class="btn btn-sm btn-light rounded m-1"><i class="fa-solid fa-shuffle"></i> Random</div>';
                 $("#field_icon_"+this.name).html(html);
                 carrot.icon_field.show_icon_preview();
             });
+        }
+    }
+
+    msg_list_select_random(){
+        if(carrot.icon_field.icons!=null){
+            var randomIndex = Math.floor(Math.random() * carrot.icon_field.icons.length);
+            $("#"+carrot.icon_field.emp_id).attr("src",carrot.icon_field.icons[randomIndex].icon);
+            $("#"+carrot.icon_field.emp_id).attr("value",carrot.icon_field.icons[randomIndex].id);
+            $("#"+carrot.icon_field.emp_id+"_val").html(carrot.icon_field.icons[randomIndex].id);
+        }else{
+            carrot.icon_field.show_list_icon_by_cat('emoji');
         }
     }
 
@@ -365,6 +376,7 @@ class Carrot_Field{
         q.set_order(carrot.icon_field.orderBy_at,carrot.icon_field.orderBy_type);
         q.get_data((icons)=>{
             carrot.hide_loading();
+            carrot.icon_field.icons=icons;
             carrot.icon_field.done_msg_list_select(icons);
         });
     }
