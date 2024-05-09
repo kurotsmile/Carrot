@@ -4,6 +4,7 @@ class Carrot_Query{
     select_fields=[];
     filters_search=[];
     limit=-1;
+    orderBy=[];
 
     constructor(collection){
         var coll={};
@@ -31,6 +32,10 @@ class Carrot_Query{
         this.filters_search.push(Filter);
     }
 
+    set_order(field_name,direction_val='ASCENDING'){ //'DESCENDING'
+      this.orderBy=[{ field: { fieldPath: field_name }, direction: direction_val }];
+    } 
+
     set_limit(count){
         this.limit=count;
     }
@@ -42,6 +47,7 @@ class Carrot_Query{
         structuredQuery["from"]=this.collections;
         structuredQuery["where"]={compositeFilter: {op: 'AND',filters: this.filters_search}};
         if(this.limit!=-1) structuredQuery["limit"]=this.limit;
+        if(this.orderBy.length>0) structuredQuery["orderBy"]=this.orderBy;
         query["structuredQuery"]=structuredQuery;
         return JSON.stringify(query);
     }
@@ -96,6 +102,10 @@ class Carrot_Server{
                 }
                 act_done(list);
             }).catch((error) => {if(act_fail!=null) act_fail();});
+    }
+
+    get(collection,document,act_done,act_fail=null){
+      this.get_doc(collection,document,act_done,act_fail);
     }
 
     get_doc(collection,document,act_done,act_fail=null){

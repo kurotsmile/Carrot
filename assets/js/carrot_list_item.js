@@ -183,6 +183,10 @@ class Carrot_Info{
         this.s_icon_image=url_image;
     }
 
+    set_icon_img(url){
+        this.set_icon_image(url);
+    }
+
     set_icon_id(id){
         this.s_icon_id=id;
     }

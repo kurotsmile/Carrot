@@ -7,7 +7,7 @@ class Song{
         html+='<div class="row mb-2">';
         html+='<div class="col-12">';
             html+='<div class="btn-group mr-2 btn-sm" role="group" aria-label="First group">';
-                html+='<button onclick="carrot.song.add();" class="btn btn-sm dev btn-success"><i class="fa-solid fa-square-plus"></i> Add Radio</button>';
+                html+='<button onclick="carrot.song.add();" class="btn btn-sm dev btn-success"><i class="fa-solid fa-square-plus"></i> Add</button>';
                 html+=carrot.tool.btn_export("song");
                 html+='<button onclick="carrot.song.delete_all_data();return false;" class="btn btn-danger dev btn-sm"><i class="fa-solid fa-dumpster-fire"></i> Delete All data</button>';
             html+='</div>';
@@ -60,6 +60,8 @@ class Song{
         q.add_select("artist");
         q.add_select("avatar");
         q.set_limit(30);
+        q.set_order('name','ASCENDING');
+        q.add_where("lang",carrot.lang);
         q.get_data((songs)=>{
             carrot.song.objs=songs;
             $(songs).each(function(index,song){
@@ -85,6 +87,7 @@ class Song{
         item_music.set_act_edit("carrot.music.edit");
         item_music.set_class_icon("pe-0 col-3 btn_info_music");
         item_music.set_class_body("mt-2 col-9");
+        item_music.set_act_click("carrot.song.get_info('"+data_music.id_doc+"')");
         var html_body='';
         html_body+='<li class="col-8 ratfac">';
             if(data_music.artist!='') html_body+='<span class="d-block fs-8 mb-2">'+data_music.artist+'</span>';
@@ -104,9 +107,34 @@ class Song{
         return item_music;
     }
 
+    get_info(id){
+        carrot.data.get("song",id,(data)=>{
+            carrot.song.info(data);
+        },()=>{
+            carrot.server.get("song",id,(data)=>{
+                carrot.data.add("song_info",data);
+                carrot.song.info(data);
+            });
+        });
+    }
+
+    info(data){
+        var box_info=new Carrot_Info(data.id_doc);
+        box_info.set_name(data.name);
+        box_info.set_icon_image(carrot.url()+"/images/150.png");
+        carrot.show(box_info.html());
+        carrot.song.check_event();
+    }
+
+    check_event(){
+        carrot.tool.list_other_and_footer("song");
+        carrot.check_event();
+    }
+
     delete_all_data(){
         carrot.song.objs=null;
         carrot.data.clear("song");
+        carrot.data.clear("song_info");
         carrot.msg("Delete all data success!","success");
     }
 }

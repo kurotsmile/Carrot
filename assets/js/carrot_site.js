@@ -257,7 +257,10 @@ class Carrot_Site{
             this.pay=new Carrot_Pay(this);
             this.rate=new Carrot_Rate(this);
             this.tool=this.rate;
-            this.data=new Carrot_data("carrotstore11","11");
+
+           
+            this.data=new Carrot_data("carrotstore"+this.get_ver_cur("page"),this.get_ver_cur("page"));
+           
             
             var btn_mod_host=this.menu.create("btn_mode_host").set_label("Change Mode Host").set_type("setting").set_icon("fa-brands fa-dev");
             $(btn_mod_host).click(function(){carrot.change_host_connection();});

@@ -331,6 +331,8 @@ class Carrot_Field{
         if(this.type=="icon"){
             carrot.icon_field=this;
             carrot.icon_field.emp_id=this.name;
+            carrot.icon_field.orderBy_at='date_create';
+            carrot.icon_field.orderBy_type='ASCENDING';
             carrot.data.list("icon_category").then((cats)=>{
                 var html='';
                 $(cats).each(function(index,cat){
@@ -345,8 +347,8 @@ class Carrot_Field{
 
     show_icon_preview(){
         var id_icon=$("#"+carrot.icon_field.emp_id).attr("value");
-        $("#"+carrot.icon_field.emp_id+"_val").html(carrot.loading_html());
         if(id_icon!=""){
+            $("#"+carrot.icon_field.emp_id+"_val").html(carrot.loading_html());
             carrot.server.get_doc("icon",id_icon,(data)=>{
                 $("#"+carrot.icon_field.emp_id).attr("src",data.icon);
                 $("#"+carrot.icon_field.emp_id+"_val").html(data.id_doc);
@@ -355,14 +357,22 @@ class Carrot_Field{
     }
 
     show_list_icon_by_cat(id_cat){
+        carrot.icon_field.id_cat=id_cat;
         carrot.loading("Get Icon by "+id_cat+"category ");
         var q=new Carrot_Query("icon");
         q.add_where("category",id_cat);
         q.set_limit(28);
+        q.set_order(carrot.icon_field.orderBy_at,carrot.icon_field.orderBy_type);
         q.get_data((icons)=>{
             carrot.hide_loading();
             carrot.icon_field.done_msg_list_select(icons);
         });
+    }
+
+    change_box_list_icon_by_order(orderBy_at,orderBy_type){
+        carrot.icon_field.orderBy_at=orderBy_at;
+        carrot.icon_field.orderBy_type=orderBy_type;
+        carrot.icon_field.show_list_icon_by_cat(carrot.icon_field.id_cat);
     }
 
     select_icon_for_field(emp){
@@ -386,17 +396,15 @@ class Carrot_Field{
 
         html+='<div class="btn-group d-block mt-3 mb-3" role="group" aria-label="Basic example">';
 
-            /*
-            if(this.orderBy_at=="date_create"&&this.orderBy_type=="desc") style_date_create_desc='btn-success';
-            if(this.orderBy_at=="date_create"&&this.orderBy_type=="asc") style_date_create_asc='btn-success';
-            if(this.orderBy_at=="name"&&this.orderBy_type=="desc") style_name_desc='btn-success';
-            if(this.orderBy_at=="name"&&this.orderBy_type=="asc") style_name_asc='btn-success';
-            */
+            if(carrot.icon_field.orderBy_at=="date_create"&&carrot.icon_field.orderBy_type=="DESCENDING") style_date_create_desc='btn-success';
+            if(carrot.icon_field.orderBy_at=="date_create"&&carrot.icon_field.orderBy_type=="ASCENDING") style_date_create_asc='btn-success';
+            if(carrot.icon_field.orderBy_at=="name"&&carrot.icon_field.orderBy_type=="DESCENDING") style_name_desc='btn-success';
+            if(carrot.icon_field.orderBy_at=="name"&&carrot.icon_field.orderBy_type=="ASCENDING") style_name_asc='btn-success';
 
-            html+='<button onClick="carrot.icon.change_box_list_icon_by_order(\'date_create\',\'desc\');" type="button" class="btn '+style_date_create_desc+' btn-sm"><i class="fa-solid fa-arrow-up-short-wide"></i> Date</button>';
-            html+='<button onClick="carrot.icon.change_box_list_icon_by_order(\'date_create\',\'asc\');" type="button" class="btn  '+style_date_create_asc+' btn-sm"><i class="fa-solid fa-arrow-down-short-wide"></i> Date</button>';
-            html+='<button onClick="carrot.icon.change_box_list_icon_by_order(\'name\',\'desc\');" type="button" class="btn '+style_name_desc+' btn-sm"><i class="fa-solid fa-arrow-up-short-wide"></i> Key</button>';
-            html+='<button onClick="carrot.icon.change_box_list_icon_by_order(\'name\',\'asc\');" type="button" class="btn '+style_name_asc+'  btn-sm"><i class="fa-solid fa-arrow-down-short-wide"></i> Key</button>';
+            html+='<button onClick="carrot.icon_field.change_box_list_icon_by_order(\'date_create\',\'DESCENDING\');" type="button" class="btn '+style_date_create_desc+' btn-sm"><i class="fa-solid fa-arrow-up-short-wide"></i> Date</button>';
+            html+='<button onClick="carrot.icon_field.change_box_list_icon_by_order(\'date_create\',\'ASCENDING\');" type="button" class="btn  '+style_date_create_asc+' btn-sm"><i class="fa-solid fa-arrow-down-short-wide"></i> Date</button>';
+            html+='<button onClick="carrot.icon_field.change_box_list_icon_by_order(\'name\',\'DESCENDING\');" type="button" class="btn '+style_name_desc+' btn-sm"><i class="fa-solid fa-arrow-up-short-wide"></i> Key</button>';
+            html+='<button onClick="carrot.icon_field.change_box_list_icon_by_order(\'name\',\'ASCENDING\');" type="button" class="btn '+style_name_asc+'  btn-sm"><i class="fa-solid fa-arrow-down-short-wide"></i> Key</button>';
         html+='</div>';
 
         $(icons).each(function(index,icon){

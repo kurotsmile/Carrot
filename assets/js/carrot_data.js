@@ -6,6 +6,13 @@ class Carrot_data{
     databaseVersion=1;
 
     constructor(databaseName, databaseVersion) {
+        var indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
+        if (!indexedDB) {
+            console.log("Trình duyệt của bạn không hỗ trợ IndexedDB.");
+        } else {
+            console.log("IndexedDB đã được khai báo thành công trên trình duyệt của bạn.");
+        }
+
         this.databaseName = databaseName;
         this.databaseVersion = databaseVersion;
         this.request = indexedDB.open(this.databaseName , databaseVersion);
@@ -31,6 +38,7 @@ class Carrot_data{
             this.db.createObjectStore("ebook",{keyPath: 'id_doc'});
             this.db.createObjectStore("bible",{keyPath: 'id_doc'});
             this.db.createObjectStore("song",{keyPath: 'id_doc'});
+            this.db.createObjectStore("song_info",{keyPath: 'id_doc'});
             this.db.createObjectStore("character_fashion",{keyPath: 'id_doc'});
         }
         this.request.onsuccess = () => {
