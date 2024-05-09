@@ -22,19 +22,22 @@ class Share{
     }
 
     list(){
+        carrot.change_title("All Link Share","?p=share","share");
         carrot.loading("Get all data share and show");
+        carrot.share.get_data(carrot.share.load_list_by_data);
+    }
+
+    load_list_by_data(datas){
         var html='';
         html+=carrot.share.menu();
         html+='<div class="row" id="all_share"></div>';
         carrot.show(html);
-        carrot.share.get_data((datas)=>{
-            carrot.hide_loading();
-            $(datas).each(function(index,share){
-                share["index"]=index;
-                $("#all_share").append(carrot.share.box_item(share).html());
-            });
-            carrot.check_event();
+        carrot.hide_loading();
+        $(datas).each(function(index,share){
+            share["index"]=index;
+            $("#all_share").append(carrot.share.box_item(share).html());
         });
+        carrot.check_event();
     }
 
     get_data(act_done){
@@ -51,7 +54,12 @@ class Share{
     get_data_from_server(act_done){
         var q=new Carrot_Query("share");
         q.set_limit(20);
-        q.get_data(act_done);
+        q.get_data((shares)=>{
+            $(shares).each(function(index,share){
+                carrot.data.add("share",share);
+            });
+            act_done(shares);
+        });
     }
 
     get_data_from_db(act_done,act_fail){
