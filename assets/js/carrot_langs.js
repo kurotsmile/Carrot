@@ -66,6 +66,7 @@ class Carrot_Langs{
                 html+='<div role="group" aria-label="First group"  class="btn-group mr-2">';
                     html+='<button onclick="carrot.langs.list_category_setting_lang();" type="button" class="btn btn-dark btn-sm"><i class="fa-solid fa-rectangle-list"></i> Category Lang Setting</button>';
                     html+=carrot.tool.btn_export("lang_data");
+                    html+=carrot.tool.btn_export("setting_web","setting_web (lang,version)");
                     html+='<button onclick="carrot.langs.add_setting_lang()" class="btn btn-sm btn-success"><i class="fa-solid fa-square-plus"></i> Add setting lang</button>';
                     html+=btn_extension;
                     if(this.lang_setting_db_collection!="") html+=carrot.langs.list_btn_lang_select();

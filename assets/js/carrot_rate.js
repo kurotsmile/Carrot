@@ -375,9 +375,9 @@ class Carrot_Rate{
         }
     }
 
-    btn_export(collection){
+    btn_export(collection,label='Export'){
         var html='';
-        html+='<div class="btn btn-sm dev btn-dark" onclick="carrot.export(\''+collection+'\');"><i class=\"fa-solid fa-download\"></i> Export</div>';
+        html+='<div class="btn btn-sm dev btn-dark" onclick="carrot.export(\''+collection+'\');"><i class=\"fa-solid fa-download\"></i> '+label+'</div>';
         return html;
     }
 }
