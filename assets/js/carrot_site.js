@@ -1297,6 +1297,8 @@ class Carrot_Site{
         location.reload();
     }
 
+    js(file_name_js_page, obj_js=null, callback=null){carrot.load_js_page(file_name_js_page,obj_js,callback);}
+
     load_js_page(file_name_js_page, obj_js=null, callback=null) {
         var url="assets/js/pages/"+file_name_js_page+".js?ver="+this.get_ver_cur("js");
         if(obj_js!=null){
