@@ -154,6 +154,9 @@ class Carrot_Info{
     s_obj_js="";
     s_protocol_url="";
 
+    s_header_left_content="";
+    s_header_right_content="";
+
     s_db="";
     list_attr=[];
     list_body=[];
@@ -211,6 +214,14 @@ class Carrot_Info{
         this.s_protocol_url=url;
     }
 
+    set_header_left(content){
+        this.s_header_left_content=content;
+    }
+
+    set_header_right(content){
+        this.s_header_right_content=content;
+    }
+
     add_btn(id,icon,label,act_click){
         var btn_head={};
         btn_head["id"]=id;
@@ -264,6 +275,7 @@ class Carrot_Info{
                     html+='<div class="'+this.s_icon_col_class+' p-3 text-center">';
                         if(this.s_icon_image!="") html+='<img class="w-100 '+this.s_icon_id+'" src="'+this.s_icon_image+'" alt="Info Icon">';
                         if(this.s_icon_font!="") html+='<i class="w-100 '+this.s_icon_font+' fa-5x" id="'+this.s_icon_id+'" alt="Info Icon"></i>';
+                        if(this.s_header_left_content!="") html+=this.s_header_left_content;
                     html+='</div>';
 
                     html+='<div class="col-md-8 p-2">';
@@ -290,6 +302,8 @@ class Carrot_Info{
                             });
                             html+='</div>';
                         html+='</div>';
+                        
+                        if(this.s_header_right_content!="") html+=this.s_header_right_content;
 
                     html+='</div>';
                 html+="</div>";

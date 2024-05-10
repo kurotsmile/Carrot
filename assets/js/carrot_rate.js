@@ -345,7 +345,7 @@ class Carrot_Rate{
                 var list_other=carrot.random(datas);
                 var count_item=0;
                 $(list_other).each(function(index,data_item){
-                    data_item["index"]=index;
+                    data_item["index"]=count_item;
                     if(field_compare!=''){
                         if(data_item[field_compare]==field_val){
                             count_item++;
@@ -364,8 +364,9 @@ class Carrot_Rate{
 
                 var list_footer=carrot.random(datas);
                 $(list_footer).each(function(index,data_item){
+                    count_item++;
                     if(index>=12) return false;
-                    data_item["index"]=index;
+                    data_item["index"]=count_item;
                     var box_item=carrot[obj_js].box_item(data_item);
                     box_item.set_class(class_col_footer);
                     $("#box_footer").append(box_item.html());
