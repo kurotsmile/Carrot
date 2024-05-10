@@ -67,7 +67,7 @@ class Song{
     }
 
     edit(data,carrot){
-        carrot.music.frm_add_or_edit(data).set_title("Edit Music").set_msg_done("Update song success!").show();
+        carrot.song.frm_add_or_edit(data).set_title("Edit Music").set_msg_done("Update song success!").show();
     }
 
     frm_add_or_edit(data){
@@ -191,18 +191,16 @@ class Song{
 
     box_item(data_music){
         if(data_music==null) return "";
-        var s_url_avatar="";
-        if(data_music.avatar!=null) s_url_avatar=data_music.avatar;
-        if(s_url_avatar=="") s_url_avatar="images/150.png";
         var item_music=new Carrot_List_Item(carrot);
+        carrot.data.img(carrot.tool.id(data_music.id_doc),data_music.avatar,"pic_music_"+carrot.tool.id(data_music.id_doc));
         item_music.set_db("song");
-        item_music.set_obj_js("music");
+        item_music.set_obj_js("song");
         item_music.set_id(data_music.id_doc);
         item_music.set_class('col-md-4 mb-3');
         item_music.set_name(data_music.name);
         item_music.set_index(data_music.index);
-        item_music.set_icon(s_url_avatar);
-        item_music.set_act_edit("carrot.music.edit");
+        item_music.set_icon(carrot.url()+"/images/150.png");
+        item_music.set_id_icon("pic_music_"+carrot.tool.id(data_music.id_doc));
         item_music.set_class_icon("pe-0 col-3 btn_info_music");
         item_music.set_class_body("mt-2 col-9");
         item_music.set_act_click("carrot.song.get_info('"+data_music.id_doc+"')");
@@ -241,11 +239,11 @@ class Song{
         carrot.hide_loading();
         carrot.change_title(data.name,"?page=song&id="+data.id_doc,"song");
         carrot.song.data_info_cur=data;
-        carrot.data.img(data.id_doc,data.avatar,"song_avatar");
+        carrot.data.img(carrot.tool.id(data.id_doc),data.avatar,"pic_music_"+carrot.tool.id(data.id_doc));
         var box_info=new Carrot_Info(data.id_doc);
         box_info.set_name(data.name);
         box_info.set_icon_image(carrot.url()+"/images/150.png");
-        box_info.set_icon_id("song_avatar");
+        box_info.set_icon_id("pic_music_"+carrot.tool.id(data.id_doc));
         box_info.set_db("song");
         box_info.set_obj_js("song");
         box_info.add_attrs("fa-solid fa-guitar",'<l class="lang" key_lang="genre">Genre</l>',data.genre);
@@ -256,6 +254,9 @@ class Song{
         box_info.add_body('<h4 class="fw-semi fs-5 lang" key_lang="describe">Lyrics</h4>','<p class="fs-8 text-justify">'+data.lyrics.replaceAll(". ","</br>")+'</p>');
         box_info.set_protocol_url("music://show/"+data.id_doc);
 
+        box_info.add_btn("btn_download","fa-solid fa-file-arrow-down","Download","carrot.song.act_download()");
+        box_info.add_btn("btn_pay","fa-brands fa-paypal","Download","carrot.song.pay()");
+
         var html_head_left='';
         if(data.mp3!="") html_head_left+='<i id="btn_info_play_audio" role="button" class="fa-sharp fa-solid fa-circle-play fa-5x text-success mt-2 mr-2" onclick="carrot.song.play_music_info();"></i> ';
         if(data.link_ytb!="") html_head_left+='<i id="btn_info_play_video" role="button" class="fa-sharp fa-solid fa-film fa-5x text-success mt-2" onclick="carrot.song.play_music_info(\'video\');"></i>';
@@ -263,6 +264,17 @@ class Song{
 
         carrot.show(carrot.song.menu()+box_info.html());
         carrot.song.check_event();
+        
+        $("#btn_download").removeClass("d-inline");
+        $("#btn_pay").removeClass("d-inline");
+
+        if(carrot.song.check_pay(data.id_doc)){
+            $("#btn_download").show();
+            $("#btn_pay").hide();
+        }else{
+            $("#btn_download").hide();
+            $("#btn_pay").show();
+        }
     }
 
     check_event(){
@@ -318,6 +330,7 @@ class Song{
 
     next_music(){
         carrot.song.index_song_cur++;
+        if(carrot.song.index_song_cur>=carrot.song.objs.length) carrot.song.index_song_cur=0;
         if(carrot.song.type_player_media=="music")
             carrot.player_media.open('#btn_play_music_'+carrot.song.index_song_cur,carrot.song.play_music_by_data(carrot.song.objs[carrot.song.index_song_cur]));
         else
@@ -326,6 +339,7 @@ class Song{
 
     prev_music(){
         carrot.song.index_song_cur--;
+        if(carrot.song.index_song_cur<=0) carrot.song.index_song_cur=carrot.song.objs.length;
         if(carrot.song.type_player_media=="music")
             carrot.song.play_music_by_data(carrot.song.objs[carrot.song.index_song_cur]);
         else
@@ -388,7 +402,7 @@ class Song{
             var list_song=carrot.random(carrot.song.objs);
             carrot.song.objs=list_song;
             html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-4">';
-            html+='<i class="'+this.icon+' fs-6 me-2"></i> <l class="lang" key_lang="other_music">Other Music</l>';
+            html+='<i class="fa-solid fa-music fs-6 me-2"></i> <l class="lang" key_lang="other_music">Other Music</l>';
             html+='<span role="button" onclick="carrot.song.list()" class="btn float-end btn-sm btn-light"><i class="fa-solid fa-square-caret-right"></i> <l class="lang" key_lang="view_all">View All</l></span>';
             html+='</h4>';
 
@@ -401,6 +415,28 @@ class Song{
             html+='</div>';
         }
         return html;
+    }
+
+    act_download(){
+        window.open(carrot.song.data_info_cur.mp3, "_blank");
+    }
+
+    pay_success(carrot){
+        $("#btn_download").show();
+        $("#btn_pay").hide();
+        localStorage.setItem("buy_song_"+carrot.song.data_info_cur.id_doc,"1");
+        carrot.song.act_download();
+    }
+
+    check_pay(id){
+        if(localStorage.getItem("buy_song_"+id)!=null)
+            return true;
+        else
+            return false;
+    }
+
+    pay(){
+        carrot.show_pay("song","Download Music ("+carrot.song.data_info_cur.name+")","Get file mp3 thi song from Carrot Music","1.99",carrot.song.pay_success);
     }
 }
 carrot.song=new Song();

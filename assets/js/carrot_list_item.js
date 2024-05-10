@@ -296,9 +296,9 @@ class Carrot_Info{
                         html+='<div class="row pt-4">';
                             html+='<div class="col-12 text-center">';
                             html+='<button id="btn_share" type="button" class="btn d-inline btn-success"><i class="fa-solid fa-share-nodes"></i> <l class="lang" key_lang="share">Share</l> </button> ';
-                            if(this.s_protocol_url!="") html+='<a href="'+this.s_protocol_url+'" id="register_protocol_url" type="button"  class="btn d-inline btn-success"><i class="fa-solid fa-rocket"></i> <l class="lang" key_lang="open_with">Open with..</l> </a>';
+                            if(this.s_protocol_url!="") html+=' <a href="'+this.s_protocol_url+'" id="register_protocol_url" type="button"  class="btn d-inline btn-success"><i class="fa-solid fa-rocket"></i> <l class="lang" key_lang="open_with">Open with..</l> </a> ';
                             $(this.list_btn).each(function(index,btn){
-                                html+='<button id="'+btn["id"]+'" index="'+index+'" onclick="'+btn["act"]+'" type="button" class="btn d-inline btn-success"><i class="'+btn["icon"]+'"></i> '+btn["label"]+' </button> ';
+                                html+=' <button id="'+btn["id"]+'" index="'+index+'" onclick="'+btn["act"]+'" type="button" class="btn d-inline btn-success"><i class="'+btn["icon"]+'"></i> '+btn["label"]+' </button> ';
                             });
                             html+='</div>';
                         html+='</div>';

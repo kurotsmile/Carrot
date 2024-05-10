@@ -381,4 +381,9 @@ class Carrot_Rate{
         html+='<div class="btn btn-sm dev btn-dark" onclick="carrot.export(\''+collection+'\');"><i class=\"fa-solid fa-download\"></i> '+label+'</div>';
         return html;
     }
+
+    id(str) {
+        var s_new = str.replace(/[\u00C0-\u1EF9\s]/g, '');
+        return s_new.replace(/[^\w\s]/gi, '');
+    }
 }
