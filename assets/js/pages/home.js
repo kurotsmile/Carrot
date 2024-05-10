@@ -9,7 +9,7 @@ class Home{
             html+='</div>';
         html+='</div>';
 
-        html+=carrot.music.list_for_home();
+        if(carrot.song!=null) html+=carrot.song.list_for_home();
         if(carrot.coder!=null) html+=carrot.coder.list_for_home();
         if(carrot.ico!=null) html+=carrot.ico.list_for_home();
         html+=carrot.user.list_for_home();
@@ -22,7 +22,6 @@ class Home{
 
         carrot.show(html);
 
-        carrot.music.check_event();
         carrot.user.check_event();
         carrot.bible.check_event();
         carrot.ebook.check_event();

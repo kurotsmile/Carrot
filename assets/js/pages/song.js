@@ -379,6 +379,27 @@ class Song{
         })
     }
 
+    list_for_home(){
+        var html="";
+        if(carrot.song.objs!=null){
+            carrot.player_media.create();
+            carrot.player_media.set_act_next(carrot.song.next_music);
+            carrot.player_media.set_act_prev(carrot.song.prev_music);
+            var list_song=carrot.random(carrot.song.objs);
+            html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-4">';
+            html+='<i class="'+this.icon+' fs-6 me-2"></i> <l class="lang" key_lang="other_music">Other Music</l>';
+            html+='<span role="button" onclick="carrot.song.list()" class="btn float-end btn-sm btn-light"><i class="fa-solid fa-square-caret-right"></i> <l class="lang" key_lang="view_all">View All</l></span>';
+            html+='</h4>';
+
+            html+='<div id="other_code" class="row m-0">';
+            for(var i=0;i<12;i++){
+                var song=list_song[i];
+                html+=carrot.song.box_item(song).html();
+            }
+            html+='</div>';
+        }
+        return html;
+    }
 }
 carrot.song=new Song();
 if(carrot.call_show_on_load_pagejs) carrot.song.show();

@@ -180,7 +180,6 @@ class Carrot_Site{
             $('head').append('<script type="text/javascript" src="assets/js/carrot_langs.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_form.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_user.js?ver='+this.get_ver_cur("js")+'"></script>');
-            $('head').append('<script type="text/javascript" src="assets/js/carrot_music.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_ebook.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_rate.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/ai_lover.js?ver='+this.get_ver_cur("js")+'"></script>');
@@ -216,7 +215,9 @@ class Carrot_Site{
             $(btn_list_link_store).click(function(){carrot.load_js_page("app","app","carrot.appp.show_other_store()");});
     
             this.user=new Carrot_user(this);
-            this.music=new Carrot_Music(this);
+
+            var btn_list_music=this.menu.create("btn_list_music").set_label("Music").set_lang("music").set_icon("fa-solid fa-music");
+            $(btn_list_music).click(function(){carrot.load_js_page("song","song","carrot.song.list()");});
             
             var btn_code=this.menu.create("btn_code").set_label("Coder").set_lang("code").set_icon("fa-solid fa-code");
             $(btn_code).click(function(){carrot.load_js_page("code","coder","carrot.coder.list()");});
@@ -258,10 +259,8 @@ class Carrot_Site{
             this.rate=new Carrot_Rate(this);
             this.tool=this.rate;
 
-           
             this.data=new Carrot_data("carrotstore"+this.get_ver_cur("page"),this.get_ver_cur("page"));
            
-            
             var btn_mod_host=this.menu.create("btn_mode_host").set_label("Change Mode Host").set_type("setting").set_icon("fa-brands fa-dev");
             $(btn_mod_host).click(function(){carrot.change_host_connection();});
     
