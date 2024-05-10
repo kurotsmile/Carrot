@@ -264,7 +264,7 @@ class Song{
 
         carrot.show(carrot.song.menu()+box_info.html());
         carrot.song.check_event();
-        
+
         $("#btn_download").removeClass("d-inline");
         $("#btn_pay").removeClass("d-inline");
 
@@ -325,6 +325,7 @@ class Song{
         carrot.song.objs=null;
         carrot.data.clear("song");
         carrot.data.clear("song_info");
+        carrot.data.clear("images");
         carrot.msg("Delete all data success!","success");
     }
 
