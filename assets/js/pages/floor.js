@@ -35,7 +35,7 @@ class Floor{
         box.set_icon(data.icon);
         box.set_db("floor");
         box.set_id(data.id);
-        box.set_class("col-3 mb-2");
+        box.set_class("col-2 mb-2");
         return box;
     }
 

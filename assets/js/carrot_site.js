@@ -245,6 +245,12 @@ class Carrot_Site{
 
             var btn_list_share=this.menu.create("btn_list_share").set_label("List Share").set_type("dev").set_lang("share").set_icon("fa-solid fa-share-nodes");
             $(btn_list_share).click(function(){carrot.load_js_page("share","share","carrot.share.list()");});
+            
+            var btn_list_fashion=this.menu.create("btn_list_fashion").set_label("List Fashion").set_type("dev").set_icon("fa-solid fa-shirt");
+            $(btn_list_fashion).click(function(){carrot.load_js_page("fashion","fashion","carrot.fashion.show()");});
+
+            var btn_list_floor=this.menu.create("btn_list_floor").set_label("List Floor").set_type("dev").set_icon("fa-solid fa-seedling");
+            $(btn_list_floor).click(function(){carrot.load_js_page("floor","floor","carrot.floor.show()");});
 
             this.bible=new Carrot_Bible(this);
             this.ebook=new Carrot_Ebook(this);
