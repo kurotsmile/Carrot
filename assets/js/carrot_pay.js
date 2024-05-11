@@ -186,8 +186,8 @@ class Carrot_Pay{
         var list_service=Array();
         var html='';
         //Attributes
-        var attr_limit_download_song=new Carrot_Product_Attribute(this.carrot.music.icon,"Limit Download Song").limit();
-        var attr_unlimit_download_song=new Carrot_Product_Attribute(this.carrot.music.icon,"Unlimit Download Song").unlimit();
+        var attr_limit_download_song=new Carrot_Product_Attribute("fa-solid fa-music","Limit Download Song").limit();
+        var attr_unlimit_download_song=new Carrot_Product_Attribute("fa-solid fa-music","Unlimit Download Song").unlimit();
 
         var attr_limit_download_code=new Carrot_Product_Attribute("fa-solid fa-code","Limit Download Code").limit();
         var attr_unlimit_download_code=new Carrot_Product_Attribute("fa-solid fa-code","Unlimit Download Code").unlimit();
@@ -195,16 +195,16 @@ class Carrot_Pay{
         var attr_limit_download_icon=new Carrot_Product_Attribute("fa-solid fa-face-smile-wink","Limit Download Icon").limit();
         var attr_unlimit_download_icon=new Carrot_Product_Attribute("fa-solid fa-face-smile-wink","Unlimit Download Icon").unlimit();
 
-        var attr_limit_download_bible=new Carrot_Product_Attribute(this.carrot.bible.icon,"Limit Download Bible").limit();
-        var attr_unlimit_download_bible=new Carrot_Product_Attribute(this.carrot.bible.icon,"Unlimit Download Bible").unlimit();
+        var attr_limit_download_bible=new Carrot_Product_Attribute("fa-solid fa-book-bible","Limit Download Bible").limit();
+        var attr_unlimit_download_bible=new Carrot_Product_Attribute("fa-solid fa-book-bible","Unlimit Download Bible").unlimit();
         
         var attr_none_api_music=new Carrot_Product_Attribute("fa-solid fa-compact-disc","No Api Music").none();
         var attr_limit_api_music=new Carrot_Product_Attribute("fa-solid fa-compact-disc","Limit Api Music").limit();
         var attr_unlimit_api_music=new Carrot_Product_Attribute("fa-solid fa-compact-disc","UnLimit Api Music").unlimit();
 
-        var attr_none_api_chat=new Carrot_Product_Attribute(this.carrot.ai.chat.icon,"No Api Music").none();
-        var attr_limit_api_chat=new Carrot_Product_Attribute(this.carrot.ai.chat.icon,"Limit Api chat").limit();
-        var attr_unlimit_api_chat=new Carrot_Product_Attribute(this.carrot.ai.chat.icon,"UnLimit Api chat").unlimit();
+        var attr_none_api_chat=new Carrot_Product_Attribute("fa-solid fa-comments","No Api Music").none();
+        var attr_limit_api_chat=new Carrot_Product_Attribute("fa-solid fa-comments","Limit Api chat").limit();
+        var attr_unlimit_api_chat=new Carrot_Product_Attribute("fa-solid fa-comments","UnLimit Api chat").unlimit();
 
         var attr_none_public_app=new Carrot_Product_Attribute("fa-solid fa-tablet-screen-button","No Public App").none();
         var attr_dev_public_app=new Carrot_Product_Attribute("fa-solid fa-tablet-screen-button","Public Your App").unlimit();
