@@ -3,9 +3,7 @@ class Fashion{
     objs=null;
 
     show(){
-        carrot.server.list("block",(datas)=>{
-            console.log(datas);
-        });
+        carrot.fashion.list();
     }
 
     list(){
@@ -23,7 +21,8 @@ class Fashion{
     }
 
     get_data_from_server(act_done,act_fail){
-        carrot.server.get_collection("character_fashion",(datas)=>{
+        var q=new Carrot_Query("character_fashion");
+        q.get_data((datas)=>{
             console.log(datas);
             carrot.fashion.objs=datas;
             act_done(datas);
@@ -39,12 +38,13 @@ class Fashion{
     load_list_by_data(datas){
         carrot.hide_loading();
         var html='';
-        html+='<div class="row" id="all_fashion">'+carrot.loading_html()+'</div>';
+        html+='<div class="row" id="all_fashion"></div>';
         carrot.show(html);
         $(datas).each(function(index,fashion){
             fashion["index"]=index;
             $("#all_fashion").append(carrot.fashion.box_item(fashion).html());
         });
+        carrot.check_event();
     }
 }
 carrot.fashion=new Fashion();
