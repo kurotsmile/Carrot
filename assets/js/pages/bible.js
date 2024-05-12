@@ -197,6 +197,9 @@ class Bible{
         box_info.add_attrs('fa-solid fa-file','Ebook File',data.name+".epub");
         box_info.add_attrs('fa-solid fa-language','<l class="lang" key_lang="country">Country</l>',data.lang);
 
+        box_info.add_btn("btn_download","fa-solid fa-file-arrow-down","Download","carrot.bible.act_download()");
+        box_info.add_btn("btn_pay","fa-brands fa-paypal","Download","carrot.bible.pay()");
+
         html+=box_info.html();
         carrot.show(html);
 
@@ -206,6 +209,17 @@ class Bible{
             });
         });
         
+        $("#btn_download").removeClass("d-inline");
+        $("#btn_pay").removeClass("d-inline");
+
+        if(carrot.bible.check_pay(data.id_doc)){
+            $("#btn_download").show();
+            $("#btn_pay").hide();
+        }else{
+            $("#btn_download").hide();
+            $("#btn_pay").show();
+        }
+
         carrot.bible.check_event();
     }
 
@@ -218,6 +232,17 @@ class Bible{
         },2);
     }
 
+    pay(){
+        carrot.show_pay("bible","Download Bible ("+carrot.bible.obj_data_cur.name+")","Download the source code file to use","2.00",carrot.bible.pay_success);
+    }
+    
+    pay_success(carrot){
+        $("#btn_download").show();
+        $("#btn_pay").hide();
+        localStorage.setItem("buy_bible_"+carrot.bible.obj_data_cur.id_doc,"1");
+        carrot.bible.act_download(carrot);
+    }
+
     check_event(){
         if(carrot.bible.obj_data_cur!=null)
             carrot.tool.list_other_and_footer("bible","type",carrot.bible.obj_data_cur.type);
@@ -228,6 +253,13 @@ class Bible{
             var key_change=$(this).attr("key_change");
             carrot.bible.get_list_by_key_lang(key_change);
         });
+    }
+
+    check_pay(id){
+        if(localStorage.getItem("buy_bible_"+id)!=null)
+            return true;
+        else
+            return false;
     }
 
     delete_all_data(){

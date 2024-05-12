@@ -273,7 +273,8 @@ class Code{
     }
 
     pay_success(carrot){
-        $("#btn_download").removeClass("btn-info").addClass("btn-success").html('<i class="fa-solid fa-download"></i> <l class="lang" key_lang="download">Download</l>');
+        $("#btn_download").show();
+        $("#btn_pay").hide();
         localStorage.setItem("buy_code_"+carrot.coder.info_code_cur.id_doc,"1");
         carrot.coder.act_download(carrot);
     }
