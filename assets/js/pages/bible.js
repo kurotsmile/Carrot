@@ -190,13 +190,19 @@ class Bible{
         var box_info=new Carrot_Info(data.id_doc);
         box_info.set_title(data.name);
         box_info.set_icon_font("fa-solid fa-book-bible");
-        box_info.add_body('s','<div id="all_paragraphs"></div>');
+        box_info.add_body('<h4 class="fs-6 fw-bolder my-3 mt-2 mb-3 lang"  key_lang="related_bible">Related Bible</h4>','<div id="all_paragraphs"></div>');
+
+        box_info.add_attrs('fa-solid fa-book-journal-whills','<l class="lang" key_lang="bible_type">Type</l>',data.type);
+        box_info.add_attrs('fa-solid fa-paragraph','<l class="lang" key_lang="bible_count_p">Paragraphs</l>',data.contents.length);
+        box_info.add_attrs('fa-solid fa-file','Ebook File',data.name+".epub");
+        box_info.add_attrs('fa-solid fa-language','<l class="lang" key_lang="country">Country</l>',data.lang);
+
         html+=box_info.html();
         carrot.show(html);
 
         $(data.contents).each(function(index,c){
-            $(c.paragraphs).each(function(index,p){
-                $("#all_paragraphs").append(p);
+            $(c.paragraphs).each(function(index_p,p){
+                $("#all_paragraphs").append('<small class="fs-8" style="position: relative;bottom: 1ex;font-size: 80%;">'+(index_p+1)+'</small> <span class="text-dark">'+p+'</span> ');
             });
         });
         
@@ -213,7 +219,10 @@ class Bible{
     }
 
     check_event(){
-        carrot.tool.list_other_and_footer("bible");
+        if(carrot.bible.obj_data_cur!=null)
+            carrot.tool.list_other_and_footer("bible","type",carrot.bible.obj_data_cur.type);
+        else
+            carrot.tool.list_other_and_footer("bible");
         carrot.check_event();
         $(".btn-setting-lang-change").click(function(){
             var key_change=$(this).attr("key_change");
