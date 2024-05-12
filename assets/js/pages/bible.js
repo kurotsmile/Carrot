@@ -240,7 +240,23 @@ class Bible{
         $("#btn_download").show();
         $("#btn_pay").hide();
         localStorage.setItem("buy_bible_"+carrot.bible.obj_data_cur.id_doc,"1");
-        carrot.bible.act_download(carrot);
+        carrot.bible.download_bible();
+    }
+
+    download_bible() {
+        var ebook_file=new Carrot_Ebook_File();
+        var contents=carrot.bible.obj_data_cur.contents;
+        ebook_file.set_lang(carrot.bible.obj_data_cur.lang);
+        ebook_file.set_title(carrot.bible.obj_data_cur.name);
+        $(contents).each(function(index,chapter){
+            var xhtml='';
+            var paragraphs=chapter.paragraphs;
+            for(var i=0;i<paragraphs.length;i++){
+                xhtml+='<p><sup>'+(i+1)+'</sup> '+paragraphs[i]+'</p>';
+            };
+            ebook_file.add_chapter("Chapter "+(index+1),xhtml);
+        });
+        ebook_file.download();
     }
 
     check_event(){
