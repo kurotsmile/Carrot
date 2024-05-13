@@ -37,11 +37,7 @@ class Appp{
         var id_app=carrot.get_param_url("id");
         if(id_app!=undefined){
             id_app=decodeURI(id_app);
-            carrot.data.get("app_info",id_app,(data)=>{
-                carrot.appp.show_app_info(data);
-            },()=>{
-                carrot.server.get_doc("app",id_app,carrot.appp.show_app_info);
-            });
+            carrot.appp.show_app_by_id(id_app);
         }else{
             carrot.loading("Get data app and game");
             this.type_view="all";
@@ -376,14 +372,13 @@ class Appp{
         return store_item.html();
     }
     
-
     box_qr(data){
         var html='';
         html+='<div class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
             html+='<div class="col-md-4 text-center">';
                 html+='<h4 class="fw-semi fs-5 lang" key_lang="qr_code">QR Code</h4>';
                 html+='<div id="qr_cdoe" class="rounded m-1"></div>';
-                html+='<small class="m-1">Use other devices capable of scanning and recognizing qr code barcodes to continue using the current link</small>';
+                html+='<small class="m-1 lang" key_lang="qr_code_tip">Use other devices capable of scanning and recognizing qr code barcodes to continue using the current link</small>';
             html+='</div>';
 
             html+='<div class="col-md-8">';
@@ -418,18 +413,20 @@ class Appp{
         });
     }
 
-    show_app_by_id(id_app){
-        carrot.loading();
-        if(carrot.data.get("app_info",id_app,(data)=>{
-            carrot.appp.show_app_info(data);
+    get(id,act_done){
+        if(carrot.data.get("app_info",id,(data)=>{
+            act_done(data);
         },()=>{
-            carrot.server.get_doc("app",id_app,carrot.appp.act_get_data_info_app_done);
+            carrot.server.get_doc("app",id,(data)=>{
+                carrot.data.add("app_info",data);
+                act_done(data);
+            });
         })); 
     }
 
-    act_get_data_info_app_done(data){
-        carrot.data.add("app_info",data);
-        carrot.appp.show_app_info(data);
+    show_app_by_id(id_app){
+        carrot.loading("Get data app "+id_app);
+        carrot.appp.get(id_app,carrot.appp.show_app_info);
     }
 
     menu(){
@@ -529,6 +526,39 @@ class Appp{
 
         carrot.show(box_info.html());
         carrot.appp.check_event();
+    }
+
+    box_app_tip(id){
+        $("#app_tip").html(carrot.loading_html());
+        carrot.appp.get(id,(data)=>{
+            var html='';
+            html+='<div class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
+            html+='<div class="col-md-3 text-center">';
+                html+='<img src="'+data.icon+'" class="w-100"/>';
+            html+='</div>';
+
+            html+='<div class="col-md-9">';
+                html+='<h4 class="fw-semi fs-5">'+data.name_en+'</h4>';
+                html+='<h5 class="fw-semi fs-9">'+data.name_en+'</h5>';
+                html+='<small class="m-1 lang" key_lang="qr_code_tip">Use other devices capable of scanning and recognizing qr code barcodes to continue using the current link</small>';
+                html+='<div class="fs-9"><i class="fa-solid fa-link"></i> <b>Link</b> : <span id="link_qr" class="text-break">'+window.location.href+'</span></div>';
+                
+                if(carrot.appp.link_store!=null){
+                    var html_store_link="<br/>";
+                    $(carrot.appp.link_store).each(function(index,store){
+                        if(data[store.key]!=null){
+                            var link_store_app=data[store.key];
+                            if(link_store_app!='') html_store_link+="<a class='link_app' title=\""+store.name+"\" target=\"_blank\" href=\""+link_store_app+"\"><i class=\""+store.icon+"\"></i></a>";
+                        }
+                    });
+                    html+=html_store_link+'<br/>';
+                }
+
+                html+='<button class="btn btn-success mt-2" onclick="carrot.appp.show_app_by_id(\''+id+'\')"><i class="fa-solid fa-square-up-right"></i> <l class="lang" key_lang="visit">visit</l></button>';
+            html+='</div>';
+            html+='</div>';
+            $("#app_tip").html(html);
+        });
     }
 
     clear_all_data(){

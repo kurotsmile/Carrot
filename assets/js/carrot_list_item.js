@@ -165,6 +165,7 @@ class Carrot_Info{
     list_footer=[];
     list_btn=[];
     is_show_qr=true;
+    is_show_app_tip=true;
 
     constructor(s_id){
         this.id=s_id;
@@ -266,6 +267,10 @@ class Carrot_Info{
         this.is_show_qr=false;
     }
 
+    off_app_tip(){
+        this.is_show_app_tip=false;
+    }
+
     html(){
         var html='<div class="section-container p-2 p-xl-2 pt-0">';
         html+='<div class="row">';
@@ -318,6 +323,9 @@ class Carrot_Info{
                 $(this.list_contain).each(function(index,data){html+=data;});
 
                 if(this.is_show_qr) html+=carrot.tool.box_qr();
+                if(this.is_show_app_tip){
+                    html+='<div id="app_tip"></div>';
+                }
             html+="</div>";
     
             html+='<div class="col-md-4" id="box_related_contain">';

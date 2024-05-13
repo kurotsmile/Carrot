@@ -303,6 +303,7 @@ class Midi{
             carrot.midi.show_midi_by_id(obj_id);
         });
         carrot.tool.list_other_and_footer("midi");
+        carrot.tool.box_app_tip('Midi Piano Editor');
         carrot.check_event();
     }
 

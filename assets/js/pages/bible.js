@@ -468,6 +468,7 @@ class Bible{
             carrot.tool.list_other_and_footer("bible");
         }
 
+        carrot.tool.box_app_tip('Bible world');
         carrot.check_event();
         $(".btn-setting-lang-change").click(function(){
             var key_change=$(this).attr("key_change");

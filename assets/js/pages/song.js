@@ -287,6 +287,7 @@ class Song{
         else
             carrot.tool.list_other_and_footer("song","genre",carrot.song.data_info_cur.genre);
 
+        carrot.tool.box_app_tip('Music for life');
         carrot.check_event();
         
         $(".btn-setting-lang-change").click(function(){

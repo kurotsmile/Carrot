@@ -335,6 +335,16 @@ class Carrot_Rate{
         return html;
     }
 
+    box_app_tip(id){
+        if($("#app_tip").length>0){
+            if(carrot.appp!=null){
+                carrot.appp.box_app_tip(id);
+            }else{
+                carrot.js("app","appp","carrot.appp.box_app_tip('"+id+"')");
+            }
+        }
+    }
+
     list_other_and_footer(obj_js,field_compare='',field_val='',class_col_other='col-md-12 mb-3 col-12',class_col_footer='col-md-4 mb-3 col-12'){
         if($("#box_related").length>0){
             $("#box_related").html(carrot.loading_html());

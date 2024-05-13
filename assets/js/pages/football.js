@@ -259,6 +259,7 @@ class FootBall{
 
     check_event(){
         carrot.tool.list_other_and_footer('football','playing_position',carrot.football.index_player_position);
+        carrot.tool.box_app_tip('Table Soccer');
         carrot.check_event();
     }
 
