@@ -6,7 +6,11 @@ class Bible{
     index_edit_chapter=0;
     
     show(){
-        carrot.bible.list();
+        var id=carrot.get_param_url("id");
+        if(id!=undefined)
+            carrot.bible.show_info(id);
+        else
+            carrot.bible.list();
     }
 
     menu(){
@@ -138,7 +142,7 @@ class Bible{
             html_contain+='<div class="input-group-prepend">';
                 html_contain+='<div class="input-group-text">'+(index+1)+'</div>';
             html_contain+='</div>';
-            html_contain+='<input type="text" class="form-control paragraph" value="'+data+'"   placeholder="Enter Paragraph"/>';
+            html_contain+='<input type="text" class="form-control paragraph" value="'+data+'" placeholder="Enter Paragraph"/>';
             html_contain+='<div class="input-group-prepend">';
                 html_contain+='<div role="button" onclick="carrot.bible.delete_paragraph(this);return false;" class="input-group-text btn-danger"><i class="fa-solid fa-delete-left"></i> &nbsp</div>';
             html_contain+='</div>';
@@ -147,15 +151,20 @@ class Bible{
         html_contain+="</div>";
         html_contain+='<button onclick="carrot.bible.add_paragraph();return false;" class="btn btn-sm btn-light"><i class="fa-solid fa-plus"></i> Add paragraph</button>';
         frm.create_field("contain").set_type("msg").set_value(html_contain);
-        var btn_add=frm.create_btn();
-        btn_add.set_label("Add Chapter");
-        btn_add.set_icon("fa-solid fa-square-check");
-        btn_add.set_onclick("carrot.bible.act_done_chapter_to_book()");
 
         var btn_add_by_text=frm.create_btn();
         btn_add_by_text.set_label("Add by Text");
         btn_add_by_text.set_icon("fa-solid fa-square-check");
         btn_add_by_text.set_onclick("carrot.bible.add_paragraph_by_text()");
+
+        var btn_add=frm.create_btn();
+        if(carrot.bible.type_view=="add") 
+            btn_add.set_label("Done add");
+        else
+            btn_add.set_label("Done update");
+        btn_add.set_icon("fa-solid fa-square-check");
+        btn_add.set_onclick("carrot.bible.act_done_chapter_to_book()");
+
         frm.off_btn_done();
         return frm;
     } 
@@ -211,7 +220,7 @@ class Bible{
                 carrot.bible.obj_data_cur.contents.splice(index,1);
                 carrot.set_doc("bible",carrot.bible.obj_data_cur.id_doc,carrot.bible.obj_data_cur);
                 Swal.close();
-                
+
                 setTimeout(()=>{
                     carrot.bible.reload_all_data();   
                 },500);
@@ -223,7 +232,7 @@ class Bible{
         var item_book=new Carrot_List_Item(carrot);
         item_book.set_id(book.id_doc);
         item_book.set_class("col-12 mt-1");
-        item_book.set_icon_font("fa-solid fa-book bible_icon");
+        item_book.set_icon_font("fa-solid fa-book-medical");
         item_book.set_class_body("col-11");
         item_book.set_name(book.name);
         item_book.set_db("bible");
@@ -358,10 +367,10 @@ class Bible{
         box_info.set_obj_js("bible");
         box_info.set_title(data.name);
         box_info.set_icon_font("fa-solid fa-book-bible");
-        box_info.add_body('<h4 class="fs-6 fw-bolder my-3 mt-2 mb-3 lang"  key_lang="related_bible">Related Bible</h4>','<div id="bible_contents"></div>');
+        box_info.add_body('<h4 id="bible_contents_title" class="fs-6 fw-bolder my-3 mt-2 mb-3 lang"  key_lang="content">Content</h4>','<div id="bible_contents"></div>');
 
         box_info.add_attrs('fa-solid fa-book-journal-whills','<l class="lang" key_lang="bible_type">Type</l>',data.type);
-        box_info.add_attrs('fa-solid fa-paragraph','<l class="lang" key_lang="bible_count_p">Paragraphs</l>',data.contents.length);
+        box_info.add_attrs('fa-solid fa-paragraph','<l class="lang" key_lang="chapter">Chapter</l>',data.contents.length);
         box_info.add_attrs('fa-solid fa-file','Ebook File',data.name+".epub");
         box_info.add_attrs('fa-solid fa-language','<l class="lang" key_lang="country">Country</l>',data.lang);
 
@@ -377,7 +386,7 @@ class Bible{
         $(data.contents).each(function(index,c){
             var s_class='';
             if(index==0) s_class='active';
-            html_list+='<a class="list-group-item list-group-item-action '+s_class+'" id="c_'+index+'" data-bs-toggle="list" href="#c_'+index+'_body" role="tab" aria-controls="c_'+index+'_body"><l class="lang" key_lang="chapter">Chapter</l> '+(index+1)+'  <i style="font-size:3px;color:gray" class="fa-solid fa-circle"></i>  <span class="float-right badge bg-success text-white">'+c.paragraphs.length+'</span></a>';
+            html_list+='<a class="list-group-item list-group-item-action '+s_class+'" id="c_'+index+'" data-bs-toggle="list" href="#c_'+index+'_body" role="tab" aria-controls="c_'+index+'_body"><l class="lang" key_lang="chapter">Chapter</l> '+(index+1)+'  <i style="font-size:3px;color:gray" class="fa-solid fa-circle"></i>  <span class="float-right badge bg-success text-white">'+c.paragraphs.length+'</span> <span class="btn btn-danger btn-sm dev" role="button" onclick="carrot.bible.delete_chapter(\''+index+'\');return false;"><i class="fa-solid fa-trash-can"></i></span></a>';
         });
         html_list+='</div>';
         html_list+='</div>';
@@ -448,15 +457,44 @@ class Bible{
     }
 
     check_event(){
-        if(carrot.bible.obj_data_cur!=null)
+        if(carrot.bible.obj_data_cur!=null){
+            $(".list-group-item").click(()=>{
+                $([document.documentElement, document.body]).animate({
+                    scrollTop: $("#bible_contents_title").offset().top
+                }, 500);
+            });
             carrot.tool.list_other_and_footer("bible","type",carrot.bible.obj_data_cur.type);
-        else
+        }else{
             carrot.tool.list_other_and_footer("bible");
+        }
+
         carrot.check_event();
         $(".btn-setting-lang-change").click(function(){
             var key_change=$(this).attr("key_change");
             carrot.bible.get_list_by_key_lang(key_change);
         });
+    }
+
+    list_for_home(){
+        var html='';
+        if(carrot.bible.objs!=null){
+            html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-4">';
+            html+='<i class="fa-solid fa-book-tanakh"></i> <l class="lang" key_lang="bible">Bible</l>';
+            html+='<span role="button" onclick="carrot.bible.list()" class="btn float-end btn-sm btn-light"><i class="fa-solid fa-square-caret-right"></i> <l class="lang" key_lang="view_all">View All</l></span></h4>';
+            html+='<div id="other_football" class="row m-0">';
+            $(carrot.random(carrot.bible.objs)).each(function(index,bible){
+                if(index<12){
+                    bible["index"]=index;
+                    var box_bible=carrot.bible.box_item(bible);
+                    box_bible.set_class("col-md-4 mb-3 col-12");
+                    html+=box_bible.html();
+                }else{
+                    return false;
+                }
+            });
+            html+='</div>';
+        }
+        return html;
     }
 
     check_pay(id){

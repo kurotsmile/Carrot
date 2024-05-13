@@ -33,10 +33,7 @@ class Carrot_Site{
 
     /*Obj Main*/
     user;
-    music;
     ai_lover;ai;
-    icon;
-    bible;
     menu;
     avatar;
     file;
@@ -191,7 +188,6 @@ class Carrot_Site{
             $('head').append('<script type="text/javascript" src="assets/js/carrot_file.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_avatar.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/ai_key_block.js?ver='+this.get_ver_cur("js")+'sd"></script>');
-            $('head').append('<script type="text/javascript" src="assets/js/carrot_bible.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_about_us.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_privacy_policy.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="https://www.paypal.com/sdk/js?client-id='+this.paypal_CLIENT_ID+'"></script>');
@@ -243,6 +239,9 @@ class Carrot_Site{
             var btn_add_bk=this.menu.create("btn_add_bk").set_label("Add Background").set_type("add").set_icon("fa-image fa-solid");
             $(btn_add_bk).click(function(){carrot.load_js_page("background","background","carrot.background.add()");});
 
+            var btn_bible=this.menu.create("btn_bible").set_label("Bible").set_lang("bible").set_type("main").set_icon("fa-solid fa-book-medical");
+            $(btn_bible).click(function(){carrot.load_js_page("bible","bible","carrot.bible.list()");});
+
             var btn_list_share=this.menu.create("btn_list_share").set_label("List Share").set_type("dev").set_lang("share").set_icon("fa-solid fa-share-nodes");
             $(btn_list_share).click(function(){carrot.load_js_page("share","share","carrot.share.list()");});
             
@@ -252,7 +251,6 @@ class Carrot_Site{
             var btn_list_floor=this.menu.create("btn_list_floor").set_label("List Floor").set_type("dev").set_icon("fa-solid fa-seedling");
             $(btn_list_floor).click(function(){carrot.load_js_page("floor","floor","carrot.floor.show()");});
 
-            this.bible=new Carrot_Bible(this);
             this.ebook=new Carrot_Ebook(this);
             this.avatar=new Carrot_Avatar(this);
             this.ai_lover=new Ai_Lover(this);
@@ -510,7 +508,6 @@ class Carrot_Site{
     act_del_obj(db_collection,db_doc_id){
         this.db.collection(db_collection).doc(db_doc_id).delete().then(() => {
             carrot.msg("Document "+db_doc_id+" successfully deleted!");
-            this.delete_cache_obj_by_collection(db_collection);
             if($('#'+db_doc_id).length)
                 $('#'+db_doc_id).remove();
             else
@@ -929,9 +926,6 @@ class Carrot_Site{
         }
             
         this.check_mode_site();
-        this.app.delete_obj_app();
-        this.icon.delete_obj_icon();
-        this.music.delete_obj_song();
         this.setup_sever_db();
         this.msg("Thay đổi chế độ kết nối cơ sở dữ liệu thành công! Load lại trang để làm mới các chức năng!");
     }
@@ -1011,15 +1005,6 @@ class Carrot_Site{
     box(html){
         $('#box_body').html(html);
         $('#box').modal("show");
-    }
-
-    delete_cache_obj_by_collection(db_collection){
-        if(db_collection=="app") this.app.delete_obj_app();
-        if(db_collection=="icon") this.icon.delete_obj_icon();
-        if(db_collection=="song") this.music.delete_obj_song();
-        if(db_collection=="code") this.code.delete_obj_code();
-        if(db_collection=="audio") this.audio.delete_obj_audios();
-        if(this.id_page=="address_book") this.user.delete_obj_phone_book();
     }
 
     show_lis_by_collection(db_collection){
