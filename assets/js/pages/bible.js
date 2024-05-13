@@ -128,9 +128,9 @@ class Bible{
         var html_contain='';
         html_contain+="<div id='paragraphs'>";
         if(data.paragraphs!=null)
-            this.count_chapter=data.paragraphs.length;
+            carrot.bible.count_chapter=data.paragraphs.length;
         else
-            this.index_chapter=0;
+            carrot.bible.count_chapter=0;
         $(data.paragraphs).each(function(index,data){
             html_contain+='<div class="input-group">';
             html_contain+='<div class="input-group-prepend">';
@@ -177,6 +177,28 @@ class Bible{
         html_body+='</div>';
         item_book.set_body(html_body);
         return item_book;
+    }
+
+    add_paragraph(){
+        var html='';
+        carrot.bible.count_chapter++;
+        html+='<div class="input-group">';
+            html+='<div class="input-group-prepend">';
+                html+='<div class="input-group-text">'+carrot.bible.count_chapter+'</div>';
+            html+='</div>';
+
+            html+='<input id="p_'+carrot.bible.count_chapter+'" type="text" class="form-control paragraph" value=""   placeholder="Enter Paragraph"/>';
+
+            html+='<div class="input-group-prepend">';
+                html+='<div  role="button" onclick="paste_tag(\'p_'+carrot.bible.count_chapter+'\');return false;" class="input-group-text"><i class="fa-solid fa-clipboard"></i> &nbsp</div>';
+            html+='</div>';
+
+            html+='<div class="input-group-prepend">';
+                html+='<div  role="button" onclick="carrot.bible.delete_paragraph(this);return false;" class="input-group-text btn-danger"><i class="fa-solid fa-delete-left"></i> &nbsp</div>';
+            html+='</div>';
+
+        html+='</div>';
+        $("#paragraphs").append(html);
     }
 
     load_list_by_data(data){
@@ -258,6 +280,8 @@ class Bible{
         var html='';
         html+=carrot.bible.menu();
         var box_info=new Carrot_Info(data.id_doc);
+        box_info.set_db("bible");
+        box_info.set_obj_js("bible");
         box_info.set_title(data.name);
         box_info.set_icon_font("fa-solid fa-book-bible");
         box_info.add_body('<h4 class="fs-6 fw-bolder my-3 mt-2 mb-3 lang"  key_lang="related_bible">Related Bible</h4>','<div id="bible_contents"></div>');
