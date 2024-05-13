@@ -212,7 +212,7 @@ class Carrot_Server{
                   } else if (typeof item === 'boolean') {
                     return { booleanValue: item };
                   } else {
-                    return { mapValue: { fields: convertToFirestoreData(item) } };
+                    return { mapValue: { fields: carrot.server.convertToFirestoreData(item) } };
                   }
                 })
               }
@@ -220,7 +220,7 @@ class Carrot_Server{
           } else if (typeof value === 'object') {
             firestoreData[key] = {
               mapValue: {
-                fields: convertToFirestoreData(value)
+                fields: carrot.server.convertToFirestoreData(value)
               }
             };
           }

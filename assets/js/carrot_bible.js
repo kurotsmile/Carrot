@@ -474,16 +474,16 @@ class Carrot_Bible{
 
     add_paragraph(){
         var html='';
-        this.count_chapter+=1;
+        carrot.bible.count_chapter++;
         html+='<div class="input-group">';
             html+='<div class="input-group-prepend">';
-                html+='<div class="input-group-text">'+this.count_chapter+'</div>';
+                html+='<div class="input-group-text">'+carrot.bible.count_chapter+'</div>';
             html+='</div>';
 
-            html+='<input id="p_'+this.count_chapter+'" type="text" class="form-control paragraph" value=""   placeholder="Enter Paragraph"/>';
+            html+='<input id="p_'+carrot.bible.count_chapter+'" type="text" class="form-control paragraph" value=""   placeholder="Enter Paragraph"/>';
 
             html+='<div class="input-group-prepend">';
-                html+='<div  role="button" onclick="paste_tag(\'p_'+this.count_chapter+'\');return false;" class="input-group-text"><i class="fa-solid fa-clipboard"></i> &nbsp</div>';
+                html+='<div  role="button" onclick="paste_tag(\'p_'+carrot.bible.count_chapter+'\');return false;" class="input-group-text"><i class="fa-solid fa-clipboard"></i> &nbsp</div>';
             html+='</div>';
 
             html+='<div class="input-group-prepend">';
