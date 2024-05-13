@@ -99,32 +99,28 @@ class Bible{
         carrot.bible.get(id,(data)=>{
             carrot.hide_loading();
             carrot.bible.obj_data_cur=data;
+            carrot.bible.add_chapter_to_book();
         })
     }
 
-    add_chapter_to_book(emp){
+    add_chapter_to_book(){
         var new_data_chapter=new Object();
         new_data_chapter["name"]="";
         new_data_chapter["tip"]="";
-        this.model_chapter_to_book="add";
-        this.frm_add_or_edit_chapter(new_data_chapter).set_title("Add Chapter To Book").show();
+        carrot.bible.type_view="add";
+        carrot.bible.frm_add_or_edit_chapter(new_data_chapter).set_title("Add Chapter To Book").show();
     }
 
-    edit_chapter(emp){
-        var index_chapter=$(emp).attr("index");
-        var name_book=$(this.emp_book_cur_edit).attr("book_name");
-        var data_book=JSON.parse(this.obj_bibles[name_book]);
-        var contents=data_book["contents"];
-        this.emp_book_cur_edit["index_chapter"]=index_chapter;
-        this.model_chapter_to_book="update";
-        this.frm_add_or_edit_chapter(contents[index_chapter]).set_title("Edit Chapter Book").show();
+    edit_chapter(index){
+        carrot.bible.type_view="update";
+        carrot.bible.frm_add_or_edit_chapter(carrot.bible.obj_data_cur.contents[index]).set_title("Edit Chapter Book").show();
         Swal.close();
     }
 
     frm_add_or_edit_chapter(data){
         var frm=new Carrot_Form("frm_chapter",carrot);
         var html_msg='';
-        html_msg+='<i class="fa-solid fa-book fa-2x"></i> '+$(this.emp_book_cur_edit).attr("book_name");
+        html_msg+='<i class="fa-solid fa-book fa-2x"></i> '+carrot.bible.obj_data_cur.name;
         frm.create_field("msg").set_value(html_msg).set_type("msg");
         frm.set_icon("fa-solid fa-book-tanakh");
         frm.create_field("name").set_label("chapter Name").set_value(data["name"]);
@@ -216,13 +212,14 @@ class Bible{
     list_chapter(id){
         carrot.loading("Get data bible ("+id+")");
         carrot.bible.get(id,(data)=>{
+            carrot.bible.obj_data_cur=data;
             carrot.hide_loading();
             var html='';
             $(data.contents).each(function(index,chapter){
                 html+='<div role="button" class="d-block m-1 text-justify bg-light">';
                 html+='<i class="fa-solid fa-note-sticky"></i> '+chapter.name+' ('+chapter.paragraphs.length+')';
                 html+='<button index="'+index+'" name_chapter="'+chapter.name+'" onclick="carrot.bible.delete_chapter(this);return false;" class="btn btn-sm btn-danger float-end"><i class="fa-solid fa-trash-can"></i></button>';
-                html+='<button index="'+index+'" onclick="carrot.bible.edit_chapter(this);return false;" class="btn btn-sm btn-secondary float-end"><i class="fa-solid fa-file-pen"></i></button>';
+                html+='<button index="'+index+'" onclick="carrot.bible.edit_chapter(\''+index+'\');return false;" class="btn btn-sm btn-secondary float-end"><i class="fa-solid fa-file-pen"></i></button>';
                 html+='</div>';
             });
 
