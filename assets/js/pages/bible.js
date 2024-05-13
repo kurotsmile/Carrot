@@ -2,6 +2,7 @@ class Bible{
 
     objs=null;
     obj_data_cur=null;
+    type_view='';
 
     show(){
         carrot.bible.list();
@@ -12,6 +13,7 @@ class Bible{
         html+='<div class="row mb-2">';
         html+='<div class="col-12">';
             html+='<div class="btn-group mr-2 btn-sm" role="group" aria-label="First group">';
+                if(carrot.bible.type_view=='info') html+='<button onclick="carrot.bible.list();" class="btn btn-sm btn-success"><i class="fa-solid fa-square-caret-left"></i> <l class="lang" key_lang="back">Back</l></button>';
                 html+='<button onclick="carrot.bible.add(\'old_testament\');" class="btn btn-sm dev btn-success"><i class="fa-solid fa-square-plus"></i> Add Old testament</button>';
                 html+='<button onclick="carrot.bible.add(\'new_testament\');" class="btn btn-sm dev btn-success"><i class="fa-solid fa-square-plus"></i> Add New testament</button>';
                 html+=carrot.tool.btn_export("bible");
@@ -91,6 +93,74 @@ class Bible{
         frm.set_act_done("carrot.bible.reload_list()");
         return frm;
     }
+    
+    get_edit_chapter_by_id_bible(id){
+        carrot.loading("Get data bible ("+id+")");
+        carrot.bible.get(id,(data)=>{
+            carrot.hide_loading();
+            carrot.bible.obj_data_cur=data;
+        })
+    }
+
+    add_chapter_to_book(emp){
+        var new_data_chapter=new Object();
+        new_data_chapter["name"]="";
+        new_data_chapter["tip"]="";
+        this.model_chapter_to_book="add";
+        this.frm_add_or_edit_chapter(new_data_chapter).set_title("Add Chapter To Book").show();
+    }
+
+    edit_chapter(emp){
+        var index_chapter=$(emp).attr("index");
+        var name_book=$(this.emp_book_cur_edit).attr("book_name");
+        var data_book=JSON.parse(this.obj_bibles[name_book]);
+        var contents=data_book["contents"];
+        this.emp_book_cur_edit["index_chapter"]=index_chapter;
+        this.model_chapter_to_book="update";
+        this.frm_add_or_edit_chapter(contents[index_chapter]).set_title("Edit Chapter Book").show();
+        Swal.close();
+    }
+
+    frm_add_or_edit_chapter(data){
+        var frm=new Carrot_Form("frm_chapter",carrot);
+        var html_msg='';
+        html_msg+='<i class="fa-solid fa-book fa-2x"></i> '+$(this.emp_book_cur_edit).attr("book_name");
+        frm.create_field("msg").set_value(html_msg).set_type("msg");
+        frm.set_icon("fa-solid fa-book-tanakh");
+        frm.create_field("name").set_label("chapter Name").set_value(data["name"]);
+        frm.create_field("tip").set_label("chapter Tip").set_value(data["tip"]);
+        var html_contain='';
+        html_contain+="<div id='paragraphs'>";
+        if(data.paragraphs!=null)
+            this.count_chapter=data.paragraphs.length;
+        else
+            this.index_chapter=0;
+        $(data.paragraphs).each(function(index,data){
+            html_contain+='<div class="input-group">';
+            html_contain+='<div class="input-group-prepend">';
+                html_contain+='<div class="input-group-text">'+(index+1)+'</div>';
+            html_contain+='</div>';
+            html_contain+='<input type="text" class="form-control paragraph" value="'+data+'"   placeholder="Enter Paragraph"/>';
+            html_contain+='<div class="input-group-prepend">';
+                html_contain+='<div role="button" onclick="carrot.bible.delete_paragraph(this);return false;" class="input-group-text btn-danger"><i class="fa-solid fa-delete-left"></i> &nbsp</div>';
+            html_contain+='</div>';
+            html_contain+='</div>';
+        });
+        html_contain+="</div>";
+        html_contain+='<button onclick="carrot.bible.add_paragraph();return false;" class="btn btn-sm btn-light"><i class="fa-solid fa-plus"></i> Add paragraph</button>';
+        frm.create_field("contain").set_type("msg").set_value(html_contain);
+        var btn_add=frm.create_btn();
+        btn_add.set_label("Add Chapter");
+        btn_add.set_icon("fa-solid fa-square-check");
+        btn_add.set_onclick("carrot.bible.act_done_chapter_to_book()");
+
+        var btn_add_by_text=frm.create_btn();
+        btn_add_by_text.set_label("Add by Text");
+        btn_add_by_text.set_icon("fa-solid fa-square-check");
+        btn_add_by_text.set_onclick("carrot.bible.add_paragraph_by_text()");
+        frm.off_btn_done();
+        return frm;
+    } 
 
     box_item(book){
         var item_book=new Carrot_List_Item(carrot);
@@ -107,13 +177,14 @@ class Bible{
         html_body+='<div class="col-6">'+book.name+'</div>';
         html_body+='<div class="col-6 dev text-end">';
             html_body+='<i role="button" book_name="'+book.id_doc+'" onclick="carrot.bible.list_chapter(\''+book.id_doc+'\')" class="fa-solid fa-rectangle-list m-1"></i>';
-            html_body+='<i role="button" book_name="'+book.id_doc+'" onclick="carrot.bible.add_chapter_to_book(\''+book.id_doc+'\')" class="fa-solid fa-folder-plus m-1"></i>';
+            html_body+='<i role="button" book_name="'+book.id_doc+'" onclick="carrot.bible.get_edit_chapter_by_id_bible(\''+book.id_doc+'\')" class="fa-solid fa-folder-plus m-1"></i>';
         html_body+='</div>';
         item_book.set_body(html_body);
         return item_book;
     }
 
     load_list_by_data(data){
+        carrot.bible.type_view="list";
         carrot.hide_loading();
         var html='';
         html+=carrot.bible.menu();
@@ -183,6 +254,8 @@ class Bible{
     }
 
     info(data){
+        carrot.change_title(data.name,"?page=bible&id="+data.id_doc,"bible");
+        carrot.bible.type_view='info';
         carrot.bible.obj_data_cur=data;
         carrot.hide_loading();
         var html='';
@@ -190,7 +263,7 @@ class Bible{
         var box_info=new Carrot_Info(data.id_doc);
         box_info.set_title(data.name);
         box_info.set_icon_font("fa-solid fa-book-bible");
-        box_info.add_body('<h4 class="fs-6 fw-bolder my-3 mt-2 mb-3 lang"  key_lang="related_bible">Related Bible</h4>','<div id="all_paragraphs"></div>');
+        box_info.add_body('<h4 class="fs-6 fw-bolder my-3 mt-2 mb-3 lang"  key_lang="related_bible">Related Bible</h4>','<div id="bible_contents"></div>');
 
         box_info.add_attrs('fa-solid fa-book-journal-whills','<l class="lang" key_lang="bible_type">Type</l>',data.type);
         box_info.add_attrs('fa-solid fa-paragraph','<l class="lang" key_lang="bible_count_p">Paragraphs</l>',data.contents.length);
@@ -202,12 +275,32 @@ class Bible{
 
         html+=box_info.html();
         carrot.show(html);
-
+        var html_list='';
+        html_list+='<div class="row">';
+        html_list+='<div class="col-2" style="font-size:10px">';
+        html_list+='<div class="list-group" id="list-tab" role="tablist">';
         $(data.contents).each(function(index,c){
-            $(c.paragraphs).each(function(index_p,p){
-                $("#all_paragraphs").append('<small class="fs-8" style="position: relative;bottom: 1ex;font-size: 80%;">'+(index_p+1)+'</small> <span class="text-dark">'+p+'</span> ');
-            });
+            var s_class='';
+            if(index==0) s_class='active';
+            html_list+='<a class="list-group-item list-group-item-action '+s_class+'" id="c_'+index+'" data-bs-toggle="list" href="#c_'+index+'_body" role="tab" aria-controls="c_'+index+'_body"><l class="lang" key_lang="chapter">Chapter</l> '+(index+1)+'  <i style="font-size:3px;color:gray" class="fa-solid fa-circle"></i>  <span class="float-right badge bg-success text-white">'+c.paragraphs.length+'</span></a>';
         });
+        html_list+='</div>';
+        html_list+='</div>';
+        html_list+='<div class="col-10">';
+        html_list+='<div class="tab-content" id="nav-tabContent">';
+        $(data.contents).each(function(index,c){
+            var s_class='';
+            if(index==0) s_class='show active';
+            html_list+='<div class="tab-pane fade '+s_class+'" id="c_'+index+'_body" role="tabpanel" aria-labelledby="c_'+index+'">'
+            $(c.paragraphs).each(function(index_p,p){
+                html_list+='<small class="fs-8" style="position: relative;bottom: 1ex;font-size: 80%;">'+(index_p+1)+'</small> <span class="text-dark">'+p+'</span> ';
+            });
+            html_list+='</div>';
+        });
+        html_list+='</div>';
+        html_list+='</div>';
+        html_list+='</div>';
+        $("#bible_contents").append(html_list);
         
         $("#btn_download").removeClass("d-inline");
         $("#btn_pay").removeClass("d-inline");

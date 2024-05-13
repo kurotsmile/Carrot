@@ -36,6 +36,7 @@ class Carrot_data{
             this.db.createObjectStore("share",{keyPath: 'id_doc'});
             this.db.createObjectStore("floor",{keyPath: 'id_doc'});
             this.db.createObjectStore("ebook",{keyPath: 'id_doc'});
+            this.db.createObjectStore("ebook_info",{keyPath: 'id_doc'});
             this.db.createObjectStore("bible",{keyPath: 'id_doc'});
             this.db.createObjectStore("bible_info",{keyPath: 'id_doc'});
             this.db.createObjectStore("song",{keyPath: 'id_doc'});
