@@ -1,12 +1,12 @@
 class Chat{
-    obj_chats=null;
+    objs=null;
     obj_animations=null;
     obj_func=null;
     list_animation_act=Array();
 
     icon="fa-solid fa-comments";
     orderBy_at="date_create";
-    orderBy_type="desc";
+    orderBy_type="DESCENDING";
 
     where_a="status";
     where_b="==";
@@ -33,36 +33,57 @@ class Chat{
     }
 
     show(){
+        carrot.chat.list();
+    }
+
+    list(){
+        carrot.loading("Get all chat data and show");
         carrot.change_title_page("All Chat","?page=chat","All Chat");
         carrot.chat.where_a="status";
         carrot.chat.where_c="passed";
-        carrot.chat.get_list_data();
+        carrot.chat.get_data(carrot.chat.load_lis_by_data);
     }
 
     get_list_by_key(opera_a,opera_c){
+        carrot.loading("Show list by key ("+opera_a+"=="+opera_c+")");
+        carrot.chat.objs=null;
         carrot.chat.orderBy_at='date_create';
         carrot.chat.show_type='msg';
         carrot.chat.where_a=opera_a;
         carrot.chat.where_c=opera_c;
-        carrot.chat.get_list_data();
+        carrot.chat.get_data(carrot.chat.load_lis_by_data);
     }
 
-    get_list_data(){
-        carrot.loading("Get all chat data and show");
-        var html='';
-        html+=carrot.chat.menu();
-        html+='<div id="all_chat" class="row"></div>';
-        carrot.show(html);
+    get_data(act_done){
+        if(carrot.chat.objs!=null){
+            carrot.chat.load_lis_by_data(carrot.chat.objs);
+        }else{
+            carrot.chat.get_data_from_server(act_done,()=>{
+                carrot.msg("Error!","error");
+            });
+        }
+    }
+
+    get_data_from_server(act_done,act_fail){
         var q=new Carrot_Query("chat-"+carrot.langs.lang_setting);
         q.add_where(carrot.chat.where_a,carrot.chat.where_c);
         q.set_limit(100);
         q.get_data((chats)=>{
-            $(chats).each(function(index,c){
-                carrot.hide_loading();
-                $("#all_chat").append(carrot.chat.box_item(c).html());
-                carrot.check_event();
-            });
+            carrot.chat.objs=chats;
+            act_done(chats);
+        },act_fail);
+    }
+
+    load_lis_by_data(data){
+        carrot.hide_loading();
+        var html=carrot.chat.menu();
+        html+='<div class="row" id="all_chat"></div>';
+        carrot.show(html);
+        $(data).each(function(index,c){
+            c["index"]=index;
+            $("#all_chat").append(carrot.chat.box_item(c).html());
         });
+        carrot.chat.check_event();
     }
 
     get_icon(data){
@@ -315,10 +336,10 @@ class Chat{
                         html_menu+=' ('+carrot.chat.orderBy_at+')';
                     html_menu+='</button>';
                     html_menu+='<div class="dropdown-menu" aria-labelledby="btn_order">';
-                        html_menu+='<button onclick="carrot.ai.chat.get_list_orderBy(\'date_create\',\'desc\');return false;" type="button" class="dropdown-item"><i class="fa-solid fa-arrow-up-short-wide"></i> Date</button>';
-                        html_menu+='<button onclick="carrot.ai.chat.get_list_orderBy(\'date_create\',\'asc\');return false;"  type="button" class="dropdown-item"><i class="fa-solid fa-arrow-down-short-wide"></i> Date</button>';
-                        html_menu+='<button onclick="carrot.ai.chat.get_list_orderBy(\'key\',\'desc\');return false;" type="button" class="dropdown-item"><i class="fa-solid fa-arrow-up-short-wide"></i> Key</button>';
-                        html_menu+='<button onclick="carrot.ai.chat.get_list_orderBy(\'key\',\'asc\');return false;" type="button" class="dropdown-item"><i class="fa-solid fa-arrow-down-short-wide"></i> Key</button>';
+                        html_menu+='<button onclick="carrot.ai.chat.get_list_orderBy(\'date_create\',\'DESCENDING\');return false;" type="button" class="dropdown-item"><i class="fa-solid fa-arrow-up-short-wide"></i> Date</button>';
+                        html_menu+='<button onclick="carrot.ai.chat.get_list_orderBy(\'date_create\',\'ASCENDING\');return false;"  type="button" class="dropdown-item"><i class="fa-solid fa-arrow-down-short-wide"></i> Date</button>';
+                        html_menu+='<button onclick="carrot.ai.chat.get_list_orderBy(\'key\',\'DESCENDING\');return false;" type="button" class="dropdown-item"><i class="fa-solid fa-arrow-up-short-wide"></i> Key</button>';
+                        html_menu+='<button onclick="carrot.ai.chat.get_list_orderBy(\'key\',\'ASCENDING\');return false;" type="button" class="dropdown-item"><i class="fa-solid fa-arrow-down-short-wide"></i> Key</button>';
                     html_menu+='</div>';
                 html_menu+='</div>';
         
@@ -391,7 +412,9 @@ class Chat{
         });
     }
 
-    
+    check_event(){
+        carrot.check_event();
+    }
 }
 
 carrot.chat=new Chat();

@@ -532,16 +532,19 @@ class Appp{
         $("#app_tip").html(carrot.loading_html());
         carrot.appp.get(id,(data)=>{
             var html='';
+            var name_loca='';
+            if(data["name_"+carrot.lang]!=null) name_loca=data["name_"+carrot.lang];
+            if(name_loca=='') name_loca=data.name_en;
             html+='<div class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
             html+='<div class="col-md-3 text-center">';
                 html+='<img src="'+data.icon+'" class="w-100"/>';
             html+='</div>';
 
             html+='<div class="col-md-9">';
-                html+='<h4 class="fw-semi fs-5">'+data.name_en+'</h4>';
+                html+='<h4 class="fw-semi fs-5">'+name_loca+'</h4>';
                 html+='<h5 class="fw-semi fs-9">'+data.name_en+'</h5>';
-                html+='<small class="m-1 lang" key_lang="qr_code_tip">Use other devices capable of scanning and recognizing qr code barcodes to continue using the current link</small>';
-                html+='<div class="fs-9"><i class="fa-solid fa-link"></i> <b>Link</b> : <span id="link_qr" class="text-break">'+window.location.href+'</span></div>';
+                html+='<small class="m-1 lang" key_lang="app_tip">The above content is all included in this application, please download the corresponding application to explore and experience great features.</small>';
+                html+='<div class="fs-9"><i class="fa-solid fa-link"></i> <b>Link</b> : '+carrot.url()+'?page=app&id='+id+'</div>';
                 
                 if(carrot.appp.link_store!=null){
                     var html_store_link="<br/>";
