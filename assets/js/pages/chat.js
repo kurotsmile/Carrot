@@ -54,6 +54,14 @@ class Chat{
         carrot.chat.get_data(carrot.chat.load_lis_by_data);
     }
 
+    get_list_orderBy(opera_a,opera_c){
+        carrot.loading("Order list by  ("+opera_a+" -> "+opera_c+")");
+        carrot.chat.objs=null;
+        carrot.chat.orderBy_at=opera_a;
+        carrot.chat.orderBy_type=opera_c;
+        carrot.chat.get_data(carrot.chat.load_lis_by_data);
+    }
+
     get_data(act_done){
         if(carrot.chat.objs!=null){
             carrot.chat.load_lis_by_data(carrot.chat.objs);
@@ -67,6 +75,7 @@ class Chat{
     get_data_from_server(act_done,act_fail){
         var q=new Carrot_Query("chat-"+carrot.langs.lang_setting);
         q.add_where(carrot.chat.where_a,carrot.chat.where_c);
+        q.set_order(carrot.chat.orderBy_at,carrot.chat.orderBy_type);
         q.set_limit(100);
         q.get_data((chats)=>{
             carrot.chat.objs=chats;

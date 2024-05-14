@@ -33,7 +33,6 @@ class Carrot_Site{
 
     /*Obj Main*/
     user;
-    ai_lover;ai;
     menu;
     avatar;
     file;
@@ -179,7 +178,6 @@ class Carrot_Site{
             $('head').append('<script type="text/javascript" src="assets/js/carrot_user.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_ebook.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_rate.js?ver='+this.get_ver_cur("js")+'"></script>');
-            $('head').append('<script type="text/javascript" src="assets/js/ai_lover.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/ai_chat.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_menu.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_list_item.js?ver='+this.get_ver_cur("js")+'"></script>');
@@ -242,6 +240,9 @@ class Carrot_Site{
             var btn_bible=this.menu.create("btn_bible").set_label("Bible").set_lang("bible").set_type("main").set_icon("fa-solid fa-book-medical");
             $(btn_bible).click(function(){carrot.load_js_page("bible","bible","carrot.bible.list()");});
 
+            var btn_chat=this.menu.create("btn_chat").set_label("Bible").set_lang("chat").set_type("main").set_icon("fa-solid fa-comments");
+            $(btn_chat).click(function(){carrot.load_js_page("chat","chat","carrot.chat.list()");});
+
             var btn_list_share=this.menu.create("btn_list_share").set_label("List Share").set_type("dev").set_lang("share").set_icon("fa-solid fa-share-nodes");
             $(btn_list_share).click(function(){carrot.load_js_page("share","share","carrot.share.list()");});
             
@@ -253,8 +254,6 @@ class Carrot_Site{
 
             this.ebook=new Carrot_Ebook(this);
             this.avatar=new Carrot_Avatar(this);
-            this.ai_lover=new Ai_Lover(this);
-            this.ai=this.ai_lover;
             this.privacy_policy=new Carrot_Privacy_Policy(this);
             this.about_us=new Carrot_About_Us(this);
             this.player_media=new Carrot_Player_Media(this);
