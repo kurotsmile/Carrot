@@ -363,6 +363,7 @@ class Chat{
         html_menu+=carrot.langs.list_btn_lang_select('btn-success');
         html_menu+='</div>';
                 html_menu+='<div role="group" aria-label="First group"  class="btn-group mr-2 btn-sm">';
+                if(carrot.chat.show_type=='info') html_menu+='<button onclick="carrot.chat.list();" class="btn btn-sm btn-success"><i class="fa-solid fa-square-caret-left"></i> <l class="lang" key_lang="back">Back</l></button>';
                 html_menu+='<button onclick="carrot.chat.add()" type="button" class="btn btn-info btn-sm"><i class="fa-solid fa-circle-plus"></i> Add New Chat</button>';
                 html_menu+='<button onclick="carrot.chat.del_multiple()" type="button" class="btn dev btn-danger btn-sm"><i class="fa-solid fa-eraser"></i></button>';
                 html_menu+=carrot.tool.btn_export("chat-"+carrot.langs.lang_setting,"chat-"+carrot.langs.lang_setting);
