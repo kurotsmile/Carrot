@@ -854,12 +854,31 @@ class Chat{
         return html;
     }
 
-
     reload_list(){
         carrot.chat.objs=null;
         setTimeout(() => {
             carrot.chat.list();
         }, 500);
+    }
+
+    list_for_home(){
+        var html='';
+        if(carrot.chat.objs!=null){
+            html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-4">';
+            html+='<i class="fa-solid fa-comment-dots"></i> <l class="lang" key_lang="chat">Chat</l>';
+            html+='<span role="button" onclick="carrot.chat.list()" class="btn float-end btn-sm btn-light"><i class="fa-solid fa-square-caret-right"></i> <l class="lang" key_lang="view_all">View All</l></span></h4>';
+            html+='<div id="other_football" class="row m-0">';
+            $(carrot.random(carrot.chat.objs)).each(function(index,c){
+                if(index<12){
+                    c["index"]=index;
+                    html+=carrot.chat.box_item(c).html();
+                }else{
+                    return false;
+                }
+            });
+            html+='</div>';
+        }
+        return html;
     }
 }
 
