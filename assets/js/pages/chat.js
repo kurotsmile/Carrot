@@ -441,7 +441,7 @@ class Chat{
             if (doc.exists) {
                 var data_obj = doc.data();
                 data_obj["id"]=doc.id;
-                $("#pater_details").html(carrot.ai.chat.box_chat_item(data_obj,"col-md-12"));
+                $("#pater_details").html(carrot.chat.box_item(data_obj).html());
                 Swal.close();
                 carrot.check_event();
             } else {
@@ -463,7 +463,7 @@ class Chat{
         var html='';
         var index_func=parseInt($("#func").val());
         $(obj_array).each(function(index,key){
-            html+='<button onclick="carrot.ai.chat.select_sys_func_for_link(\''+key+'\');" class="btn btn-sm btn-info m-1"><i class="fa-solid fa-atom"></i> '+key+'</button>';
+            html+='<button onclick="carrot.chat.select_sys_func_for_link(\''+key+'\');" class="btn btn-sm btn-info m-1"><i class="fa-solid fa-atom"></i> '+key+'</button>';
             if(index_func==19){
                 html+='<a href="https://play.google.com/store/apps/details?id='+key+'" class="btn btn-sm btn-success m-1" target="_blank"><i class="fa-solid fa-link"></i></a>';
             }
