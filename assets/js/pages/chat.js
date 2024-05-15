@@ -1,5 +1,6 @@
 class Chat{
     objs=null;
+    obj_info_cur=null;
     obj_animations=null;
     obj_func=null;
     list_animation_act=Array();
@@ -35,7 +36,16 @@ class Chat{
     }
 
     show(){
-        carrot.chat.list();
+        var id=carrot.get_param_url("id");
+        if(id!=undefined){
+            var lang_chat=carrot.get_param_url("lang_chat");
+            if(lang_chat!=undefined) lang_chat=carrot.langs.lang_setting;
+            carrot.langs.lang_setting=lang_chat;
+            carrot.chat.get_info(id);
+        }
+        else{
+            carrot.chat.list();
+        }
     }
 
     list(){
@@ -66,7 +76,7 @@ class Chat{
 
     get_data(act_done){
         if(carrot.chat.objs!=null){
-            carrot.chat.load_list_by_data(carrot.chat.objs);
+            act_done(carrot.chat.objs);
         }else{
             carrot.chat.get_data_from_server(act_done,()=>{
                 carrot.msg("Error!","error");
@@ -240,6 +250,7 @@ class Chat{
     }
 
     edit(data,carrot){
+        console.log(data);
         if(data["lang"]==null){
             data["lang"]=carrot.langs.lang_setting;
         }else{
@@ -437,19 +448,13 @@ class Chat{
 
     show_chat_father_in_form(){
         var val_pater_id=$("#pater").val();
-        carrot.db.collection("chat-"+carrot.langs.lang_setting).doc(val_pater_id).get().then((doc) => {
-            if (doc.exists) {
-                var data_obj = doc.data();
-                data_obj["id"]=doc.id;
-                $("#pater_details").html(carrot.chat.box_item(data_obj).html());
-                Swal.close();
-                carrot.check_event();
-            } else {
-                $("#pater_details").html('<span class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i> No Found Chat</span>');
-                Swal.close();
-            }
-        }).catch((error) => {
-            carrot.log_error(error);
+        carrot.server.get("chat-"+carrot.langs.lang_setting,val_pater_id,(data)=>{
+            var box_c=carrot.chat.box_item(data);
+            box_c.set_class("col-12");
+            $("#pater_details").html(box_c.html());
+            carrot.check_event();
+        },()=>{
+            $("#pater_details").html('<span class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i> No Found Chat</span>');
         });
     }
 
@@ -606,7 +611,9 @@ class Chat{
                 carrot.chat.list();
             }  
         });
-        
+
+        if(carrot.chat.obj_info_cur!=null) carrot.tool.list_other_and_footer("chat","func",carrot.chat.obj_info_cur.func);
+        carrot.tool.box_app_tip("AI Lover");
         carrot.check_event();
     }
 
@@ -618,12 +625,41 @@ class Chat{
     }
 
     info(data){
+        carrot.chat.obj_info_cur=data;
+        carrot.change_title_page("Chat Info","?page=chat&id="+data.id_doc+"&lang_chat="+carrot.langs.lang_setting,"chat");
         carrot.chat.show_type="info";
         carrot.hide_loading();
         var html=carrot.chat.menu();
         var box_info=new Carrot_Info(data.id_doc);
+        box_info.set_db("chat-"+carrot.langs.lang_setting);
+        box_info.set_obj_js("chat");
+        box_info.set_icon_font(carrot.chat.get_icon(data)+" fa-10x");
         box_info.set_name(data.key);
-        box_info.set_header_right(data.msg);
+
+        if(data.sex_user=="0")
+            box_info.add_attrs("fa-solid fa-mars text-primary",'<l class="lang" key_lang="sex">Sex</l>','<l class="lang" key_lang="boy">Boy</l>');
+        else
+            box_info.add_attrs("fa-solid fa-venus text-danger",'<l class="lang" key_lang="sex">Sex</l>','<l class="lang" key_lang="girl">Girl</l>');
+        box_info.add_attrs("fa-brands fa-suse",'<l class="lang" key_lang="status">Status</l>',data.status);
+        box_info.add_attrs("fa-solid fa-palette",'<l class="lang" key_lang="color">Color</l>',data.color);
+        box_info.add_attrs("fa-solid fa-smile",'<l class="lang" key_lang="icon">Icon</l>',data.icon);
+        box_info.add_attrs("fa-regular fa-calendar",'<l class="lang" key_lang="date_create">Date Create</l>',data.date_create);
+        if(data.user.name!=undefined) box_info.add_attrs("fa-solid fa-user-nurse",'<l class="lang" key_lang="author">Author</l>',data.user.name);
+        if(data.func!=undefined){
+            var index_func=parseInt(data.func);
+            box_info.add_attrs("fa-solid fa-atom",'Function',carrot.chat.funcs[index_func]);
+        }
+    
+        if(data.link!="") box_info.add_attrs("fa-solid fa-link",'Link',data.link);
+           
+        box_info.set_protocol_url("ailover://data/"+data.id_doc);
+
+        box_info.add_body('<i class="fa-solid fa-message"></i> '+data.key,'<i class="fa-solid fa-diagram-successor"></i> '+data.msg);
+
+        data["collection"]="chat-"+carrot.langs.lang_setting;
+        box_info.add_contain(carrot.rate.box_report(data));
+        box_info.add_contain(carrot.rate.box_comment(data));
+
         html+=box_info.html();
         carrot.show(html);
         carrot.chat.check_event();
