@@ -101,7 +101,7 @@ class AI_Chat{
         btn_add_key_fnc.set_label(" Add Key func");
         btn_add_key_fnc.set_icon("fa-solid fa-circle-plus");
         btn_add_key_fnc.set_class("btn-sm mt-1 btn-light fs-9");
-        btn_add_key_fnc.set_act("carrot.ai.chat.add_key_fnc_for_msg_field()");
+        btn_add_key_fnc.set_act("carrot.chat.add_key_fnc_for_msg_field()");
         var btn_translate=new Carrot_Btn();
         btn_translate.set_icon("fa-solid fa-language");
         btn_translate.set_class("btn-sm mt-1 btn-light fs-9");
@@ -120,7 +120,7 @@ class AI_Chat{
         frm.create_field("icon").set_label("Icon").set_val(data["icon"]).set_type("icon");
         var btn_random_action=new Carrot_Btn();
         btn_random_action.set_icon("fa-solid fa-shuffle");
-        btn_random_action.set_act("carrot.ai.chat.sel_random_action()");
+        btn_random_action.set_act("carrot.chat.sel_random_action()");
         var btn_list_action=new Carrot_Btn();
         btn_list_action.set_icon("fa-solid fa-list");
         btn_list_action.set_act("carrot.ai.chat.show_list_category_action_animations()");
@@ -156,14 +156,14 @@ class AI_Chat{
     }
 
     sel_random_action(){
-        var random_action=Math. floor(Math. random() * this.list_animation_act.length);
-        $('#act').val(this.list_animation_act[random_action]);
+        var random_action=Math. floor(Math. random() * carrot.chat.list_animation_act.length);
+        $('#act').val(carrot.chat.list_animation_act[random_action]);
     }
 
     show_list_category_action_animations(){
         var html='';
-        $.each(this.obj_animations, function(k,v) {
-            html+='<button onclick="carrot.ai.chat.show_list_action_animations_by_cat(\''+k+'\');" class="btn btn-sm btn-info m-1"><i class="fa-solid fa-radiation"></i> '+v.name+'</button>';
+        $.each(carrot.chat.obj_animations, function(k,v) {
+            html+='<button onclick="carrot.chat.show_list_action_animations_by_cat(\''+k+'\');" class="btn btn-sm btn-info m-1"><i class="fa-solid fa-radiation"></i> '+v.name+'</button>';
         });
 
         Swal.fire({
@@ -173,10 +173,10 @@ class AI_Chat{
     }
 
     show_list_action_animations_by_cat(index_cat){
-        var obj_cat=this.obj_animations[index_cat];
+        var obj_cat=carrot.chat.obj_animations[index_cat];
         var html='';
         $.each(obj_cat.data, function(k,v) {
-            html+='<button onclick="carrot.ai.chat.sel_action_animation(\''+v.name+'\');" class="btn btn-sm btn-info m-1"><i class="fa-solid fa-person-running"></i> '+v.name+'</button>';
+            html+='<button onclick="carrot.chat.sel_action_animation(\''+v.name+'\');" class="btn btn-sm btn-info m-1"><i class="fa-solid fa-person-running"></i> '+v.name+'</button>';
         });
 
         Swal.fire({
@@ -244,7 +244,7 @@ class AI_Chat{
         var list_parameter_msg=Array("{ten_user}","{ten_nv}","{gio}","{phut}","{ngay}","{thang}","{nam}","{thu}","{key_chat}","{song_name}");
         var html='';
         $(list_parameter_msg).each(function(index,key){
-            html+='<button onclick="carrot.ai.chat.select_key_parameter_for_msg(\''+key+'\');" class="btn btn-sm btn-info m-1"><i class="fa-brands fa-keycdn"></i> '+key+'</button>';
+            html+='<button onclick="carrot.chat.select_key_parameter_for_msg(\''+key+'\');" class="btn btn-sm btn-info m-1"><i class="fa-brands fa-keycdn"></i> '+key+'</button>';
         });
         Swal.fire({
             title:"Parameter Msg Key",
@@ -290,7 +290,7 @@ class AI_Chat{
         if(this.show_type=='msg')
             frm.set_act_done("carrot.ai.chat.reload(carrot)");
         else
-            frm.set_act_done("carrot.ai.chat.show_compare_msg_list()");
+            frm.set_act_done("carrot.chat.show_compare_msg_list()");
         frm.show();
     }
 

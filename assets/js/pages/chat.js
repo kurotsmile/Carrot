@@ -250,7 +250,6 @@ class Chat{
     }
 
     edit(data,carrot){
-        console.log(data);
         if(data["lang"]==null){
             data["lang"]=carrot.langs.lang_setting;
         }else{
@@ -299,7 +298,7 @@ class Chat{
         frm.create_field("icon").set_label("Icon").set_val(data["icon"]).set_type("icon");
         var btn_random_action=new Carrot_Btn();
         btn_random_action.set_icon("fa-solid fa-shuffle");
-        btn_random_action.set_act("carrot.ai.chat.sel_random_action()");
+        btn_random_action.set_act("carrot.chat.sel_random_action()");
         var btn_list_action=new Carrot_Btn();
         btn_list_action.set_icon("fa-solid fa-list");
         btn_list_action.set_act("carrot.chat.show_list_category_action_animations()");
@@ -436,8 +435,8 @@ class Chat{
     }
 
     sel_random_action(){
-        var random_action=Math. floor(Math. random() * this.list_animation_act.length);
-        $('#act').val(this.list_animation_act[random_action]);
+        var random_action=Math. floor(Math. random() * carrot.chat.list_animation_act.length);
+        $('#act').val(carrot.chat.list_animation_act[random_action]);
     }
 
     sel_random_face(){
@@ -487,7 +486,7 @@ class Chat{
     show_list_category_action_animations(){
         var html='';
         $.each(this.obj_animations, function(k,v) {
-            html+='<button onclick="carrot.ai.chat.show_list_action_animations_by_cat(\''+k+'\');" class="btn btn-sm btn-info m-1"><i class="fa-solid fa-radiation"></i> '+v.name+'</button>';
+            html+='<button onclick="carrot.chat.show_list_action_animations_by_cat(\''+k+'\');" class="btn btn-sm btn-info m-1"><i class="fa-solid fa-radiation"></i> '+v.name+'</button>';
         });
 
         Swal.fire({
@@ -500,13 +499,18 @@ class Chat{
         var obj_cat=this.obj_animations[index_cat];
         var html='';
         $.each(obj_cat.data, function(k,v) {
-            html+='<button onclick="carrot.ai.chat.sel_action_animation(\''+v.name+'\');" class="btn btn-sm btn-info m-1"><i class="fa-solid fa-person-running"></i> '+v.name+'</button>';
+            html+='<button onclick="carrot.chat.sel_action_animation(\''+v.name+'\');" class="btn btn-sm btn-info m-1"><i class="fa-solid fa-person-running"></i> '+v.name+'</button>';
         });
 
         Swal.fire({
             title:"List Category Actions",
             html:html
         });
+    }
+
+    sel_action_animation(s_name_animation){
+        Swal.close();
+        $("#act").val(s_name_animation);
     }
 
     show_check_same_key(emp){

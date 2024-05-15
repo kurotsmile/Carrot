@@ -537,7 +537,7 @@ class Appp{
             if(name_loca=='') name_loca=data.name_en;
             html+='<div class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
             html+='<div class="col-md-3 text-center">';
-                html+='<img src="'+data.icon+'" class="w-100"/>';
+                html+='<img id="icon_app_'+data_app.id_doc.replace(/[\s!@#$%^&*()]/g, '')+'" src="'+carrot.url()+'/images/150.png" class="w-100"/>';
             html+='</div>';
 
             html+='<div class="col-md-9">';
@@ -561,6 +561,7 @@ class Appp{
             html+='</div>';
             html+='</div>';
             $("#app_tip").html(html);
+            carrot.data.load_image(data_app.id_doc,data_app.icon,"icon_app_"+data_app.id_doc.replace(/[\s!@#$%^&*()]/g, ''));
         });
     }
 
