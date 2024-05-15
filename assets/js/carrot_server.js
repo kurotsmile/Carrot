@@ -52,7 +52,7 @@ class Carrot_Query{
         return JSON.stringify(query);
     }
 
-    get_data(act_done){
+    get_data(act_done,act_fail=null){
         fetch(carrot.config.url_server_rest_api[carrot.index_server]+":runQuery", {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
@@ -74,7 +74,8 @@ class Carrot_Query{
             act_done(list);
           })
           .catch(error => {
-            console.error('There was a problem with your fetch operation:', error);
+            if(act_fail!=null) act_fail();
+            else console.error('There was a problem with your fetch operation:', error);
           });
     }
 }
