@@ -102,6 +102,7 @@ class EBook{
                 html+='</div>';
 
                 html+='<div class="btn-group m-1" role="group">';
+                    if(carrot.ebook.type_view=='info') html+='<button onclick="carrot.ebook.list();" class="btn btn-sm btn-success"><i class="fa-solid fa-square-caret-left"></i> <l class="lang" key_lang="back">Back</l></button>';
                     if(carrot.ebook.type_view=="list_ebook") s_class="active"; else s_class="";
                     html+='<button onclick="carrot.ebook.list();return false;" class="btn '+s_class+' btn-success btn-sm"><i class="fa-solid fa-swatchbook"></i> list Ebook</button>';
                     if(carrot.ebook.type_view=="list_category") s_class="active"; else s_class="";
@@ -303,8 +304,8 @@ class EBook{
 
     info(data){
         console.log(data);
-        carrot.obj_ebook_cur=data;
-        carrot.type_view="info";
+        carrot.ebook.obj_ebook_cur=data;
+        carrot.ebook.type_view="info";
         carrot.change_title(data.title,"?page=ebook&id="+data.id_doc,"ebook");
         carrot.hide_loading();
         
@@ -351,8 +352,14 @@ class EBook{
         $(data.contents).each(function(index,c){
             var s_class='';
             if(index==0) s_class='active';
-            html_list+='<a class="list-group-item list-group-item-action '+s_class+'" id="c_'+index+'" data-bs-toggle="list" href="#c_'+index+'_body" role="tab" aria-controls="c_'+index+'_body"><l class="lang" key_lang="chapter">Chapter</l> '+(index+1)+' <span class="btn btn-danger btn-sm dev" role="button" onclick="carrot.bible.delete_chapter(\''+index+'\');return false;"><i class="fa-solid fa-trash-can"></i></span></a>';
+            html_list+='<a class="list-group-item list-group-item-action '+s_class+'" id="c_'+index+'" data-bs-toggle="list" href="#c_'+index+'_body" role="tab" aria-controls="c_'+index+'_body"><l class="lang" key_lang="chapter">Chapter</l> '+(index+1);
+            html_list+=' <span class="btn btn-info btn-sm dev fs-9" role="button" onclick="carrot.ebook.edit_chapter(\''+index+'\');return false;"><i class="fa-solid fa-pen-to-square"></i></span>';
+            html_list+=' <span class="btn btn-danger btn-sm dev fs-9" role="button" onclick="carrot.ebook.delete_chapter(\''+index+'\');return false;"><i class="fa-solid fa-trash-can"></i></span>';
+            html_list+='</a>';
         });
+
+        html_list+='<a onclick="carrot.ebook.add_chapter()" class="list-group-item bg-success text-white" role="button" ><i class="fa-solid fa-square-plus"></i> Add Chapter</a>';
+
         html_list+='</div>';
         html_list+='</div>';
         html_list+='<div class="col-10">';
@@ -369,15 +376,20 @@ class EBook{
         html_list+='</div>';
         html_list+='</div>';
         $("#ebook_contents").append(html_list);
-
         carrot.ebook.check_event();
+    }
+
+    show_chapter_by_index(index){
+        $('#c_'+index).tab('show');
+        Swal.close();
+        carrot.ebook.scroll_to_contain();
     }
 
     table_of_contents(){
         var html='';
         html+='<div class="d-block">';
-        $(carrot.obj_ebook_cur.contents).each(function(index,chapter){
-            html+='<div role="button" data-index="'+index+'" onclick="carrot.ebook.select_chapter_for_content_edit(this)"  class="text-justify btn d-block btn-success btn-sm m-1">'+chapter.title+'</div>';
+        $(carrot.ebook.obj_ebook_cur.contents).each(function(index,chapter){
+            html+='<a role="button" onclick="carrot.ebook.show_chapter_by_index(\''+index+'\');return false;" class="text-justify btn d-block btn-success btn-sm m-1">'+chapter.title+'</a>';
         });
         html+='</div>';
         Swal.fire({
@@ -398,12 +410,44 @@ class EBook{
                 $("#list_ebook_category").append(html);
             });
         });
+
+        if(carrot.ebook.obj_ebook_cur!=null){
+            $(".list-group-item.list-group-item-action").click(()=>{
+                carrot.ebook.scroll_to_contain();
+            });
+            carrot.tool.list_other_and_footer("ebook","category",carrot.ebook.obj_ebook_cur.category);
+        }else{
+            carrot.tool.list_other_and_footer("ebook");
+        }
         
-        carrot.tool.list_other_and_footer("ebook");
         carrot.tool.box_app_tip("ERead Now");
         carrot.check_event();
     }
 
+    scroll_to_contain(){
+        $([document.documentElement, document.body]).animate({
+            scrollTop: $("#ebook_contents_title").offset().top
+        }, 500);
+    }
+
+    add_chapter(){
+        var data_new={};
+        data_new["title"]="";
+        data_new["content"]="";
+        carrot.ebook.frm_add_or_edit_chapter(data_new).set_title("Add Chapter").show();
+    }
+
+    edit_chapter(index){
+        carrot.ebook.frm_add_or_edit_chapter(carrot.ebook.obj_ebook_cur.contents[index]).set_title("Edit Chapter").show();
+    }
+
+    frm_add_or_edit_chapter(data){
+        var frm=new Carrot_Form("frm_ebook",carrot);
+        frm.set_icon("fa-solid fa-quote-left");
+        frm.create_field("title").set_label("Title").set_val(data["title"]);
+        frm.create_field("Content").set_label("Content").set_val(data["content"]).set_type("editor");
+        return frm;
+    }
 
     delete_all_data(){
         carrot.data.clear("ebook");
