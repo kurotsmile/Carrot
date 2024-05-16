@@ -109,7 +109,7 @@ class FootBall{
         html_body+='</div>';
 
         html_body+='<div class="col-2 text-white">';
-            html_body+='<p class="fs-7 bg-secondary rounded p-3 pr-3">'+(parseInt(data.ball_force)+parseInt(data.ball_control)+parseInt(data.ball_cutting))+' <i class="fa-solid fa-medal"></i></p>';
+            html_body+='<p class="fs-7 bg-success rounded p-3 pr-3">'+(parseInt(data.ball_force)+parseInt(data.ball_control)+parseInt(data.ball_cutting))+' <i class="fa-solid fa-medal"></i></p>';
         html_body+='</div>';
 
         html_body+='</div>';
@@ -242,10 +242,10 @@ class FootBall{
         var index_pos=parseInt(data.playing_position);
         carrot.football.index_player_position=data.playing_position;
         var total_skill=parseInt(data.ball_force)+parseInt(data.ball_control)+parseInt(data.ball_cutting);
+        box_info.add_attrs("fa-solid fa-arrows-to-circle","Force ("+data.ball_force+"0%)",carrot.football.bar_skill(data.ball_force));
+        box_info.add_attrs("fa-solid fa-person-running","Control ("+data.ball_control+"0%)",carrot.football.bar_skill(data.ball_control));
+        box_info.add_attrs("fa-solid fa-shoe-prints","Cutting ("+data.ball_cutting+"0%)",carrot.football.bar_skill(data.ball_cutting));
         box_info.add_attrs("fa-solid fa-medal","Total skill score",total_skill +' <i class="fa-solid fa-circle-dot"></i>');
-        box_info.add_attrs("fa-solid fa-arrows-to-circle","Force",data.ball_force +' <i class="fa-solid fa-circle-dot"></i>');
-        box_info.add_attrs("fa-solid fa-person-running","Control",data.ball_control +' <i class="fa-solid fa-circle-dot"></i>');
-        box_info.add_attrs("fa-solid fa-shoe-prints","Cutting",data.ball_cutting +' <i class="fa-solid fa-circle-dot"></i>');
         box_info.add_attrs("fa-solid fa-street-view","Playing position",carrot.football.playing_position[index_pos]);
         if(data.buy=="1")
             box_info.add_attrs("fa-solid fa-cart-shopping","Commercial status","Pay fees");
@@ -255,6 +255,14 @@ class FootBall{
         if(data["tip"]!=null) box_info.add_body('<h4 class="fw-semi fs-5 lang" key_lang="describe">Short introduction</h4>',data["tip"]);
         carrot.show(box_info.html());
         carrot.football.check_event();
+    }
+
+    bar_skill(val){
+        var html='';
+        html+='<div class="progress">';
+        html+='<div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" aria-valuenow="'+val+'" aria-valuemin="0" aria-valuemax="10" style="width: '+val+'0%"></div>';
+        html+='</div>';
+        return html;
     }
 
     check_event(){

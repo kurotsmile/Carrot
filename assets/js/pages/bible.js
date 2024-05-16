@@ -5,6 +5,10 @@ class Bible{
     type_view='';
     index_edit_chapter=0;
     
+    constructor(){
+        if(!carrot.tool.isClassLoaded("Carrot_Ebook_File")) $('head').append('<script type="text/javascript" src="assets/js/carrot_ebook_file.js?ver='+carrot.get_ver_cur("js")+'"></script>');
+    }
+    
     show(){
         var id=carrot.get_param_url("id");
         if(id!=undefined)

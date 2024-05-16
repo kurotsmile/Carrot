@@ -308,7 +308,6 @@ class EBook{
     }
 
     info(data){
-        console.log(data);
         carrot.ebook.obj_ebook_cur=data;
         carrot.ebook.type_view="info";
         carrot.change_title(data.title,"?page=ebook&id="+data.id_doc,"ebook");
@@ -334,7 +333,7 @@ class EBook{
         info.add_attrs("fa-solid fa-calendar-days",'<l class="lang" key_lang="date">Date Public</l>',data.date);
         info.set_protocol_url("ebook://show/"+data.id_doc);
 
-        info.add_btn("btn_download","fa-solid fa-download","Download (trial)","carrot.ebook.download(true)");
+        info.add_btn("btn_download_trial","fa-solid fa-download","Download (trial)","carrot.ebook.download(true)");
         info.add_btn("btn_download","fa-solid fa-file-arrow-down","Download (full)","carrot.ebook.download()");
         info.add_btn("btn_pay","fa-brands fa-paypal","Download (full)","carrot.ebook.pay()");
 
@@ -342,9 +341,6 @@ class EBook{
         var html_head='<div class="text-center">';
         html_head+='<button id="btn_ebook_menu" onclick="carrot.ebook.table_of_contents()" class="btn d-inline btn-success m-1"><i class="fa-brands fa-elementor"></i> <l class="lang" key_lang="table_of_contents">Table of contents</l> </button>';
         if(data.user.id==carrot.user.get_user_login_id()) html_head+='<button role="button" onclick="carrot.ebook.edit_info_book_cur()" type="button" class="btn d-inline btn-warning m-1"><i class="fa-solid fa-pen-to-square"></i> <l class="lang" key_lang="edit_info">Edit Info</l> </button>';
-        if(carrot.user.get_user_login_role()=="admin"||carrot.user.get_user_login_id()==data.user.id){
-            html_head+='<button id="btn_editor_mode" role="button" onclick="carrot.ebook.change_mode_editor_content()" type="button" class="btn d-inline btn-info m-1"><i class="fa-solid fa-pen-ruler"></i> <l class="lang" key_lang="edit_content">Edit Content</l> </button>';
-        }
         html_head+='</div>';
         info.set_header_right(html_head);
 
@@ -353,6 +349,20 @@ class EBook{
         info.set_db("ebook");
         info.set_obj_js("ebook");
         carrot.show(carrot.ebook.menu()+info.html());
+
+        $("#btn_download_trial").removeClass("d-inline");
+        $("#btn_download").removeClass("d-inline");
+        $("#btn_pay").removeClass("d-inline");
+
+        if(carrot.ebook.check_pay(data.id_doc)){
+            $("#btn_download").show();
+            $("#btn_pay").hide();
+            $("#btn_download_trial").hide();
+        }else{
+            $("#btn_download").hide();
+            $("#btn_pay").show();
+            $("#btn_download_trial").show();
+        }
 
         var html_list='';
         html_list+='<div class="row">';
@@ -446,12 +456,20 @@ class EBook{
         carrot.check_event();
     }
 
+    check_pay(id){
+        if(localStorage.getItem("buy_ebook_"+id)!=null)
+            return true;
+        else
+            return false;
+    }
+
     pay(){
         carrot.show_pay("Ebook","Download Ebook ("+carrot.ebook.obj_ebook_cur.title+")","Download the Ebook file (epub) to use","2.00",carrot.ebook.pay_success);
     }
 
     pay_success(carrot){
         $("#btn_download").show();
+        $("#btn_download_trial").hide();
         $("#btn_pay").hide();
         localStorage.setItem("buy_ebook_"+carrot.ebook.obj_ebook_cur.id_doc,"1");
         carrot.ebook.download();
