@@ -9,6 +9,11 @@ class EBook{
     type_category_show="all";
     type_view="list_ebook";
     type_content_show="view";
+    data_img_cover=null;
+
+    constructor(){
+        if(!carrot.tool.isClassLoaded("Carrot_Ebook_File")) $('head').append('<script type="text/javascript" src="assets/js/carrot_ebook_file.js?ver='+carrot.get_ver_cur("js")+'"></script>');
+    }
 
     show(){
         var id=carrot.get_param_url("id");
@@ -329,6 +334,10 @@ class EBook{
         info.add_attrs("fa-solid fa-calendar-days",'<l class="lang" key_lang="date">Date Public</l>',data.date);
         info.set_protocol_url("ebook://show/"+data.id_doc);
 
+        info.add_btn("btn_download","fa-solid fa-download","Download (trial)","carrot.ebook.download(true)");
+        info.add_btn("btn_download","fa-solid fa-file-arrow-down","Download (full)","carrot.ebook.download()");
+        info.add_btn("btn_pay","fa-brands fa-paypal","Download (full)","carrot.ebook.pay()");
+
         info.add_body('<h4 class="fw-semi fs-5 lang" key_lang="describe">Describe</h4>',data.describe);
         var html_head='<div class="text-center">';
         html_head+='<button id="btn_ebook_menu" onclick="carrot.ebook.table_of_contents()" class="btn d-inline btn-success m-1"><i class="fa-brands fa-elementor"></i> <l class="lang" key_lang="table_of_contents">Table of contents</l> </button>';
@@ -358,7 +367,7 @@ class EBook{
             html_list+='</a>';
         });
 
-        html_list+='<a onclick="carrot.ebook.add_chapter()" class="list-group-item bg-success text-white" role="button" ><i class="fa-solid fa-square-plus"></i> Add Chapter</a>';
+        html_list+='<a onclick="carrot.ebook.add_chapter()" class="list-group-item bg-success text-white dev" role="button" ><i class="fa-solid fa-square-plus"></i> Add Chapter</a>';
 
         html_list+='</div>';
         html_list+='</div>';
@@ -377,6 +386,19 @@ class EBook{
         html_list+='</div>';
         $("#ebook_contents").append(html_list);
         carrot.ebook.check_event();
+        carrot.ebook.reader_cover_image_data();
+    }
+
+    reader_cover_image_data(){
+        if(carrot.ebook.obj_ebook_cur!=null){
+            if(carrot.ebook.obj_ebook_cur.icon!=null){
+                carrot.file.get_base64data_file(carrot.ebook.obj_ebook_cur.icon).then((data)=>{
+                    carrot.tool.resizeImage(data, 740, 1186).then((result) => {
+                        carrot.ebook.data_img_cover=carrot.tool.makeblob(result);
+                    });
+                });
+            }
+        }
     }
 
     show_chapter_by_index(index){
@@ -422,6 +444,36 @@ class EBook{
         
         carrot.tool.box_app_tip("ERead Now");
         carrot.check_event();
+    }
+
+    pay(){
+        carrot.show_pay("Ebook","Download Ebook ("+carrot.ebook.obj_ebook_cur.title+")","Download the Ebook file (epub) to use","2.00",carrot.ebook.pay_success);
+    }
+
+    pay_success(carrot){
+        $("#btn_download").show();
+        $("#btn_pay").hide();
+        localStorage.setItem("buy_ebook_"+carrot.ebook.obj_ebook_cur.id_doc,"1");
+        carrot.ebook.download();
+    }
+
+    download(trial=false){
+        var ebook_file=new Carrot_Ebook_File();
+        ebook_file.set_title(carrot.ebook.obj_ebook_cur.title);
+        ebook_file.set_lang(carrot.ebook.obj_ebook_cur.lang);
+        if(carrot.ebook.obj_ebook_cur.author!=null) ebook_file.set_author(carrot.ebook.obj_ebook_cur.author);
+        if(carrot.ebook.obj_ebook_cur.category!=null) ebook_file.set_type(carrot.ebook.obj_ebook_cur.category);
+        if(carrot.ebook.data_img_cover!=null) ebook_file.set_data_image_cover(carrot.ebook.data_img_cover);
+        $(carrot.ebook.obj_ebook_cur.contents).each(function(index,content){
+            if(trial){
+                if(index>=(carrot.ebook.obj_ebook_cur.contents.length/2)) return false;
+                ebook_file.add_chapter(content.title,content.content);
+            }
+            else{
+                ebook_file.add_chapter(content.title,content.content);
+            }
+        });
+        ebook_file.download();
     }
 
     scroll_to_contain(){

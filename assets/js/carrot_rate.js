@@ -396,4 +396,59 @@ class Carrot_Rate{
         var s_new = str.replace(/[\u00C0-\u1EF9\s]/g, '');
         return s_new.replace(/[^\w\s]/gi, '');
     }
+
+    resizeImage(base64Str, maxWidth = 400, maxHeight = 350) {
+        return new Promise((resolve) => {
+          let img = new Image()
+          img.src = base64Str
+          img.onload = () => {
+            let canvas = document.createElement('canvas')
+            const MAX_WIDTH = maxWidth
+            const MAX_HEIGHT = maxHeight
+            let width = img.width
+            let height = img.height
+      
+            if (width > height) {
+              if (width > MAX_WIDTH) {
+                height *= MAX_WIDTH / width
+                width = MAX_WIDTH
+              }
+            } else {
+              if (height > MAX_HEIGHT) {
+                width *= MAX_HEIGHT / height
+                height = MAX_HEIGHT
+              }
+            }
+            canvas.width = width
+            canvas.height = height
+            let ctx = canvas.getContext('2d')
+            ctx.drawImage(img, 0, 0, width, height)
+            resolve(canvas.toDataURL())
+          }
+        })
+    }
+
+    makeblob(dataURL) {
+        const BASE64_MARKER = ';base64,';
+        const parts = dataURL.split(BASE64_MARKER);
+        const contentType = parts[0].split(':')[1];
+        const raw = window.atob(parts[1]);
+        const rawLength = raw.length;
+        const uInt8Array = new Uint8Array(rawLength);
+    
+        for (let i = 0; i < rawLength; ++i) {
+            uInt8Array[i] = raw.charCodeAt(i);
+        }
+    
+        return new Blob([uInt8Array], { type: contentType });
+    }
+
+    isClassLoaded(className) {
+        try {
+            new Function('return new ' + className)();
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
 }

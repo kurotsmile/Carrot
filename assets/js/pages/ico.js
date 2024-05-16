@@ -177,17 +177,17 @@ class Carrot_Ico{
         carrot.check_event();
 
         carrot.file.get_base64data_file(data.icon).then((data_img)=>{
-            carrot.ico.resizeImage(data_img, 64, 64).then((result) => {
-                carrot.ico.data_icon_64=carrot.ico.makeblob(result);
+            carrot.tool.resizeImage(data_img, 64, 64).then((result) => {
+                carrot.ico.data_icon_64=carrot.tool.makeblob(result);
             });
-            carrot.ico.resizeImage(data_img, 32, 32).then((result) => {
-                carrot.ico.data_icon_32=carrot.ico.makeblob(result);
+            carrot.tool.resizeImage(data_img, 32, 32).then((result) => {
+                carrot.ico.data_icon_32=carrot.tool.makeblob(result);
             });
-            carrot.ico.resizeImage(data_img, 24, 24).then((result) => {
-                carrot.ico.data_icon_24=carrot.ico.makeblob(result);
+            carrot.tool.resizeImage(data_img, 24, 24).then((result) => {
+                carrot.ico.data_icon_24=carrot.tool.makeblob(result);
             });
-            carrot.ico.resizeImage(data_img, 16, 16).then((result) => {
-                carrot.ico.data_icon_16=carrot.ico.makeblob(result);
+            carrot.tool.resizeImage(data_img, 16, 16).then((result) => {
+                carrot.ico.data_icon_16=carrot.tool.makeblob(result);
             });
         });
 
@@ -204,53 +204,6 @@ class Carrot_Ico{
         localStorage.setItem("buy_icon_"+carrot.ico.obj_icon_info_cur.id_doc,"1");
         carrot.ico.act_download();
     }
-
-    makeblob(dataURL) {
-        const BASE64_MARKER = ';base64,';
-        const parts = dataURL.split(BASE64_MARKER);
-        const contentType = parts[0].split(':')[1];
-        const raw = window.atob(parts[1]);
-        const rawLength = raw.length;
-        const uInt8Array = new Uint8Array(rawLength);
-    
-        for (let i = 0; i < rawLength; ++i) {
-            uInt8Array[i] = raw.charCodeAt(i);
-        }
-    
-        return new Blob([uInt8Array], { type: contentType });
-    }
-
-    resizeImage(base64Str, maxWidth = 400, maxHeight = 350) {
-        return new Promise((resolve) => {
-          let img = new Image()
-          img.src = base64Str
-          img.onload = () => {
-            let canvas = document.createElement('canvas')
-            const MAX_WIDTH = maxWidth
-            const MAX_HEIGHT = maxHeight
-            let width = img.width
-            let height = img.height
-      
-            if (width > height) {
-              if (width > MAX_WIDTH) {
-                height *= MAX_WIDTH / width
-                width = MAX_WIDTH
-              }
-            } else {
-              if (height > MAX_HEIGHT) {
-                width *= MAX_HEIGHT / height
-                height = MAX_HEIGHT
-              }
-            }
-            canvas.width = width
-            canvas.height = height
-            let ctx = canvas.getContext('2d')
-            ctx.drawImage(img, 0, 0, width, height)
-            resolve(canvas.toDataURL())
-          }
-        })
-    }
-
 
     check_pay(id_icon){
         if(localStorage.getItem("buy_icon_"+id_icon)!=null)

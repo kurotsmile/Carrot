@@ -430,7 +430,7 @@ class Bible{
     }
 
     pay(){
-        carrot.show_pay("bible","Download Bible ("+carrot.bible.obj_data_cur.name+")","Download the source code file to use","2.00",carrot.bible.pay_success);
+        carrot.show_pay("bible","Download Bible ("+carrot.bible.obj_data_cur.name+")","Download the Ebook Bible file (epub) to use","2.00",carrot.bible.pay_success);
     }
     
     pay_success(carrot){
