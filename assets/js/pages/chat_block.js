@@ -21,6 +21,7 @@ class Chat_Block{
         html_menu+='<div class="col-2 text-end btn-sm">';
             html_menu+='<div role="group" aria-label="Last group" class="btn-group btn-sm">';
                     html_menu+='<button onclick="carrot.js(\'chat\',\'chat\',\'carrot.chat.list()\');return false;" type="button" class="btn btn-success btn-sm "><i class="fa-brands fa-rocketchat"></i> All Chat</button>';
+                    html_menu+='<button onclick="carrot.js(\'chat_log\',\'chat_log\',\'carrot.chat_log.list()\');return false;" type="button" class="btn btn-success btn-sm "><i class="fa-solid fa-cat"></i> Log</button>';
                     html_menu+='<button onclick="carrot.chat_block.list();return false;" type="button" class="btn active btn-success btn-sm "><i class="fa-solid fa-shield-halved"></i> Key Block</button>';
             html_menu+='</div>';
         html_menu+='</div>';
