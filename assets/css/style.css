@@ -702,4 +702,10 @@ html {
 body:not(.modal-open){
   padding-right: 0px !important;
 }
+
+.list-group-item.active {
+  background-color: green !important;
+  border-color: #aed248;
+  color: white;
+}
 /*# sourceMappingURL=style.css.map */
