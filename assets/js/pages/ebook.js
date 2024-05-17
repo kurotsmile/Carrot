@@ -11,6 +11,8 @@ class EBook{
     type_content_show="view";
     data_img_cover=null;
 
+    index_chapter_edit=-1;
+
     constructor(){
         if(!carrot.tool.isClassLoaded("Carrot_Ebook_File")) $('head').append('<script type="text/javascript" src="assets/js/carrot_ebook_file.js?ver='+carrot.get_ver_cur("js")+'"></script>');
     }
@@ -364,6 +366,12 @@ class EBook{
             $("#btn_download_trial").show();
         }
 
+        $("#ebook_contents").append(carrot.ebook.box_content(data));
+        carrot.ebook.check_event();
+        carrot.ebook.reader_cover_image_data();
+    }
+
+    box_content(data){
         var html_list='';
         html_list+='<div class="row">';
         html_list+='<div class="col-2" style="font-size:10px">';
@@ -394,9 +402,7 @@ class EBook{
         html_list+='</div>';
         html_list+='</div>';
         html_list+='</div>';
-        $("#ebook_contents").append(html_list);
-        carrot.ebook.check_event();
-        carrot.ebook.reader_cover_image_data();
+        return html_list;
     }
 
     reader_cover_image_data(){
@@ -501,22 +507,42 @@ class EBook{
     }
 
     add_chapter(){
+        carrot.ebook.index_chapter_edit=-1;
         var data_new={};
         data_new["title"]="";
         data_new["content"]="";
-        carrot.ebook.frm_add_or_edit_chapter(data_new).set_title("Add Chapter").show();
+        carrot.ebook.frm_add_or_edit_chapter(data_new).set_title("Add Chapter").set_act_done("carrot.ebook.act_done_add_chapter").show();
     }
 
     edit_chapter(index){
+        carrot.ebook.index_chapter_edit=index;
         carrot.ebook.frm_add_or_edit_chapter(carrot.ebook.obj_ebook_cur.contents[index]).set_title("Edit Chapter").show();
     }
 
     frm_add_or_edit_chapter(data){
         var frm=new Carrot_Form("frm_ebook",carrot);
         frm.set_icon("fa-solid fa-quote-left");
-        frm.create_field("title").set_label("Title").set_val(data["title"]);
-        frm.create_field("Content").set_label("Content").set_val(data["content"]).set_type("editor");
+        frm.create_field("title_chapter").set_label("Title").set_val(data["title"]);
+        frm.create_field("content_chapter").set_label("Content").set_val(data["content"]).set_type("editor");
+        frm.off_btn_done();
+
+        var btn_done=new Carrot_Btn();
+        btn_done.set_icon("fa-solid fa-circle-check");
+        btn_done.set_act("carrot.ebook.act_done_add_chapter()");
+        frm.add_btn(btn_done);
         return frm;
+    }
+
+    act_done_add_chapter(){
+        var title_chapter=$("#title_chapter").val();
+        var content_chapter=$("#content_chapter").val();
+        if(carrot.ebook.index_chapter_edit==-1){
+
+        }else{
+            carrot.ebook.obj_ebook_cur.contents[carrot.ebook.index_chapter_edit].title=title_chapter;
+            carrot.ebook.obj_ebook_cur.contents[carrot.ebook.index_chapter_edit].content=content_chapter;
+        }
+        carrot.msg("Add Chapter ("+title_chapter+") success!");
     }
 
     delete_all_data(){
