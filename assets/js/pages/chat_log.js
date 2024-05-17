@@ -12,7 +12,6 @@ class Chat_Log{
 
         html_menu+='<div class="col-10 btn-sm">';
             html_menu+='<div role="group" aria-label="First group" class="btn-group btn-sm">';
-                html_menu+=carrot.langs.list_btn_lang_select('btn-success');
                 html_menu+=carrot.tool.btn_export("chat-log","Chat Log");
                 html_menu+='<button onclick="carrot.chat_log.delete_all_data();return false;" class="btn btn-danger dev btn-sm"><i class="fa-solid fa-dumpster-fire"></i> Delete All data</button>';
             html_menu+='</div>';
@@ -41,7 +40,6 @@ class Chat_Log{
             act_done(carrot.chat_log.objs);
         }else{
             var q=new Carrot_Query("chat-log");
-            q.set_limit(500);
             q.get_data((data)=>{
                 carrot.chat_log.objs=data;
                 act_done(data);
@@ -57,6 +55,7 @@ class Chat_Log{
         carrot.show(html);
 
         $(data).each(function(index,log){
+            log["index"]=index;
             $("#all_log").append(carrot.chat_log.box_item(log).html());
         });
         carrot.check_event();
@@ -69,16 +68,57 @@ class Chat_Log{
         else
             box.set_icon_font("fa-solid fa-paw");
         box.set_name(data.key);
-        box.set_tip(data.lang+ " "+data.pater);
+        if(data.pater_msg==null)
+            box.set_tip(data.lang+ " "+data.pater);
+        else
+            box.set_tip('<i class="fa-solid fa-comment"></i> '+data.pater_msg);
+
         box.set_class_icon_col("col-2");
         box.set_class_body("col-10");
         box.set_class("col-3 mb-2");
-        var html_body='<div>';
-        html_body+='<button type="button" class="btn btn-danger btn-sm m-1"><i class="fa-solid fa-trash-can"></i></button>';
-        html_body+='<button type="button" class="btn btn-info btn-sm m-1"><i class="fa-solid fa-feather"></i></button>';
+        var html_body='<div class="dev">';
+        html_body+='<button type="button" onclick="carrot.chat_log.delete(\''+data.index+'\')" class="btn btn-danger btn-sm m-1"><i class="fa-solid fa-trash-can"></i></button>';
+        if(data.pater_msg==null)
+            html_body+='<button type="button" onclick="carrot.chat_log.show_father(\''+data.index+'\')" class="btn btn-info btn-sm m-1"><i class="fa-solid fa-feather"></i></button>';
+        else
+            html_body+='<button type="button" onclick="carrot.chat_log.edit_chat_father(\''+data.index+'\')" class="btn btn-warning btn-sm m-1"><i class="fa-solid fa-pen-to-square"></i></button>';
+        html_body+='<button type="button" onclick="carrot.chat_log.add_chat_with_father(\''+data.index+'\')" class="btn btn-success btn-sm m-1"><i class="fa-solid fa-square-plus"></i></button>';
         html_body+='</div>';
         box.set_body(html_body);
         return box;
+    }
+
+    show_father(index){
+        carrot.loading("Get chat father ("+carrot.chat_log.objs[index].pater+")");
+        carrot.server.get("chat-"+carrot.chat_log.objs[index].lang,carrot.chat_log.objs[index].pater,(data)=>{
+            carrot.hide_loading();
+            carrot.chat_log.objs[index].pater_msg=data.msg;
+            carrot.chat_log.load_list_by_data(carrot.chat_log.objs);
+        });
+    }
+
+    add_chat_with_father(index){
+        var data_new=carrot.chat.data_new_chat();
+        var id_pater=carrot.chat_log.objs[index].pater;
+        //data_new["sex_user"]=father_emp_sex_user;
+        //data_new["sex_character"]=father_emp_sex_character;
+        data_new["pater"]=id_pater;
+        data_new["key"]=carrot.chat_log.objs[index].key;
+        carrot.chat.show_add_or_edit_chat(data_new).set_title("Continue the conversation").set_msg_done("Add chat success!").show();
+    }
+
+    edit_chat_father(index){
+        var id=carrot.chat_log.objs[index].pater;
+        var lang=carrot.chat_log.objs[index].lang;
+        if(carrot.chat!=null)
+            carrot.chat.edit_chat_by_id(id,lang);
+        else
+            carrot.js("chat","chat","carrot.chat.edit_chat_by_id('"+id+"','"+lang+"')");
+    }
+
+    delete(index){
+        carrot.chat_log.objs.splice(index,1);
+        carrot.chat_log.load_list_by_data(carrot.chat_log.objs);
     }
 
     delete_all_data(){

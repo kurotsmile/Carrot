@@ -249,6 +249,14 @@ class Chat{
         return data_new_chat;
     }
 
+    edit_chat_by_id(id,lang){
+        carrot.loading("Get chat "+id);
+        carrot.server.get_doc("chat-"+lang,id,(data)=>{
+            carrot.hide_loading();
+            carrot.chat.edit(data,carrot);
+        });
+    }
+
     edit(data,carrot){
         if(data["lang"]==null){
             data["lang"]=carrot.langs.lang_setting;

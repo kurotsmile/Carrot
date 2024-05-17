@@ -14,7 +14,7 @@ class Chat_Block{
                 html_menu+=carrot.langs.list_btn_lang_select('btn-success');
                 html_menu+=carrot.tool.btn_export("block","Key chat block");
                 html_menu+='<button onclick="carrot.chat_block.delete_all_data();return false;" class="btn btn-danger dev btn-sm"><i class="fa-solid fa-dumpster-fire"></i> Delete All data</button>';
-                html_menu+='<button onclick="carrot.chat_block.add()" type="button" class="btn btn-info btn-sm"><i class="fa-solid fa-circle-plus"></i> Add New Chat</button>';
+                html_menu+='<button onclick="carrot.chat_block.add()" type="button" class="btn dev btn-info btn-sm"><i class="fa-solid fa-circle-plus"></i> Add Key</button>';
             html_menu+='</div>';
         html_menu+='</div>';
 
