@@ -421,12 +421,8 @@ class Chat{
 
                 html_menu+='<div class="col-2 text-end btn-sm">';
                 html_menu+='<div role="group" aria-label="Last group" class="btn-group btn-sm">';
-                    var css_active_chat="";
-                    var css_active_key_block="";
-                    if(carrot.chat.show_type=="list_chat") css_active_chat="active";
-                    if(carrot.id_page=="block") css_active_key_block="active";
-                    html_menu+='<button id="btn_list_chat" onclick="carrot.chat.list();return false;" type="button" class="btn btn-success btn-sm '+css_active_chat+'"><i class="fa-brands fa-rocketchat"></i> All Chat</button>';
-                    html_menu+='<button id="btn_list_key_block" onclick="carrot.key_block.list_pub();return false;" type="button" class="btn btn-success btn-sm '+css_active_key_block+'"><i class="fa-solid fa-shield-halved"></i> Key Block</button>';
+                    html_menu+='<button onclick="carrot.chat.list();return false;" type="button" class="btn btn-success btn-sm active"><i class="fa-brands fa-rocketchat"></i> All Chat</button>';
+                    html_menu+='<button onclick="carrot.js(\'chat_block\',\'chat_block\',\'carrot.chat_block.show()\');return false;" type="button" class="btn btn-success btn-sm"><i class="fa-solid fa-shield-halved"></i> Key Block</button>';
                     html_menu+='</div>';
                 html_menu+='</div>';
             

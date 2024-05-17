@@ -1,8 +1,95 @@
 class Chat_Block{
+    objs=null;
+
     show(){
-        carrot.show("sdsd");
+        carrot.chat_block.list();
+    }
+
+    menu(){
+        var html_menu='';
+        html_menu+='<div class="row">';
+
+        html_menu+='<div class="col-10 btn-sm">';
+            html_menu+='<div role="group" aria-label="First group" class="btn-group btn-sm">';
+                html_menu+=carrot.langs.list_btn_lang_select('btn-success');
+                html_menu+=carrot.tool.btn_export("block","Key chat block");
+                html_menu+='<button onclick="carrot.chat_block.add()" type="button" class="btn btn-info btn-sm"><i class="fa-solid fa-circle-plus"></i> Add New Chat</button>';
+            html_menu+='</div>';
+        html_menu+='</div>';
+
+        html_menu+='<div class="col-2 text-end btn-sm">';
+            html_menu+='<div role="group" aria-label="Last group" class="btn-group btn-sm">';
+                    html_menu+='<button onclick="carrot.js(\'chat\',\'chat\',\'carrot.chat.list()\');return false;" type="button" class="btn btn-success btn-sm "><i class="fa-brands fa-rocketchat"></i> All Chat</button>';
+                    html_menu+='<button onclick="carrot.chat_block.list();return false;" type="button" class="btn active btn-success btn-sm "><i class="fa-solid fa-shield-halved"></i> Key Block</button>';
+            html_menu+='</div>';
+        html_menu+='</div>';
+
+        html_menu+='</div>';
+        return html_menu;
+    }
+
+    list(){
+        carrot.change_title("List Key Block","?page=chat_block","chat_block");
+        carrot.loading("Get list key block chat");
+        carrot.chat_block.get_data((data)=>{
+            carrot.chat_block.load_list_by_data(data);
+        });
+    }
+
+    load_list_by_data(data){
+        carrot.hide_loading();
+        var html=carrot.chat_block.menu();
+        html+='<div class="row" id="list_key_block"><div>';
+        carrot.show(html);
+        $(data).each(function(index,block){
+            $("#list_key_block").append(carrot.chat_block.box_item(block).html());
+        });
+        carrot.chat_block.check_event();
+    }
+
+    get_data(act_done){
+        if(carrot.chat_block.objs!=null){
+            act_done(carrot.chat_block.objs);
+        }else{
+            carrot.server.get_doc("block",carrot.langs.lang_setting,(data)=>{
+                carrot.chat_block.objs=data["chat"];
+                act_done(data["chat"]);
+            });
+        }
+    }
+
+    add(){
+        carrot.chat_block.frm_add_or_edit("").set_title("Add Key Block").show();
+    }
+
+    frm_add_or_edit(val){
+        var frm=new Carrot_Form("frm_key_block",carrot);
+        frm.set_icon("fa-solid fa-user-shield");
+        frm.create_field("key_block").set_label("Key").set_val(val).set_type("text");
+        return frm;
+    }
+    
+    box_item(data){
+        var box=new Carrot_List_Item(carrot);
+        box.set_icon_font("fa-solid fa-shield-halved");
+        box.set_class_icon_col("col-2");
+        box.set_class_body("col-10");
+        box.set_class("col-3 mb-2");
+        box.set_title(data);
+        box.set_tip(data);
+        return box;
+    }
+
+    check_event(){
+        $(".btn-setting-lang-change").click(function(){
+            var key_change=$(this).attr("key_change");
+            carrot.langs.lang_setting=key_change;
+            carrot.chat_block.objs=null;
+            carrot.chat_block.list();
+        });
         carrot.check_event();
     }
+ 
 }
 
 carrot.chat_block=new Chat_Block();
