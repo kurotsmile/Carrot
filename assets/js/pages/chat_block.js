@@ -13,6 +13,7 @@ class Chat_Block{
             html_menu+='<div role="group" aria-label="First group" class="btn-group btn-sm">';
                 html_menu+=carrot.langs.list_btn_lang_select('btn-success');
                 html_menu+=carrot.tool.btn_export("block","Key chat block");
+                html_menu+='<button onclick="carrot.chat_block.delete_all_data();return false;" class="btn btn-danger dev btn-sm"><i class="fa-solid fa-dumpster-fire"></i> Delete All data</button>';
                 html_menu+='<button onclick="carrot.chat_block.add()" type="button" class="btn btn-info btn-sm"><i class="fa-solid fa-circle-plus"></i> Add New Chat</button>';
             html_menu+='</div>';
         html_menu+='</div>';
@@ -66,7 +67,19 @@ class Chat_Block{
         var frm=new Carrot_Form("frm_key_block",carrot);
         frm.set_icon("fa-solid fa-user-shield");
         frm.create_field("key_block").set_label("Key").set_val(val).set_type("text");
+        frm.off_btn_done();
+        var btn=frm.create_btn();
+        btn.set_icon("fa-solid fa-square-plus");
+        btn.set_label("Done");
+        btn.set_act("carrot.chat_block.act_done_frm()");
         return frm;
+    }
+
+    act_done_frm(){
+        var key_block=$("#key_block").val();
+        carrot.chat_block.objs.push(key_block);
+        $('#box').modal('hide');
+        carrot.chat_block.load_list_by_data(carrot.chat_block.objs);
     }
     
     box_item(data){
@@ -90,6 +103,10 @@ class Chat_Block{
         carrot.check_event();
     }
  
+    delete_all_data(){
+        carrot.chat_block.objs=null;
+        carrot.msg("Delete all data!","success");
+    }
 }
 
 carrot.chat_block=new Chat_Block();
