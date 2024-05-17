@@ -43,7 +43,7 @@ class Chat_Block{
         html+='<div class="row" id="list_key_block"><div>';
         carrot.show(html);
         $(data).each(function(index,block){
-            $("#list_key_block").append(carrot.chat_block.box_item(block).html());
+            $("#list_key_block").append(carrot.chat_block.box_item(block,index).html());
         });
         carrot.chat_block.check_event();
     }
@@ -78,19 +78,45 @@ class Chat_Block{
     act_done_frm(){
         var key_block=$("#key_block").val();
         carrot.chat_block.objs.push(key_block);
+        carrot.set_doc("block",carrot.langs.lang_setting,{chat:carrot.chat_block.objs});
         $('#box').modal('hide');
         carrot.chat_block.load_list_by_data(carrot.chat_block.objs);
     }
     
-    box_item(data){
+    box_item(val,index){
         var box=new Carrot_List_Item(carrot);
         box.set_icon_font("fa-solid fa-shield-halved");
         box.set_class_icon_col("col-2");
         box.set_class_body("col-10");
         box.set_class("col-3 mb-2");
-        box.set_title(data);
-        box.set_tip(data);
+        box.set_title(val);
+        box.set_tip(val);
+        if(carrot.mode_site=="dev") 
+            box.set_act_click("carrot.chat_block.delete_item('"+index+"');");
+        else
+            box.set_act_click("carrot.msg('"+val+"');");
         return box;
+    }
+
+    delete_item(index){
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Delete Key Block ("+carrot.chat_block.objs[index]+") ?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed){
+                carrot.chat_block.objs.splice(index,1);
+                carrot.set_doc("block",carrot.langs.lang_setting,{chat:carrot.chat_block.objs});
+                Swal.close();
+                setTimeout(()=>{
+                    carrot.chat_block.load_list_by_data(carrot.chat_block.objs);
+                },500);
+            }
+        })
     }
 
     check_event(){
