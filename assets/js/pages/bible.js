@@ -430,7 +430,7 @@ class Bible{
         carrot.data.clear("bible");
         setTimeout(()=>{
             carrot.bible.get_data(carrot.bible.load_list_by_data);
-        },2);
+        },500);
     }
 
     pay(){

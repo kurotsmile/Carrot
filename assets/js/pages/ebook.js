@@ -145,6 +145,15 @@ class EBook{
         carrot.ebook.get_data(carrot.ebook.load_list_by_data);
     }
 
+    get_list_by_key_lang(s_key){
+        carrot.loading("Get all Ebook ("+s_key+")");
+        carrot.langs.lang_setting=s_key;
+        carrot.data.clear("ebook");
+        setTimeout(()=>{
+            carrot.ebook.get_data(carrot.ebook.load_list_by_data);
+        },500);
+    }
+
     list_category(){
         carrot.loading("Get all data Ebook category and show");
         carrot.ebook.get_category((data)=>{
@@ -457,6 +466,11 @@ class EBook{
         }else{
             carrot.tool.list_other_and_footer("ebook");
         }
+
+        $(".btn-setting-lang-change").click(function(){
+            var key_change=$(this).attr("key_change");
+            carrot.ebook.get_list_by_key_lang(key_change);
+        });
         
         carrot.tool.box_app_tip("ERead Now");
         carrot.check_event();
