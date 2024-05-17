@@ -422,7 +422,7 @@ class Bible{
         }
 
         carrot.bible.check_event();
-    }
+    } 
 
     get_list_by_key_lang(s_key){
         carrot.loading("Get all bible ("+s_key+")");
