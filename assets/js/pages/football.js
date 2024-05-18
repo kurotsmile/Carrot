@@ -4,6 +4,11 @@ class FootBall{
     playing_position=["tiền đạo","tiền vệ","hậu vệ","thủ môn"];
     index_player_position=-1;
 
+    orderBy_at="date_create";
+    orderBy_type="DESCENDING";
+
+    type_show='list';
+
     show(){
         var id=carrot.get_param_url("id");
         if(id!=undefined)
@@ -15,6 +20,15 @@ class FootBall{
     list(){
         carrot.football.index_player_position=-1;
         carrot.loading("Get and load all player");
+        carrot.football.get_data(carrot.football.load_list_by_data);
+    }
+
+    get_list_orderBy(orderBy_at,orderBy_type){
+        carrot.data.clear("football");
+        carrot.football.objs=null;
+        carrot.loading("Get list data by order ("+orderBy_at+" -> "+orderBy_type+")");
+        carrot.football.orderBy_at=orderBy_at;
+        carrot.football.orderBy_type=orderBy_type;
         carrot.football.get_data(carrot.football.load_list_by_data);
     }
 
@@ -49,6 +63,7 @@ class FootBall{
         q.add_select("icon");
         q.add_select("playing_position");
         q.add_select("buy");
+        q.set_order(carrot.football.orderBy_at,carrot.football.orderBy_type);
         if(carrot.football.index_player_position!=-1) q.add_where("playing_position",carrot.football.index_player_position);
         q.set_limit(50);
         q.get_data((players)=>{
@@ -69,6 +84,7 @@ class FootBall{
     }
 
     load_list_by_data(players){
+        carrot.football.type_show="list";
         carrot.hide_loading();
         carrot.change_title_page("Football","?page=football","football");
         var html=carrot.football.menu();
@@ -138,7 +154,11 @@ class FootBall{
         html+='<div class="row mb-2">';
         html+='<div class="col-12">';
             html+='<div class="btn-group mr-2 btn-sm" role="group" aria-label="First group">';
+                
+                if(carrot.football.type_show=='info') html+='<button onclick="carrot.football.list();" class="btn btn-sm btn-success"><i class="fa-solid fa-square-caret-left"></i> <l class="lang" key_lang="back">Back</l></button>';
+                
                 html+='<button onclick="carrot.football.add();" class="btn btn-sm dev btn-success"><i class="fa-solid fa-square-plus"></i> Add new players</button>';
+
                 html+=carrot.tool.btn_export("football");
                 html+='<button onclick="carrot.football.delete_all_data();return false;" class="btn btn-danger dev btn-sm"><i class="fa-solid fa-dumpster-fire"></i> Delete All data</button>';
                 html+='<div class="btn-group" role="group">';
@@ -153,6 +173,25 @@ class FootBall{
                     html+='</div>';
                 html+='</div>';
             html+='</div>';
+
+            if(carrot.football.type_show=="list"){
+                html+='<div class="btn-group mr-2 btn-sm" role="group" aria-label="First group">';
+                    var s_active="active";
+                    if(carrot.football.orderBy_at=="date_create"&&carrot.football.orderBy_type=="DESCENDING") s_active="active";
+                    else s_active="";
+                    html+='<button id="btn-add-code" class="btn btn-success btn-sm '+s_active+'" onclick="carrot.football.get_list_orderBy(\'date_create\',\'DESCENDING\');return false;"><i class="fa-solid fa-arrow-up-9-1"></i> Date</button>';
+                    if(carrot.football.orderBy_at=="date_create"&&carrot.football.orderBy_type=="ASCENDING") s_active="active";
+                    else s_active="";
+                    html+='<button id="btn-add-code" class="btn btn-success btn-sm '+s_active+'" onclick="carrot.football.get_list_orderBy(\'date_create\',\'ASCENDING\');return false;"><i class="fa-solid fa-arrow-down-1-9"></i> Date</button>';
+                    if(carrot.football.orderBy_at=="name"&&carrot.football.orderBy_type=="DESCENDING") s_active="active";
+                    else s_active="";
+                    html+='<button id="btn-add-code" class="btn btn-success btn-sm '+s_active+'" onclick="carrot.football.get_list_orderBy(\'name\',\'DESCENDING\');return false;"><i class="fa-solid fa-arrow-up-a-z"></i> Name</button>';
+                    if(carrot.football.orderBy_at=="name"&&carrot.football.orderBy_type=="ASCENDING") s_active="active";
+                    else s_active="";
+                    html+='<button id="btn-add-code" class="btn btn-success btn-sm '+s_active+'" onclick="carrot.football.get_list_orderBy(\'name\',\'ASCENDING\');return false;"><i class="fa-solid fa-arrow-down-z-a"></i> Name</button>';
+                html+='</div>';
+            }
+
         html+='</div>';
         html+='</div>';
         return html;
@@ -226,6 +265,7 @@ class FootBall{
     }
 
     info(data){
+        carrot.football.type_show="info";
         carrot.change_title_page(data.name,"?page=football&id="+data.id_doc,"football");
         carrot.hide_loading();
         carrot.data.img(data.id_doc,data.icon,"football_icon_"+data.id_doc);
@@ -253,7 +293,7 @@ class FootBall{
             box_info.add_attrs("fa-brands fa-creative-commons-by","Commercial status","Free");
         box_info.set_protocol_url("tablesoccer://show/"+data.id_doc);
         if(data["tip"]!=null) box_info.add_body('<h4 class="fw-semi fs-5 lang" key_lang="describe">Short introduction</h4>',data["tip"]);
-        carrot.show(box_info.html());
+        carrot.show(carrot.football.menu()+box_info.html());
         carrot.football.check_event();
     }
 
