@@ -73,7 +73,7 @@ class Appp{
         html+='<div id="all_app" class="row m-0">';
         $(this.link_store).each(function(index,store){
             store["index"]=index;
-            html+=carrot.appp.box_store_item(store);
+            html+=carrot.appp.box_store_item(store).html();
         });
         html+='</div>';
         carrot.show(html);
@@ -85,8 +85,37 @@ class Appp{
             $("#all_store_contain").html('');
             $(carrot.random(stores)).each(function(index,s){
                 s["index"]=index;
-                $("#all_store_contain").append(carrot.appp.box_store_item(s));
+                var box_store=carrot.appp.box_store_item(s);
+                box_store.set_class("item m-2");
+                $("#all_store_contain").append(box_store.html());
             });
+
+            $('.owl-carousel').owlCarousel({
+                loop:true,
+                margin:30,
+                autoplay: true,
+                autoplayTimeout: 3000,
+                autoplayHoverPause:true,
+                animateOut: 'slideOutDown',
+                animateIn: 'flipInX',
+                responsiveClass:true,
+                responsive:{
+                    0:{
+                        items:1,
+                        nav:true
+                    },
+                    600:{
+                        items:3,
+                        nav:false
+                    },
+                    1000:{
+                        items:5,
+                        nav:true,
+                        loop:false
+                    }
+                }
+            });
+
             carrot.appp.link_store=stores;
             carrot.data.list("apps").then((data)=>{
                 $("#all_app_contain").html('');
@@ -111,7 +140,7 @@ class Appp{
         $(carrot.random(stores)).each(function(index,s){
             carrot.data.add("stores",s);
             s["index"]=index;
-            $("#all_store_contain").append(carrot.appp.box_store_item(s));
+            $("#all_store_contain").append(carrot.appp.box_store_item(s).html());
         });
         carrot.appp.link_store=stores;
         carrot.appp.get_data(carrot.appp.act_get_data_app_done_home);
@@ -369,7 +398,7 @@ class Appp{
         store_item.set_tip('<i class="'+data.icon+'"></i> '+data.id_doc);
         store_item.set_act_edit("appp.edit_link_store");
         store_item.set_act_click("carrot.appp.show_store_by_id('"+data.id_doc+"')");
-        return store_item.html();
+        return store_item;
     }
     
     box_qr(data){

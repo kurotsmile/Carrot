@@ -5,7 +5,7 @@ class Home{
             html+='<div id="all_app_contain" class="row"><div class="col-12 text-center"><i class="fa-solid fa-spinner fa-3x fa-spin"></i></div></div>';
             html+='<div class="row">';
                 html+='<div class="col-12"><h4 class="fs-6 fw-bolder my-3 mt-2 mb-4"><i class="fa-solid fa-store fs-6 me-2"></i> <l class="lang" key_lang="other_store">Other Store</l></h4></div>';
-                html+='<div class="col-12"><div class="row" id="all_store_contain"><div class="col-12 text-center"><i class="fa-solid fa-spinner fa-3x fa-spin"></i></div></div></div>';
+                html+='<div class="col-12"><div class="row owl-carousel" id="all_store_contain"><div class="col-12 text-center"><i class="fa-solid fa-spinner fa-3x fa-spin"></i></div></div></div>';
             html+='</div>';
         html+='</div>';
 
