@@ -451,4 +451,12 @@ class Carrot_Rate{
             return false;
         }
     }
+
+    getIdFileFromURL(url) {
+        let urlWithoutQuery = url.split('?')[0];
+        let segments = urlWithoutQuery.split('/');
+        let fileName = segments.pop();
+        fileName = decodeURIComponent(fileName);
+        return fileName.replace(".","");
+    }
 }

@@ -1,43 +1,100 @@
 class Carrot_user{
     carrot;
+
+    objs=null;
     obj_login=null;
     obj_phone_book=null;
 
     phone_book_info_cur=null;
     icon="fa-solid fa-address-book";
+    type_show='list';
 
-    constructor(carrot){
-        this.carrot=carrot;
-        if(localStorage.getItem("obj_login")!=null) this.obj_login=JSON.parse(localStorage.getItem("obj_login"));
-        if (localStorage.getItem("obj_phone_book") != null) this.obj_phone_book=JSON.parse(localStorage.getItem("obj_phone_book"));
+    orderBy_type='DESCENDING';
+    orderBy_at='name';
 
-        carrot.register_page("phone_book","carrot.user.list()","carrot.user.edit","carrot.user.show_user_by_id","carrot.user.reload");
+    constructor(){
         var btn_list=carrot.menu.create("phone_book").set_label("Phone book").set_lang("phone_book").set_icon(this.icon).set_type("main");
         $(btn_list).click(function(){carrot.user.list();});
     }
 
-    get_all_data_phone_book(){
-        Swal.showLoading();
-        this.carrot.log("get_all_data_phone_book from sever");
-        this.carrot.db.collection("user-"+this.carrot.lang).where("status_share", "==", "0").where("phone", "!=", "").limit(200).get().then((querySnapshot) => {
-            if(querySnapshot.docs.length>0){
-                Swal.close();
-                this.obj_phone_book=Object();
-                querySnapshot.forEach((doc) => {
-                    var data_phone=doc.data();
-                    data_phone["id"]=doc.id;
-                    if(data_phone.rates!=null) delete data_phone.rates;
-                    if(data_phone.backup_contact!=null) delete data_phone.backup_contact;
-                    this.obj_phone_book[doc.id]=JSON.stringify(data_phone);
-                });
-                this.save_obj_phone_book();
-                this.show_all_phone_book_from_list();
-                this.carrot.update_new_ver_cur("user",true);
-            }
-        }).catch((error) => {
-            console.log(error);
-            this.carrot.msg(error.message,"error");
+    show(){
+        carrot.user.list();
+    }
+
+    menu(){
+        var html='';
+        html+='<div class="row mb-2">';
+                html+='<div class="col-8">';
+
+                    if(carrot.user.type_show=='info'){
+                        html+='<div class="btn-group mr-2 btn-sm" role="group" aria-label="One group">';
+                            html+='<button onclick="carrot.user.list();" class="btn btn-sm btn-success"><i class="fa-solid fa-square-caret-left"></i> <l class="lang" key_lang="back">Back</l></button>';
+                        html+='</div>';
+                    }
+
+                    html+='<div class="btn-group mr-2 btn-sm" role="group" aria-label="Last group">';
+                        var s_active="active";
+                        if(carrot.user.orderBy_at=="publishedAt"&&carrot.user.orderBy_type=="DESCENDING") s_active="active";
+                        else s_active="";
+                        html+='<button id="btn-add-code" class="btn btn-success btn-sm '+s_active+'" onclick="carrot.user.get_list_orderBy(\'publishedAt\',\'DESCENDING\');return false;"><i class="fa-solid fa-arrow-up-9-1"></i> Date</button>';
+                        if(carrot.user.orderBy_at=="publishedAt"&&carrot.user.orderBy_type=="ASCENDING") s_active="active";
+                        else s_active="";
+                        html+='<button id="btn-add-code" class="btn btn-success btn-sm '+s_active+'" onclick="carrot.user.get_list_orderBy(\'publishedAt\',\'ASCENDING\');return false;"><i class="fa-solid fa-arrow-down-1-9"></i> Date</button>';
+                        
+                        if(carrot.user.orderBy_at=="name"&&carrot.user.orderBy_type=="DESCENDING") s_active="active";
+                        else s_active="";
+                        html+='<button id="btn-add-code" class="btn btn-success btn-sm '+s_active+'" onclick="carrot.user.get_list_orderBy(\'name\',\'DESCENDING\');return false;"><i class="fa-solid fa-arrow-up-a-z"></i> Name</button>';
+                        if(carrot.user.orderBy_at=="name"&&carrot.user.orderBy_type=="ASCENDING") s_active="active";
+                        else s_active="";
+                        html+='<button id="btn-add-code" class="btn btn-success btn-sm '+s_active+'" onclick="carrot.user.get_list_orderBy(\'name\',\'ASCENDING\');return false;"><i class="fa-solid fa-arrow-down-z-a"></i> Name</button>';
+                    html+='</div>';
+
+                    html+='<div class="btn-group mr-2 btn-sm" role="group" aria-label="First group">';
+                        html+='<button onclick="carrot.user.add();" class="btn btn-sm dev btn-success"><i class="fa-solid fa-square-plus"></i> Add</button>';
+                        html+=carrot.tool.btn_export("user-"+carrot.langs.lang_setting);
+                        html+='<button onclick="carrot.user.delete_all_data();return false;" class="btn btn-danger dev btn-sm"><i class="fa-solid fa-dumpster-fire"></i> Delete All data</button>';
+                    html+='</div>';
+                html+='</div>';
+
+                html+='<div class="col-4">';
+                    html+='<div class="btn-group mr-2 btn-sm float-end" role="group" aria-label="End group">';
+                    html+=carrot.langs.list_btn_lang_select('btn-success');
+                    html+='</div>';
+                html+='</div>'
+
+        html+='</div>';
+     
+        return html;
+    }
+
+    get_data(act_done){
+        if(carrot.check_ver_cur("user")==false){
+            carrot.update_new_ver_cur("user",true);
+            carrot.user.get_data_from_server(act_done);
+        }else{
+            carrot.user.get_data_from_db(act_done,()=>{
+                carrot.user.get_data_from_server(act_done);
+            });
+        }
+    }
+
+    get_data_from_server(act_done){
+        var q=new Carrot_Query("user-"+carrot.langs.lang_setting);
+        q.add_where("phone","","NOT_EQUAL");
+        q.add_where("status_share","0");
+        q.set_limit(50);
+        //q.set_order(carrot.user.orderBy_at,carrot.user.orderBy_type);
+        q.get_data((data)=>{
+            carrot.user.objs=data;
+            $(data).each(function(index,u){
+                carrot.data.add("user",u);
+            });
+            act_done(data);
         });
+    }
+
+    get_data_from_db(act_done,act_fail){
+        carrot.data.list("user").then(act_done).catch(act_fail);
     }
 
     login_user_google(){
@@ -186,7 +243,7 @@ class Carrot_user{
         if(this.obj_login.rates!=null) delete this.obj_login.rates;
         if(this.obj_login.backup_contact!=null) delete this.obj_login.backup_contact;
         localStorage.setItem("obj_login",JSON.stringify(this.obj_login));
-        this.show_info_user_login_in_header();
+        carrot.user.show_info_user_login_in_header();
     }
 
     user_logout(){
@@ -200,7 +257,7 @@ class Carrot_user{
     }
 
     show_info_user_login_in_header(){
-        if(this.obj_login==null){
+        if(carrot.user.obj_login==null){
             $("#btn_acc_info").hide();
             $("#btn_login").show();
             $("#menu_account").hide();
@@ -211,7 +268,7 @@ class Carrot_user{
             $("#acc_info_name").html(this.obj_login.name);
             if(this.obj_login.avatar!=null&&this.obj_login.avatar!="") $("#acc_info_avatar").attr("src",this.obj_login.avatar);
         }
-        this.carrot.rate.check_status_user_login();
+        carrot.rate.check_status_user_login();
         $(".user_data").each(function(index,emp){
             $(emp).attr("value",encodeURI(JSON.stringify(carrot.user.get_user_login())));
             $(emp).html(carrot.user.box_item_field_form_user(carrot.user.get_user_login()));
@@ -261,28 +318,20 @@ class Carrot_user{
     }
 
     list(){
-        if(this.carrot.get_ver_cur("user")){
-            if(this.obj_phone_book==null) 
-                this.get_all_data_phone_book();
-            else{
-                this.carrot.log("Show all data phone book from cache!");
-                this.show_all_phone_book_from_list();
-            }
-        }else{
-            this.get_all_data_phone_book();
-        }
+        carrot.loading("Get all data list and show");
+        carrot.user.get_data(carrot.user.load_list_by_data);
     }
 
-    box_user_item(data_user,s_class="col-md-4 mb-3"){
+    box_item(data_user){
         var url_avatar='';
         if(data_user.avatar!=null) url_avatar=data_user.avatar;
         if(url_avatar=="") url_avatar="images/avatar_default.png";
 
-        var item_user=new Carrot_List_Item(this.carrot);
+        var item_user=new Carrot_List_Item(carrot);
         item_user.set_db("user-"+data_user.lang);
         item_user.set_id(data_user.id);
         item_user.set_name(data_user.name);
-        item_user.set_class(s_class);
+        item_user.set_class("col-md-3 mb-3");
         item_user.set_class_icon("col-4 user-avatar");
         item_user.set_class_body("col-8");
         item_user.set_icon(url_avatar);
@@ -315,42 +364,34 @@ class Carrot_user{
                 html+='<span class="text-success float-end"><i class="fa-solid fa-venus"></i></span>';
         html+='</div>';
 
+        item_user.set_act_click("carrot.user.show_info_by_id('"+data_user.id_doc+"','"+data_user.lang+"')");
         item_user.set_body(html);
-        return item_user.html();
+        return item_user;
     }
 
-    show_all_phone_book_from_list(){
-        var carrot=this.carrot;
-        var list_phone_book=this.carrot.convert_obj_to_list(this.obj_phone_book);
-        this.carrot.change_title_page("Phone Book", "?p=phone_book","phone_book");
+    load_list_by_data(data){
+        carrot.user.type_show="list";
+        carrot.hide_loading();
+        carrot.change_title("Phone Book", "?p=phone_book","phone_book");
         var html="";
+        html+=carrot.user.menu();
         html+='<div class="row m-0">';
-        $(list_phone_book).each(function(index,data_u) {
-            html+=carrot.user.box_user_item(data_u);
+        $(data).each(function(index,data_u) {
+            data_u["index"]=index;
+            html+=carrot.user.box_item(data_u).html();
         });
         html+="</div>";
-        this.carrot.show(html);
-        this.carrot.user.check_event();
+        carrot.show(html);
+        carrot.user.check_event();
     }
 
     check_event(){
-        var carrot=this.carrot;
-        if(this.obj_phone_book!=null){
-            $(".user-avatar").click(function(){
-                var user_id=$(this).attr("obj_id");
-                var db_collection=$(this).attr("db_collection");
-                carrot.get_doc(db_collection,user_id,carrot.user.show_user_info);
-            })
-    
-            $("#btn_download").click(function(){
-                carrot.user.download_vcard();
-            });
-        }
+        carrot.tool.list_other_and_footer("user");
         carrot.check_event();
     }
 
     show_register(){
-        this.add();
+        carrot.user.add();
     }
 
     add(){
@@ -414,23 +455,36 @@ class Carrot_user{
     after_done_update_user(){
         carrot.get_doc("user-"+carrot.user.obj_login.lang,carrot.user.obj_login.id,carrot.user.get_user_data_login_from_server);
     }
-    
-    show_user_by_id(user_id,carrot){
-        var user_lang=carrot.get_param_url("user_lang");
-        carrot.get_doc("user-"+user_lang,user_id,carrot.user.show_user_info);
+
+    show_info_by_id(id,lang){
+        carrot.user.get_info(id,lang,carrot.user.info);
+    }
+
+    get_info(id,lang,act_done){
+        carrot.loading("Get and show info user("+id+" - "+lang+")");
+        carrot.data.get("user_info",id,act_done,()=>{
+            carrot.server.get("user-"+lang,id,act_done);
+        });
     }
     
-    show_user_info(data_user,carrot){
-        if(data_user==null){
-            carrot.msg("This user no longer exists","alert");
-            carrot.show_404();
-            return false;
-        }
+    info(data_user){
+        carrot.hide_loading();
+        carrot.change_title(data_user.name,"?p=phone_book&id="+data_user.id_doc+"&user_lang="+data_user.lang,"phone_book");
+        carrot.data.add("user_info",data_user);
+        carrot.user.type_show="info";
         var url_avatar='';
         carrot.user.phone_book_info_cur=data_user;
         if(data_user.avatar!=null) url_avatar=data_user.avatar;
         if(url_avatar==""||url_avatar=="null") url_avatar="images/avatar_default.png";
-        carrot.change_title_page(data_user.name,"?p=phone_book&id="+data_user.id+"&user_lang="+data_user.lang,"phone_book");
+
+        var html='';
+        var box_info=new Carrot_Info(data_user.id_doc);
+        box_info.set_name(data_user.name);
+        box_info.set_icon_image(carrot.url()+"/images/avatar_default.png");
+        box_info.add_attrs("fa-solid fa-envelopes-bulk","Email",data_user.email);
+        html+=carrot.user.menu();
+        html+=box_info.html();
+        /*
         var html='<div class="section-container p-2 p-xl-4">';
         html+='<div class="row">';
             html+='<div class="col-md-8 ps-4 ps-lg-3">';
@@ -440,7 +494,6 @@ class Carrot_user{
                     html+='</div>';
                     html+='<div class="col-md-8 p-2">';
                         html+='<h4 class="fw-semi fs-4 mb-3">'+data_user.name+'</h4>';
-                        html+=carrot.btn_dev("user-"+data_user.lang,data_user.id,"user");
 
                         html+='<div class="row pt-4">';
                             if(data_user.email!=""){
@@ -536,36 +589,18 @@ class Carrot_user{
                 }
 
                 html+=carrot.rate.box_comment(data_user);
-                html+=carrot.link_store.box_qrdoce();
-
             html+="</div>";
     
-            html+='<div class="col-md-4">';
-            html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-3 lang"  key_lang="related_songs">Related User</h4>';
-            var list_user_other= carrot.convert_obj_to_list(carrot.user.obj_phone_book).map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
-            var count_show=0;
-            for(var i=0;i<list_user_other.length;i++){
-                var u_data=list_user_other[i];
-                if(u_data.sex==data_user.sex){
-                    if(data_user.id!=u_data.id){
-                        html+=carrot.user.box_user_item(u_data,'col-md-12 mb-3');
-                        count_show++;
-                        if(count_show>12) break;
-                    }
-                }
-            };
-            html+='</div>';
 
         html+="</div>";
         html+="</div>";
-
-        html+=carrot.user.list_for_home();
+        */
         carrot.show(html);
         carrot.user.check_event();
     }
 
     show_user_info_login(){
-        this.show_user_info(this.obj_login,this.carrot);
+        carrot.user.info(carrot.user.obj_login);
     }
 
     show_edit_user_info_login(){
@@ -716,7 +751,7 @@ class Carrot_user{
             html+='<div id="other_user" class="row m-0">';
             for(var i=0;i<12;i++){
                 var user=list_user[i];
-                html+=this.box_user_item(user);
+                html+=carrot.user.box_item(user).html();
             }
             html+='</div>';
         }
@@ -731,5 +766,11 @@ class Carrot_user{
     change_type_user(id_product_service){
         carrot.user.obj_login.type=id_product_service;
         this.carrot.update_doc("user-"+carrot.user.obj_login.lang,carrot.user.obj_login.id,carrot.user.obj_login);
+    }
+
+    delete_all_data(){
+        carrot.data.clear("user");
+        carrot.user.obj_user=null;
+        carrot.msg("Delete all data user success!","success");
     }
 }

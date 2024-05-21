@@ -205,7 +205,7 @@ class Carrot_Site{
             var btn_list_link_store=carrot.menu.create("app").set_label("List Store").set_icon("fa-solid fa-store").set_type("dev");
             $(btn_list_link_store).click(function(){carrot.load_js_page("app","app","carrot.appp.show_other_store()");});
     
-            this.user=new Carrot_user(this);
+            this.user=new Carrot_user();
 
             var btn_list_music=this.menu.create("btn_list_music").set_label("Music").set_lang("music").set_icon("fa-solid fa-music");
             $(btn_list_music).click(function(){carrot.load_js_page("song","song","carrot.song.list()");});

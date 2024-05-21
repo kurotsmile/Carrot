@@ -6,12 +6,20 @@ class Song{
     data_info_cur=null;
     index_song_cur=-1;
     type_player_media="music";
+    type_show='list';
 
     menu(){
         var html='';
         html+='<div class="row mb-2">';
                 html+='<div class="col-8">';
-                    html+='<div class="btn-group mr-2 btn-sm" role="group" aria-label="First group">';
+
+                    if(carrot.song.type_show=='info'){
+                        html+='<div class="btn-group mr-2 btn-sm" role="group" aria-label="One group">';
+                            html+='<button onclick="carrot.song.list();" class="btn btn-sm btn-success"><i class="fa-solid fa-square-caret-left"></i> <l class="lang" key_lang="back">Back</l></button>';
+                        html+='</div>';
+                    }
+
+                    html+='<div class="btn-group mr-2 btn-sm" role="group" aria-label="Last group">';
                         var s_active="active";
                         if(carrot.song.orderBy_at=="publishedAt"&&carrot.song.orderBy_type=="DESCENDING") s_active="active";
                         else s_active="";
@@ -19,9 +27,7 @@ class Song{
                         if(carrot.song.orderBy_at=="publishedAt"&&carrot.song.orderBy_type=="ASCENDING") s_active="active";
                         else s_active="";
                         html+='<button id="btn-add-code" class="btn btn-success btn-sm '+s_active+'" onclick="carrot.song.get_list_orderBy(\'publishedAt\',\'ASCENDING\');return false;"><i class="fa-solid fa-arrow-down-1-9"></i> Date</button>';
-                    html+='</div>';
-
-                    html+='<div class="btn-group mr-2 btn-sm" role="group" aria-label="Last group">';
+                        
                         if(carrot.song.orderBy_at=="name"&&carrot.song.orderBy_type=="DESCENDING") s_active="active";
                         else s_active="";
                         html+='<button id="btn-add-code" class="btn btn-success btn-sm '+s_active+'" onclick="carrot.song.get_list_orderBy(\'name\',\'DESCENDING\');return false;"><i class="fa-solid fa-arrow-up-a-z"></i> Name</button>';
@@ -139,6 +145,7 @@ class Song{
     }
 
     load_list_by_data(datas){
+        carrot.song.type_show="list";
         var html='';
         html+=carrot.song.menu();
         html+='<div class="row" id="all_song"></div>';
@@ -237,6 +244,7 @@ class Song{
 
     info(data){
         carrot.hide_loading();
+        carrot.song.type_show="info";
         carrot.change_title(data.name,"?page=song&id="+data.id_doc,"song");
         carrot.song.data_info_cur=data;
         carrot.data.img(carrot.tool.id(data.id_doc),data.avatar,"pic_music_"+carrot.tool.id(data.id_doc));

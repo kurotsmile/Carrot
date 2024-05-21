@@ -43,6 +43,8 @@ class Carrot_data{
             this.db.createObjectStore("song",{keyPath: 'id_doc'});
             this.db.createObjectStore("song_info",{keyPath: 'id_doc'});
             this.db.createObjectStore("character_fashion",{keyPath: 'id_doc'});
+            this.db.createObjectStore("user",{keyPath: 'id_doc'});
+            this.db.createObjectStore("user_info",{keyPath: 'id_doc'});
         }
         this.request.onsuccess = () => {
             this.db = this.request.result;
