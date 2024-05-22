@@ -160,6 +160,7 @@ class Carrot_user{
         url_avatar = url_avatar.replace("s96-c", "s512-c");
         data_user_login.avatar=url_avatar;
         data_user_login.id=user.uid;
+        data_user_login.id_doc=data_user_login.id;
         data_user_login.sex="0";
         data_user_login.lang=carrot.lang;
         carrot.user.obj_login=data_user_login;
@@ -425,18 +426,18 @@ class Carrot_user{
     }
 
     frm_add_or_edit(data){
-        var frm=new Carrot_Form("frm_user",this.carrot);
-        frm.set_db("user-"+this.carrot.lang,"id");
-        frm.set_icon(this.icon);
+        var frm=new Carrot_Form("frm_user",carrot);
+        frm.set_db("user-"+carrot.lang,"id");
+        frm.set_icon(carrot.user.icon);
         frm.create_field("id").set_label("ID").set_value(data.id).set_main().set_type("id");
         frm.create_field("name").set_label("Full Name").set_value(data.name);
         frm.create_field("avatar").set_label("Avatar").set_value(data.avatar).set_type("avatar").set_type_file("image/*");
         frm.create_field("password").set_label("password").set_value(data.password);
-        frm.create_field("phone").set_label(this.carrot.l("phone","Phone")).set_value(data.phone);
+        frm.create_field("phone").set_label(carrot.l("phone","Phone")).set_value(data.phone);
         frm.create_field("email").set_label("Email").set_value(data.email);
-        var field_sex=frm.create_field("sex").set_label(this.carrot.l("gender","Gender")).set_value(data.sex).set_type("select");
-        field_sex.add_option("0",this.carrot.l("boy","Boy"));
-        field_sex.add_option("1",this.carrot.l("girl","Girl"));
+        var field_sex=frm.create_field("sex").set_label(carrot.l("gender","Gender")).set_value(data.sex).set_type("select");
+        field_sex.add_option("0",carrot.l("boy","Boy"));
+        field_sex.add_option("1",carrot.l("girl","Girl"));
         frm.create_field("address").set_label("Address").set_value(data.address).set_type("address");
         var field_share=frm.create_field("status_share").set_label("Share Status").set_value(data.status_share).set_type("select");
         field_share.add_option("0","Share");
@@ -450,8 +451,8 @@ class Carrot_user{
         var field_role=frm.create_field("role").set_label("Role").set_val(data.role).set_dev().set_type("select");
         field_role.add_option("user","basic user");
         field_role.add_option("admin","Administrators");
-        var field_lang=frm.create_field("lang").set_label(this.carrot.l("country","Country")).set_value(data.lang).set_type("select");
-        $(this.carrot.langs.list_lang).each(function(index,lang){
+        var field_lang=frm.create_field("lang").set_label(carrot.l("country","Country")).set_value(data.lang).set_type("select");
+        $(carrot.langs.list_lang).each(function(index,lang){
             lang.index=index;
             field_lang.add_option(lang.key,lang.name);
         });
@@ -501,12 +502,9 @@ class Carrot_user{
         if(data_user.email!=null) box_info.add_attrs("fa-solid fa-paper-plane",'<l class="lang" key_lang="send_mail">Send Mail</l>','<a href="mailto:'+data_user.email+'" type="button">'+data_user.email+'</a>');
         box_info.set_protocol_url("contactstore://show/"+data_user.id_doc+"/"+data_user.lang);
 
-        box_info.add_btn("btn_edit_info","fa-solid fa-user-pen",'<l class="lang" key_lang="edit_info">Edit Info</l>',"carrot.user.show_edit_user_info_login()");
-
         if(carrot.user.obj_login!=null){
             if(data_user.id_doc==carrot.user.obj_login.id){
-                
-                html+='<button onclick="" type="button" class="btn d-inline btn-warning"><i class="fa-solid fa-download"></i>  </button> ';
+                box_info.add_btn("btn_edit_info","fa-solid fa-user-pen",'<l class="lang" key_lang="edit_info">Edit Info</l>',"carrot.user.show_edit_user_info_login()");
             }
         }
 
