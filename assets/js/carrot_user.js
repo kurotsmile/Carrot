@@ -107,7 +107,7 @@ class Carrot_user{
     login_user_google(){
         var provider_google = new firebase.auth.GoogleAuthProvider();
         provider_google.addScope('https://www.googleapis.com/auth/contacts.readonly');
-        carrot.firebase.auth().languageCode = this.carrot.lang;
+        carrot.firebase.auth().languageCode = carrot.lang;
         carrot.firebase.auth().signInWithPopup(provider_google).then((result) => {
             var user = result.user;
             carrot.user.login_success(user);
@@ -118,7 +118,7 @@ class Carrot_user{
 
     login_user_twitter(){
         var provider_twitter = new firebase.auth.TwitterAuthProvider();
-        carrot.firebase.auth().languageCode = this.carrot.lang;
+        carrot.firebase.auth().languageCode = carrot.lang;
         carrot.firebase.auth().signInWithPopup(provider_twitter).then((result) => {
             var user = result.user;
             carrot.user.login_success(user);
@@ -161,9 +161,9 @@ class Carrot_user{
         data_user_login.avatar=url_avatar;
         data_user_login.id=user.uid;
         data_user_login.sex="0";
-        data_user_login.lang=this.carrot.lang;
-        this.obj_login=data_user_login;
-        carrot.set_doc_merge("user-"+this.carrot.lang,user.uid,data_user_login,this.done_login_success);
+        data_user_login.lang=carrot.lang;
+        carrot.user.obj_login=data_user_login;
+        carrot.set_doc_merge("user-"+carrot.lang,user.uid,data_user_login,carrot.user.done_login_success);
         Swal.close();
     }
 
@@ -180,22 +180,22 @@ class Carrot_user{
         html+='<form class="row">';
             html+='<div class="col-6 fs-9 text-justify">';
                 html+='<div class="form-group">';
-                    html+='<label for="login_user"><i class="fa-solid fa-phone"></i> '+this.carrot.l("phone","Phone")+'</label>';
+                    html+='<label for="login_user"><i class="fa-solid fa-phone"></i> '+carrot.l("phone","Phone")+'</label>';
                     html+='<input  class="form-control form-control-sm mt-1"" id="login_user" aria-describedby="emailHelp" placeholder="Enter Your Phone">';
                 html+='</div>';
 
                 html+='<div class="form-group">';
-                    html+='<label for="login_password"><i class="fa-solid fa-lock"></i> '+this.carrot.l("password","Password")+'</label>';
+                    html+='<label for="login_password"><i class="fa-solid fa-lock"></i> '+carrot.l("password","Password")+'</label>';
                     html+='<input type="password" class="form-control form-control-sm mt-1" id="login_password" placeholder="Password">';
                 html+='</div>';
 
                 html+='<div class="form-group">';
-                    html+='<small class="fs-9">'+this.carrot.l("login_tip")+'</small>';
+                    html+='<small class="fs-9">'+carrot.l("login_tip")+'</small>';
                 html+='</div>';
 
                 html+='<div class="form-group mt-2 text-center">';
-                    html+='<div id="btn_user_login" role="button" class="btn btn-success m-1 btn-sm"><i class="fa-solid fa-key"></i> '+this.carrot.l("login","Login")+'</div>';
-                    html+='<div onclick="Swal.close();return false;" role="button" class="btn m-1 btn-sm"><i class="fa-solid fa-circle-xmark"></i> '+this.carrot.l("cancel","Cancel")+'</div>';
+                    html+='<div id="btn_user_login" role="button" class="btn btn-success m-1 btn-sm"><i class="fa-solid fa-key"></i> '+carrot.l("login","Login")+'</div>';
+                    html+='<div onclick="Swal.close();return false;" role="button" class="btn m-1 btn-sm"><i class="fa-solid fa-circle-xmark"></i> '+carrot.l("cancel","Cancel")+'</div>';
                 html+='</div>';
             html+='</div>';
             
@@ -204,12 +204,12 @@ class Carrot_user{
                 html+='<button onclick="carrot.user.login_user_twitter();return false;" class="btn btn-info fs-9 m-2 d-block btn-sm"><i class="fa-brands fa-twitter"></i> login with twitter account</button>';
                 html+='<button onclick="carrot.user.login_user_apple();return false;" class="btn btn-info fs-9 m-2 d-block btn-sm"><i class="fa-brands fa-apple"></i> login with Apple account</button>';
                 html+='<button onclick="carrot.user.login_user_github();return false;" class="btn btn-info fs-9 m-2 d-block btn-sm"><i class="fa-brands fa-square-github"></i> login with Github account</button>';
-                html+='<button onclick="carrot.user.show_register();Swal.close();return false;" class="btn btn-success fs-9 m-2 d-block btn-lg"><i class="fa-solid fa-user-plus"></i> '+this.carrot.l("register","Register")+'</button>';
+                html+='<button onclick="carrot.user.show_register();Swal.close();return false;" class="btn btn-success fs-9 m-2 d-block btn-lg"><i class="fa-solid fa-user-plus"></i> '+carrot.l("register","Register")+'</button>';
             html+='</div>';
 
         html+='</form>';
         Swal.fire({
-            title: this.carrot.l("login","Login"),
+            title: carrot.l("login","Login"),
             html:html,
             showConfirmButton: false
         });
@@ -498,9 +498,21 @@ class Carrot_user{
         if(data_user.phone!=null) box_info.add_attrs("fa-solid fa-user",'<l class="lang" key_lang="phone">Phone</l>',data_user.phone);
         if(data_user.role!=null) box_info.add_attrs("fa-solid fa-hurricane",'<l class="lang" key_lang="role">Role</l>',data_user.role);
         if(data_user.type!=null) box_info.add_attrs("fa-solid fa-hat-cowboy",'<l class="lang" key_lang="type">Type</l>',data_user.type);
+        if(data_user.email!=null) box_info.add_attrs("fa-solid fa-paper-plane",'<l class="lang" key_lang="send_mail">Send Mail</l>','<a href="mailto:'+data_user.email+'" type="button">'+data_user.email+'</a>');
+        box_info.set_protocol_url("contactstore://show/"+data_user.id_doc+"/"+data_user.lang);
+
+        box_info.add_btn("btn_edit_info","fa-solid fa-user-pen",'<l class="lang" key_lang="edit_info">Edit Info</l>',"carrot.user.show_edit_user_info_login()");
+
+        if(carrot.user.obj_login!=null){
+            if(data_user.id_doc==carrot.user.obj_login.id){
+                
+                html+='<button onclick="" type="button" class="btn d-inline btn-warning"><i class="fa-solid fa-download"></i>  </button> ';
+            }
+        }
+
         html+=carrot.user.menu();
         html+=box_info.html();
-        
+
         /*
         var html='<div class="section-container p-2 p-xl-4">';
         html+='<div class="row">';
@@ -621,7 +633,8 @@ class Carrot_user{
     }
 
     show_edit_user_info_login(){
-        this.carrot.get_doc("user-"+this.obj_login.lang,this.obj_login.id,carrot.user.edit);
+        carrot.loading("Get data curent login user");
+        carrot.get_doc("user-"+carrot.user.obj_login.lang,carrot.user.obj_login.id,carrot.user.edit);
     }
 
     check_user_login(username,password){
@@ -645,16 +658,16 @@ class Carrot_user{
     }
 
     get_user_login_id(){
-        if(this.obj_login!=null){
-            return this.obj_login["id"];
+        if(carrot.user.obj_login!=null){
+            return carrot.user.obj_login["id"];
         }else{
             return "";
         }
     }
 
     get_user_login_role(){
-        if(this.obj_login!=null){
-            return this.obj_login.role;
+        if(carrot.user.obj_login!=null){
+            return carrot.user.obj_login.role;
         }else{
             return "";
         }
