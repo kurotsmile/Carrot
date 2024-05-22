@@ -18,7 +18,14 @@ class Carrot_user{
     }
 
     show(){
-        carrot.user.list();
+        var id=carrot.get_param_url("id");
+        if(id!=undefined){
+            var user_lang=carrot.get_param_url("user_lang");
+            carrot.user.show_info_by_id(id,user_lang);
+        }
+        else{
+            carrot.user.list();
+        }      
     }
 
     menu(){
@@ -34,12 +41,12 @@ class Carrot_user{
 
                     html+='<div class="btn-group mr-2 btn-sm" role="group" aria-label="Last group">';
                         var s_active="active";
-                        if(carrot.user.orderBy_at=="publishedAt"&&carrot.user.orderBy_type=="DESCENDING") s_active="active";
+                        if(carrot.user.orderBy_at=="date_create"&&carrot.user.orderBy_type=="DESCENDING") s_active="active";
                         else s_active="";
-                        html+='<button id="btn-add-code" class="btn btn-success btn-sm '+s_active+'" onclick="carrot.user.get_list_orderBy(\'publishedAt\',\'DESCENDING\');return false;"><i class="fa-solid fa-arrow-up-9-1"></i> Date</button>';
-                        if(carrot.user.orderBy_at=="publishedAt"&&carrot.user.orderBy_type=="ASCENDING") s_active="active";
+                        html+='<button id="btn-add-code" class="btn btn-success btn-sm '+s_active+'" onclick="carrot.user.get_list_orderBy(\'date_create\',\'DESCENDING\');return false;"><i class="fa-solid fa-arrow-up-9-1"></i> Date</button>';
+                        if(carrot.user.orderBy_at=="date_create"&&carrot.user.orderBy_type=="ASCENDING") s_active="active";
                         else s_active="";
-                        html+='<button id="btn-add-code" class="btn btn-success btn-sm '+s_active+'" onclick="carrot.user.get_list_orderBy(\'publishedAt\',\'ASCENDING\');return false;"><i class="fa-solid fa-arrow-down-1-9"></i> Date</button>';
+                        html+='<button id="btn-add-code" class="btn btn-success btn-sm '+s_active+'" onclick="carrot.user.get_list_orderBy(\'date_create\',\'ASCENDING\');return false;"><i class="fa-solid fa-arrow-down-1-9"></i> Date</button>';
                         
                         if(carrot.user.orderBy_at=="name"&&carrot.user.orderBy_type=="DESCENDING") s_active="active";
                         else s_active="";
@@ -482,8 +489,18 @@ class Carrot_user{
         box_info.set_name(data_user.name);
         box_info.set_icon_image(carrot.url()+"/images/avatar_default.png");
         box_info.add_attrs("fa-solid fa-envelopes-bulk","Email",data_user.email);
+        if(data_user.sex=="0")
+            box_info.add_attrs("fa-solid fa-mars",'<l class="lang" key_lang="gender">Sex</l>','<l class="lang" key_lang="boy">Boy</l>');
+        else
+            box_info.add_attrs("fa-solid fa-venus",'<l class="lang" key_lang="gender">Sex</l>','<l class="girl" key_lang="girl">Boy</l>');
+
+        box_info.add_attrs("fa-solid fa-language",'<l class="lang" key_lang="country">Country</l>',data_user.lang);
+        if(data_user.phone!=null) box_info.add_attrs("fa-solid fa-user",'<l class="lang" key_lang="phone">Phone</l>',data_user.phone);
+        if(data_user.role!=null) box_info.add_attrs("fa-solid fa-hurricane",'<l class="lang" key_lang="role">Role</l>',data_user.role);
+        if(data_user.type!=null) box_info.add_attrs("fa-solid fa-hat-cowboy",'<l class="lang" key_lang="type">Type</l>',data_user.type);
         html+=carrot.user.menu();
         html+=box_info.html();
+        
         /*
         var html='<div class="section-container p-2 p-xl-4">';
         html+='<div class="row">';
