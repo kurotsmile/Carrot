@@ -32,6 +32,13 @@ class Carrot_user{
         }      
     }
 
+    get_list_orderBy(orderBy_at,orderBy_type){
+        carrot.loading("Get list data by order ("+orderBy_at+" -> "+orderBy_at+")");
+        carrot.user.orderBy_at=orderBy_at;
+        carrot.user.orderBy_type=orderBy_type;
+        carrot.user.get_data(carrot.user.load_list_by_data);
+    }
+
     menu(){
         var html='';
         html+='<div class="row mb-2">';
@@ -91,10 +98,10 @@ class Carrot_user{
 
     get_data_from_server(act_done){
         var q=new Carrot_Query("user-"+carrot.langs.lang_setting);
-        q.add_where("phone","","NOT_EQUAL");
+        //q.add_where("phone","","NOT_EQUAL");
         q.add_where("status_share","0");
         q.set_limit(52);
-        //q.set_order(carrot.user.orderBy_at,carrot.user.orderBy_type);
+        q.set_order(carrot.user.orderBy_at,carrot.user.orderBy_type);
         q.get_data((data)=>{
             carrot.user.objs=data;
             $(data).each(function(index,u){
@@ -440,7 +447,7 @@ class Carrot_user{
         var frm=new Carrot_Form("frm_user",carrot);
         frm.set_db("user-"+carrot.lang,"id");
         frm.set_icon(carrot.user.icon);
-        frm.create_field("id").set_label("ID").set_value(data.id).set_main().set_type("id");
+        frm.create_field("id").set_label("ID").set_value(data.id_doc).set_main().set_type("id");
         frm.create_field("name").set_label("Full Name").set_value(data.name);
         frm.create_field("avatar").set_label("Avatar").set_value(data.avatar).set_type("avatar").set_type_file("image/*");
         frm.create_field("password").set_label("password").set_value(data.password);
@@ -533,120 +540,32 @@ class Carrot_user{
             }
         }
 
+        
+        var html_backup='';
+        if(data_user.backup_contact!=null){
+            html_backup+='<div class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
+            html_backup+='<h4 class="fw-semi fs-5"><i class="fa-solid fa-address-book"></i> Contact backup list</h4>';
+            html_backup+='<small class="fw-semi fs-8">Contact backup list by account</small>';
+            html_backup+='<table class="table table-striped table-hover">';
+            html_backup+='<tbody>';
+                $(data_user.backup_contact).each(function(index,contact){
+                    contact.index=index;
+                    html_backup+='<tr>';
+                    html_backup+='<td><i class="fa-solid fa-database"></i> '+contact.date+'</td>';
+                    html_backup+='<td><i class="fa-solid fa-blender-phone"></i> '+contact.length+' contact</td>';
+                    html_backup+='</tr>';
+                });
+            html_backup+='</tbody>';
+            html_backup+='</table>';
+            html_backup+='</div>';
+        }
+        box_info.add_contain(html_backup);
+
+        box_info.add_contain(carrot.tool.box_comment(data_user));
+
         html+=carrot.user.menu();
         html+=box_info.html();
-
-        /*
-        var html='<div class="section-container p-2 p-xl-4">';
-        html+='<div class="row">';
-            html+='<div class="col-md-8 ps-4 ps-lg-3">';
-                html+='<div class="row bg-white shadow-sm">';
-                    html+='<div class="col-md-4 p-3 text-center">';
-                        html+='<img id="imageid" class="w-100" src="'+url_avatar+'" alt="'+data_user.name+'">';
-                    html+='</div>';
-                    html+='<div class="col-md-8 p-2">';
-                        html+='<h4 class="fw-semi fs-4 mb-3">'+data_user.name+'</h4>';
-
-                        html+='<div class="row pt-4">';
-                            if(data_user.email!=""){
-                                html+='<div class="col-md-4 col-6 text-center">';
-                                    html+='<b>Email <i class="fa-solid fa-envelopes-bulk"></i></b>';
-                                    html+='<p class="lang" key_lang="email">'+data_user.email+'</p>';
-                                html+='</div>';
-                            }
-
-                            html+='<div class="col-md-4 col-6 text-center">';
-                                if(data_user.sex=="0"){
-                                    html+='<b><l class="lang" key_lang="gender">Sex</l> <i class="fa-solid fa-mars"></i></b>';
-                                    html+='<p class="lang" key_lang="boy">'+data_user.sex+'</p>';
-                                }
-                                else{
-                                    html+='<b><l class="lang" key_lang="gender">Sex</l> <i class="fa-solid fa-venus"></i></b>';
-                                    html+='<p class="lang" key_lang="girl">'+data_user.sex+'</p>';
-                                }
-                            html+='</div>';
-
-                            html+='<div class="col-md-4 col-6 text-center">';
-                                html+='<b><l class="lang" key_lang="country">Country</l> <i class="fa-solid fa-language"></i></b>';
-                                html+='<p>'+data_user.lang+'</p>';
-                            html+='</div>';
-
-                            if(data_user.phone!=null){
-                                html+='<div class="col-md-4 col-6 text-center">';
-                                html+='<b><l class="lang" key_lang="phone">Phone</l> <i class="fa-solid fa-user"></i></b>';
-                                html+='<p>'+data_user.phone+'</p>';
-                                html+='</div>';
-                            }
-
-                            if(data_user.role!=null){
-                                html+='<div class="col-md-4 col-6 text-center">';
-                                html+='<b><l class="lang" key_lang="role">Role</l> <i class="fa-solid fa-hat-cowboy"></i></b>';
-                                html+='<p>'+data_user.role+'</p>';
-                                html+='</div>';
-                            }
-
-                            if(data_user.type!=null){
-                                html+='<div class="col-md-4 col-6 text-center">';
-                                html+='<b><l class="lang" key_lang="type">Type</l> <i class="fa-solid fa-hurricane"></i></b>';
-                                html+='<p>'+data_user.type+'</p>';
-                                html+='</div>';
-                            }
-                        html+='</div>';
-
-                        html+='<div class="row pt-4">';
-                            html+='<div class="col-12 text-center">';
-                            if(data_user.phone!=null) html+='<a href="tel:+'+data_user.phone+'" id="btn_call" type="button" class="btn d-inline btn-success m-1"><i class="fa-solid fa-phone-volume"></i> <l class="lang" key_lang="call">Call</l></a>';
-                            if(data_user.email!="") html+='<a href="mailto:'+data_user.email+'" id="btn_send" type="button" class="btn d-inline btn-success m-1"><i class="fa-solid fa-paper-plane"></i> <l class="lang" key_lang="send_mail">Send Mail</l></a>';
-                            html+='<button id="btn_share" type="button" class="btn d-inline btn-success m-1"><i class="fa-solid fa-share-nodes"></i> <l class="lang" key_lang="share">Share</l></button>';
-                            html+='<a id="register_protocol_url" href="contactstore://show/'+data_user.id+'/'+data_user.lang+'" type="button" class="btn d-inline btn-success m-1" ><i class="fa-solid fa-rocket"></i> <l class="lang" key_lang="open_with">Open with..</l></a>';
-                            html+='<button id="btn_download" type="button" class="btn d-inline btn-success m-1"><i class="fa-solid fa-download"></i> <l class="lang" key_lang="download">Download Vcard</l></button>';
-                            if(carrot.user.obj_login!=null){
-                                if(data_user.id==carrot.user.obj_login.id){
-                                    html+='<button onclick="carrot.user.show_edit_user_info_login()" type="button" class="btn d-inline btn-warning"><i class="fa-solid fa-download"></i> <l class="lang" key_lang="edit_info">Edit Info</l> </button> ';
-                                }
-                            }
-                            html+='</div>';
-                        html+='</div>';
-
-                    html+='</div>';
-                html+="</div>";
-    
-                if(data_user.address!=null){
-                    var user_address=data_user.address;
-                    if(user_address.lat!=null){
-                        html+='<div class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
-                        html+='<h4 class="fw-semi fs-5 lang" key_lang="address">Address</h4>';
-                        if(user_address.name!="")html+='<small class="fw-semi fs-8">'+user_address.name+'</small>';
-                        if(user_address.lot!=null) html+='<iframe src="https://maps.google.com/maps?q='+user_address.lat+','+user_address.lot+'&hl='+carrot.lang+'&z=14&amp;output=embed" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>';
-                        html+='</div>';
-                    }
-                }
-
-                if(data_user.backup_contact!=null){
-                    html+='<div class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
-                    html+='<h4 class="fw-semi fs-5"><i class="fa-solid fa-address-book"></i> Contact backup list</h4>';
-                    html+='<small class="fw-semi fs-8">Contact backup list by account</small>';
-                    html+='<table class="table table-striped table-hover">';
-                    html+='<tbody>';
-                        $(data_user.backup_contact).each(function(index,contact){
-                            contact.index=index;
-                            html+='<tr>';
-                                html+='<td><i class="fa-solid fa-database"></i> '+contact.date+'</td>';
-                                html+='<td><i class="fa-solid fa-blender-phone"></i> '+contact.length+' contact</td>';
-                            html+='</tr>';
-                        });
-                    html+='</tbody>';
-                    html+='</table>';
-                    html+='</div>';
-                }
-
-                html+=carrot.rate.box_comment(data_user);
-            html+="</div>";
-    
-
-        html+="</div>";
-        html+="</div>";
-        */
+        
         carrot.show(html);
         carrot.user.check_event();
     }
