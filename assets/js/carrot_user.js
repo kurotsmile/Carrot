@@ -15,6 +15,10 @@ class Carrot_user{
         var btn_list=carrot.menu.create("phone_book").set_label("Phone book").set_lang("phone_book").set_icon(this.icon).set_type("main");
         $(btn_list).click(function(){carrot.user.list();});
         carrot.register_page("phone_book","carrot.user.show()","","carrot.user.show()");
+
+        if(localStorage.getItem("obj_login")!=null){
+           this.obj_login=JSON.parse(localStorage.getItem("obj_login"));
+        }
     }
 
     show(){
@@ -89,7 +93,7 @@ class Carrot_user{
         var q=new Carrot_Query("user-"+carrot.langs.lang_setting);
         q.add_where("phone","","NOT_EQUAL");
         q.add_where("status_share","0");
-        q.set_limit(50);
+        q.set_limit(52);
         //q.set_order(carrot.user.orderBy_at,carrot.user.orderBy_type);
         q.get_data((data)=>{
             carrot.user.objs=data;
@@ -101,7 +105,10 @@ class Carrot_user{
     }
 
     get_data_from_db(act_done,act_fail){
-        carrot.data.list("user").then(act_done).catch(act_fail);
+        carrot.data.list("user").then((data)=>{
+            carrot.user.objs=data;
+            act_done(data);
+        }).catch(act_fail);
     }
 
     login_user_google(){
@@ -484,15 +491,19 @@ class Carrot_user{
         carrot.change_title(data_user.name,"?p=phone_book&id="+data_user.id_doc+"&user_lang="+data_user.lang,"phone_book");
         carrot.data.add("user_info",data_user);
         carrot.user.type_show="info";
-        var url_avatar='';
         carrot.user.phone_book_info_cur=data_user;
-        if(data_user.avatar!=null) url_avatar=data_user.avatar;
-        if(url_avatar==""||url_avatar=="null") url_avatar="images/avatar_default.png";
+       
+        var id_img="";
+        if(data_user.avatar!=""){
+            id_img=carrot.tool.getIdFileFromURL(data_user.avatar);
+            carrot.data.img(id_img,data_user.avatar,id_img);
+        }
 
         var html='';
         var box_info=new Carrot_Info(data_user.id_doc);
         box_info.set_name(data_user.name);
         box_info.set_icon_image(carrot.url()+"/images/avatar_default.png");
+        box_info.set_icon_id(id_img);
         box_info.add_attrs("fa-solid fa-envelopes-bulk","Email",data_user.email);
         if(data_user.sex=="0")
             box_info.add_attrs("fa-solid fa-mars",'<l class="lang" key_lang="gender">Sex</l>','<l class="lang" key_lang="boy">Boy</l>');
