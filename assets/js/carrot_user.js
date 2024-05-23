@@ -247,10 +247,10 @@ class Carrot_user{
     }
 
     set_user_login(data_user){
-        this.obj_login=data_user;
-        if(this.obj_login.rates!=null) delete this.obj_login.rates;
-        if(this.obj_login.backup_contact!=null) delete this.obj_login.backup_contact;
-        localStorage.setItem("obj_login",JSON.stringify(this.obj_login));
+        carrot.user.obj_login=data_user;
+        if(carrot.user.obj_login.rates!=null) delete carrot.user.obj_login.rates;
+        if(carrot.user.obj_login.backup_contact!=null) delete carrot.user.obj_login.backup_contact;
+        localStorage.setItem("obj_login",JSON.stringify(carrot.user.obj_login));
         carrot.user.show_info_user_login_in_header();
     }
 
@@ -273,8 +273,8 @@ class Carrot_user{
             $("#menu_account").removeAttr("style");
             $("#btn_acc_info").show();
             $("#btn_login").hide();
-            $("#acc_info_name").html(this.obj_login.name);
-            if(this.obj_login.avatar!=null&&this.obj_login.avatar!="") $("#acc_info_avatar").attr("src",this.obj_login.avatar);
+            $("#acc_info_name").html(carrot.user.obj_login.name);
+            if(carrot.user.obj_login.avatar!=null&&carrot.user.obj_login.avatar!="") $("#acc_info_avatar").attr("src",carrot.user.obj_login.avatar);
         }
         carrot.rate.check_status_user_login();
         $(".user_data").each(function(index,emp){
@@ -331,18 +331,22 @@ class Carrot_user{
     }
 
     box_item(data_user){
-        var url_avatar='';
-        if(data_user.avatar!=null) url_avatar=data_user.avatar;
-        if(url_avatar=="") url_avatar="images/avatar_default.png";
-
+        var id_img="";
+        if(data_user.avatar!=""){
+            id_img=carrot.tool.getIdFileFromURL(data_user.avatar);
+            carrot.data.img(id_img,data_user.avatar,id_img);
+            console.log(data_user.avatar);
+            console.log(id_img);
+        }
         var item_user=new Carrot_List_Item(carrot);
         item_user.set_db("user-"+data_user.lang);
         item_user.set_id(data_user.id);
         item_user.set_name(data_user.name);
         item_user.set_class("col-md-3 mb-3");
-        item_user.set_class_icon("col-4 user-avatar");
+        item_user.set_class_icon("col-4 user-avatar "+id_img);
         item_user.set_class_body("col-8");
-        item_user.set_icon(url_avatar);
+        item_user.set_icon(carrot.url()+"/images/avatar_default.png");
+        item_user.set_id_icon(id_img);
         item_user.set_obj_js("user");
         var html='';
         html+='<div class="col-10">';
@@ -505,6 +509,16 @@ class Carrot_user{
         if(carrot.user.obj_login!=null){
             if(data_user.id_doc==carrot.user.obj_login.id){
                 box_info.add_btn("btn_edit_info","fa-solid fa-user-pen",'<l class="lang" key_lang="edit_info">Edit Info</l>',"carrot.user.show_edit_user_info_login()");
+            }
+        }
+
+        if(data_user.address!=null){
+            var user_address=data_user.address;
+            if(user_address.lat!=null){
+                var html_addreess='';
+                if(user_address.name!="")html_addreess+='<small class="fw-semi fs-8">'+user_address.name+'</small>';
+                if(user_address.lot!=null) html_addreess+='<iframe src="https://maps.google.com/maps?q='+user_address.lat+','+user_address.lot+'&hl='+carrot.lang+'&z=14&amp;output=embed" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>';
+                box_info.add_body('<l class="fw-semi fs-5 lang" key_lang="address">Address</l>',html_addreess);
             }
         }
 
@@ -672,12 +686,12 @@ class Carrot_user{
     }
 
     get_user_login(){
-        if(this.obj_login!=null){
+        if(carrot.user.obj_login!=null){
             var obj_user=new Object();
-            obj_user.id=this.obj_login.id;
-            obj_user.name=this.obj_login.name;
-            obj_user.avatar=this.obj_login.avatar;
-            obj_user.lang=this.obj_login.lang;
+            obj_user.id=carrot.user.obj_login.id;
+            obj_user.name=carrot.user.obj_login.name;
+            obj_user.avatar=carrot.user.obj_login.avatar;
+            obj_user.lang=carrot.user.obj_login.lang;
             return obj_user;
         }else{
             return null;
@@ -686,16 +700,15 @@ class Carrot_user{
 
     get_user_cur_info_comment(){
         var data_info={
-            name:this.obj_login.name,
-            id:this.obj_login.id,
-            avatar:this.obj_login.avatar,
-            lang:this.obj_login.lang
+            name:carrot.user.obj_login.name,
+            id:carrot.user.obj_login.id,
+            avatar:carrot.user.obj_login.avatar,
+            lang:carrot.user.obj_login.lang
         }
         return data_info;
     }
 
     download_vcard() {
-        var carrot=this.carrot;
         var filename=carrot.user.phone_book_info_cur.name+".vcf";
         var element = document.createElement('a');
         var text='';
