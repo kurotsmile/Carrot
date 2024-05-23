@@ -453,10 +453,10 @@ class Carrot_Rate{
     }
 
     getIdFileFromURL(url) {
-        let urlWithoutQuery = url.split('?')[0];
-        let segments = urlWithoutQuery.split('/');
-        let fileName = segments.pop();
-        fileName = decodeURIComponent(fileName);
-        return fileName.replace(".","");
+        const path = url.split('?')[0];
+        const fileNameWithExtension = path.substring(path.lastIndexOf('/') + 1);
+        const lastDotIndex = fileNameWithExtension.lastIndexOf('.');
+        const fileNameWithoutExtension = lastDotIndex === -1 ? fileNameWithExtension : fileNameWithExtension.substring(0, lastDotIndex);
+        return carrot.tool.id(fileNameWithoutExtension);
     }
 }

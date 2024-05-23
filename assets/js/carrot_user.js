@@ -1,5 +1,4 @@
 class Carrot_user{
-    carrot;
 
     objs=null;
     obj_login=null;
@@ -15,6 +14,7 @@ class Carrot_user{
     constructor(){
         var btn_list=carrot.menu.create("phone_book").set_label("Phone book").set_lang("phone_book").set_icon(this.icon).set_type("main");
         $(btn_list).click(function(){carrot.user.list();});
+        carrot.register_page("phone_book","carrot.user.show()","","carrot.user.show()");
     }
 
     show(){
