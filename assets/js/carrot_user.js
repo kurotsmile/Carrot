@@ -419,6 +419,7 @@ class Carrot_user{
         $(".btn-setting-lang-change").click(function(){
             var key_change=$(this).attr("key_change");
             carrot.langs.lang_setting=key_change;
+            carrot.loading("Get list data by ("+key_change+")");
             carrot.data.clear("user");
             setTimeout(()=>{
                 carrot.user.get_data_from_server(carrot.user.load_list_by_data);
