@@ -412,7 +412,7 @@ class Carrot_user{
 
     check_event(){
         carrot.tool.list_other_and_footer("user");
-
+        carrot.tool.box_app_tip('Contact store');
         $(".btn-setting-lang-change").click(function(){
             var key_change=$(this).attr("key_change");
             carrot.langs.lang_setting=key_change;
@@ -502,6 +502,7 @@ class Carrot_user{
             },()=>{
             carrot.server.get("user-"+lang,id,(data)=>{
                 carrot.data.add("user_info",data);
+                act_done(data);
             });
         });
     }
