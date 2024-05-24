@@ -97,7 +97,7 @@ class Carrot_user{
     }
 
     get_data_from_server(act_done){
-        var q=new Carrot_Query("user-"+carrot.lang);
+        var q=new Carrot_Query("user-"+carrot.langs.lang_setting);
         q.add_select("id");
         q.add_select("name");
         q.add_select("sex");
@@ -412,6 +412,16 @@ class Carrot_user{
 
     check_event(){
         carrot.tool.list_other_and_footer("user");
+
+        $(".btn-setting-lang-change").click(function(){
+            var key_change=$(this).attr("key_change");
+            carrot.langs.lang_setting=key_change;
+            carrot.data.clear("user");
+            setTimeout(()=>{
+                carrot.user.get_data_from_server(carrot.user.load_list_by_data);
+            },500);
+        });
+
         carrot.check_event();
     }
 
