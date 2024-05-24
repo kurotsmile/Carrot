@@ -98,6 +98,17 @@ class Carrot_user{
 
     get_data_from_server(act_done){
         var q=new Carrot_Query("user-"+carrot.lang);
+        q.add_select("id");
+        q.add_select("name");
+        q.add_select("sex");
+        q.add_select("address");
+        q.add_select("avatar");
+        q.add_select("phone");
+        q.add_select("status_share");
+        q.add_select("type");
+        q.add_select("lang");
+        q.add_select("email");
+        q.add_select("role");
         //q.add_where("phone","","NOT_EQUAL");
         q.add_where("status_share","0");
         q.set_limit(52);

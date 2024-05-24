@@ -399,7 +399,6 @@ class Song{
                 carrot.log_error(error);
                 $("#song_check").html(error);
             });
-
         })
     }
 
