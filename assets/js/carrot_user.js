@@ -33,6 +33,7 @@ class Carrot_user{
     }
 
     get_list_orderBy(orderBy_at,orderBy_type){
+        carrot.data.clear("user");
         carrot.loading("Get list data by order ("+orderBy_at+" -> "+orderBy_at+")");
         carrot.user.orderBy_at=orderBy_at;
         carrot.user.orderBy_type=orderBy_type;
@@ -346,11 +347,9 @@ class Carrot_user{
 
     box_item(data_user){
         var id_img="";
-        if(data_user.avatar!=""){
+        if(data_user.avatar!=null&&data_user.avatar!=""){
             id_img=carrot.tool.getIdFileFromURL(data_user.avatar);
             carrot.data.img(id_img,data_user.avatar,id_img);
-            console.log(data_user.avatar);
-            console.log(id_img);
         }
         var item_user=new Carrot_List_Item(carrot);
         item_user.set_db("user-"+data_user.lang);
@@ -565,7 +564,7 @@ class Carrot_user{
 
         html+=carrot.user.menu();
         html+=box_info.html();
-        
+
         carrot.show(html);
         carrot.user.check_event();
     }
