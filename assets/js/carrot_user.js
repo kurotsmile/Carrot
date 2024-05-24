@@ -2,7 +2,6 @@ class Carrot_user{
 
     objs=null;
     obj_login=null;
-    obj_phone_book=null;
 
     phone_book_info_cur=null;
     icon="fa-solid fa-address-book";
@@ -34,7 +33,7 @@ class Carrot_user{
 
     get_list_orderBy(orderBy_at,orderBy_type){
         carrot.data.clear("user");
-        carrot.loading("Get list data by order ("+orderBy_at+" -> "+orderBy_at+")");
+        carrot.loading("Get list data by order ("+orderBy_at+" -> "+orderBy_type+")");
         carrot.user.orderBy_at=orderBy_at;
         carrot.user.orderBy_type=orderBy_type;
         carrot.user.get_data(carrot.user.load_list_by_data);
@@ -98,7 +97,7 @@ class Carrot_user{
     }
 
     get_data_from_server(act_done){
-        var q=new Carrot_Query("user-"+carrot.langs.lang_setting);
+        var q=new Carrot_Query("user-"+carrot.lang);
         //q.add_where("phone","","NOT_EQUAL");
         q.add_where("status_share","0");
         q.set_limit(52);
@@ -251,16 +250,6 @@ class Carrot_user{
           });
     }
 
-    save_obj_phone_book(){
-        localStorage.setItem("obj_phone_book", JSON.stringify(this.obj_phone_book));
-    }
-
-    delete_obj_phone_book(){
-        localStorage.removeItem("obj_phone_book");
-        this.obj_phone_book=null;
-        this.carrot.delete_ver_cur("user");
-    }
-
     set_user_login(data_user){
         carrot.user.obj_login=data_user;
         if(carrot.user.obj_login.rates!=null) delete carrot.user.obj_login.rates;
@@ -353,7 +342,7 @@ class Carrot_user{
         }
         var item_user=new Carrot_List_Item(carrot);
         item_user.set_db("user-"+data_user.lang);
-        item_user.set_id(data_user.id);
+        item_user.set_id(data_user.id_doc);
         item_user.set_name(data_user.name);
         item_user.set_class("col-md-3 mb-3");
         item_user.set_class_icon("col-4 user-avatar "+id_img);
@@ -373,11 +362,11 @@ class Carrot_user{
             html+='</div>';
             html+='<div class="row">';
                 html+='<div class="col-12 ratfac">';
-                html+='<i class="bi text-warning fa-solid fa-heart fa-beat m-1"></i>';
-                html+='<i class="bi text-warning fa-solid fa-heart fa-beat m-1" style="--fa-animation-duration: 0.5s;"></i>';
-                html+='<i class="bi text-warning fa-solid fa-heart fa-beat m-1 fa-fade"></i>';
-                html+='<i class="bi text-danger fa-solid fa-heart fa-beat m-1 fa-fade" style="--fa-animation-duration: 0.5s;"></i>';
-                html+='<i class="bi fa-solid fa-heart fa-beat m-1" style="--fa-beat-scale: 1.3;"></i>';
+                html+='<i class="bi text-success fa-solid fa-heart fa-beat fs-9 mr-1"></i> ';
+                html+='<i class="bi text-success fa-solid fa-heart fa-beat fs-9 mr-1" style="--fa-animation-duration: 0.5s;"></i> ';
+                html+='<i class="bi text-success fa-solid fa-heart fa-beat fa-fade fs-9 mr-1"></i> ';
+                html+='<i class="bi text-danger fa-solid fa-heart fa-beat fa-fade fs-9 mr-1" style="--fa-animation-duration: 0.5s;"></i> ';
+                html+='<i class="bi fa-solid fa-heart fa-beat fs-9"></i>';
                 html+='</div>';
             html+='</div>';
         html+='</div>';
@@ -421,7 +410,7 @@ class Carrot_user{
 
     add(){
         var data_user_new=new Object();
-        data_user_new["id"]=this.carrot.create_id();
+        data_user_new["id"]=carrot.create_id();
         data_user_new["name"]="";
         data_user_new["avatar"]="";
         data_user_new["password"]="";
@@ -432,9 +421,9 @@ class Carrot_user{
         data_user_new["address"]="";
         data_user_new["role"]="";
         data_user_new["type"]="";
-        data_user_new["lang"]=this.carrot.lang;
-        this.frm_add_or_edit(data_user_new).set_title(this.carrot.l("register","Register User")).set_msg_done("Register User Success!").set_type("add").show();
-        this.carrot.check_event();
+        data_user_new["lang"]=carrot.lang;
+        carrot.user.frm_add_or_edit(data_user_new).set_title(carrot.l("register","Register User")).set_msg_done("Register User Success!").set_type("add").show();
+        carrot.check_event();
     }
     
     edit(data,carrot){
@@ -487,8 +476,12 @@ class Carrot_user{
 
     get_info(id,lang,act_done){
         carrot.loading("Get and show info user("+id+" - "+lang+")");
-        carrot.data.get("user_info",id,act_done,()=>{
-            carrot.server.get("user-"+lang,id,act_done);
+        carrot.data.get("user_info",id,(data)=>{
+            act_done(data);
+            },()=>{
+            carrot.server.get("user-"+lang,id,(data)=>{
+                carrot.data.add("user_info",data);
+            });
         });
     }
     
@@ -510,7 +503,8 @@ class Carrot_user{
         box_info.set_name(data_user.name);
         box_info.set_icon_image(carrot.url()+"/images/avatar_default.png");
         box_info.set_icon_id(id_img);
-        box_info.add_attrs("fa-solid fa-envelopes-bulk","Email",data_user.email);
+        box_info.set_db("user-"+data_user.lang);
+        box_info.set_obj_js("user");
         if(data_user.sex=="0")
             box_info.add_attrs("fa-solid fa-mars",'<l class="lang" key_lang="gender">Sex</l>','<l class="lang" key_lang="boy">Boy</l>');
         else
@@ -580,7 +574,7 @@ class Carrot_user{
 
     check_user_login(username,password){
         Swal.showLoading();
-        this.carrot.db.collection("user-"+this.carrot.lang).where("phone", "==", username).where("password", "==", password).get().then((querySnapshot) => {
+        carrot.db.collection("user-"+carrot.lang).where("phone", "==", username).where("password", "==", password).get().then((querySnapshot) => {
             if(querySnapshot.docs.length>0){
                 Swal.close();
                 querySnapshot.forEach((doc) => {
@@ -641,7 +635,7 @@ class Carrot_user{
         var filename=carrot.user.phone_book_info_cur.name+".vcf";
         var element = document.createElement('a');
         var text='';
-        var arr_name=this.phone_book_info_cur.name.split(' ');
+        var arr_name=carrot.user.phone_book_info_cur.name.split(' ');
         var Prefix="";
 
         html2canvas($("#imageid"), {
@@ -709,38 +703,31 @@ class Carrot_user{
 
     list_for_home(){
         var html='';
-        if(this.obj_phone_book!=null){
-            var list_user=this.carrot.obj_to_array(this.obj_phone_book);
-            list_user=list_user.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
-
+        if(carrot.user.objs!=null){
             html+='<h4 class="fs-6 fw-bolder my-3 mt-2 mb-4">';
-            html+='<i class="'+this.icon+' fs-6 me-2"></i> <l class="lang" key_lang="other_user">Other User</l>';
+            html+='<i class="'+carrot.user.icon+' fs-6 me-2"></i> <l class="lang" key_lang="other_user">Other User</l>';
             html+='<span role="button" onclick="carrot.user.list()" class="btn float-end btn-sm btn-light"><i class="fa-solid fa-square-caret-right"></i> <l class="lang" key_lang="view_all">View All</l></span>';
             html+='</h4>';
 
             html+='<div id="other_user" class="row m-0">';
-            for(var i=0;i<12;i++){
-                var user=list_user[i];
+            $(carrot.random(carrot.user.objs)).each(function(index,user){
+                if(index>=12) return false;
                 html+=carrot.user.box_item(user).html();
-            }
+            });
             html+='</div>';
         }
         return html;
     }
 
-    reload(carrot){
-        carrot.user.delete_obj_phone_book();
-        carrot.user.list();
-    }
-
     change_type_user(id_product_service){
         carrot.user.obj_login.type=id_product_service;
-        this.carrot.update_doc("user-"+carrot.user.obj_login.lang,carrot.user.obj_login.id,carrot.user.obj_login);
+        carrot.update_doc("user-"+carrot.user.obj_login.lang,carrot.user.obj_login.id_doc,carrot.user.obj_login);
     }
 
     delete_all_data(){
         carrot.data.clear("user");
-        carrot.user.obj_user=null;
+        carrot.data.clear("user_info");
+        carrot.user.objs=null;
         carrot.msg("Delete all data user success!","success");
     }
 }

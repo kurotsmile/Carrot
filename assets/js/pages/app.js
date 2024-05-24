@@ -96,8 +96,6 @@ class Appp{
                 autoplay: true,
                 autoplayTimeout: 3000,
                 autoplayHoverPause:true,
-                animateOut: 'slideOutDown',
-                animateIn: 'flipInX',
                 responsiveClass:true,
                 responsive:{
                     0:{

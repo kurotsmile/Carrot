@@ -12,7 +12,7 @@ class Home{
         if(carrot.song!=null) html+=carrot.song.list_for_home();
         if(carrot.coder!=null) html+=carrot.coder.list_for_home();
         if(carrot.ico!=null) html+=carrot.ico.list_for_home();
-        html+=carrot.user.list_for_home();
+        if(carrot.user!=null) html+=carrot.user.list_for_home();
         if(carrot.audio!=null) html+=carrot.audio.list_for_home();
         if(carrot.radio!=null) html+=carrot.radio.list_for_home();
         if(carrot.bible!=null) html+=carrot.bible.list_for_home();
@@ -23,7 +23,6 @@ class Home{
 
         carrot.show(html);
 
-        carrot.user.check_event();
 
         if(carrot.appp==null)
             carrot.load_js_page("app","Appp","carrot.appp.show_for_home()");
