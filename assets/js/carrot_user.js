@@ -411,7 +411,10 @@ class Carrot_user{
     }
 
     check_event(){
-        carrot.tool.list_other_and_footer("user");
+        if(carrot.user.phone_book_info_cur!=null){
+            carrot.tool.list_other_and_footer("user","sex",carrot.user.phone_book_info_cur.sex);
+        }
+        
         carrot.tool.box_app_tip('Contact store');
         $(".btn-setting-lang-change").click(function(){
             var key_change=$(this).attr("key_change");
@@ -510,7 +513,6 @@ class Carrot_user{
     info(data_user){
         carrot.hide_loading();
         carrot.change_title(data_user.name,"?p=phone_book&id="+data_user.id_doc+"&user_lang="+data_user.lang,"phone_book");
-        carrot.data.add("user_info",data_user);
         carrot.user.type_show="info";
         carrot.user.phone_book_info_cur=data_user;
        
@@ -537,6 +539,8 @@ class Carrot_user{
         if(data_user.role!=null) box_info.add_attrs("fa-solid fa-hurricane",'<l class="lang" key_lang="role">Role</l>',data_user.role);
         if(data_user.type!=null) box_info.add_attrs("fa-solid fa-hat-cowboy",'<l class="lang" key_lang="type">Type</l>',data_user.type);
         if(data_user.email!=null) box_info.add_attrs("fa-solid fa-paper-plane",'<l class="lang" key_lang="send_mail">Send Mail</l>','<a href="mailto:'+data_user.email+'" type="button">'+data_user.email+'</a>');
+        box_info.add_attrs("fa-solid fa-calendar-days",'<l class="lang" key_lang="date">Date Public</l>',data_user.date_create);
+        box_info.add_attrs("fa-solid fa-language",'<l class="lang" key_lang="country">Country</l>',data_user.lang);
         box_info.set_protocol_url("contactstore://show/"+data_user.id_doc+"/"+data_user.lang);
 
         if(carrot.user.obj_login!=null){
