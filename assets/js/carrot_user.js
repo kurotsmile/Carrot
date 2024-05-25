@@ -549,6 +549,7 @@ class Carrot_user{
                 box_info.add_btn("btn_edit_info","fa-solid fa-user-pen",'<l class="lang" key_lang="edit_info">Edit Info</l>',"carrot.user.show_edit_user_info_login()");
             }
         }
+        box_info.add_btn("btn_download","fa-solid fa-id-card-clip","Download Vcard (.vcf)","carrot.user.download_vcard()");
 
         if(data_user.address!=null){
             var user_address=data_user.address;
@@ -559,7 +560,6 @@ class Carrot_user{
                 box_info.add_body('<l class="fw-semi fs-5 lang" key_lang="address">Address</l>',html_addreess);
             }
         }
-
         
         var html_backup='';
         if(data_user.backup_contact!=null){
@@ -619,15 +619,16 @@ class Carrot_user{
         html+='</tbody>';
         html+='</table>';
 
-        html+='<button class="btn btn-sm btn-success m-2" onclick="swal.clickConfirm();"><i class="fa-solid fa-circle-xmark"></i> Close</button>';
-        html+='<button class="btn btn-sm btn-success m-2" onclick="carrot.user.show_info_by_id(\''+data.id_doc+'\',\''+data.lang+'\');swal.clickConfirm();"><i class="fa-solid fa-clipboard-user"></i> Visit</button>';
-
+        html+='<button class="btn btn-sm btn-success m-2" onclick="carrot.user.show_info_by_id(\''+data.id_doc+'\',\''+data.lang+'\');swal.clickConfirm();"><i class="fa-solid fa-clipboard-user"></i> '+carrot.l("visit","Visit")+'</button>';
+        html+='<button class="btn btn-sm m-2" onclick="swal.clickConfirm();"><i class="fa-solid fa-circle-xmark"></i> '+carrot.l("cancel","Cancel")+'</button>';
+        
         Swal.fire({
             title: data.name,
             html:html,
             showCancelButton: false,
             showConfirmButton: false 
         });
+        carrot.check_event();
     }
 
     show_user_info_login(){
@@ -705,18 +706,16 @@ class Carrot_user{
         var arr_name=carrot.user.phone_book_info_cur.name.split(' ');
         var Prefix="";
 
-        html2canvas($("#imageid"), {
-            logging: true, 
-            letterRendering: 1, 
-            allowTaint: false,
-            useCORS: true,
-            onrendered: function (canvas) {
+        var img_url=carrot.user.phone_book_info_cur.avatar;
+        if(img_url=="") img_url=carrot.url()+"/images/avatar_default.png";
+        carrot.file.get_base64data_file(img_url).then((data_img)=>{
+            carrot.tool.resizeImage(data_img, 300, 300).then((result) => {
                 if(carrot.user.phone_book_info_cur.sex=="0") Prefix="Mr"; else Prefix="Ms";
 
                 text+="BEGIN:VCARD\n";
                 text+="VERSION:3.0";
                 text+="FN;CHARSET=UTF-8:"+carrot.user.phone_book_info_cur.name+"\n";
-                text+="PHOTO;ENCODING=b;TYPE=JPEG:"+canvas.toDataURL("image/png")+"\n";
+                text+="PHOTO;ENCODING=b;TYPE=JPEG:"+result.replace('data:image/png;base64,','')+"\n";
         
                 if(arr_name.length>1){
                     var lastname = arr_name[0];
@@ -764,7 +763,7 @@ class Carrot_user{
                 element.click();
                 document.body.removeChild(element);
                 carrot.msg("Download Success!");
-            }
+            });
         });
     }  
 
