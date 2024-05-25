@@ -595,10 +595,17 @@ class Carrot_user{
     }
 
     info_mini_box(data){
+
+        var id_img="";
+        if(data.avatar!=null&&data.avatar!=""){
+            id_img=carrot.tool.getIdFileFromURL(data.avatar);
+            carrot.data.img(id_img,data.avatar,id_img);
+        }
+
         delete(data.password);
         delete(data.avatar);
         var html='';
-        html+='<img class="m-2" src="'+carrot.url()+'/images/avatar_default.png">';
+        html+='<img class="m-2 '+id_img+'" src="'+carrot.url()+'/images/avatar_default.png">';
         html+='<table class="table table-striped">';
         html+='<tbody>';
  

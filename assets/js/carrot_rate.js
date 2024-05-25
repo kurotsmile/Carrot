@@ -203,14 +203,21 @@ class Carrot_Rate{
     box_report_item(report){
         var html='';
         var date_report=new Date(report.date);
-        var url_avatar_user_field='images/avatar_default.png';
+        var url_avatar_user_field='';
         var name_user_field="Incognito";
+
+        var id_img="";
+        if(data.avatar!=null&&data.avatar!=""){
+            id_img=carrot.tool.getIdFileFromURL(data.avatar);
+            carrot.data.img(id_img,data.avatar,id_img);
+        }
+
         if(report.user!=null){
             if(report.user.avatar!=null) url_avatar_user_field=report.user.avatar;
             if(report.user.name!=null) name_user_field=report.user.name;
         }
         html+='<tr>';
-            html+='<td class="w-20 col-1"><img class="rounder" style="width:24px" src="'+url_avatar_user_field+'"/></td>';
+            html+='<td class="w-20 col-1"><img class="rounder '+id_img+'" style="width:24px" src="'+carrot.url()+'/images/avatar_default.png"/></td>';
             html+='<td class="w-20 col-2">'+name_user_field+'</td>';
             html+='<td class="w-20 col-5">'+report.comment+'</td>';
             html+='<td class="w-20 col-4">'+date_report.toLocaleDateString()+'</td>';
