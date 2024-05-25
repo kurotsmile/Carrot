@@ -590,6 +590,39 @@ class Carrot_user{
         carrot.user.check_event();
     }
 
+    show_info_mini(id,lang){
+        carrot.user.get_info(id,lang,carrot.user.info_mini_box);
+    }
+
+    info_mini_box(data){
+        delete(data.password);
+        delete(data.avatar);
+        var html='';
+        html+='<img class="m-2" src="'+carrot.url()+'/images/avatar_default.png">';
+        html+='<table class="table table-striped">';
+        html+='<tbody>';
+ 
+        $.each(data,function(key,val){
+            html+='<tr>';
+                html+='<th scope="row"><i class="fa-solid fa-lemon"></i> '+key+'</th>';
+                html+='<td>'+val+'</td>';
+            html+='</tr>';
+        });
+        
+        html+='</tbody>';
+        html+='</table>';
+
+        html+='<button class="btn btn-sm btn-success m-2" onclick="swal.clickConfirm();"><i class="fa-solid fa-circle-xmark"></i> Close</button>';
+        html+='<button class="btn btn-sm btn-success m-2" onclick="carrot.user.show_info_by_id(\''+data.id_doc+'\',\''+data.lang+'\');swal.clickConfirm();"><i class="fa-solid fa-clipboard-user"></i> Visit</button>';
+
+        Swal.fire({
+            title: data.name,
+            html:html,
+            showCancelButton: false,
+            showConfirmButton: false 
+        });
+    }
+
     show_user_info_login(){
         carrot.user.info(carrot.user.obj_login);
     }

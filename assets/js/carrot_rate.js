@@ -50,8 +50,7 @@ class Carrot_Rate{
         html += '</div>';
 
         if (data.rates != null) {
-            var list_rate = data.rates;
-            $(list_rate).each(function (index, comment) {
+            $(carrot.random(data.rates)).each(function (index, comment) {
                 comment["index"] = index;
                 html += carrot.rate.box_comment_item(comment);
             });
@@ -70,8 +69,7 @@ class Carrot_Rate{
             html+='<h4 class="fw-semi fs-5"><i class="fa-solid fa-ranking-star"></i> <l class="lang" key_lang="player_rankings">Player rankings</l></h4>';
             html+='<table class="table table-responsive table-striped table-hover">';
             html+='<tbody>';
-                var list_rank= data.rank;
-                $(list_rank).each(function (index,rank) {
+                $(carrot.random(data.rank)).each(function (index,rank) {
                     rank["index"] = index;
                     html+=carrot.rate.box_rank_item(rank);
                 });
@@ -137,9 +135,10 @@ class Carrot_Rate{
     box_comment_item(comment){
         var html='';
         var date_comment=new Date(comment.date);
+        var user=comment.user;
         html+='<div class="row m-0 reviewrow p-3 px-0 border-bottom">';
 
-            html+='<div class="col-md-1 align-items-center col-1 rcolm">';
+            html+='<div class="col-md-1 align-items-center col-1 rcolm" role="button" onclick="carrot.user.show_info_mini(\''+user.id+'\',\''+user.lang+'\')">';
                 var url_avatar_user_field='images/avatar_default.png';
                 if(comment.user!=null){
                     if(comment.user.avatar!=null) url_avatar_user_field=comment.user.avatar;
@@ -183,16 +182,19 @@ class Carrot_Rate{
         var date_rank=new Date(rank.date);
         var url_avatar_user_field='images/avatar_default.png';
         var name_user_field="Incognito";
+        var act_click_user='';
+
         if(rank.user!=null){
             if(rank.user.avatar!="") url_avatar_user_field=rank.user.avatar;
             name_user_field=rank.user.name;
+            act_click_user='onclick="carrot.user.show_info_mini(\''+rank.user.id+'\',\''+rank.user.lang+'\')"';
         }
         
         html+='<tr>';
-            html+='<td class="w-20 col-1"><img class="rounder" style="width:24px" src="'+url_avatar_user_field+'"/></td>';
+            html+='<td class="w-20 col-1" role="button" '+act_click_user+'><img class="rounder" style="width:24px" src="'+url_avatar_user_field+'"/></td>';
             html+='<td class="w-20 col-2">'+name_user_field+'</td>';
-            html+='<td class="w-20 col-4">'+rank.scores+'</td>';
-            html+='<td class="w-20 col-1">'+rank.type+'</td>';
+            html+='<td class="w-20 col-4"><i class="fa-solid fa-carrot"></i> '+rank.scores+'</td>';
+            html+='<td class="w-20 col-1"><i class="fa-solid fa-chess-knight"></i> '+rank.type+'</td>';
             html+='<td class="w-20 col-4">'+date_rank.toLocaleDateString()+'</td>';
         html+='</tr>';
         return html;
