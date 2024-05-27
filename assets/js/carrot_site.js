@@ -318,8 +318,8 @@ class Carrot_Site{
                 carrot.check_show_by_id_page();
             }
         },()=>{
-            alert("Error");
-            carrot.act_next_server_when_fail();
+            //alert("Error");
+            //carrot.act_next_server_when_fail();
         });
     }
 

@@ -20,7 +20,16 @@ class Carrot_user{
     }
 
     show(){
-        carrot.user.list();    
+        var id=carrot.get_param_url("id");
+        if(id!=undefined){
+            var lang=carrot.get_param_url("user_lang");
+            setTimeout(()=>{
+            carrot.user.get_info(id,lang,carrot.user.info);
+            },500);
+        }
+        else{
+            carrot.user.list();
+        }
     }
 
     get_list_orderBy(orderBy_at,orderBy_type){
@@ -527,11 +536,10 @@ class Carrot_user{
         else
             box_info.add_attrs("fa-solid fa-venus",'<l class="lang" key_lang="gender">Sex</l>','<l class="girl" key_lang="girl">Boy</l>');
 
-        box_info.add_attrs("fa-solid fa-language",'<l class="lang" key_lang="country">Country</l>',data_user.lang);
-        if(data_user.phone!=null) box_info.add_attrs("fa-solid fa-user",'<l class="lang" key_lang="phone">Phone</l>',data_user.phone);
+        if(data_user.phone!=null&&data_user.phone!="") box_info.add_attrs("fa-solid fa-user",'<l class="lang" key_lang="phone">Phone</l>',data_user.phone);
         if(data_user.role!=null) box_info.add_attrs("fa-solid fa-hurricane",'<l class="lang" key_lang="role">Role</l>',data_user.role);
         if(data_user.type!=null) box_info.add_attrs("fa-solid fa-hat-cowboy",'<l class="lang" key_lang="type">Type</l>',data_user.type);
-        if(data_user.email!=null) box_info.add_attrs("fa-solid fa-paper-plane",'<l class="lang" key_lang="send_mail">Send Mail</l>','<a href="mailto:'+data_user.email+'" type="button">'+data_user.email+'</a>');
+        if(data_user.email!=null&&data_user.email!="") box_info.add_attrs("fa-solid fa-paper-plane",'<l class="lang" key_lang="send_mail">Send Mail</l>','<a href="mailto:'+data_user.email+'" type="button">'+data_user.email+'</a>');
         box_info.add_attrs("fa-solid fa-calendar-days",'<l class="lang" key_lang="date">Date Public</l>',data_user.date_create);
         box_info.add_attrs("fa-solid fa-language",'<l class="lang" key_lang="country">Country</l>',data_user.lang);
         box_info.set_protocol_url("contactstore://show/"+data_user.id_doc+"/"+data_user.lang);
@@ -545,7 +553,7 @@ class Carrot_user{
 
         if(data_user.address!=null){
             var user_address=data_user.address;
-            if(user_address.lat!=null){
+            if(user_address.lat!=null&&user_address.lat!=""){
                 var html_addreess='';
                 if(user_address.name!="")html_addreess+='<small class="fw-semi fs-8">'+user_address.name+'</small>';
                 if(user_address.lot!=null) html_addreess+='<iframe src="https://maps.google.com/maps?q='+user_address.lat+','+user_address.lot+'&hl='+carrot.lang+'&z=14&amp;output=embed" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>';
