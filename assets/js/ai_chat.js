@@ -17,7 +17,6 @@ class AI_Chat{
 
     constructor(carrot){
         this.carrot=carrot;
-        carrot.register_page("chat","carrot.ai.chat.list()","carrot.ai.chat.edit","carrot.ai.chat.show","carrot.ai.chat.reload");
         var btn_list_chat=carrot.menu.create_menu("list_chat").set_label("List Chat").set_icon(this.icon).set_type("main").set_lang("chat");
         $(btn_list_chat).click(function(){carrot.ai.chat.show_all_chat(carrot.lang);});
         carrot.menu.create_menu("add_chat").set_label("Add Chat").set_icon(this.icon).set_act("carrot.ai.chat.show_add()").set_type("add");
@@ -329,7 +328,6 @@ class AI_Chat{
         Swal.showLoading();
         if(lang_show!=''){
             this.carrot.langs.lang_setting=lang_show;
-            carrot.register_page("chat-"+lang_show,"carrot.ai.chat.list()","carrot.ai.chat.edit","carrot.ai.chat.show","carrot.ai.chat.reload");
         }
         this.carrot.db.collection("chat-"+this.carrot.langs.lang_setting).where(this.where_a,this.where_b,this.where_c).orderBy(this.orderBy_at,this.orderBy_type).limit(100).get().then((querySnapshot) => {
             this.obj_chats=new Object();

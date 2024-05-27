@@ -125,7 +125,7 @@ class Carrot_Server{
                 var obj_data=carrot.server.simplifyDocument(data.fields);
                 obj_data["id_doc"]=data.name.split("/").pop();
                 act_done(obj_data);
-            }).catch((error) => {if(act_fail!=null) act_fail();});
+            }).catch((error) => {console.log(error); if(act_fail!=null) act_fail();});
     }
 
     add_doc(collection,document_data,act_done=null,act_fail=null){

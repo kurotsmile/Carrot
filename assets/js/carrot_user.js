@@ -13,22 +13,14 @@ class Carrot_user{
     constructor(){
         var btn_list=carrot.menu.create("phone_book").set_label("Phone book").set_lang("phone_book").set_icon(this.icon).set_type("main");
         $(btn_list).click(function(){carrot.user.list();});
-        carrot.register_page("phone_book","carrot.user.show()","","carrot.user.show()");
-
+    
         if(localStorage.getItem("obj_login")!=null){
            this.obj_login=JSON.parse(localStorage.getItem("obj_login"));
         }
     }
 
     show(){
-        var id=carrot.get_param_url("id");
-        if(id!=undefined){
-            var user_lang=carrot.get_param_url("user_lang");
-            carrot.user.show_info_by_id(id,user_lang);
-        }
-        else{
-            carrot.user.list();
-        }      
+        carrot.user.list();    
     }
 
     get_list_orderBy(orderBy_at,orderBy_type){
@@ -501,7 +493,7 @@ class Carrot_user{
 
     get_info(id,lang,act_done){
         carrot.loading("Get and show info user("+id+" - "+lang+")");
-        carrot.data.get("user_info",id,(data)=>{
+        carrot.data.get_doc("user_info",id,(data)=>{
             act_done(data);
             },()=>{
             carrot.server.get("user-"+lang,id,(data)=>{

@@ -7,7 +7,6 @@ class Carrot_File{
 
     constructor(carrot){
         this.carrot=carrot;
-        carrot.register_page(this.id_page,"carrot.file.list()","carrot.file.edit","carrot.file.show","carrot.file.reload");
         var btn_list=carrot.menu.create("file").set_label("File").set_icon(this.icon).set_type("dev");
         $(btn_list).click(function(){
             carrot.file.list();

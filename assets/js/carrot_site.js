@@ -22,7 +22,6 @@ class Carrot_Site{
     name_document_cur="";
     id_page;
     body;
-    obj_page=new Object();
     load_bar_count_data=0;
 
     /*Firebase*/
@@ -182,7 +181,6 @@ class Carrot_Site{
             $('head').append('<script type="text/javascript" src="assets/js/carrot_player_media.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_file.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_avatar.js?ver='+this.get_ver_cur("js")+'"></script>');
-            $('head').append('<script type="text/javascript" src="assets/js/ai_key_block.js?ver='+this.get_ver_cur("js")+'sd"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_about_us.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_privacy_policy.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="https://www.paypal.com/sdk/js?client-id='+this.paypal_CLIENT_ID+'"></script>');
@@ -206,6 +204,7 @@ class Carrot_Site{
             $(btn_list_link_store).click(function(){carrot.load_js_page("app","app","carrot.appp.show_other_store()");});
     
             this.user=new Carrot_user();
+            this.phone_book=this.user;
 
             var btn_list_music=this.menu.create("btn_list_music").set_label("Music").set_lang("music").set_icon("fa-solid fa-music");
             $(btn_list_music).click(function(){carrot.load_js_page("song","song","carrot.song.list()");});
@@ -254,8 +253,8 @@ class Carrot_Site{
 
             
             this.avatar=new Carrot_Avatar(this);
-            this.privacy_policy=new Carrot_Privacy_Policy(this);
-            this.about_us=new Carrot_About_Us(this);
+            this.privacy_policy=new Carrot_Privacy_Policy();
+            this.about_us=new Carrot_About_Us();
             this.player_media=new Carrot_Player_Media(this);
             this.file=new Carrot_File(this);
             this.pay=new Carrot_Pay(this);
@@ -319,6 +318,7 @@ class Carrot_Site{
                 carrot.check_show_by_id_page();
             }
         },()=>{
+            alert("Error");
             carrot.act_next_server_when_fail();
         });
     }
@@ -445,15 +445,6 @@ class Carrot_Site{
         return arr.map(value => ({ value, sort: Math.random() })).sort((a, b) => a.sort - b.sort).map(({ value }) => value);
     }
 
-    register_page(id_page,event_show_page,event_edit,event_info='',event_reload=''){
-        var obj_data=new Object();
-        obj_data["edit"]=event_edit;
-        obj_data["show"]= event_show_page;
-        obj_data["info"]= event_info;
-        obj_data["reload"]= event_reload;
-        this.obj_page[id_page]=obj_data;
-    }
-
     show_edit_version_data_version(){
         var frm=new Carrot_Form("frm_ver",this);
         frm.set_title("Change Version Data");
@@ -507,10 +498,7 @@ class Carrot_Site{
     act_del_obj(db_collection,db_doc_id){
         this.db.collection(db_collection).doc(db_doc_id).delete().then(() => {
             carrot.msg("Document "+db_doc_id+" successfully deleted!");
-            if($('#'+db_doc_id).length)
-                $('#'+db_doc_id).remove();
-            else
-                this.call_func_by_id_page(db_collection,"reload");
+            if($('#'+db_doc_id).length) $('#'+db_doc_id).remove();
         }).catch((error) => {
             this.log_error(error);
         });
@@ -702,16 +690,7 @@ class Carrot_Site{
             image: null
         });
         $("#qr_cdoe").attr("id","qr_cdoe_done_success");
-
         $('[data-toggle="tooltip"]').tooltip();
-    }
-
-    act_edit_by_page_register(data,carrot){
-        eval(carrot.obj_page[carrot.id_page].edit)(data,carrot);
-    }
-
-    call_func_by_id_page(id_page,func){
-        if(carrot.obj_page[id_page]!=null) eval(carrot.obj_page[id_page][func])(carrot);
     }
 
     act_search(s_key_search){
@@ -945,16 +924,9 @@ class Carrot_Site{
         this.id_page = this.get_param_url("p");
         if(this.id_page!=undefined){
             this.log("check_show_by_id_page : "+this.id_page,"info");
-            var obj_page_show=this.obj_page[this.id_page];
+            var obj_page_show=carrot[this.id_page];
             if(obj_page_show!=null){
-                var id_obj=this.get_param_url("id");
-                if(id_obj!=undefined){
-                    id_obj=decodeURI(id_obj);
-                    eval(obj_page_show.info)(id_obj,carrot);
-                }
-                else{
-                    eval(obj_page_show.show);
-                }
+                eval("carrot."+this.id_page+".show()");
                 $("#load_bar").css("width","100%");
             }else{
                 this.load_js_page(this.id_page);

@@ -7,7 +7,6 @@ class Carrot_Avatar{
 
     constructor(carrot){
         this.carrot=carrot;
-        carrot.register_page("avatar","carrot.avatar.list()","carrot.avatar.edit");
         $(this.carrot.menu.create("add_avatar").set_label("Add Avatar").set_icon(this.icon).set_type("add")).click(function(){carrot.avatar.add()});
         $(this.carrot.menu.create("list_avatar").set_label("List Avatar").set_icon(this.icon).set_type("dev")).click(function(){carrot.avatar.list();});
 

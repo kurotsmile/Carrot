@@ -138,14 +138,12 @@ class Carrot_Pay{
 
     constructor(carrot){
         this.carrot=carrot;
-        carrot.register_page("all_product","carrot.pay.list_product()");
-        carrot.register_page("order","carrot.pay.list_order()");
         var btn_list_order=carrot.menu.create_menu("list_order").set_label("List Oreder").set_icon(this.icon).set_type("dev");
         $(btn_list_order).click(function(){carrot.pay.list_order();});
     }
 
     list_order(){
-        this.carrot.get_list_doc("order",this.act_done_list_order);
+        carrot.get_list_doc("order",carrot.pay.act_done_list_order);
     }
 
     act_done_list_order(data,carrot){

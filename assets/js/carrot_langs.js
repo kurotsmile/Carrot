@@ -21,10 +21,7 @@ class Carrot_Langs{
         }
         if(localStorage.getItem("list_lang") != null) this.list_lang=JSON.parse(localStorage.getItem("list_lang"));
         if(localStorage.getItem("lang_web")!=null) this.lang_web=JSON.parse(localStorage.getItem("lang_web"));
-        if(localStorage.getItem("obj_lang_web")!=null) this.obj_lang_web=JSON.parse(localStorage.getItem("obj_lang_web"))
-
-        carrot.register_page("lang","carrot.langs.list()","carrot.langs.edit_lang","carrot.langs.reload");
-        carrot.register_page("lang_setting","carrot.langs.show_setting_lang_app()","carrot.langs.edit_lang");
+        if(localStorage.getItem("obj_lang_web")!=null) this.obj_lang_web=JSON.parse(localStorage.getItem("obj_lang_web"));
 
         var btn_add=carrot.menu.create("add_lang").set_label("Add Lang").set_icon(this.icon).set_type("add");
         var btn_list=carrot.menu.create("list_lang").set_label("List Lang").set_icon(this.icon).set_type("dev");
