@@ -32,7 +32,7 @@ class Carrot_Avatar{
 
     frm_add_or_edit(data){
         var frm=new Carrot_Form("frm_avatar",this.carrot);
-        frm.set_icon(this.icon);
+        frm.set_icon("fa-regular fa-image-portrait");
         frm.set_db("user-avatar","id");
         frm.create_field("id").set_label("ID").set_type("id").set_val(data.id);
         frm.create_field("type").set_label("Type").add_option("boy","Boy").add_option("girl","Girl").set_val(data.type).set_type("select");

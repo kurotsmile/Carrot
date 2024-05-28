@@ -5,12 +5,50 @@ class User_Avatar{
         carrot.avatar.get_data(carrot.avatar.load_list_by_data);
     }
 
+    menu(){
+        var html='';
+        html+='<div class="row mb-2">';
+            html+='<div class="col-12">';
+                html+='<div class="btn-group btn-sm" role="group" aria-label="First group">';
+                    html+='<button onclick="carrot.avatar.add();" class="btn btn-sm dev btn-success"><i class="fa-solid fa-square-plus"></i> Add Icon</button>';
+                    html+=carrot.tool.btn_export("user-avatar");
+                    html+='<button onclick="carrot.avatar.delete_all_data();return false;" class="btn btn-danger dev btn-sm"><i class="fa-solid fa-dumpster-fire"></i> Delete Cache</button>';
+                html+='</div>';
+            html+='</div>';
+        html+='</div>';
+        return html;
+    }
+
     get_data(act_done){
+        carrot.loading("Get list avatar from server");
         var q=new Carrot_Query("user-avatar");
         q.get_data((data)=>{
             carrot.avatar.objs=data;
             act_done(data);
         });
+    }
+
+    add(){
+        var avatar_data={};
+        avatar_data["id"]=carrot.create_id();
+        avatar_data["name"]="";
+        avatar_data["icon"]="";
+        avatar_data["type"]="boy";
+        carrot.avatar.frm_add_or_edit(avatar_data).set_title("Add Avatar").show();
+    }
+
+    edit(data,carrot){
+        carrot.avatar.frm_add_or_edit(data).set_title("Edit Avatar").show();
+    }
+
+    frm_add_or_edit(data){
+        var frm=new Carrot_Form("frm_avatar",carrot);
+        frm.set_icon(this.icon);
+        frm.set_db("user-avatar","id");
+        frm.create_field("id").set_label("ID").set_type("id").set_val(data.id);
+        frm.create_field("type").set_label("Type").add_option("boy","Boy").add_option("girl","Girl").set_val(data.type).set_type("select");
+        frm.create_field("icon").set_label("Icon").set_type("file").set_type_file("image/*").set_val(data.icon);
+        return frm;
     }
 
     box_item(data){
@@ -28,7 +66,10 @@ class User_Avatar{
     }
 
     load_list_by_data(data){
-        var html='<div class="row">';
+        carrot.hide_loading();
+        carrot.change_title("List Avatar","?page=avatar","avatar");
+        var html=carrot.avatar.menu();
+        html+='<div class="row">';
         $(data).each(function(index,avatar){
             avatar["index"]=index;
             html+=carrot.avatar.box_item(avatar).html();
@@ -36,6 +77,11 @@ class User_Avatar{
         html+='</div>';
         carrot.show(html);
         carrot.check_event();
+    }
+
+    delete_all_data(){
+        carrot.avatar.objs=null;
+        carrot.msg("Delete all data list avatar");
     }
 }
 carrot.avatar=new User_Avatar();

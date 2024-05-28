@@ -4,6 +4,7 @@ class Code{
     icon="fa-solid fa-code";
     info_code_cur=null;
     type="all";
+    type_show="list";
 
     show(){
         var id=carrot.get_param_url("id");
@@ -28,6 +29,7 @@ class Code{
         html+='<div class="col-12">';
             html+='<div class="btn-group mr-2 btn-sm" role="group" aria-label="First group">';
                 html+='<button onclick="carrot.coder.add();" class="btn btn-sm btn-success"><i class="fa-solid fa-square-plus"></i> Add Code</button>';
+                if(carrot.coder.type_show!='list') html+='<button onclick="carrot.coder.list();" class="btn btn-sm btn-success"><i class="fa-solid fa-square-caret-left"></i> <l class="lang" key_lang="back">Back</l></button>';
                 html+=carrot.tool.btn_export("code");
                 html+='<button onclick="carrot.coder.delete_all_data();return false;" class="btn btn-danger dev btn-sm"><i class="fa-solid fa-dumpster-fire"></i> Delete All data</button>';
                 html+='<button class="btn btn-secondary dropdown-toggle btn-sm" type="button" id="btn_list_type_code" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-rectangle-list"></i> Select source code type ('+carrot.coder.type+')</button>';
@@ -79,6 +81,7 @@ class Code{
     }
 
     load_list_by_data(codes){
+        carrot.coder.type_show="list";
         var html='';
         html+=carrot.coder.menu();
         html+='<div class="row" id="all_code"></div>';
@@ -203,6 +206,7 @@ class Code{
     }
 
     info(data){
+        carrot.coder.type_show="info";
         carrot.coder.info_code_cur=data;
         carrot.change_title(data.title,"?page=code&id="+data.id_doc,"coder");
         carrot.hide_loading();

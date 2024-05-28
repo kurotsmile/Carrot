@@ -584,7 +584,7 @@ class Appp{
                     html+=html_store_link+'<br/>';
                 }
 
-                html+='<button class="btn btn-success mt-2" onclick="carrot.appp.show_app_by_id(\''+id+'\')"><i class="fa-solid fa-square-up-right"></i> <l class="lang" key_lang="visit">visit</l></button>';
+                html+='<button class="btn btn-success mt-2" onclick="carrot.appp.show_app_by_id(\''+id+'\')"><i class="fa-solid fa-square-up-right"></i> '+carrot.l("visit","Visit")+'</button>';
             html+='</div>';
             html+='</div>';
             $("#app_tip").html(html);
