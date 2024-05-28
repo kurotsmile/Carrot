@@ -241,7 +241,9 @@ class Carrot_Site{
             var btn_ebook=this.menu.create("btn_ebook").set_label("Ebook").set_lang("ebook").set_type("main").set_icon("fa-solid fa-book");
             $(btn_ebook).click(function(){carrot.load_js_page("ebook","ebook","carrot.ebook.list()");});
 
-            $(this.menu.create("list_avatar").set_label("List Avatar").set_icon("fa-regular fa-image-portrait").set_type("dev")).click(function(){carrot.avatar.show();});
+            $(this.menu.create("list_avatar").set_label("List Avatar").set_icon("fa-regular fa-image-portrait").set_type("dev")).click(function(){
+                carrot.js("avatar","avatar","carrot.avatar.show()");
+            });
 
             var btn_list_share=this.menu.create("btn_list_share").set_label("List Share").set_type("dev").set_lang("share").set_icon("fa-solid fa-share-nodes");
             $(btn_list_share).click(function(){carrot.load_js_page("share","share","carrot.share.list()");});
