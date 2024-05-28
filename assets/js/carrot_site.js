@@ -180,7 +180,6 @@ class Carrot_Site{
             $('head').append('<script type="text/javascript" src="assets/js/carrot_pay.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_player_media.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_file.js?ver='+this.get_ver_cur("js")+'"></script>');
-            $('head').append('<script type="text/javascript" src="assets/js/carrot_avatar.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_about_us.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="assets/js/carrot_privacy_policy.js?ver='+this.get_ver_cur("js")+'"></script>');
             $('head').append('<script type="text/javascript" src="https://www.paypal.com/sdk/js?client-id='+this.paypal_CLIENT_ID+'"></script>');
@@ -242,6 +241,8 @@ class Carrot_Site{
             var btn_ebook=this.menu.create("btn_ebook").set_label("Ebook").set_lang("ebook").set_type("main").set_icon("fa-solid fa-book");
             $(btn_ebook).click(function(){carrot.load_js_page("ebook","ebook","carrot.ebook.list()");});
 
+            $(this.menu.create("list_avatar").set_label("List Avatar").set_icon("fa-regular fa-image-portrait").set_type("dev")).click(function(){carrot.avatar.show();});
+
             var btn_list_share=this.menu.create("btn_list_share").set_label("List Share").set_type("dev").set_lang("share").set_icon("fa-solid fa-share-nodes");
             $(btn_list_share).click(function(){carrot.load_js_page("share","share","carrot.share.list()");});
             
@@ -251,8 +252,6 @@ class Carrot_Site{
             var btn_list_floor=this.menu.create("btn_list_floor").set_label("List Floor").set_type("dev").set_icon("fa-solid fa-seedling");
             $(btn_list_floor).click(function(){carrot.load_js_page("floor","floor","carrot.floor.show()");});
 
-            
-            this.avatar=new Carrot_Avatar(this);
             this.privacy_policy=new Carrot_Privacy_Policy();
             this.about_us=new Carrot_About_Us();
             this.player_media=new Carrot_Player_Media(this);

@@ -20,7 +20,9 @@ class FootBall{
     list(){
         carrot.football.index_player_position=-1;
         carrot.loading("Get and load all player");
-        carrot.football.get_data(carrot.football.load_list_by_data);
+        setTimeout(()=>{
+            carrot.football.get_data(carrot.football.load_list_by_data);
+        },500);
     }
 
     get_list_orderBy(orderBy_at,orderBy_type){

@@ -57,6 +57,7 @@ class Carrot_Ico{
     }
 
     load_list_icon(icons){
+        carrot.ico.type_show="list";
         carrot.hide_loading();
         var  html=carrot.ico.menu();
         html+='<div id="all_icon" class="row m-0"></div>';
@@ -102,6 +103,7 @@ class Carrot_Ico{
     }
 
     info(data){
+        carrot.ico.type_show="info";
         carrot.ico.obj_icon_info_cur=data;
         carrot.change_title_page(data.id_doc,"?page=ico&id="+data.id_doc,"ico");
         carrot.data.load_image(data.id_doc,data.icon,"icon_info_ico");
@@ -227,27 +229,31 @@ class Carrot_Ico{
     menu(){
         var html='';
         html+='<div class="row mb-2">';
-        html+='<div class="col-12">';
-            html+='<div class="btn-group mr-2 btn-sm" role="group" aria-label="First group">';
-                html+='<button onclick="carrot.ico.add();" class="btn btn-sm dev btn-success"><i class="fa-solid fa-square-plus"></i> Add Icon</button>';
-                html+='<button onclick="carrot.ico.add_category();" class="btn dev btn-sm btn-success"><i class="fa-solid fa-square-plus"></i> Add Category</button>';
-                html+=carrot.tool.btn_export("icon");
-                html+='<button onclick="carrot.ico.delete_all_data();return false;" class="btn btn-danger dev btn-sm"><i class="fa-solid fa-dumpster-fire"></i> Delete All data</button>';
-                html+='<div class="btn-group" role="group">';
+            html+='<div class="col-8">';
+                html+='<div class="btn-group btn-sm" role="group" aria-label="Mider group">';
+                    if(carrot.ico.type_show!='list') html+='<button onclick="carrot.ico.list();" class="btn btn-sm btn-success"><i class="fa-solid fa-square-caret-left"></i> <l class="lang" key_lang="back">Back</l></button>';
                     html+='<button class="btn btn-secondary dropdown-toggle btn-sm" type="button" id="btn_list_icon_category" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-rectangle-list"></i> Category ('+carrot.ico.cur_show_icon_category+')</button>';
                     html+='<div class="dropdown-menu" aria-labelledby="btn_list_ebook_category" id="list_icon_category"></div>';
                 html+='</div>';
+
+                html+='<div class="btn-group btn-sm" role="group" aria-label="First group">';
+                    html+='<button onclick="carrot.ico.add();" class="btn btn-sm dev btn-success"><i class="fa-solid fa-square-plus"></i> Add Icon</button>';
+                    html+='<button onclick="carrot.ico.add_category();" class="btn dev btn-sm btn-success"><i class="fa-solid fa-square-plus"></i> Add Category</button>';
+                    html+=carrot.tool.btn_export("icon");
+                    html+='<button onclick="carrot.ico.delete_all_data();return false;" class="btn btn-danger dev btn-sm"><i class="fa-solid fa-dumpster-fire"></i> Delete All data</button>';
+                html+='</div>';
+
             html+='</div>';
 
-            html+='<div class="btn-group mr-2 btn-sm float-end" role="group" aria-label="Last group">';
-                var css_active="";
-                if(this.type_show=="list_icon") css_active="active"; else css_active="";
-                html+='<button onclick="carrot.ico.show_list_icon();" class="btn btn-sm btn-success '+css_active+'"><i class="fa-regular fa-rectangle-list"></i> List Icon</button>';
-                if(this.type_show=="list_category") css_active="active"; else css_active="";
-                html+='<button onclick="carrot.ico.show_list_category();" class="btn btn-sm btn-success '+css_active+'"><i class="fa-solid fa-rectangle-list"></i> List Category</button>';
+            html+='<div class="col-4">';
+                html+='<div class="btn-group btn-sm float-end" role="group" aria-label="Last group">';
+                    var css_active="";
+                    if(this.type_show=="list_icon") css_active="active"; else css_active="";
+                    html+='<button onclick="carrot.ico.show_list_icon();" class="btn btn-sm btn-success '+css_active+'"><i class="fa-regular fa-rectangle-list"></i> List Icon</button>';
+                    if(this.type_show=="list_category") css_active="active"; else css_active="";
+                    html+='<button onclick="carrot.ico.show_list_category();" class="btn btn-sm btn-success '+css_active+'"><i class="fa-solid fa-rectangle-list"></i> List Category</button>';
+                html+='</div>';
             html+='</div>';
-
-        html+='</div>';
         html+='</div>';
         return html;
     }

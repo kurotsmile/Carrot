@@ -603,7 +603,5 @@ class Appp{
         carrot.msg("Delete all data app success!","success");
     }
 }
-
-var appp=new Appp();
-carrot.appp=appp;
+carrot.appp=new Appp();
 if(carrot.call_show_on_load_pagejs) carrot.appp.show();
