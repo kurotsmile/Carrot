@@ -52,6 +52,8 @@ class User_Avatar{
     }
 
     box_item(data){
+        var id_img=carrot.tool.getIdFileFromURL(data.icon);
+        carrot.data.img(id_img,data.icon,id_img);
         var box=new Carrot_List_Item(carrot);
         box.set_id(data.id_doc);
         box.set_index(data.index);
@@ -61,7 +63,7 @@ class User_Avatar{
         box.set_tip(data.type);
         box.set_title(data.id_doc);
         box.set_class("col-md-2 mb-3");
-        box.set_class_icon("col-md-12 mb-3 col-12");
+        box.set_class_icon("col-md-12 mb-3 col-12 "+id_img);
         return box;
     }
 
