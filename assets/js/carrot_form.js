@@ -234,12 +234,11 @@ class Carrot_Field{
         }
         else if(this.type=='icon'){
             carrot.field_icon=this.name;
-            var url_icon='images/64.png';
+            var url_icon=carrot.url()+'/images/64.png';
             html+='<div class="input-group mb-3" id="field_icon_'+this.name+'_preview">';
                 html+='<img id="'+this.name+'" type="icon" onclick="carrot.js(\'ico\',\'ico\',\'carrot.ico.msg_list_select()\')" data-emp-id="'+this.name+'" data-category-key="all" value="'+this.value+'" class="btn btn-sm rounded btn-info cr_field m-1" style="width:64px;" role="button" src="'+url_icon+'"/>';
                 html+='<span id="'+this.name+'_val">'+this.value+'</span>';
             html+='</div>';
-            html+='<div class="input-group mb-3" id="field_icon_'+this.name+'"></div>';
         }
         else if(this.type=='textarea'){
             html+='<textarea class="form-control m-0 cr_field" id="'+this.name+'" placeholder="'+this.placeholder+'" rows="3">'+this.value+'</textarea>';
@@ -332,109 +331,10 @@ class Carrot_Field{
 
     check_event(){
         if(this.type=="icon"){
-            carrot.icon_field=this;
-            carrot.icon_field.emp_id=this.name;
-            carrot.icon_field.orderBy_at='date_create';
-            carrot.icon_field.orderBy_type='ASCENDING';
-            carrot.data.list("icon_category").then((cats)=>{
-                var html='';
-                $(cats).each(function(index,cat){
-                    html+='<div onclick="carrot.icon_field.show_list_icon_by_cat(\''+cat.key+'\');return false;" data-emp-id="'+carrot.icon_field.name+'" data-category-key="'+cat.key+'" class="btn btn-sm btn-secondary rounded text-white m-1"><i class="'+cat.icon+'"></i> '+cat.key+'</div>';
-                });
-                html+='<div onclick="carrot.icon_field.msg_list_select_random();return false;" data-emp-id="random" data-category-key="random_icon" class="btn btn-sm btn-light rounded m-1"><i class="fa-solid fa-shuffle"></i> Random</div>';
-                $("#field_icon_"+this.name).html(html);
-                carrot.icon_field.show_icon_preview();
-            });
+            if(this.value!="") carrot.js("ico","ico","carrot.ico.load_msg_field_preview()");
         }
     }
 
-    msg_list_select_random(){
-        if(carrot.icon_field.icons!=null){
-            var randomIndex = Math.floor(Math.random() * carrot.icon_field.icons.length);
-            $("#"+carrot.icon_field.emp_id).attr("src",carrot.icon_field.icons[randomIndex].icon);
-            $("#"+carrot.icon_field.emp_id).attr("value",carrot.icon_field.icons[randomIndex].id);
-            $("#"+carrot.icon_field.emp_id+"_val").html(carrot.icon_field.icons[randomIndex].id);
-        }else{
-            carrot.icon_field.show_list_icon_by_cat('emoji');
-        }
-    }
-
-    show_icon_preview(){
-        var id_icon=$("#"+carrot.icon_field.emp_id).attr("value");
-        if(id_icon!=""){
-            $("#"+carrot.icon_field.emp_id+"_val").html(carrot.loading_html());
-            carrot.server.get_doc("icon",id_icon,(data)=>{
-                $("#"+carrot.icon_field.emp_id).attr("src",data.icon);
-                $("#"+carrot.icon_field.emp_id+"_val").html(data.id_doc);
-            });
-        }
-    }
-
-    show_list_icon_by_cat(id_cat){
-        carrot.icon_field.id_cat=id_cat;
-        carrot.loading("Get Icon by "+id_cat+" category ");
-        var q=new Carrot_Query("icon");
-        q.add_where("category",id_cat);
-        q.set_limit(28);
-        q.set_order(carrot.icon_field.orderBy_at,carrot.icon_field.orderBy_type);
-        q.get_data((icons)=>{
-            carrot.hide_loading();
-            carrot.icon_field.icons=icons;
-            carrot.icon_field.done_msg_icon_list_select(icons);
-        });
-    }
-
-    change_box_list_icon_by_order(orderBy_at,orderBy_type){
-        carrot.icon_field.orderBy_at=orderBy_at;
-        carrot.icon_field.orderBy_type=orderBy_type;
-        carrot.icon_field.show_list_icon_by_cat(carrot.icon_field.id_cat);
-    }
-
-    select_icon_for_field(emp){
-        var id_icon=$(emp).attr("data-id-icon");
-        var color_icon=$(emp).attr("data-color");
-        var url_icon=$(emp).attr("src");
-        $("#"+carrot.icon_field.emp_id).attr("src",url_icon);
-        $("#"+carrot.icon_field.emp_id).attr("value",id_icon);
-        $("#"+carrot.icon_field.emp_id+"_val").html(id_icon);
-        if(carrot.field_color!=null) $("#"+carrot.field_color).attr("value",color_icon);
-        Swal.close();
-    }
-
-    done_msg_icon_list_select(icons){
-        var html='';
-        var color_bg='';
-        var id_icon=$("#"+carrot.icon_field.emp_id).attr("value");
-
-        var style_date_create_desc='btn-secondary';
-        var style_date_create_asc='btn-secondary';
-        var style_name_desc='btn-secondary';
-        var style_name_asc='btn-secondary';
-
-        html+='<div class="btn-group d-block mt-3 mb-3" role="group" aria-label="Basic example">';
-            if(carrot.icon_field.orderBy_at=="date_create"&&carrot.icon_field.orderBy_type=="DESCENDING") style_date_create_desc='btn-success';
-            if(carrot.icon_field.orderBy_at=="date_create"&&carrot.icon_field.orderBy_type=="ASCENDING") style_date_create_asc='btn-success';
-            if(carrot.icon_field.orderBy_at=="name"&&carrot.icon_field.orderBy_type=="DESCENDING") style_name_desc='btn-success';
-            if(carrot.icon_field.orderBy_at=="name"&&carrot.icon_field.orderBy_type=="ASCENDING") style_name_asc='btn-success';
-
-            html+='<button onClick="carrot.icon_field.change_box_list_icon_by_order(\'date_create\',\'DESCENDING\');" type="button" class="btn '+style_date_create_desc+' btn-sm"><i class="fa-solid fa-arrow-up-short-wide"></i> Date</button>';
-            html+='<button onClick="carrot.icon_field.change_box_list_icon_by_order(\'date_create\',\'ASCENDING\');" type="button" class="btn  '+style_date_create_asc+' btn-sm"><i class="fa-solid fa-arrow-down-short-wide"></i> Date</button>';
-            html+='<button onClick="carrot.icon_field.change_box_list_icon_by_order(\'name\',\'DESCENDING\');" type="button" class="btn '+style_name_desc+' btn-sm"><i class="fa-solid fa-arrow-up-short-wide"></i> Key</button>';
-            html+='<button onClick="carrot.icon_field.change_box_list_icon_by_order(\'name\',\'ASCENDING\');" type="button" class="btn '+style_name_asc+'  btn-sm"><i class="fa-solid fa-arrow-down-short-wide"></i> Key</button>';
-        html+='</div>';
-
-        $(icons).each(function(index,icon){
-            icon.index=index;
-            if(id_icon==icon.id_doc) color_bg='bg-info'; else color_bg='';
-            html+="<img role='button' title='"+icon.name+"' data-id-icon='"+icon.id+"' data-color='"+icon.color+"' file_url='"+icon.icon+"' onclick='carrot.icon_field.select_icon_for_field(this);return false;' style='width:50px' class='rounded m-1 "+color_bg+"' src='"+icon.icon+"'/>";
-        });
-
-        Swal.fire({
-            title: 'Select Icon',
-            html:html,
-            showCancelButton: false
-        });
-    }
 }
 
 class Carrot_Form{

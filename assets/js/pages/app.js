@@ -388,13 +388,14 @@ class Appp{
         var store_item=new Carrot_List_Item(carrot);
         store_item.set_id(data.id_doc);
         store_item.set_db("link_store");
+        store_item.set_obj_js("appp");
         store_item.set_icon("images/298x168.jpg");
         store_item.set_id_icon("store_icon_"+data.id_doc);
         store_item.set_class_icon("col-md-12 mb-3 col-12 text-center");
         store_item.set_name(data.name);
         store_item.set_class("col-md-2 mb-2 col-sm-3");
         store_item.set_tip('<i class="'+data.icon+'"></i> '+data.id_doc);
-        store_item.set_act_edit("appp.edit_link_store");
+        store_item.set_act_edit("carrot.appp.edit_link_store");
         store_item.set_act_click("carrot.appp.show_store_by_id('"+data.id_doc+"')");
         return store_item;
     }

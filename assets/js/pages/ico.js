@@ -49,6 +49,22 @@ class Carrot_Ico{
         }
     }
 
+    get_data_cat(act_done){
+        carrot.data.list("icon_category").then((cats)=>{
+            carrot.ico.obj_icon_category=cats;
+            act_done(cats);
+        }).catch(()=>{
+            var q=new Carrot_Query("icon_category");
+            q.get_data((cats)=>{
+                carrot.ico.obj_icon_category=cats;
+                $(cats).each(function(index,cat){
+                    carrot.data.add("icon_category",cat);
+                });
+                act_done(cats);
+            });
+        });
+    }
+
     get_data_from_server(act_done){
         var q=new Carrot_Query("icon");
         if(carrot.ico.cur_show_icon_category!="all") q.add_where("category",carrot.ico.cur_show_icon_category);
@@ -269,7 +285,7 @@ class Carrot_Ico{
                 html+='<div class="btn-group btn-sm" role="group" aria-label="Mider group">';
                     if(carrot.ico.type_show!='list') html+='<button onclick="carrot.ico.list();" class="btn btn-sm btn-success"><i class="fa-solid fa-square-caret-left"></i> <l class="lang" key_lang="back">Back</l></button>';
                     html+='<button class="btn btn-secondary dropdown-toggle btn-sm" type="button" id="btn_list_icon_category" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-rectangle-list"></i> Category ('+carrot.ico.cur_show_icon_category+')</button>';
-                    html+='<div class="dropdown-menu" aria-labelledby="btn_list_ebook_category" id="list_icon_category"></div>';
+                    html+='<div class="dropdown-menu" aria-labelledby="btn_list_icon_category" id="list_icon_category"></div>';
                 html+='</div>';
 
                 html+='<div class="btn-group btn-sm" role="group" aria-label="First group">';
@@ -459,28 +475,61 @@ class Carrot_Ico{
         },500);
     }
 
+    change_category_icon_from(cat_key){
+        carrot.data.clear("icons");
+        carrot.ico.cur_show_icon_category=cat_key;
+        carrot.ico.msg_list_select();
+    }
+
+    load_msg_field_preview(){
+        var id_icon=$("#"+carrot.field_icon).attr("value");
+        $("#"+carrot.field_icon+"_val").html(carrot.loading_html());
+            carrot.server.get_doc("icon",id_icon,(data)=>{
+                $("#"+carrot.field_icon).attr("src",data.icon);
+                $("#"+carrot.field_icon+"_val").html(data.id_doc);
+        });
+    }
+
     load_msg_list_by_data(icons){
         carrot.hide_loading();
         var html='';
         var color_bg='';
         var id_icon=$("#"+carrot.field_ico).attr("value");
 
-        html+='<div>';
-        html+=carrot.ico.menu_sort('show_msg_list_by_sort');
-        html+='</div>';
+        carrot.ico.get_data_cat((cats)=>{
 
-        html+='<div>';
-        $(icons).each(function(index,icon){
-            icon.index=index;
-            if(id_icon==icon.id_doc) color_bg='bg-info'; else color_bg='';
-            html+="<img role='button' title='"+icon.name+"' data-id-icon='"+icon.id+"' data-color='"+icon.color+"' file_url='"+icon.icon+"' onclick='carrot.ico.select_icon_for_field(this);return false;' style='width:50px' class='rounded m-1 "+color_bg+"' src='"+icon.icon+"'/>";
-        });
-        html+='</div>';
+            html+='<div class="btn-group m-1" role="group" aria-label="Group Category Icon">';
+            var style_cat_item='';
+            cats.push({key:"all",icon:"fa-solid fa-rectangle-list"});
+            $(cats).each(function(index,cat){
+                style_cat_item='btn-secondary';
+                if(carrot.ico.cur_show_icon_category==cat.key)style_cat_item='btn-info';
+                html+='<div onclick="carrot.ico.change_category_icon_from(\''+cat.key+'\')" class="btn btn-sm '+style_cat_item+'"><i class="'+cat.icon+'"></i></div>';
+            });
+            html+='</div>';
 
-        Swal.fire({
-            title: 'Select Icon',
-            html:html,
-            showCancelButton: false
+            html+='<div>';
+            html+=carrot.ico.menu_sort('show_msg_list_by_sort');
+            html+='</div>';
+
+            html+='<div>';
+            $(icons).each(function(index,icon){
+                icon.index=index;
+                if(id_icon==icon.id_doc) color_bg='bg-info'; else color_bg='';
+                html+="<img role='button' title='"+icon.name+"' data-id-icon='"+icon.id+"' data-color='"+icon.color+"' file_url='"+icon.icon+"' onclick='carrot.ico.select_icon_for_field(this);return false;' style='width:50px' class='rounded m-1 "+color_bg+"' src='"+icon.icon+"'/>";
+            });
+            html+='</div>';
+
+            html+='<div>';
+            html+=carrot.ico.menu_sort('show_msg_list_by_sort');
+            html+='</div>';
+
+            Swal.fire({
+                title: 'Select Icon',
+                html:html,
+                showCancelButton: false
+            });
+
         });
     }
 
