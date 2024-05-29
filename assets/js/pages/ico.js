@@ -5,6 +5,9 @@ class Carrot_Ico{
     type_show="list_icon";
     obj_icon_info_cur=null;
 
+    orderBy_at="date_create";
+    orderBy_type="ASCENDING";
+    
     show(){
         var id_icon=carrot.get_param_url("id");
         if(id_icon!=undefined)
@@ -25,6 +28,16 @@ class Carrot_Ico{
         carrot.ico.list();
     }
 
+    show_list_icon_by_sort(sort_at,sort_type){
+        carrot.data.clear("icons");
+        carrot.loading("Get all data icon by order ("+sort_at+" -> "+sort_type+")");
+        carrot.ico.orderBy_at=sort_at;
+        carrot.ico.orderBy_type=sort_type;
+        setTimeout(()=>{
+            carrot.ico.get_data(carrot.ico.load_list_icon);
+        },500);
+    }
+
     get_data(act_done){
         if(carrot.check_ver_cur("icon")==false){
             carrot.update_new_ver_cur("icon",true);
@@ -40,6 +53,7 @@ class Carrot_Ico{
         var q=new Carrot_Query("icon");
         if(carrot.ico.cur_show_icon_category!="all") q.add_where("category",carrot.ico.cur_show_icon_category);
         q.set_limit(54);
+        q.set_order(carrot.ico.orderBy_at,carrot.ico.orderBy_type);
         q.get_data((icons)=>{
             carrot.ico.objs=icons;
             $(icons).each(function(index,icon){
@@ -226,6 +240,28 @@ class Carrot_Ico{
         });
     }
 
+    menu_sort(s_func='show_list_icon_by_sort'){
+        var html='';
+        var style_date_create_desc='btn-secondary';
+        var style_date_create_asc='btn-secondary';
+        var style_name_desc='btn-secondary';
+        var style_name_asc='btn-secondary';
+
+        html+='<div class="btn-group" role="group" aria-label="Basic menu sort">';
+
+            if(carrot.ico.orderBy_at=="date_create"&&carrot.ico.orderBy_type=="DESCENDING") style_date_create_desc='btn-success';
+            if(carrot.ico.orderBy_at=="date_create"&&carrot.ico.orderBy_type=="ASCENDING") style_date_create_asc='btn-success';
+            if(carrot.ico.orderBy_at=="name"&&carrot.ico.orderBy_type=="DESCENDING") style_name_desc='btn-success';
+            if(carrot.ico.orderBy_at=="name"&&carrot.ico.orderBy_type=="ASCENDING") style_name_asc='btn-success';
+
+            html+='<button onClick="carrot.ico.'+s_func+'(\'date_create\',\'DESCENDING\');" type="button" class="btn '+style_date_create_desc+' btn-sm"><i class="fa-solid fa-arrow-up-short-wide"></i> Date</button>';
+            html+='<button onClick="carrot.ico.'+s_func+'(\'date_create\',\'ASCENDING\');" type="button" class="btn  '+style_date_create_asc+' btn-sm"><i class="fa-solid fa-arrow-down-short-wide"></i> Date</button>';
+            html+='<button onClick="carrot.ico.'+s_func+'(\'name\',\'DESCENDING\');" type="button" class="btn '+style_name_desc+' btn-sm"><i class="fa-solid fa-arrow-up-a-z"></i> Key</button>';
+            html+='<button onClick="carrot.ico.'+s_func+'(\'name\',\'ASCENDING\');" type="button" class="btn '+style_name_asc+'  btn-sm"><i class="fa-solid fa-arrow-down-z-a"></i> Key</button>';
+        html+='</div>';
+        return html;
+    }
+
     menu(){
         var html='';
         html+='<div class="row mb-2">';
@@ -243,14 +279,16 @@ class Carrot_Ico{
                     html+='<button onclick="carrot.ico.delete_all_data();return false;" class="btn btn-danger dev btn-sm"><i class="fa-solid fa-dumpster-fire"></i> Delete All data</button>';
                 html+='</div>';
 
+                if(carrot.ico.type_show=='list') html+=carrot.ico.menu_sort();
+
             html+='</div>';
 
             html+='<div class="col-4">';
                 html+='<div class="btn-group btn-sm float-end" role="group" aria-label="Last group">';
                     var css_active="";
-                    if(this.type_show=="list_icon") css_active="active"; else css_active="";
+                    if(carrot.ico.type_show=="list") css_active="active"; else css_active="";
                     html+='<button onclick="carrot.ico.show_list_icon();" class="btn btn-sm btn-success '+css_active+'"><i class="fa-regular fa-rectangle-list"></i> List Icon</button>';
-                    if(this.type_show=="list_category") css_active="active"; else css_active="";
+                    if(carrot.ico.type_show=="list_category") css_active="active"; else css_active="";
                     html+='<button onclick="carrot.ico.show_list_category();" class="btn btn-sm btn-success '+css_active+'"><i class="fa-solid fa-rectangle-list"></i> List Category</button>';
                 html+='</div>';
             html+='</div>';
@@ -404,6 +442,57 @@ class Carrot_Ico{
             html+='</div>';
         }
         return html;
+    }
+
+    msg_list_select(){
+        carrot.loading("Get list data icon and show");
+        carrot.ico.get_data(carrot.ico.load_msg_list_by_data);
+    }
+
+    show_msg_list_by_sort(sort_at,sort_type){
+        carrot.loading("Get list data icon by order ("+sort_at+" -> "+sort_type+")");
+        carrot.data.clear("icons");
+        carrot.ico.orderBy_at=sort_at;
+        carrot.ico.orderBy_type=sort_type;
+        setTimeout(()=>{
+            carrot.ico.get_data(carrot.ico.load_msg_list_by_data);
+        },500);
+    }
+
+    load_msg_list_by_data(icons){
+        carrot.hide_loading();
+        var html='';
+        var color_bg='';
+        var id_icon=$("#"+carrot.field_ico).attr("value");
+
+        html+='<div>';
+        html+=carrot.ico.menu_sort('show_msg_list_by_sort');
+        html+='</div>';
+
+        html+='<div>';
+        $(icons).each(function(index,icon){
+            icon.index=index;
+            if(id_icon==icon.id_doc) color_bg='bg-info'; else color_bg='';
+            html+="<img role='button' title='"+icon.name+"' data-id-icon='"+icon.id+"' data-color='"+icon.color+"' file_url='"+icon.icon+"' onclick='carrot.ico.select_icon_for_field(this);return false;' style='width:50px' class='rounded m-1 "+color_bg+"' src='"+icon.icon+"'/>";
+        });
+        html+='</div>';
+
+        Swal.fire({
+            title: 'Select Icon',
+            html:html,
+            showCancelButton: false
+        });
+    }
+
+    select_icon_for_field(emp){
+        var id_icon=$(emp).attr("data-id-icon");
+        var color_icon=$(emp).attr("data-color");
+        var url_icon=$(emp).attr("src");
+        $("#"+carrot.field_icon).attr("src",url_icon);
+        $("#"+carrot.field_icon).attr("value",id_icon);
+        $("#"+carrot.field_icon+"_val").html(id_icon);
+        if(carrot.field_color!=null) $("#"+carrot.field_color).attr("value",color_icon);
+        Swal.close();
     }
 
     delete_all_data(){

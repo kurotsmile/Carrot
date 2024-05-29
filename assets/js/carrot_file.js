@@ -24,6 +24,7 @@ class Carrot_File{
     }
 
     get_list_file_from_server(){
+        carrot.loading("Get data file from server");
         this.carrot.db.collection(this.id_page).orderBy("timeCreated", "desc").limit(100).get().then((querySnapshot) => {
             var obj_data=Object();
             querySnapshot.forEach((doc) => {
@@ -43,6 +44,10 @@ class Carrot_File{
         carrot.file.show_list_from_data(files,carrot);
     }
 
+    show(){
+        carrot.file.list();
+    }
+
     list(){
         if(this.obj_files!=null){
             this.show_list_from_data(this.obj_files,this.carrot);
@@ -52,6 +57,7 @@ class Carrot_File{
     }
 
     show_list_from_data(files,carrot){
+        carrot.hide_loading();
         carrot.change_title_page(this.id_page,"?p="+this.id_page,this.id_page);
         var html='';
         var list_file=carrot.obj_to_array(files);

@@ -225,6 +225,7 @@ class Carrot_Field{
             html+='</div>';
         }
         else if(this.type=='color'){
+            carrot.field_color=this.name;
             if(this.value.length>=9) this.value=this.value.substring(0,7);
             html+='<input type="color" class="form-control form-control-color cr_field m-0"  id="'+this.name+'" value="'+this.value+'" title="Choose your color"></input>';
         }
@@ -232,9 +233,10 @@ class Carrot_Field{
             html+='<input type="range" min="1" max="4" value="'+this.value+'" class="form-range cr_field" id="'+this.name+'"></input>'
         }
         else if(this.type=='icon'){
+            carrot.field_icon=this.name;
             var url_icon='images/64.png';
             html+='<div class="input-group mb-3" id="field_icon_'+this.name+'_preview">';
-                html+='<img id="'+this.name+'" type="icon" onclick="carrot.icon.msg_list_select(this)" data-emp-id="'+this.name+'" data-category-key="all" value="'+this.value+'" class="btn btn-sm rounded btn-info cr_field m-1" style="width:64px;" role="button" src="'+url_icon+'"/>';
+                html+='<img id="'+this.name+'" type="icon" onclick="carrot.js(\'ico\',\'ico\',\'carrot.ico.msg_list_select()\')" data-emp-id="'+this.name+'" data-category-key="all" value="'+this.value+'" class="btn btn-sm rounded btn-info cr_field m-1" style="width:64px;" role="button" src="'+url_icon+'"/>';
                 html+='<span id="'+this.name+'_val">'+this.value+'</span>';
             html+='</div>';
             html+='<div class="input-group mb-3" id="field_icon_'+this.name+'"></div>';
@@ -370,7 +372,7 @@ class Carrot_Field{
 
     show_list_icon_by_cat(id_cat){
         carrot.icon_field.id_cat=id_cat;
-        carrot.loading("Get Icon by "+id_cat+"category ");
+        carrot.loading("Get Icon by "+id_cat+" category ");
         var q=new Carrot_Query("icon");
         q.add_where("category",id_cat);
         q.set_limit(28);
@@ -378,7 +380,7 @@ class Carrot_Field{
         q.get_data((icons)=>{
             carrot.hide_loading();
             carrot.icon_field.icons=icons;
-            carrot.icon_field.done_msg_list_select(icons);
+            carrot.icon_field.done_msg_icon_list_select(icons);
         });
     }
 
@@ -390,14 +392,16 @@ class Carrot_Field{
 
     select_icon_for_field(emp){
         var id_icon=$(emp).attr("data-id-icon");
+        var color_icon=$(emp).attr("data-color");
         var url_icon=$(emp).attr("src");
         $("#"+carrot.icon_field.emp_id).attr("src",url_icon);
         $("#"+carrot.icon_field.emp_id).attr("value",id_icon);
         $("#"+carrot.icon_field.emp_id+"_val").html(id_icon);
+        if(carrot.field_color!=null) $("#"+carrot.field_color).attr("value",color_icon);
         Swal.close();
     }
 
-    done_msg_list_select(icons){
+    done_msg_icon_list_select(icons){
         var html='';
         var color_bg='';
         var id_icon=$("#"+carrot.icon_field.emp_id).attr("value");
@@ -408,7 +412,6 @@ class Carrot_Field{
         var style_name_asc='btn-secondary';
 
         html+='<div class="btn-group d-block mt-3 mb-3" role="group" aria-label="Basic example">';
-
             if(carrot.icon_field.orderBy_at=="date_create"&&carrot.icon_field.orderBy_type=="DESCENDING") style_date_create_desc='btn-success';
             if(carrot.icon_field.orderBy_at=="date_create"&&carrot.icon_field.orderBy_type=="ASCENDING") style_date_create_asc='btn-success';
             if(carrot.icon_field.orderBy_at=="name"&&carrot.icon_field.orderBy_type=="DESCENDING") style_name_desc='btn-success';
