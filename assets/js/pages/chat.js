@@ -287,7 +287,7 @@ class Chat{
         btn_add_key_fnc.set_label(" Add Key func");
         btn_add_key_fnc.set_icon("fa-solid fa-circle-plus");
         btn_add_key_fnc.set_class("btn-sm mt-1 btn-light fs-9");
-        btn_add_key_fnc.set_act("carrot.ai.chat.add_key_fnc_for_msg_field()");
+        btn_add_key_fnc.set_act("carrot.chat.add_key_fnc_for_msg_field()");
         var btn_translate=new Carrot_Btn();
         btn_translate.set_icon("fa-solid fa-language");
         btn_translate.set_class("btn-sm mt-1 btn-light fs-9");
@@ -338,6 +338,8 @@ class Chat{
         btn_list_child.set_icon("fa-solid fa-child");
         btn_list_child.set_act("carrot.chat.show_list_child('"+data["id"]+"')");
         frm.add_btn(btn_list_child);
+
+        frm.set_act_done("carrot.chat.reload_list()");
         return frm;
     }
 
@@ -486,6 +488,27 @@ class Chat{
 
     select_sys_func_for_link(s_key){
         $('#link').val(s_key);
+        Swal.close();
+    }
+
+    add_key_fnc_for_msg_field(){
+        var list_parameter_msg=Array("{ten_user}","{ten_nv}","{gio}","{phut}","{ngay}","{thang}","{nam}","{thu}","{key_chat}","{song_name}");
+        var html='';
+        $(list_parameter_msg).each(function(index,key){
+            html+='<button onclick="carrot.chat.select_key_parameter_for_msg(\''+key+'\');" class="btn btn-sm btn-info m-1"><i class="fa-brands fa-keycdn"></i> '+key+'</button>';
+        });
+        Swal.fire({
+            title:"Parameter Msg Key",
+            html:html
+        });
+    }
+
+    select_key_parameter_for_msg(s_key){
+        var cursorPos = $('#msg').prop('selectionStart');
+        var v = $('#msg').val();
+        var textBefore = v.substring(0,  cursorPos);
+        var textAfter  = v.substring(cursorPos, v.length);
+        $('#msg').val(textBefore + s_key + textAfter);
         Swal.close();
     }
 
@@ -863,7 +886,7 @@ class Chat{
     reload_list(){
         carrot.chat.objs=null;
         setTimeout(() => {
-            carrot.chat.list();
+            carrot.chat.get_data(carrot.chat.load_list_by_data);
         }, 500);
     }
 

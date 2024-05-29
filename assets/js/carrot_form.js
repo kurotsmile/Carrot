@@ -582,10 +582,7 @@ class Carrot_Form{
             }
 
             carrot.msg(frm.msg_done);
-            if(frm.s_act_func_done!=null)
-                eval(frm.s_act_func_done);
-            else
-                carrot.call_func_by_id_page(frm.db_collection,"reload")
+            if(frm.s_act_func_done!=null) eval(frm.s_act_func_done);
             $('#box').modal('hide');
         });
 
