@@ -264,6 +264,7 @@ class Carrot_Field{
 
             html+='</div>';
         }else if(this.type=="avatar"){
+            carrot.field_avatar=this.name+"_img";
             var url_img_avatar="";
             if(this.value==null||this.value==undefined||this.value=="null") url_img_avatar="images/avatar_default.png";
             else url_img_avatar=this.value;
@@ -271,7 +272,7 @@ class Carrot_Field{
                 html+='<div class="card flex-md-row mb-4 box-shadow h-md-250">';
                 html+='<div class="card-body d-flex flex-column align-items-start">';
                 html+='<img id="'+this.name+'_img" class="rounded card-img-left flex-auto d-none d-md-block" src="'+url_img_avatar+'"/>';
-                html+='<button class="btn btn-sm mt-2 cr_field" id="'+this.name+'" type="'+this.type+'" value="'+this.value+'" emp_img="'+this.name+'_img" onclick="carrot.avatar.msg_list_select(this);return false;"><i class="fa-solid fa-user-ninja"></i> Change Avatar</button>';
+                html+='<button class="btn btn-sm mt-2 cr_field" id="'+this.name+'" type="'+this.type+'" value="'+this.value+'" emp_img="'+this.name+'_img" onclick="carrot.js(\'avatar\',\'avatar\',\'carrot.avatar.msg_list_select()\');return false;"><i class="fa-solid fa-user-ninja"></i> Change Avatar</button>';
                 html+='</div>';
                 html+='</div>';
             html+='</div>';

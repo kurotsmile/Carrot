@@ -79,6 +79,34 @@ class User_Avatar{
         carrot.check_event();
     }
 
+    msg_list_select(){
+        if(carrot.avatar.objs!=null)
+            carrot.avatar.load_list_for_msg_by_data(carrot.avatar.objs);
+        else
+            carrot.avatar.get_data(carrot.avatar.load_list_for_msg_by_data);
+    }
+
+    load_list_for_msg_by_data(data){
+        var html='';
+        $(data).each(function(index,avatar){
+            if(index>=20) return false;
+            html+="<img role='button' onclick='carrot.avatar.select_avatar_for_user(this)' style='width:50px' class='rounded m-1' src='"+avatar.icon+"'/>";
+        });
+        
+        Swal.fire({
+            title: 'Select Avatar',
+            html:html,
+            showCancelButton: false
+        });
+    }
+
+    select_avatar_for_user(emp){
+        var img_src=$(emp).attr("src");
+        $("#"+carrot.field_avatar).attr("src",img_src);
+        $("#"+carrot.field_avatar).attr("value",img_src);
+        Swal.close();
+    }
+
     delete_all_data(){
         carrot.avatar.objs=null;
         carrot.msg("Delete all data list avatar");
