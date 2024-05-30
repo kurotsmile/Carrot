@@ -305,6 +305,11 @@ class Appp{
         btn_data.set_icon("fa-solid fa-object-group");
         btn_data.set_act("alert('Thie ke data')");
         field_data_extension.add_btn(btn_data);
+
+        frm.create_field("field_apk_file").set_label("Apk File (Android)").set_value("").set_type("file");
+        frm.create_field("field_exe_file").set_label("Exe File (Window)").set_value("").set_type("file");
+        frm.create_field("field_ipa_file").set_label("Ios File (Iphone Device)").set_value("").set_type("file");
+        frm.create_field("field_dmg_file").set_label("Mac File (MacOs)").set_value("").set_type("file");
         return frm;
     }
 

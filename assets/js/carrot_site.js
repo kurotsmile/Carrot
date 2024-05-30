@@ -257,7 +257,7 @@ class Carrot_Site{
             this.privacy_policy=new Carrot_Privacy_Policy();
             this.about_us=new Carrot_About_Us();
             this.player_media=new Carrot_Player_Media(this);
-            this.file=new Carrot_File(this);
+            this.file=new Carrot_File();
             this.pay=new Carrot_Pay(this);
             this.rate=new Carrot_Rate(this);
             this.tool=this.rate;

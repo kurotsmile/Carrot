@@ -1,94 +1,135 @@
 class Carrot_File{
-    carrot;
     icon="fa-solid fa-laptop-file";
-    id_page="file";
-    obj_files=null;
+    objs=null;
     emp_msg_field_file=null;
+    type_show="list";
 
-    constructor(carrot){
-        this.carrot=carrot;
+    orderBy_at="timeCreated";
+    orderBy_type="ASCENDING";
+
+    constructor(){
         $(carrot.menu.create("file").set_label("File").set_icon(this.icon).set_type("dev")).click(function(){
             carrot.file.list();
-        });
+        }); 
     }
 
-    save_obj_files(){
-        localStorage.setItem("obj_files",JSON.stringify(this.obj_files));
+    show_list_by_order(sort_at,sort_type){
+        carrot.loading("Get list data by order ("+sort_at+"->"+sort_type+")");
+        carrot.file.objs=null;
+        carrot.file.orderBy_at=sort_at;
+        carrot.file.orderBy_type=sort_type;
+        carrot.file.get_data(carrot.file.load_list_by_data);
     }
 
-    delete_obj_files(){
-        localStorage.removeItem("obj_files");
-        this.obj_files=null;
-        this.carrot.delete_ver_cur(this.id_page);
-    }
+    menu(){
+        var html='';
+        html+='<div class="row mb-2">';
+            html+='<div class="col-6">';
+                var style_date_create_desc='btn-secondary';
+                var style_date_create_asc='btn-secondary';
+                var style_name_desc='btn-secondary';
+                var style_name_asc='btn-secondary';
 
-    get_list_file_from_server(){
-        carrot.loading("Get data file from server");
-        this.carrot.db.collection(this.id_page).orderBy("timeCreated", "desc").limit(100).get().then((querySnapshot) => {
-            var obj_data=Object();
-            querySnapshot.forEach((doc) => {
-                var item_data=doc.data();
-                item_data["id"]=doc.id;
-                obj_data[doc.id]=JSON.stringify(item_data);
-            });
-            this.act_get_done_list_server(obj_data,this.carrot);
-        }).catch((error) => {
-            this.carrot.log_error(error);
-        });
-    }
+                html+='<div class="btn-group" role="group" aria-label="Basic menu sort">';
 
-    act_get_done_list_server(files,carrot){
-        carrot.file.obj_files=files;
-        carrot.file.save_obj_files();
-        carrot.file.show_list_from_data(files,carrot);
-    }
+                    if(carrot.file.orderBy_at=="timeCreated"&&carrot.file.orderBy_type=="DESCENDING") style_date_create_desc='btn-success';
+                    if(carrot.file.orderBy_at=="timeCreated"&&carrot.file.orderBy_type=="ASCENDING") style_date_create_asc='btn-success';
+                    if(carrot.file.orderBy_at=="name"&&carrot.file.orderBy_type=="DESCENDING") style_name_desc='btn-success';
+                    if(carrot.file.orderBy_at=="name"&&carrot.file.orderBy_type=="ASCENDING") style_name_asc='btn-success';
 
+                    html+='<button onClick="carrot.file.show_list_by_order(\'timeCreated\',\'DESCENDING\');" type="button" class="btn '+style_date_create_desc+' btn-sm"><i class="fa-solid fa-arrow-up-short-wide"></i> Date</button>';
+                    html+='<button onClick="carrot.file.show_list_by_order(\'timeCreated\',\'ASCENDING\');" type="button" class="btn  '+style_date_create_asc+' btn-sm"><i class="fa-solid fa-arrow-down-short-wide"></i> Date</button>';
+                    html+='<button onClick="carrot.file.show_list_by_order(\'name\',\'DESCENDING\');" type="button" class="btn '+style_name_desc+' btn-sm"><i class="fa-solid fa-arrow-up-a-z"></i> Key</button>';
+                    html+='<button onClick="carrot.file.show_list_by_order(\'name\',\'ASCENDING\');" type="button" class="btn '+style_name_asc+'  btn-sm"><i class="fa-solid fa-arrow-down-z-a"></i> Key</button>';
+                html+='</div>';
+
+                html+='<div class="btn-group btn-sm" role="group" aria-label="Mider group">';
+                    if(carrot.file.type_show!='list') html+='<button onclick="carrot.file.list();" class="btn btn-sm btn-success"><i class="fa-solid fa-square-caret-left"></i> <l class="lang" key_lang="back">Back</l></button>';
+                html+='</div>';
+
+                html+='<div class="btn-group btn-sm" role="group" aria-label="First group">';
+                    html+=carrot.tool.btn_export("file","file");
+                    html+='<button onclick="carrot.file.delete_all_data();return false;" class="btn btn-danger dev btn-sm"><i class="fa-solid fa-dumpster-fire"></i> Delete All data</button>';
+                html+='</div>';
+            html+='</div>';
+
+            html+='<div class="col-6">';
+                html+='<div class="btn-group btn-sm float-end" role="group" aria-label="Last group">';
+                    var css_active="";
+                    if(carrot.file.type_show=="list") css_active="active"; else css_active="";
+                    html+='<button onclick="carrot.ico.show_list_icon();" class="btn btn-sm btn-success '+css_active+'"><i class="fa-regular fa-rectangle-list"></i> List Icon</button>';
+                    if(carrot.file.type_show=="list_category") css_active="active"; else css_active="";
+                    html+='<button onclick="carrot.ico.show_list_category();" class="btn btn-sm btn-success '+css_active+'"><i class="fa-solid fa-rectangle-list"></i> List Category</button>';
+                html+='</div>';
+            html+='</div>';
+        html+='</div>';
+        return html;
+    }
+    
     show(){
         carrot.file.list();
     }
 
     list(){
-        if(this.obj_files!=null){
-            this.show_list_from_data(this.obj_files,this.carrot);
-        }else{
-            this.get_list_file_from_server();
+       carrot.loading("Get and show all data file");
+       setTimeout(()=>{
+            carrot.file.get_data(carrot.file.load_list_by_data);
+       },500);
+    }
+
+    get_data(act_done){
+        if(carrot.file.objs!=null)
+            act_done(carrot.file.objs);
+        else{
+            var q=new Carrot_Query("file");
+            q.set_limit(50);
+            q.set_order(carrot.file.orderBy_at,carrot.file.orderBy_type);
+            q.get_data((data)=>{
+                carrot.file.objs=data;
+                act_done(data);
+            });
         }
     }
 
-    show_list_from_data(files,carrot){
-        carrot.hide_loading();
-        carrot.change_title_page(this.id_page,"?p="+this.id_page,this.id_page);
-        var html='';
-        var list_file=carrot.obj_to_array(files);
-        html+='<div class="row">';
-        $(list_file).each(function(index,f){
-            var item_file=new Carrot_List_Item(carrot);
+    box_item(data){
+        var item_file=new Carrot_List_Item(carrot);
+        if(data.type_emp=="image/*")
+            item_file.set_icon_font("fa-solid fa-file-image");
+        else if(data.type_emp=="audio/*")
+            item_file.set_icon_font("fa-solid fa-file-audio");
+        else
+            item_file.set_icon_font("fa-solid fa-file");
 
-            if(f.type_emp=="image/*")
-                item_file.set_icon_font("fa-solid fa-file-image");
-            else if(f.type_emp=="audio/*")
-                item_file.set_icon_font("fa-solid fa-file-audio");
-            else
-                item_file.set_icon_font("fa-solid fa-file");
-
-            item_file.set_id(f.id);
-            item_file.set_db("file");
-            item_file.set_index(index);
-            item_file.set_obj_js("file");
-            item_file.set_name(f.name);
-            item_file.set_class_body("mt-2 col-11");
+        item_file.set_id(data.id_doc);
+        item_file.set_db("file");
+        item_file.set_index(data.index);
+        item_file.set_obj_js("file");
+        item_file.set_name(data.name);
+        item_file.set_class_body("mt-2 col-11");
+            
             var html_body='';
-            html_body+='<div class="col-10">';
-                html_body+='<div class="d-block text-info"><i class="fa-solid fa-bezier-curve"></i> <small class="fs-9">'+f.fullPath+'</small></div>';
-                html_body+='<div class="d-block"><i class="fa-solid fa-server"></i> <small>'+carrot.file.formatSizeUnits(f.size)+'</small></div>';
-                html_body+='<div class="d-block"><i class="fa-solid fa-calendar-days"></i> <small>'+f.timeCreated+'</small></div>';
+            html_body+='<div class="col-10 fs-12">';
+                html_body+='<div class="d-block text-info"><i class="fa-solid fa-bezier-curve"></i> <small class="fs-9">'+data.fullPath+'</small></div>';
+                html_body+='<div class="d-block"><i class="fa-solid fa-server"></i> <small>'+carrot.file.formatSizeUnits(data.size)+'</small></div>';
+                html_body+='<div class="d-block"><i class="fa-solid fa-calendar-days"></i> <small>'+data.timeCreated+'</small></div>';
             html_body+='</div>';
 
             html_body+='<div class="col-2">';
-            html_body+='<button role="button" class="btn btn-sm btn-danger" fullPath="'+f.fullPath+'" onclick="delete_file(this)"><i class="fa-solid fa-trash"></i></button>';
+            html_body+='<button role="button" class="btn btn-sm btn-danger" fullPath="'+data.fullPath+'" onclick="delete_file(this)"><i class="fa-solid fa-trash"></i></button>';
             html_body+='</div>';
-            item_file.set_body(html_body);
-            html+=item_file.html();
+        item_file.set_body(html_body);
+        return item_file;
+    }
+
+    load_list_by_data(files){
+        carrot.hide_loading();
+        carrot.change_title("file","?p=file","file");
+        var html='';
+        html+=carrot.file.menu();
+        html+='<div class="row">';
+        $(files).each(function(index,f){
+            f["index"]=index;
+            html+=carrot.file.box_item(f).html();
         });
         html+='</div>';
         carrot.show(html);
@@ -240,5 +281,10 @@ class Carrot_File{
                 console.log(error);
             });
         })
+    }
+
+    delete_all_data(){
+        carrot.file.objs=null;
+        carrot.msg("Delete All data Cache success!");
     }
 }
