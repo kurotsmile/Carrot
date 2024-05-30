@@ -7,8 +7,7 @@ class Carrot_File{
 
     constructor(carrot){
         this.carrot=carrot;
-        var btn_list=carrot.menu.create("file").set_label("File").set_icon(this.icon).set_type("dev");
-        $(btn_list).click(function(){
+        $(carrot.menu.create("file").set_label("File").set_icon(this.icon).set_type("dev")).click(function(){
             carrot.file.list();
         });
     }
@@ -75,6 +74,7 @@ class Carrot_File{
             item_file.set_id(f.id);
             item_file.set_db("file");
             item_file.set_index(index);
+            item_file.set_obj_js("file");
             item_file.set_name(f.name);
             item_file.set_class_body("mt-2 col-11");
             var html_body='';
