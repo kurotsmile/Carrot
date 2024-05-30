@@ -65,7 +65,7 @@ class Carrot_File{
         html+='</div>';
         return html;
     }
-    
+
     show(){
         carrot.file.list();
     }
@@ -173,40 +173,27 @@ class Carrot_File{
     msg_list_select(emp){
         this.emp_msg_field_file=emp;
         var type_file=$(emp).attr("type_file");
-        this.carrot.db.collection("file").where("type_emp","==",type_file).orderBy("timeCreated","desc").limit(50).get().then((querySnapshot) => {
-            if(querySnapshot.docs.length>0){
-                var files=new Object();
-                querySnapshot.forEach((doc) => {
-                    var data_file=doc.data();
-                    data_file["id"]=doc.id;
-                    files[doc.id]=JSON.stringify(data_file);
-                });
-                this.done_msg_list_select(files,this.carrot);
-            }else{
-                this.done_msg_list_select(null,this.carrot);
-            }
-        }).catch((error) => {
-            console.log(error);
-            this.carrot.msg(error.message,"error");
-        });
-    }
+        carrot.loading("Get list data file "+type_file);
+        var q=new Carrot_Query("file");
+        q.add_where("type_emp",type_file);
+        q.set_order("timeCreated","DESCENDING");
+        q.set_limit(100);
+        q.get_data((data)=>{
+            var html="";
+            $(data).each(function(index,file){
+                if(file.type_emp=="image/*")
+                    html+="<img role='button' file_url='"+file.url+"' file_type='"+file.type_emp+"' file_path='"+file.fullPath+"' onclick='carrot.file.select_file_for_msg(this)' style='width:50px' class='rounded m-1' src='"+file.url+"'/>";
+                else if(file.type_emp=="audio/*")
+                    html+='<div role="button" file_url="'+file.url+'" file_type="'+file.type_emp+'" file_path="'+file.fullPath+'" onclick="carrot.file.select_file_for_msg(this)" class="btn btn-sm bg-secondary text-white rounded fs-9 m-1"><i class="fa-solid fa-file-audio"></i><br/>'+file.name+'</div>';
+                else
+                    html+="<img role='button' file_url='"+file.url+"' file_type='"+file.type_emp+"' file_path='"+file.fullPath+"' onclick='carrot.file.select_file_for_msg(this)' style='width:50px' class='rounded m-1' src='"+file.url+"'/>";
+            });
 
-    done_msg_list_select(data,carrot){
-        var html='';
-        var list_file=this.carrot.obj_to_array(data);
-        $(list_file).each(function(index,file){
-            if(file.type_emp=="image/*")
-                html+="<img role='button' file_url='"+file.url+"' file_type='"+file.type_emp+"' file_path='"+file.fullPath+"' onclick='carrot.file.select_file_for_msg(this)' style='width:50px' class='rounded m-1' src='"+file.url+"'/>";
-            else if(file.type_emp=="audio/*")
-                html+='<div role="button" file_url="'+file.url+'" file_type="'+file.type_emp+'" file_path="'+file.fullPath+'" onclick="carrot.file.select_file_for_msg(this)" class="btn btn-sm bg-secondary text-white rounded fs-9 m-1"><i class="fa-solid fa-file-audio"></i><br/>'+file.name+'</div>';
-            else
-                html+="<img role='button' file_url='"+file.url+"' file_type='"+file.type_emp+"' file_path='"+file.fullPath+"' onclick='carrot.file.select_file_for_msg(this)' style='width:50px' class='rounded m-1' src='"+file.url+"'/>";
-        });
-        
-        Swal.fire({
-            title: 'Select File',
-            html:html,
-            showCancelButton: false
+            Swal.fire({
+                title: 'Select File',
+                html:html,
+                showCancelButton: false
+            });
         });
     }
 
