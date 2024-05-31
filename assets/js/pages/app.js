@@ -10,14 +10,9 @@ class Appp{
             carrot.data.clear("stores");
             carrot.log("Get link store new version "+carrot.get_ver_cur("link_store"));
             carrot.update_new_ver_cur("link_store",true);
-            carrot.appp.get_data_link_store(carrot.appp.act_get_data_link_store_done);
+            carrot.appp.get_data_link_store(carrot.appp.show_all());
         }else{
-            carrot.data.list("stores").then((data)=>{
-                carrot.appp.link_store=data;
-                carrot.appp.show_all();
-            }).catch(()=>{
-                carrot.appp.get_data_link_store(carrot.appp.act_get_data_link_store_done);
-            });
+            carrot.appp.get_data_link_store(carrot.appp.show_all());
         }
     }
     
@@ -30,7 +25,9 @@ class Appp{
         carrot.appp.type_view='all';
         carrot.data.clear("apps");
         carrot.data.clear("app_info");
-        carrot.appp.get_data(carrot.appp.load_list_app_by_array);
+        setTimeout(()=>{
+            carrot.appp.get_data(carrot.appp.load_list_app_by_array);
+        },3000);
     }
 
     show_all(){
@@ -40,49 +37,52 @@ class Appp{
             carrot.appp.show_app_by_id(id_app);
         }else{
             carrot.loading("Get data app and game");
-            this.type_view="all";
+            carrot.appp.type_view="all";
             carrot.appp.get_data(carrot.appp.act_get_data_app_done);
         }
     }
 
     show_app(){
-        this.type_view="app";
+        carrot.appp.type_view="app";
         carrot.appp.get_data(carrot.appp.act_get_data_app_done);
     }
 
     show_game(){
-        this.type_view="game";
+        carrot.appp.type_view="game";
         carrot.appp.get_data(carrot.appp.act_get_data_app_done);
     }
 
     show_app_publish(){
-        this.type_view="all";
-        this.status_view="publish";
+        carrot.appp.type_view="all";
+        carrot.appp.status_view="publish";
         carrot.appp.get_data_from_server(carrot.appp.act_get_data_app_done);
     }
 
     show_app_draft(){
-        this.type_view="all";
-        this.status_view="draft";
+        carrot.appp.type_view="all";
+        carrot.appp.status_view="draft";
         carrot.appp.get_data_from_server(carrot.appp.act_get_data_app_done);
     }
 
     show_other_store(){
-        this.type_view="stores";
-        var html=this.menu();
-        html+='<div id="all_app" class="row m-0">';
-        $(this.link_store).each(function(index,store){
+        carrot.appp.type_view="stores";
+        var html=carrot.appp.menu();
+        html+='<div id="all_store" class="row m-0">';
+        $(carrot.appp.link_store).each(function(index,store){
             store["index"]=index;
             html+=carrot.appp.box_store_item(store).html();
         });
         html+='</div>';
         carrot.show(html);
-        this.check_event();
+        carrot.appp.check_event();
     }
 
     show_for_home(){
-        carrot.data.list("stores").then((stores)=>{
+        $("#all_store_contain").html(carrot.loading_html());
+        carrot.appp.get_data_link_store((stores)=>{
             $("#all_store_contain").html('');
+            $("#all_app_contain").html(carrot.loading_html());
+
             $(carrot.random(stores)).each(function(index,s){
                 s["index"]=index;
                 var box_store=carrot.appp.box_store_item(s);
@@ -114,34 +114,16 @@ class Appp{
                 }
             });
 
-            carrot.appp.link_store=stores;
-            carrot.data.list("apps").then((data)=>{
+            carrot.appp.get_data((data)=>{
                 $("#all_app_contain").html('');
-                var list_app=carrot.random(data);
-                $(list_app).each(function(index,app){
+                $(carrot.random(data)).each(function(index,app){
                     if(index>=12) return false;
                     app["index"]=index;
                     $("#all_app_contain").append(carrot.appp.box_item(app).html());
                 });
                 carrot.appp.check_event();
-            },()=>{
-                carrot.appp.get_data(carrot.appp.act_get_data_app_done_home);
             });
-        }).catch(()=>{
-            carrot.appp.get_data_link_store(carrot.appp.act_get_data_link_store_done_home);
-        })
-    }
-
-    act_get_data_link_store_done_home(stores){
-        carrot.hide_loading();
-        $("#all_store_contain").html('');
-        $(carrot.random(stores)).each(function(index,s){
-            carrot.data.add("stores",s);
-            s["index"]=index;
-            $("#all_store_contain").append(carrot.appp.box_store_item(s).html());
         });
-        carrot.appp.link_store=stores;
-        carrot.appp.get_data(carrot.appp.act_get_data_app_done_home);
     }
 
     act_get_data_app_done_home(data){
@@ -162,17 +144,19 @@ class Appp{
     }
 
     get_data_link_store(act_done){
-        carrot.loading("Get data link store");
-        var q=new Carrot_Query("link_store");
-        q.get_data(act_done);
-    }
-
-    act_get_data_link_store_done(data){
-        $(data).each(function(index,store){
-            carrot.data.add("stores",store);
+        carrot.data.list("stores").then((stores)=>{
+            carrot.appp.link_store=stores;
+            act_done(stores);
+        }).catch(()=>{
+            var q=new Carrot_Query("link_store");
+            q.get_data((stores)=>{
+                $(stores).each(function(index,store){
+                    carrot.data.add("stores",store);
+                });
+                carrot.appp.link_store=stores;
+                act_done(stores);
+            });
         });
-        carrot.appp.link_store=data;
-        carrot.appp.show_all();
     }
 
     get_data(act_done){
@@ -235,7 +219,6 @@ class Appp{
     }
 
     check_event(){
-        $(".owl-carousel").owlCarousel();
         if(carrot.appp.type_view=='all') carrot.tool.list_other_and_footer("appp");
         else carrot.tool.list_other_and_footer("appp",'type',carrot.appp.type_view);
         carrot.check_event();
@@ -531,7 +514,7 @@ class Appp{
         box_info.add_attrs("fa-solid fa-user-group-simple",carrot.l_html("author","Author"),'<p>Thanh <i class="fa-solid fa-heart '+effect_font[effect_random]+'" style="color: #ff0000;"></i> Nhung</p>');
 
         if(data["data_extension"]!=null){
-            if(data["data_extension"]!="") box_info.add_btn('btn_extension_1','fa-solid fa-square-up-right',"Football","carrot.football.show()");
+            if(data["data_extension"]!="") box_info.add_btn('btn_extension_1','fa-solid fa-square-up-right',"Football",data["data_extension"]);
         }
 
         if(data.apk_file!=null) box_info.add_btn("apk_file","fa-brands fa-android","Download (Apk)",data.apk_file,'link');
@@ -574,12 +557,13 @@ class Appp{
         box_info.add_contain(carrot.rate.box_comment(data));
 
         carrot.show(box_info.html());
+        $(".owl-carousel").owlCarousel();
         carrot.appp.check_event();
     }
 
     box_download_item(name,link='',icon='fa-solid fa-file-arrow-down',tip='download'){
         var html_download='';
-        html_download+='<a href="'+link+'" class="p-1 col-2 m-2 bg-success shadow-sm text-white">';
+        html_download+='<a href="'+link+'" title="Click here to download" data-toggle="tooltip" class="pt-2 pb-2 p-1 col-2 m-2 bg-success shadow-sm text-white">';
         html_download+='<i class="'+icon+' fa-3x"></i>';
         html_download+='</br>'+name+'<br/>';
         html_download+='<p class="fs-9"><i class="fa-solid fa-download"></i> '+tip+'</p>';

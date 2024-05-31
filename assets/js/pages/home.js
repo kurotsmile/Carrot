@@ -23,11 +23,7 @@ class Home{
 
         carrot.show(html);
 
-
-        if(carrot.appp==null)
-            carrot.load_js_page("app","Appp","carrot.appp.show_for_home()");
-        else
-            carrot.appp.show_for_home();
+        carrot.js("app","appp","carrot.appp.show_for_home()");
         carrot.check_event();
     }
 }
