@@ -10,19 +10,19 @@ class Appp{
             carrot.data.clear("stores");
             carrot.log("Get link store new version "+carrot.get_ver_cur("link_store"));
             carrot.update_new_ver_cur("link_store",true);
-            this.get_data_link_store(carrot.appp.act_get_data_link_store_done);
+            carrot.appp.get_data_link_store(carrot.appp.act_get_data_link_store_done);
         }else{
             carrot.data.list("stores").then((data)=>{
-                this.link_store=data;
-                this.show_all();
+                carrot.appp.link_store=data;
+                carrot.appp.show_all();
             }).catch(()=>{
-                this.get_data_link_store(carrot.appp.act_get_data_link_store_done);
+                carrot.appp.get_data_link_store(carrot.appp.act_get_data_link_store_done);
             });
         }
     }
     
     back_show_all(){
-        carrot.change_title_page(carrot.l("app","App and Game"),"?page=app","appp");
+        carrot.change_title(carrot.l("app","App and Game"),"?page=app","appp");
         carrot.appp.show();
     }
 
@@ -128,7 +128,7 @@ class Appp{
                 carrot.appp.get_data(carrot.appp.act_get_data_app_done_home);
             });
         }).catch(()=>{
-            this.get_data_link_store(carrot.appp.act_get_data_link_store_done_home);
+            carrot.appp.get_data_link_store(carrot.appp.act_get_data_link_store_done_home);
         })
     }
 
@@ -312,7 +312,7 @@ class Appp{
 
         frm.create_field("apk_file").set_label("Apk File (Android)").set_value(data.apk_file).set_type("file").set_type_file("apk/*");
         frm.create_field("exe_file").set_label("Exe File (Window)").set_value(data.exe_file).set_type("file").set_type_file("exe/*");
-        frm.create_field("ipa_file").set_label("Ios File (Iphone Device)").set_value(data.ipa_file).set_type_file("ipa/*");
+        frm.create_field("ipa_file").set_label("Ios File (Iphone Device)").set_value(data.ipa_file).set_type("file").set_type_file("ipa/*");
         frm.create_field("dmg_file").set_label("Mac File (MacOs)").set_value(data.dmg_file).set_type("file").set_type_file("dmg/*");
         return frm;
     }
@@ -534,6 +534,9 @@ class Appp{
             if(data["data_extension"]!="") box_info.add_btn('btn_extension_1','fa-solid fa-square-up-right',"Football","carrot.football.show()");
         }
 
+        if(data.apk_file!=null) box_info.add_btn("apk_file","fa-brands fa-android","Download (Apk)",data.apk_file,'link');
+        if(data.exe_file!=null) box_info.add_btn("apk_file","fa-solid fa-desktop","Download (Exe)",data.exe_file,'link');
+
         if(data["img1"]!=""&&data["img1"]!=undefined){
                 var html_img='<div class="owl-carousel owl-theme">';
                 for(var i=1;i<=8;i++){
@@ -557,6 +560,15 @@ class Appp{
             box_info.add_body('<h4 class="fw-semi fs-5 lang" key_lang="intro_video">Intro video</h4>',html_video);
         }
 
+        if(data.apk_file!=""&&data.exe_file!=""){
+            var html_download='';
+            html_download+='<div class="row mt-3 text-center">';
+            if(data.apk_file!=null) html_download+=carrot.appp.box_download_item("Download Apk",data.apk_file,'fa-brands fa-android');
+            if(data.exe_file!=null) html_download+=carrot.appp.box_download_item("Download Exe",data.exe_file,'fa-solid fa-desktop');
+            html_download+='</div>';
+            box_info.add_contain(html_download);
+        }
+ 
         box_info.add_contain(carrot.appp.box_qr(data));
         box_info.add_contain(carrot.rate.box_rank(data));
         box_info.add_contain(carrot.rate.box_comment(data));
@@ -565,8 +577,18 @@ class Appp{
         carrot.appp.check_event();
     }
 
+    box_download_item(name,link='',icon='fa-solid fa-file-arrow-down',tip='download'){
+        var html_download='';
+        html_download+='<a href="'+link+'" class="p-1 col-2 m-2 bg-success shadow-sm text-white">';
+        html_download+='<i class="'+icon+' fa-3x"></i>';
+        html_download+='</br>'+name+'<br/>';
+        html_download+='<p class="fs-9"><i class="fa-solid fa-download"></i> '+tip+'</p>';
+        html_download+='</a>';
+        return html_download;
+    }
+
     box_app_tip(id){
-        $("#app_tip").html(carrot.loading_html());
+        $("#app_tip").html("<div class='row mt-4'><div class='col-12'>"+carrot.loading_html()+"</div></div>");
         carrot.appp.get(id,(data)=>{
             var html='';
             var name_loca='';

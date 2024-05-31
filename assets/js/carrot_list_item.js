@@ -223,12 +223,13 @@ class Carrot_Info{
         this.s_header_right_content=content;
     }
 
-    add_btn(id,icon,label,act_click){
+    add_btn(id,icon,label,act_click,type='btn'){
         var btn_head={};
         btn_head["id"]=id;
         btn_head["icon"]=icon;
         btn_head["label"]=label;
         btn_head["act"]=act_click;
+        btn_head["type"]=type;
         this.list_btn.push(btn_head);
     }
 
@@ -303,7 +304,10 @@ class Carrot_Info{
                             html+='<button id="btn_share" type="button" class="btn d-inline btn-success"><i class="fa-solid fa-share-nodes"></i> <l class="lang" key_lang="share">Share</l> </button> ';
                             if(this.s_protocol_url!="") html+=' <a href="'+this.s_protocol_url+'" id="register_protocol_url" type="button"  class="btn d-inline btn-success"><i class="fa-solid fa-rocket"></i> <l class="lang" key_lang="open_with">Open with..</l> </a> ';
                             $(this.list_btn).each(function(index,btn){
-                                html+=' <button id="'+btn["id"]+'" index="'+index+'" onclick="'+btn["act"]+'" type="button" class="btn d-inline btn-success"><i class="'+btn["icon"]+'"></i> '+btn["label"]+' </button> ';
+                                if(btn.type=="btn")
+                                    html+=' <button id="'+btn["id"]+'" index="'+index+'" onclick="'+btn["act"]+'" type="button" class="btn d-inline btn-success"><i class="'+btn["icon"]+'"></i> '+btn["label"]+' </button> ';
+                                else
+                                    html+=' <a id="'+btn["id"]+'" index="'+index+'" href="'+btn["act"]+'" type="button" class="btn d-inline btn-success"><i class="'+btn["icon"]+'"></i> '+btn["label"]+' </a> ';
                             });
                             html+='</div>';
                         html+='</div>';
