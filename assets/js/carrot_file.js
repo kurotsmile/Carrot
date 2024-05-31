@@ -3,10 +3,21 @@ class Carrot_File{
     objs=null;
     emp_msg_field_file=null;
     type_show="list";
+    type_file_show="all";
 
     orderBy_at="timeCreated";
     orderBy_type="ASCENDING";
 
+    types=["apk","exe","ipa","dmg","jpg","png","mp3"];
+    types_id=[
+                "application/vnd.android.package-archive",
+                "application/x-msdownload",
+                "application/vnd.android.package-archive",
+                "application/vnd.android.package-archive",
+                "image/jpeg",
+                "image/png",
+                "audio/mpeg"
+            ];
     constructor(){
         $(carrot.menu.create("file").set_label("File").set_icon(this.icon).set_type("dev")).click(function(){
             carrot.file.list();
@@ -18,6 +29,13 @@ class Carrot_File{
         carrot.file.objs=null;
         carrot.file.orderBy_at=sort_at;
         carrot.file.orderBy_type=sort_type;
+        carrot.file.get_data(carrot.file.load_list_by_data);
+    }
+
+    show_list_by_type(index){
+        carrot.loading("Show List by type ("+carrot.file.types[index]+")");
+        carrot.file.objs=null;
+        carrot.file.type_file_show=carrot.file.types_id[index];
         carrot.file.get_data(carrot.file.load_list_by_data);
     }
 
@@ -55,11 +73,11 @@ class Carrot_File{
 
             html+='<div class="col-6">';
                 html+='<div class="btn-group btn-sm float-end" role="group" aria-label="Last group">';
-                    var css_active="";
-                    if(carrot.file.type_show=="list") css_active="active"; else css_active="";
-                    html+='<button onclick="carrot.ico.show_list_icon();" class="btn btn-sm btn-success '+css_active+'"><i class="fa-regular fa-rectangle-list"></i> List Icon</button>';
-                    if(carrot.file.type_show=="list_category") css_active="active"; else css_active="";
-                    html+='<button onclick="carrot.ico.show_list_category();" class="btn btn-sm btn-success '+css_active+'"><i class="fa-solid fa-rectangle-list"></i> List Category</button>';
+                    $(carrot.file.types).each(function(index,t){
+                        var css_active="";
+                        if(carrot.file.type_file_show==carrot.file.types_id[index]) css_active="active"; else css_active="";
+                        html+='<button onclick="carrot.file.show_list_by_type('+index+');" class="btn btn-sm btn-success '+css_active+'"><i class="fa-solid fa-file-invoice"></i> '+t+'</button>';
+                    });
                 html+='</div>';
             html+='</div>';
         html+='</div>';
@@ -82,6 +100,7 @@ class Carrot_File{
             act_done(carrot.file.objs);
         else{
             var q=new Carrot_Query("file");
+            if(carrot.file.type_file_show!="all") q.add_where("type",carrot.file.type_file_show);
             q.set_limit(50);
             q.set_order(carrot.file.orderBy_at,carrot.file.orderBy_type);
             q.get_data((data)=>{
@@ -115,7 +134,7 @@ class Carrot_File{
             html_body+='</div>';
 
             html_body+='<div class="col-2">';
-            html_body+='<button role="button" class="btn btn-sm btn-danger" fullPath="'+data.fullPath+'" onclick="delete_file(this)"><i class="fa-solid fa-trash"></i></button>';
+            html_body+='<button role="button" class="btn btn-sm btn-danger" fullPath="'+data.fullPath+'" onclick="delete_file(this)"><i class="fa-solid fa-file-circle-minus"></i></button>';
             html_body+='</div>';
         item_file.set_body(html_body);
         return item_file;

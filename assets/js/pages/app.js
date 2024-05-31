@@ -261,6 +261,10 @@ class Appp{
         new_data_app["img5"]="";
         new_data_app["status"]="";
         new_data_app["data_extension"]="";
+        new_data_app["apk_file"]="";
+        new_data_app["exe_file"]="";
+        new_data_app["ipa_file"]="";
+        new_data_app["dmg_file"]="";
         this.frm_add_or_edit(new_data_app).set_title("Add App").set_msg_done("Add app success!").set_type("add").show();
     }
 
@@ -306,10 +310,10 @@ class Appp{
         btn_data.set_act("alert('Thie ke data')");
         field_data_extension.add_btn(btn_data);
 
-        frm.create_field("field_apk_file").set_label("Apk File (Android)").set_value("").set_type("file");
-        frm.create_field("field_exe_file").set_label("Exe File (Window)").set_value("").set_type("file");
-        frm.create_field("field_ipa_file").set_label("Ios File (Iphone Device)").set_value("").set_type("file");
-        frm.create_field("field_dmg_file").set_label("Mac File (MacOs)").set_value("").set_type("file");
+        frm.create_field("apk_file").set_label("Apk File (Android)").set_value(data.apk_file).set_type("file").set_type_file("apk/*");
+        frm.create_field("exe_file").set_label("Exe File (Window)").set_value(data.exe_file).set_type("file").set_type_file("exe/*");
+        frm.create_field("ipa_file").set_label("Ios File (Iphone Device)").set_value(data.ipa_file).set_type_file("ipa/*");
+        frm.create_field("dmg_file").set_label("Mac File (MacOs)").set_value(data.dmg_file).set_type("file").set_type_file("dmg/*");
         return frm;
     }
 

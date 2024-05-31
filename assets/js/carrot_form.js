@@ -495,6 +495,7 @@ class Carrot_Form{
                     evt.stopPropagation();
                     evt.preventDefault();
                     var file = evt.target.files[0];
+                    carrot.loading("Upload file "+file.name);
                     var r=carrot.storage.ref();
                     var metadata = {'contentType': file.type};
                     var type_file=file.type
@@ -513,6 +514,7 @@ class Carrot_Form{
                         data_file["type_emp"]=type_file_emp;
                         $("#"+id_emp).html('<i class="fa-solid fa-spinner fa-spin"></i>');
                         snapshot.ref.getDownloadURL().then(function (url) {
+                            carrot.hide_loading();
                             data_file["url"]=url;
                             $("#"+id_emp).attr("value",url).html(carrot.file.box_file_item(url,path_file,type_file_emp));
                             carrot.set_doc("file",file_storage.generation,data_file);
