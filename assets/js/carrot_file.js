@@ -18,10 +18,31 @@ class Carrot_File{
                 "image/png",
                 "audio/mpeg"
             ];
+    types_icon=[
+                "fa-brands fa-android",
+                "fa-brands fa-microsoft",
+                "fa-solid fa-file",
+                "fa-solid fa-file",
+                "fa-solid fa-image",
+                "fa-regular fa-image",
+                "fa-solid fa-file-audio"
+            ];
+
     constructor(){
         $(carrot.menu.create("file").set_label("File").set_icon(this.icon).set_type("dev")).click(function(){
             carrot.file.list();
         }); 
+    }
+
+    get_icon(type){
+        var s_icon='fa-solid fa-file';
+        $(carrot.file.types_id).each(function(index,f){
+            if(type==f){
+                s_icon=carrot.file.types_icon[index];
+                return false;
+            }
+        });
+        return s_icon;
     }
 
     show_list_by_order(sort_at,sort_type){
@@ -76,7 +97,7 @@ class Carrot_File{
                     $(carrot.file.types).each(function(index,t){
                         var css_active="";
                         if(carrot.file.type_file_show==carrot.file.types_id[index]) css_active="active"; else css_active="";
-                        html+='<button onclick="carrot.file.show_list_by_type('+index+');" class="btn btn-sm btn-success '+css_active+'"><i class="fa-solid fa-file-invoice"></i> '+t+'</button>';
+                        html+='<button onclick="carrot.file.show_list_by_type('+index+');" class="btn btn-sm btn-success '+css_active+'"><i class="'+carrot.file.types_icon[index]+'"></i> '+t+'</button>';
                     });
                 html+='</div>';
             html+='</div>';
@@ -112,13 +133,7 @@ class Carrot_File{
 
     box_item(data){
         var item_file=new Carrot_List_Item(carrot);
-        if(data.type_emp=="image/*")
-            item_file.set_icon_font("fa-solid fa-file-image");
-        else if(data.type_emp=="audio/*")
-            item_file.set_icon_font("fa-solid fa-file-audio");
-        else
-            item_file.set_icon_font("fa-solid fa-file");
-
+        item_file.set_icon_font(carrot.file.get_icon(data.type));
         item_file.set_id(data.id_doc);
         item_file.set_db("file");
         item_file.set_index(data.index);
@@ -199,14 +214,12 @@ class Carrot_File{
         q.set_limit(100);
         q.get_data((data)=>{
             var html="";
-            $(data).each(function(index,file){
-                if(file.type_emp=="image/*")
-                    html+="<img role='button' file_url='"+file.url+"' file_type='"+file.type_emp+"' file_path='"+file.fullPath+"' onclick='carrot.file.select_file_for_msg(this)' style='width:50px' class='rounded m-1' src='"+file.url+"'/>";
-                else if(file.type_emp=="audio/*")
-                    html+='<div role="button" file_url="'+file.url+'" file_type="'+file.type_emp+'" file_path="'+file.fullPath+'" onclick="carrot.file.select_file_for_msg(this)" class="btn btn-sm bg-secondary text-white rounded fs-9 m-1"><i class="fa-solid fa-file-audio"></i><br/>'+file.name+'</div>';
-                else
-                    html+="<img role='button' file_url='"+file.url+"' file_type='"+file.type_emp+"' file_path='"+file.fullPath+"' onclick='carrot.file.select_file_for_msg(this)' style='width:50px' class='rounded m-1' src='"+file.url+"'/>";
-            });
+            if(type_file=="image/*")
+                html+=carrot.file.load_msg_list_file_image(data);
+            else if(type_file=="audio/*")
+                html+=carrot.file.load_msg_list_file_audio(data);
+            else
+                html+=carrot.file.load_msg_list_file_other(data);
 
             Swal.fire({
                 title: 'Select File',
@@ -214,6 +227,37 @@ class Carrot_File{
                 showCancelButton: false
             });
         });
+    }
+
+    load_msg_list_file_other(data){
+        var html="";
+        html+='<table class="table table-striped table-hover">';
+        html+='<tbody>';
+        $(data).each(function(index,file){
+            html+='<tr role="button" file_url="'+file.url+'" file_type="'+file.type_emp+'" file_path="'+file.fullPath+'" onclick="carrot.file.select_file_for_msg(this)">';
+                html+='<td><i class="'+carrot.file.get_icon(file.type)+'"></i></td>';
+                html+='<td>'+file.fullPath+'</td>';
+            html+='<tr>';''
+        });
+        html+='</tbody>';
+        html+='</table>';
+        return html;
+    }
+
+    load_msg_list_file_audio(data){
+        var html="";
+        $(data).each(function(index,file){
+            html+='<div role="button" file_url="'+file.url+'" file_type="'+file.type_emp+'" file_path="'+file.fullPath+'" onclick="carrot.file.select_file_for_msg(this)" class="btn btn-sm bg-secondary text-white rounded fs-9 m-1"><i class="fa-solid fa-file-audio"></i><br/>'+file.name+'</div>';
+        });
+        return html;
+    }
+
+    load_msg_list_file_image(data){
+        var html="";
+        $(data).each(function(index,file){
+            html+="<img role='button' file_url='"+file.url+"' file_type='"+file.type_emp+"' file_path='"+file.fullPath+"' onclick='carrot.file.select_file_for_msg(this)' style='width:50px' class='rounded m-1' src='"+file.url+"'/>";
+        });
+        return html;
     }
 
     select_file_for_msg(emp){

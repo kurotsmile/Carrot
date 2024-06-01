@@ -516,7 +516,7 @@ class Appp{
         }
 
         if(data.apk_file!=null) box_info.add_btn("apk_file","fa-brands fa-android","Download (Apk)",data.apk_file,'link');
-        if(data.exe_file!=null) box_info.add_btn("apk_file","fa-solid fa-desktop","Download (Exe)",data.exe_file,'link');
+        if(data.exe_file!=null) box_info.add_btn("exe_file","fa-solid fa-desktop","Download (Exe)",data.exe_file,'link');
 
         if(data["img1"]!=""&&data["img1"]!=undefined){
                 var html_img='<div class="owl-carousel owl-theme">';
