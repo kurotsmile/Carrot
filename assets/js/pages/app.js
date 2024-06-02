@@ -73,9 +73,9 @@ class Appp{
     show_other_store(){
         carrot.change_title("stores","?p=app&view=store","stores");
         carrot.loading("Get all data link store");
+        carrot.appp.type_view="stores";
         carrot.appp.get_data_link_store((data)=>{
             carrot.hide_loading();
-            carrot.appp.type_view="stores";
             var html=carrot.appp.menu();
             html+='<div id="all_store" class="row m-0">';
             $(data).each(function(index,store){
@@ -336,7 +336,7 @@ class Appp{
 
         if(carrot.appp.link_store!=null){
             var html_store_link="";
-            $(carrot.appp.link_store).each(function(index,store){
+            $(carrot.random(carrot.appp.link_store)).each(function(index,store){
                 if(data_app[store.key]!=null){
                     var link_store_app=data_app[store.key];
                     if(link_store_app!='') html_store_link+="<a class='link_app' title=\""+store.name+"\" target=\"_blank\" href=\""+link_store_app+"\"><i class=\""+store.icon+"\"></i></a>";
@@ -461,24 +461,27 @@ class Appp{
         html+='<div class="row mb-2">';
             html+='<div class="col-12">';
                 html+='<div class="btn-group mr-2" role="group">';
-                    if(this.type_view=='all') s_class='active'; else s_class='';
+                    if(carrot.appp.type_view=='all') s_class='active'; else s_class='';
                     html+='<div class="btn btn-sm btn-success '+s_class+'" onclick="carrot.appp.show_all();"><i class="fa-solid fa-table-list"></i> <l class="lang" key_lang="view_all">All</l></div>';
-                    if(this.type_view=='app') s_class='active'; else s_class='';
+                    if(carrot.appp.type_view=='app') s_class='active'; else s_class='';
                     html+='<div class="btn btn-sm btn-success '+s_class+'" onclick="carrot.appp.show_app();"><i class="fa-solid fa-mobile"></i> <l class="lang" key_lang="app">App</l></div>';
-                    if(this.type_view=='game') s_class='active'; else s_class='';
+                    if(carrot.appp.type_view=='game') s_class='active'; else s_class='';
                     html+='<div class="btn btn-sm btn-success '+s_class+'" onclick="carrot.appp.show_game();"><i class="fa-solid fa-gamepad"></i> <l class="lang" key_lang="game">Game</l></div>';
                 html+='</div>';
                 html+=' <div class="btn-group" role="group">';
-                    if(this.status_view=='publish') s_class='active'; else s_class='';
+                    if(carrot.appp.status_view=='publish') s_class='active'; else s_class='';
                     html+='<div class="btn dev btn-sm btn-success '+s_class+'" onclick="carrot.appp.show_app_publish();"><i class="fa-solid fa-van-shuttle"></i> Public App</div>';
-                    if(this.status_view=='draft') s_class='active'; else s_class='';
+                    if(carrot.appp.status_view=='draft') s_class='active'; else s_class='';
                     html+='<div class="btn dev btn-sm btn-success '+s_class+'" onclick="carrot.appp.show_app_draft();"><i class="fa-solid fa-layer-group"></i> Draft App</div>';
-                    html+=carrot.tool.btn_export("app");
+                    if(carrot.appp.type_view=="stores")
+                        html+=carrot.tool.btn_export("link_store","link_store");
+                    else
+                        html+=carrot.tool.btn_export("app","app");
                     html+='<div class="btn dev btn-sm btn-danger" onclick="carrot.appp.clear_all_data();"><i class="fa-solid fa-dumpster-fire"></i> Delete All data</div>';
                 html+='</div>';
 
                 html+=' <div class="btn-group" role="group">';
-                    if(this.type_view=="stores") s_class='active'; else s_class='';
+                    if(carrot.appp.type_view=="stores") s_class='active'; else s_class='';
                     html+='<div class="btn btn-sm btn-success '+s_class+'" onclick="carrot.appp.show_other_store();"><i class="fa-solid fa-store"></i> <l class="lang" key_lang="other_store">Other Store</l></div>';
                 html+='</div>';
             html+='</div>';
@@ -499,7 +502,7 @@ class Appp{
         box_info.set_name(data.name_en);
         box_info.off_qr();
 
-        $(carrot.appp.link_store).each(function(index,store){
+        $(carrot.random(carrot.appp.link_store)).each(function(index,store){
             store["index"]=index;
             if(data[store.id_doc]!=undefined&&data[store.id_doc]!="") box_info.add_attrs(store.icon,store.name,"<a href='"+data[store.id_doc]+"' target='_blank'><img class='w-50' src='"+store.img+"'/></a>","");
         });
@@ -523,8 +526,8 @@ class Appp{
             if(data["data_extension"]!="") box_info.add_btn('btn_extension_1','fa-solid fa-square-up-right',"Football",data["data_extension"]);
         }
 
-        if(data.apk_file!=null) box_info.add_btn("apk_file","fa-brands fa-android","Download (Apk)",data.apk_file,'link');
-        if(data.exe_file!=null) box_info.add_btn("exe_file","fa-solid fa-desktop","Download (Exe)",data.exe_file,'link');
+        if(carrot.tool.alive(data.apk_file)) box_info.add_btn("apk_file","fa-brands fa-android","Download (Apk)",data.apk_file,'link');
+        if(carrot.tool.alive(data.exe_file)) box_info.add_btn("exe_file","fa-solid fa-desktop","Download (Exe)",data.exe_file,'link');
 
         if(data["img1"]!=""&&data["img1"]!=undefined){
                 var html_img='<div class="owl-carousel owl-theme">';
@@ -549,11 +552,11 @@ class Appp{
             box_info.add_body('<h4 class="fw-semi fs-5 lang" key_lang="intro_video">Intro video</h4>',html_video);
         }
 
-        if(data.apk_file!=""&&data.exe_file!=""){
+        if(carrot.tool.alive(data.apk_file)||carrot.tool.alive(data.exe_file)){
             var html_download='';
             html_download+='<div class="row mt-3 text-center">';
-            if(data.apk_file!=null) html_download+=carrot.appp.box_download_item("Download Apk",data.apk_file,'fa-brands fa-android');
-            if(data.exe_file!=null) html_download+=carrot.appp.box_download_item("Download Exe",data.exe_file,'fa-solid fa-desktop');
+            if(carrot.tool.alive(data.apk_file)) html_download+=carrot.appp.box_download_item("Download Apk",data.apk_file,'fa-brands fa-android');
+            if(carrot.tool.alive(data.exe_file)) html_download+=carrot.appp.box_download_item("Download Exe",data.exe_file,'fa-solid fa-desktop');
             html_download+='</div>';
             box_info.add_contain(html_download);
         }

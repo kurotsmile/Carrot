@@ -468,4 +468,17 @@ class Carrot_Rate{
         const fileNameWithoutExtension = lastDotIndex === -1 ? fileNameWithExtension : fileNameWithExtension.substring(0, lastDotIndex);
         return carrot.tool.id(fileNameWithoutExtension);
     }
+
+    alive(val){
+        if(val==null)
+            return false;
+        else if(val=='')
+            return false;
+        else if(val==undefined)
+            return false;
+        else if(val=='undefined')
+            return false;
+        else
+            return true;
+    }
 }
