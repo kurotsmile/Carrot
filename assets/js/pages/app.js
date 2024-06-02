@@ -10,9 +10,11 @@ class Appp{
             carrot.data.clear("stores");
             carrot.log("Get link store new version "+carrot.get_ver_cur("link_store"));
             carrot.update_new_ver_cur("link_store",true);
-            carrot.appp.get_data_link_store(carrot.appp.show_all());
+            setTimeout(()=>{
+                carrot.appp.get_data_link_store(carrot.appp.show_all);
+            },300);
         }else{
-            carrot.appp.get_data_link_store(carrot.appp.show_all());
+            carrot.appp.get_data_link_store(carrot.appp.show_all);
         }
     }
     
@@ -26,7 +28,7 @@ class Appp{
         carrot.data.clear("apps");
         carrot.data.clear("app_info");
         setTimeout(()=>{
-            carrot.appp.get_data(carrot.appp.load_list_app_by_array);
+            carrot.appp.get_data(carrot.appp.load_list_app_by_data);
         },3000);
     }
 
@@ -69,16 +71,21 @@ class Appp{
     }
 
     show_other_store(){
-        carrot.appp.type_view="stores";
-        var html=carrot.appp.menu();
-        html+='<div id="all_store" class="row m-0">';
-        $(carrot.appp.link_store).each(function(index,store){
-            store["index"]=index;
-            html+=carrot.appp.box_store_item(store).html();
-        });
-        html+='</div>';
-        carrot.show(html);
-        carrot.appp.check_event();
+        carrot.change_title("stores","?p=app&view=store","stores");
+        carrot.loading("Get all data link store");
+        carrot.appp.get_data_link_store((data)=>{
+            carrot.hide_loading();
+            carrot.appp.type_view="stores";
+            var html=carrot.appp.menu();
+            html+='<div id="all_store" class="row m-0">';
+            $(data).each(function(index,store){
+                store["index"]=index;
+                html+=carrot.appp.box_store_item(store).html();
+            });
+            html+='</div>';
+            carrot.show(html);
+            carrot.appp.check_event();
+        })
     }
 
     show_for_home(){
@@ -204,7 +211,7 @@ class Appp{
 
     load_list_app_by_data(data){
         carrot.change_title_page("App and Game","?page=app","appp");
-        Swal.close();
+        carrot.hide_loading();
         var html="";
         html+=carrot.appp.menu();
         html+='<div id="all_app" class="row m-0"></div>';
@@ -370,6 +377,7 @@ class Appp{
         frm.create_field("icon").set_label("Icon (Font)").set_val(data["icon"]);
         frm.create_field("img").set_label("Image (Url)").set_val(data["img"]).set_type("file").set_type_file("image/*");
         frm.create_field("link").set_label("Link All App").set_val(data["link"]);
+        frm.set_act_done("carrot.appp.reload_store()");
         return frm;
     }
 
@@ -615,6 +623,13 @@ class Appp{
         carrot.data.clear("app_info");
         setTimeout(3000,()=>{carrot.appp.show();});
         carrot.msg("Delete all data app success!","success");
+    }
+
+    reload_store(){
+        carrot.data.clear("stores");
+        setTimeout(()=>{
+            carrot.appp.show_other_store();
+        },3000);
     }
 }
 carrot.appp=new Appp();
