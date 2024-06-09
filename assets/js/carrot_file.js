@@ -272,15 +272,15 @@ class Carrot_File{
     box_file_item(url_file,path_file,type_file){
         if(url_file==""||url_file==undefined||url_file=='undefined') return "";
         var html='';
-        html+='<div class="d-block text-break">';
-            html+='<div class="card-body d-flex flex-column align-items-start">';
-                html+='<div class="row">';
+        html+='<div class="d-block w-100 text-break">';
+            html+='<div class="card-body w-100 shadow-sm d-flex flex-column align-items-start">';
+                html+='<div class="row w-100">';
                     if (type_file == "image/*") {
                         html += '<div class="col-4">';
-                        html += '<img class="rounded card-img-left flex-auto d-none d-md-block" src="'+url_file+'"/>';
+                        html += '<a href="'+url_file+'" target="_blank" class="text-break fs-9"><img class="rounded card-img-left flex-auto d-none d-md-block" src="'+url_file+'"/></a>';
                         html += '</div>';
                         html += '<div class="col-6">';
-                        html += '<a href="'+url_file+'" target="_blank" class="text-break fs-9"><i class="fa-solid fa-image"></i>'+url_file+'</a>';
+                        html += '<input class="form-control fs-9 form-control-sm" value="'+url_file+'">';
                         html += '</div>';
                         html += '<div class="col-2">';
                         html += '<span fullPath="'+path_file+'" onclick="delete_file(this);return false;" role="button" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash-can"></i></span>';
@@ -288,20 +288,29 @@ class Carrot_File{
                     } else if (type_file == "audio/*") {
                         html += '<div class="col-10">';
                         html += '<audio syle="width:100%" controls muted><source src="'+url_file+'" type="audio/mpeg">Your browser does not support the audio element.</audio>';
-                        html += '<a href="'+url_file+'" target="_blank" class="text-break fs-9 d-block"><i class="fa-solid fa-file-audio"></i>'+url_file+'</a>';
+                        html += '<a href="'+url_file+'" target="_blank" class="text-break fs-9 d-block"><i class="fa-solid fa-file-audio"></i><i class="fa-solid fa-file-audio"></i></a>';
+                        html += '<input class="form-control fs-9 form-control-sm" value="'+url_file+'"></input>';
                         html += '</div>';
                         html += '<div class="col-2">';
                         html += '<span fullPath="'+path_file+'" onclick="delete_file(this);return false;" role="button" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash-can"></i></span>';
                         html += '</div>';
                     } else {
-                        html += '<div class="col-12">';
-                        html += '<b>'+type_file+'</b>:<a href="'+url_file+'" target="_blank" class="text-break fs-9"><i class="fa-solid fa-file"></i>'+url_file+'</a>';
+                        html += '<div class="col-1"><i class="fa-solid fa-file"></i></div>';
+                        html += '<div class="col-10">';
+                            html += '<textarea class="w-100 form-control fs-9">'+url_file+'</textarea>';
                         html += '</div>';
+                        html += '<div class="col-1">';
+                            html+='<span fullPath="'+path_file+'" onclick="delete_file(this);return false;" role="button" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash-can"></i></span>';
+                        html+='</div>';
                     }
-                html+='</div>';
             html+='</div>';
         html+='</div>';
         return html;
+    }
+
+    add_box_file_item_link(id_emp){
+        var type_file_emp=$("#"+id_emp+"_file").attr("accept");
+        $("#"+id_emp).html(carrot.file.box_file_item("thanh","thanh",type_file_emp));
     }
 
     get_base64data_file(url_file) {

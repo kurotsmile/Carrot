@@ -325,49 +325,50 @@ class Carrot_Site{
     }
 
     load_recognition(){
-        var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
-        var carrot=this;
+        window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    
+        if (window.SpeechRecognition) {
+            this.recognition = new SpeechRecognition();
+            this.recognition.lang = 'en-US';
+            this.recognition.interimResults = false;
+            
+            this.recognition.onresult = function(event) {
+                var speechResult = event.results[0][0].transcript.toLowerCase();
+                $("#txt_recognition_msg").removeClass("text-primary").addClass("text-success").html(speechResult);
+                carrot.act_search(s_key_search);
+                carrot.log('Confidence: ' + speechResult);
+            }
 
-        this.recognition = new SpeechRecognition();
-        this.recognition.lang = 'en-US';
-        this.recognition.interimResults = false;
-        
-        this.recognition.onresult = function(event) {
-            var speechResult = event.results[0][0].transcript.toLowerCase();
-            $("#txt_recognition_msg").removeClass("text-primary").addClass("text-success").html(speechResult);
-            carrot.act_search(s_key_search);
-            carrot.log('Confidence: ' + speechResult);
+            this.recognition.onspeechend = function() { carrot.recognition.stop();}
+            
+            this.recognition.onerror = function(event) {
+                $("#txt_recognition_msg").removeClass("text-primary").removeClass("text-success").removeClass("text-danger").html(event.error);
+            }
+            
+            this.recognition.onaudiostart = function(event) {
+                $("#txt_recognition_msg").addClass("text-primary").html(carrot.l("recognition_start","Speak into the microphone to search..."));
+                $("#txt_recognition").removeClass("d-none");
+                $("#box_input_search").addClass("d-none");
+                carrot.log('SpeechRecognition.onaudiostart');
+            }
+            
+            this.recognition.onaudioend = function(event) {
+                carrot.recognition.stop();
+                carrot.log('SpeechRecognition.onaudioend');
+            }
+            
+            this.recognition.onend = function(event) {
+                $("#txt_recognition").addClass("d-none");
+                $("#box_input_search").removeClass("d-none");
+                carrot.log('SpeechRecognition.onend');
+            }
+            
+            this.recognition.onnomatch = function(event) {carrot.log('SpeechRecognition.onnomatch');}
+            this.recognition.onsoundstart = function(event) {carrot.log('SpeechRecognition.onsoundstart');}
+            this.recognition.onsoundend = function(event) {carrot.log('SpeechRecognition.onsoundend');}
+            this.recognition.onspeechstart = function (event) {carrot.log('SpeechRecognition.onspeechstart');}
+            this.recognition.onstart = function(event) {carrot.log('SpeechRecognition.onstart');}
         }
-
-        this.recognition.onspeechend = function() { carrot.recognition.stop();}
-        
-        this.recognition.onerror = function(event) {
-            $("#txt_recognition_msg").removeClass("text-primary").removeClass("text-success").removeClass("text-danger").html(event.error);
-        }
-          
-        this.recognition.onaudiostart = function(event) {
-            $("#txt_recognition_msg").addClass("text-primary").html(carrot.l("recognition_start","Speak into the microphone to search..."));
-            $("#txt_recognition").removeClass("d-none");
-            $("#box_input_search").addClass("d-none");
-            carrot.log('SpeechRecognition.onaudiostart');
-        }
-          
-        this.recognition.onaudioend = function(event) {
-            carrot.recognition.stop();
-            carrot.log('SpeechRecognition.onaudioend');
-        }
-          
-        this.recognition.onend = function(event) {
-            $("#txt_recognition").addClass("d-none");
-            $("#box_input_search").removeClass("d-none");
-            carrot.log('SpeechRecognition.onend');
-        }
-          
-        this.recognition.onnomatch = function(event) {carrot.log('SpeechRecognition.onnomatch');}
-        this.recognition.onsoundstart = function(event) {carrot.log('SpeechRecognition.onsoundstart');}
-        this.recognition.onsoundend = function(event) {carrot.log('SpeechRecognition.onsoundend');}
-        this.recognition.onspeechstart = function (event) {carrot.log('SpeechRecognition.onspeechstart');}
-        this.recognition.onstart = function(event) {carrot.log('SpeechRecognition.onstart');}
     }
 
     start_recognition(){

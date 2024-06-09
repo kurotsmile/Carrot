@@ -254,8 +254,9 @@ class Carrot_Field{
         else if(this.type=='file'){
             html+='<div class="input-group mb-3">';
             html+='<input type="file" accept="'+this.type_file+'" class="form-control m-0 '+s_class+' form-control-sm" id="'+this.name+'_file" for-emp="'+this.name+'" placeholder="'+this.placeholder+'">';
-                html+='<div class="input-group-prepend dev">';
-                    html+='<div role="button" emp_id="'+this.name+'" type_file="'+this.type_file+'" onclick="carrot.file.msg_list_select(this);return false;" class="input-group-text btn-info btn-sm"><i class="fa-regular fa-folder-open"></i>&nbsp</div>';
+                html+='<div class="input-group-append dev">';
+                    html+='<button role="button" class="btn btn btn-dark btn-ms" onclick="carrot.file.add_box_file_item_link(\''+this.name+'\');return false;"><i class="fa-solid fa-link"></i></button>';
+                    html+='<button role="button" emp_id="'+this.name+'" type_file="'+this.type_file+'" onclick="carrot.file.msg_list_select(this);return false;" class="btn btn-info btn-sm"><i class="fa-regular fa-folder-open"></i>&nbsp</button>';
                 html+='</div>';
             html+='</div>';
 
