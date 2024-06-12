@@ -253,6 +253,7 @@ class Appp{
         new_data_app["exe_file"]="";
         new_data_app["ipa_file"]="";
         new_data_app["dmg_file"]="";
+        new_data_app["deb_file"]="";
         this.frm_add_or_edit(new_data_app).set_title("Add App").set_msg_done("Add app success!").set_type("add").show();
     }
 
@@ -300,8 +301,9 @@ class Appp{
 
         frm.create_field("apk_file").set_label("Apk File (Android)").set_value(data.apk_file).set_type("file").set_type_file("apk/*");
         frm.create_field("exe_file").set_label("Exe File (Window)").set_value(data.exe_file).set_type("file").set_type_file("exe/*");
-        frm.create_field("ipa_file").set_label("Ios File (Iphone Device)").set_value(data.ipa_file).set_type("file").set_type_file("ipa/*");
+        frm.create_field("ipa_file").set_label("Ios File (Iphone)").set_value(data.ipa_file).set_type("file").set_type_file("ipa/*");
         frm.create_field("dmg_file").set_label("Mac File (MacOs)").set_value(data.dmg_file).set_type("file").set_type_file("dmg/*");
+        frm.create_field("deb_file").set_label("Deb File (Linux)").set_value(data.deb_file).set_type("file").set_type_file("deb/*");
         return frm;
     }
 
@@ -528,6 +530,7 @@ class Appp{
 
         if(carrot.tool.alive(data.apk_file)) box_info.add_btn("apk_file","fa-brands fa-android","Download (Apk)",data.apk_file,'link');
         if(carrot.tool.alive(data.exe_file)) box_info.add_btn("exe_file","fa-solid fa-desktop","Download (Exe)",data.exe_file,'link');
+        if(carrot.tool.alive(data.deb_file)) box_info.add_btn("exe_file","fa-brands fa-ubuntu","Download <span class='fs-9'>(deb <i class='fa-brands fa-linux'></i>)</span>",data.deb_file,'link');
 
         if(data["img1"]!=""&&data["img1"]!=undefined){
                 var html_img='<div class="owl-carousel owl-theme">';
@@ -555,8 +558,9 @@ class Appp{
         if(carrot.tool.alive(data.apk_file)||carrot.tool.alive(data.exe_file)){
             var html_download='';
             html_download+='<div class="row mt-3 text-center">';
-            if(carrot.tool.alive(data.apk_file)) html_download+=carrot.appp.box_download_item("Download Apk",data.apk_file,'fa-brands fa-android');
-            if(carrot.tool.alive(data.exe_file)) html_download+=carrot.appp.box_download_item("Download Exe",data.exe_file,'fa-solid fa-desktop');
+            if(carrot.tool.alive(data.apk_file)) html_download+=carrot.appp.box_download_item("Download apk",data.apk_file,'fa-brands fa-android');
+            if(carrot.tool.alive(data.exe_file)) html_download+=carrot.appp.box_download_item("Download exe",data.exe_file,'fa-solid fa-desktop');
+            if(carrot.tool.alive(data.deb_file)) html_download+=carrot.appp.box_download_item("Download deb",data.deb_file,'fa-brands fa-linux','download','Use commands on linux operating systems to install deb files: sudo dpkg -i mygame-deb.deb');
             html_download+='</div>';
             box_info.add_contain(html_download);
         }
@@ -570,9 +574,9 @@ class Appp{
         carrot.appp.check_event();
     }
 
-    box_download_item(name,link='',icon='fa-solid fa-file-arrow-down',tip='download'){
+    box_download_item(name,link='',icon='fa-solid fa-file-arrow-down',tip='download',help='Click here to download'){
         var html_download='';
-        html_download+='<a href="'+link+'" title="Click here to download" data-toggle="tooltip" class="pt-2 pb-2 p-1 col-2 m-2 bg-success shadow-sm text-white">';
+        html_download+='<a href="'+link+'" title="'+help+'" data-toggle="tooltip" class="pt-2 pb-2 p-1 col-2 m-2 bg-success shadow-sm text-white">';
         html_download+='<i class="'+icon+' fa-3x"></i>';
         html_download+='</br>'+name+'<br/>';
         html_download+='<p class="fs-9"><i class="fa-solid fa-download"></i> '+tip+'</p>';

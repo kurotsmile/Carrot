@@ -8,12 +8,13 @@ class Carrot_File{
     orderBy_at="timeCreated";
     orderBy_type="ASCENDING";
 
-    types=["apk","exe","ipa","dmg","jpg","png","mp3"];
+    types=["apk","exe","ipa","dmg","deb","jpg","png","mp3"];
     types_id=[
                 "application/vnd.android.package-archive",
                 "application/x-msdownload",
                 "application/vnd.android.package-archive",
                 "application/vnd.android.package-archive",
+                "application",
                 "image/jpeg",
                 "image/png",
                 "audio/mpeg"
@@ -23,6 +24,7 @@ class Carrot_File{
                 "fa-brands fa-microsoft",
                 "fa-solid fa-file",
                 "fa-solid fa-file",
+                "fa-brands fa-ubuntu",
                 "fa-solid fa-image",
                 "fa-regular fa-image",
                 "fa-solid fa-file-audio"
@@ -34,10 +36,10 @@ class Carrot_File{
         }); 
     }
 
-    get_icon(type){
+    get_icon_by_extension(type_extension){
         var s_icon='fa-solid fa-file';
-        $(carrot.file.types_id).each(function(index,f){
-            if(type==f){
+        $(carrot.file.types).each(function(index,f){
+            if(type_extension==f+"/*"){
                 s_icon=carrot.file.types_icon[index];
                 return false;
             }
@@ -56,7 +58,7 @@ class Carrot_File{
     show_list_by_type(index){
         carrot.loading("Show List by type ("+carrot.file.types[index]+")");
         carrot.file.objs=null;
-        carrot.file.type_file_show=carrot.file.types_id[index];
+        carrot.file.type_file_show=carrot.file.types[index]+"/*";
         carrot.file.get_data(carrot.file.load_list_by_data);
     }
 
@@ -121,7 +123,7 @@ class Carrot_File{
             act_done(carrot.file.objs);
         else{
             var q=new Carrot_Query("file");
-            if(carrot.file.type_file_show!="all") q.add_where("type",carrot.file.type_file_show);
+            if(carrot.file.type_file_show!="all") q.add_where("type_emp",carrot.file.type_file_show);
             q.set_limit(50);
             q.set_order(carrot.file.orderBy_at,carrot.file.orderBy_type);
             q.get_data((data)=>{
@@ -133,7 +135,7 @@ class Carrot_File{
 
     box_item(data){
         var item_file=new Carrot_List_Item(carrot);
-        item_file.set_icon_font(carrot.file.get_icon(data.type));
+        item_file.set_icon_font(carrot.file.get_icon_by_extension(data.type_emp));
         item_file.set_id(data.id_doc);
         item_file.set_db("file");
         item_file.set_index(data.index);
@@ -295,7 +297,7 @@ class Carrot_File{
                         html += '<span fullPath="'+path_file+'" onclick="delete_file(this);return false;" role="button" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash-can"></i></span>';
                         html += '</div>';
                     } else {
-                        html += '<div class="col-1"><i class="fa-solid fa-file"></i></div>';
+                        html += '<div class="col-1"><i class="'+carrot.file.get_icon_by_extension(type_file)+'"></i></div>';
                         html += '<div class="col-10">';
                             html += '<textarea class="w-100 form-control fs-9">'+url_file+'</textarea>';
                         html += '</div>';
