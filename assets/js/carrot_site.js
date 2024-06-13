@@ -1066,20 +1066,7 @@ class Carrot_Site{
             $("#load_bar").css("width",val_show+"%");
         }
     }
-
-    del_file(emp){
-        var path_file=$(emp).attr("fullPath");
-        var carrot=this;
-        var storageRef = carrot.storage.ref();
-        var desertRef =storageRef.child(path_file);
-        desertRef.delete().then(() => {
-            $(emp).parent().remove();
-            carrot.log("Delete file "+path_file+" Success!","success");
-        }).catch((error) => {
-            carrot.log(error);
-        });
-    }
-
+    
     home_page(){
         if(carrot.home!=null)
             carrot.home.show();

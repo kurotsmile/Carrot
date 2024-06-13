@@ -528,9 +528,9 @@ class Appp{
             if(data["data_extension"]!="") box_info.add_btn('btn_extension_1','fa-solid fa-square-up-right',"Football",data["data_extension"]);
         }
 
-        if(carrot.tool.alive(data.apk_file)) box_info.add_btn("apk_file","fa-brands fa-android","Download (Apk)",data.apk_file,'link');
-        if(carrot.tool.alive(data.exe_file)) box_info.add_btn("exe_file","fa-solid fa-desktop","Download (Exe)",data.exe_file,'link');
-        if(carrot.tool.alive(data.deb_file)) box_info.add_btn("exe_file","fa-brands fa-ubuntu","Download <span class='fs-9'>(deb <i class='fa-brands fa-linux'></i>)</span>",data.deb_file,'link');
+        if(carrot.tool.alive(data.apk_file)) box_info.add_btn("btn_apk_file","fa-brands fa-android","Download (Apk)",data.apk_file,'link');
+        if(carrot.tool.alive(data.exe_file)) box_info.add_btn("btn_exe_file","fa-solid fa-desktop","Download (Exe)",data.exe_file,'link');
+        if(carrot.tool.alive(data.deb_file)) box_info.add_btn("btn_deb_file","fa-brands fa-ubuntu","Download <span class='fs-9'>(deb <i class='fa-brands fa-linux'></i>)</span>",data.deb_file,'link');
 
         if(data["img1"]!=""&&data["img1"]!=undefined){
                 var html_img='<div class="owl-carousel owl-theme">';
@@ -555,7 +555,7 @@ class Appp{
             box_info.add_body('<h4 class="fw-semi fs-5 lang" key_lang="intro_video">Intro video</h4>',html_video);
         }
 
-        if(carrot.tool.alive(data.apk_file)||carrot.tool.alive(data.exe_file)){
+        if(carrot.tool.alive(data.apk_file)||carrot.tool.alive(data.exe_file)||carrot.tool.alive(data.deb_file)){
             var html_download='';
             html_download+='<div class="row mt-3 text-center">';
             if(carrot.tool.alive(data.apk_file)) html_download+=carrot.appp.box_download_item("Download apk",data.apk_file,'fa-brands fa-android');

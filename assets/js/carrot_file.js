@@ -151,7 +151,7 @@ class Carrot_File{
             html_body+='</div>';
 
             html_body+='<div class="col-2">';
-            html_body+='<button role="button" class="btn btn-sm btn-danger" fullPath="'+data.fullPath+'" onclick="delete_file(this)"><i class="fa-solid fa-file-circle-minus"></i></button>';
+            html_body+='<button role="button" class="btn btn-sm btn-danger" fullPath="'+data.fullPath+'" onclick="carrot.file.delete_file(this)"><i class="fa-solid fa-file-circle-minus"></i></button>';
             html_body+='</div>';
         item_file.set_body(html_body);
         return item_file;
@@ -207,7 +207,7 @@ class Carrot_File{
     }
 
     msg_list_select(emp){
-        this.emp_msg_field_file=emp;
+        carrot.file.emp_msg_field_file=emp;
         var type_file=$(emp).attr("type_file");
         carrot.loading("Get list data file "+type_file);
         var q=new Carrot_Query("file");
@@ -237,7 +237,7 @@ class Carrot_File{
         html+='<tbody>';
         $(data).each(function(index,file){
             html+='<tr role="button" file_url="'+file.url+'" file_type="'+file.type_emp+'" file_path="'+file.fullPath+'" onclick="carrot.file.select_file_for_msg(this)">';
-                html+='<td><i class="'+carrot.file.get_icon(file.type)+'"></i></td>';
+                html+='<td><i class="'+carrot.file.get_icon_by_extension(file.type_emp)+'"></i></td>';
                 html+='<td>'+file.fullPath+'</td>';
             html+='<tr>';''
         });
@@ -266,7 +266,7 @@ class Carrot_File{
         var file_url=$(emp).attr("file_url");
         var file_path=$(emp).attr("file_path");
         var file_type=$(emp).attr("file_type");
-        var emp_id=$(this.emp_msg_field_file).attr("emp_id");
+        var emp_id=$(carrot.file.emp_msg_field_file).attr("emp_id");
         $("#"+emp_id).attr("value",file_url).html(carrot.file.box_file_item(file_url,file_path,file_type));
         Swal.close();
     }
@@ -278,36 +278,45 @@ class Carrot_File{
             html+='<div class="card-body w-100 shadow-sm d-flex flex-column align-items-start">';
                 html+='<div class="row w-100">';
                     if (type_file == "image/*") {
-                        html += '<div class="col-4">';
-                        html += '<a href="'+url_file+'" target="_blank" class="text-break fs-9"><img class="rounded card-img-left flex-auto d-none d-md-block" src="'+url_file+'"/></a>';
-                        html += '</div>';
-                        html += '<div class="col-6">';
-                        html += '<input class="form-control fs-9 form-control-sm" value="'+url_file+'">';
-                        html += '</div>';
-                        html += '<div class="col-2">';
-                        html += '<span fullPath="'+path_file+'" onclick="delete_file(this);return false;" role="button" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash-can"></i></span>';
-                        html += '</div>';
+                        html+='<div class="col-4">';
+                        html+='<a href="'+url_file+'" target="_blank" class="text-break fs-9"><img class="rounded card-img-left flex-auto d-none d-md-block" src="'+url_file+'"/></a>';
+                        html+='</div>';
+                        html+='<div class="col-6">';
+                        html+='<input class="form-control fs-9 form-control-sm" value="'+url_file+'">';
+                        html+='</div>';
+                        html+='<div class="col-2">';
+                            html+='<span fullPath="'+path_file+'" onclick="carrot.file.delete_file(this);return false;" role="button" class="btn btn-danger btn-sm"><i class="fa-solid fa-file-circle-minus"></i></span>';
+                            html+='<span onclick="carrot.file.delete_box_file_item(this);return false;" role="button" class="btn btn-danger btn-sm m-1"><i class="fa-solid fa-trash-can"></i></span>';
+                        html+='</div>';
                     } else if (type_file == "audio/*") {
-                        html += '<div class="col-10">';
-                        html += '<audio syle="width:100%" controls muted><source src="'+url_file+'" type="audio/mpeg">Your browser does not support the audio element.</audio>';
-                        html += '<a href="'+url_file+'" target="_blank" class="text-break fs-9 d-block"><i class="fa-solid fa-file-audio"></i><i class="fa-solid fa-file-audio"></i></a>';
-                        html += '<input class="form-control fs-9 form-control-sm" value="'+url_file+'"></input>';
-                        html += '</div>';
-                        html += '<div class="col-2">';
-                        html += '<span fullPath="'+path_file+'" onclick="delete_file(this);return false;" role="button" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash-can"></i></span>';
-                        html += '</div>';
+                        html+='<div class="col-10">';
+                        html+='<audio syle="width:100%" controls muted><source src="'+url_file+'" type="audio/mpeg">Your browser does not support the audio element.</audio>';
+                        html+='<a href="'+url_file+'" target="_blank" class="text-break fs-9 d-block"><i class="fa-solid fa-file-audio"></i><i class="fa-solid fa-file-audio"></i></a>';
+                        html+='<input class="form-control fs-9 form-control-sm" value="'+url_file+'"></input>';
+                        html+='</div>';
+                        html+='<div class="col-2">';
+                            html+= '<span fullPath="'+path_file+'" onclick="carrot.file.delete_file(this);return false;" role="button" class="btn btn-danger btn-sm m-1"><i class="fa-solid fa-file-circle-minus"></i></span>';
+                            html+='<span onclick="carrot.file.delete_box_file_item(this);return false;" role="button" class="btn btn-danger btn-sm m-1"><i class="fa-solid fa-trash-can"></i></span>';
+                        html+='</div>';
                     } else {
-                        html += '<div class="col-1"><i class="'+carrot.file.get_icon_by_extension(type_file)+'"></i></div>';
-                        html += '<div class="col-10">';
-                            html += '<textarea class="w-100 form-control fs-9">'+url_file+'</textarea>';
-                        html += '</div>';
-                        html += '<div class="col-1">';
-                            html+='<span fullPath="'+path_file+'" onclick="delete_file(this);return false;" role="button" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash-can"></i></span>';
+                        html+='<div class="col-1"><i class="'+carrot.file.get_icon_by_extension(type_file)+'"></i></div>';
+                        html+='<div class="col-10">';
+                            html+='<textarea class="w-100 form-control fs-9">'+url_file+'</textarea>';
+                        html+='</div>';
+                        html+='<div class="col-1">';
+                            html+='<span fullPath="'+path_file+'" onclick="carrot.file.delete_file(this);return false;" role="button" class="btn btn-danger btn-sm m-1"><i class="fa-solid fa-file-circle-minus"></i></span>';
+                            html+='<span onclick="carrot.file.delete_box_file_item(this);return false;" role="button" class="btn btn-danger btn-sm m-1"><i class="fa-solid fa-trash-can"></i></span>';
                         html+='</div>';
                     }
             html+='</div>';
         html+='</div>';
         return html;
+    }
+
+    delete_box_file_item(emp){
+        var emp_file=$(emp).parent().parent().parent().parent().parent();
+        $(emp_file).html("");
+        $(emp_file).attr("value","");
     }
 
     add_box_file_item_link(id_emp){
@@ -342,6 +351,30 @@ class Carrot_File{
                 console.log(error);
             });
         })
+    }
+
+    delete_file(emp){
+        var path_file=$(emp).attr("fullPath");
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Are you sure you want to delete the file '"+path_file+"' ?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed){
+                var storageRef = carrot.storage.ref();
+                var desertRef =storageRef.child(path_file);
+                desertRef.delete().then(() => {
+                    $(emp).parent().remove();
+                    carrot.log("Delete file "+path_file+" Success!","success");
+                }).catch((error) => {
+                    carrot.log(error);
+                });
+            }
+        });
     }
 
     delete_all_data(){
