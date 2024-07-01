@@ -321,7 +321,7 @@ class Carrot_File{
 
     add_box_file_item_link(id_emp){
         var type_file_emp=$("#"+id_emp+"_file").attr("accept");
-        $("#"+id_emp).html(carrot.file.box_file_item("thanh","thanh",type_file_emp));
+        $("#"+id_emp).html(carrot.file.box_file_item(ủ,"thanh",type_file_emp));
     }
 
     get_base64data_file(url_file) {
