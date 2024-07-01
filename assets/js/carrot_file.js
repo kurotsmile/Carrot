@@ -298,7 +298,15 @@ class Carrot_File{
                             html+= '<span fullPath="'+path_file+'" onclick="carrot.file.delete_file(this);return false;" role="button" class="btn btn-danger btn-sm m-1"><i class="fa-solid fa-file-circle-minus"></i></span>';
                             html+='<span onclick="carrot.file.delete_box_file_item(this);return false;" role="button" class="btn btn-danger btn-sm m-1"><i class="fa-solid fa-trash-can"></i></span>';
                         html+='</div>';
-                    } else {
+                    }else if(type_file=="link/*"){
+                        html+='<div class="col-1"><i class="fa-solid fa-link"></i></div>';
+                        html+='<div class="col-10">';
+                            html+='<textarea class="w-100 form-control fs-9">'+url_file+'</textarea>';
+                        html+='</div>';
+                        html+='<div class="col-1">';
+                            html+='<span onclick="carrot.file.delete_box_file_item(this);return false;" role="button" class="btn btn-danger btn-sm m-1"><i class="fa-solid fa-trash-can"></i></span>';
+                        html+='</div>';
+                    }else {
                         html+='<div class="col-1"><i class="'+carrot.file.get_icon_by_extension(type_file)+'"></i></div>';
                         html+='<div class="col-10">';
                             html+='<textarea class="w-100 form-control fs-9">'+url_file+'</textarea>';
@@ -321,7 +329,15 @@ class Carrot_File{
 
     add_box_file_item_link(id_emp){
         var type_file_emp=$("#"+id_emp+"_file").attr("accept");
-        $("#"+id_emp).html(carrot.file.box_file_item("sd","thanh",type_file_emp));
+        Swal.fire({
+            input: "url",
+            inputLabel: "URL address",
+            inputPlaceholder: "Enter the URL",
+            showCancelButton: true,
+            preConfirm: async (val) => {
+                $("#"+id_emp).attr("value",val).html(carrot.file.box_file_item(val,"thanh","link/*"));
+            }
+        });
     }
 
     get_base64data_file(url_file) {
