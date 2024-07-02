@@ -31,7 +31,7 @@ class Chat_Log{
 
     list(){
         carrot.loading("Get all data log chat");
-        carrot.change_title("All Log Chat","?page=chat_log","chat_log");
+        carrot.change_title("All Log Chat",carrot.url()+"?page=chat_log","chat_log");
         carrot.chat_log.get_data(carrot.chat_log.load_list_by_data);
     }
 

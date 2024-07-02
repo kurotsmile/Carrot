@@ -35,7 +35,7 @@ class Bible{
     }
 
     list(){
-        carrot.change_title("List all bible","?page=bible","bible");
+        carrot.change_title("List all bible",carrot.url()+"?page=bible","bible");
         carrot.loading("Get all data Bible");
         carrot.bible.get_data(carrot.bible.load_list_by_data);
     }

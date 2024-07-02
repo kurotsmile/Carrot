@@ -25,7 +25,7 @@ class Carrot_Audio{
         carrot.player_media.create();
         carrot.player_media.set_act_next(carrot.audio.next);
         carrot.player_media.set_act_prev(carrot.audio.prev);
-        carrot.change_title_page("Audio","?page=audio","audio");
+        carrot.change_title_page("Audio",carrot.url()+"?page=audio","audio");
         carrot.hide_loading();
         var html='';
         html+=carrot.audio.menu();

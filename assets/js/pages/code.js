@@ -15,7 +15,7 @@ class Code{
     }
 
     list(){
-        carrot.change_title_page("All Code","?page=code","coder");
+        carrot.change_title_page("All Code",carrot.url()+"?page=code","coder");
         carrot.loading("Get all data code");
         carrot.coder.get_data(carrot.coder.load_list_by_data);
     }
@@ -208,7 +208,7 @@ class Code{
     info(data){
         carrot.coder.type_show="info";
         carrot.coder.info_code_cur=data;
-        carrot.change_title(data.title,"?page=code&id="+data.id_doc,"coder");
+        carrot.change_title(data.title,carrot.url()+"?page=code&id="+data.id_doc,"coder");
         carrot.hide_loading();
         var html='';
         var box_info=new Carrot_Info(data.id_doc);

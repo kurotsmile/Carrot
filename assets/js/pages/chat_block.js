@@ -31,7 +31,7 @@ class Chat_Block{
     }
 
     list(){
-        carrot.change_title("List Key Block","?page=chat_block","chat_block");
+        carrot.change_title("List Key Block",carrot.url()+"?page=chat_block","chat_block");
         carrot.loading("Get list key block chat");
         carrot.chat_block.get_data((data)=>{
             carrot.chat_block.load_list_by_data(data);

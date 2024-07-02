@@ -69,7 +69,7 @@ class User_Avatar{
 
     load_list_by_data(data){
         carrot.hide_loading();
-        carrot.change_title("List Avatar","?page=avatar","avatar");
+        carrot.change_title("List Avatar",carrot.url()+"?page=avatar","avatar");
         var html=carrot.avatar.menu();
         html+='<div class="row">';
         $(data).each(function(index,avatar){

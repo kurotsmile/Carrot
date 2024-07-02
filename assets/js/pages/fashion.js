@@ -22,7 +22,7 @@ class Fashion{
 
     list(){
         carrot.loading("Get all data fashion");
-        carrot.change_title("All Fashion","?p=fashion","fashion");
+        carrot.change_title("All Fashion",carrot.url()+"?p=fashion","fashion");
         carrot.fashion.get_data(carrot.fashion.load_list_by_data);
     }
 

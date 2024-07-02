@@ -50,7 +50,7 @@ class Chat{
 
     list(){
         carrot.loading("Get all chat data and show");
-        carrot.change_title_page("All Chat","?page=chat","All Chat");
+        carrot.change_title_page("All Chat",carrot.url()+"?page=chat","All Chat");
         carrot.chat.where_a="status";
         carrot.chat.where_c="passed";
         carrot.chat.get_data(carrot.chat.load_list_by_data);
@@ -659,7 +659,7 @@ class Chat{
 
     info(data){
         carrot.chat.obj_info_cur=data;
-        carrot.change_title_page("Chat Info","?page=chat&id="+data.id_doc+"&lang_chat="+carrot.langs.lang_setting,"chat");
+        carrot.change_title_page("Chat Info",carrot.url()+"?page=chat&id="+data.id_doc+"&lang_chat="+carrot.langs.lang_setting,"chat");
         carrot.chat.show_type="info";
         carrot.hide_loading();
         var html=carrot.chat.menu();

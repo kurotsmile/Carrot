@@ -19,7 +19,7 @@ class Appp{
     }
     
     back_show_all(){
-        carrot.change_title(carrot.l("app","App and Game"),"?page=app","appp");
+        carrot.change_title(carrot.l("app","App and Game"),carrot.url()+"?page=app","appp");
         carrot.appp.show();
     }
 
@@ -71,7 +71,7 @@ class Appp{
     }
 
     show_other_store(){
-        carrot.change_title("stores","?p=app&view=store","stores");
+        carrot.change_title("stores",carrot.url()+"?p=app&view=store","stores");
         carrot.loading("Get all data link store");
         carrot.appp.type_view="stores";
         carrot.appp.get_data_link_store((data)=>{
@@ -210,7 +210,7 @@ class Appp{
     }
 
     load_list_app_by_data(data){
-        carrot.change_title_page("App and Game","?page=app","appp");
+        carrot.change_title_page("App and Game",carrot.url()+"?page=app","appp");
         carrot.hide_loading();
         var html="";
         html+=carrot.appp.menu();

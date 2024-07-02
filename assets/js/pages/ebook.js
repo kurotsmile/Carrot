@@ -139,7 +139,7 @@ class EBook{
     }
 
     list(){
-        carrot.change_title("All Ebook","?page=ebook","ebook");
+        carrot.change_title("All Ebook",carrot.url()+"?page=ebook","ebook");
         carrot.ebook.type_view="list_ebook";
         carrot.loading("Get all data Ebook and show");
         carrot.ebook.get_data(carrot.ebook.load_list_by_data);
@@ -321,7 +321,7 @@ class EBook{
     info(data){
         carrot.ebook.obj_ebook_cur=data;
         carrot.ebook.type_view="info";
-        carrot.change_title(data.title,"?page=ebook&id="+data.id_doc,"ebook");
+        carrot.change_title(data.title,carrot.url()+"?page=ebook&id="+data.id_doc,"ebook");
         carrot.hide_loading();
         
         var info=new Carrot_Info(data.id_doc);

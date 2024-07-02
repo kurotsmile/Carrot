@@ -88,7 +88,7 @@ class FootBall{
     load_list_by_data(players){
         carrot.football.type_show="list";
         carrot.hide_loading();
-        carrot.change_title_page("Football","?page=football","football");
+        carrot.change_title_page("Football",carrot.url()+"?page=football","football");
         var html=carrot.football.menu();
         html+='<div id="all_player" class="row m-0"></div>';
         carrot.show(html);
