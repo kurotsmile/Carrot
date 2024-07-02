@@ -180,7 +180,7 @@ class Carrot_Rate{
     box_rank_item(rank){
         var html='';
         var date_rank=new Date(rank.date);
-        var url_avatar_user_field='images/avatar_default.png';
+        var url_avatar_user_field=carrot.url()+'/images/avatar_default.png';
         var name_user_field="Incognito";
         var act_click_user='';
 
