@@ -18,7 +18,7 @@ class Carrot_Rate{
         html += '<div class="col-md-2 align-items-center col-2 rcolm fs-8">';
             var data_user_login = carrot.user.obj_login;
             var name_user_rate='Incognito';
-            var url_avatar_user_rate='images/avatar_default.png';
+            var url_avatar_user_rate=carrot.url()+'/images/avatar_default.png';
             if (data_user_login != null) {
                 if (data_user_login.avatar != null) url_avatar_user_rate=data_user_login.avatar;
                 name_user_rate=data_user_login.name;
