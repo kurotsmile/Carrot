@@ -539,7 +539,7 @@ class Appp{
                     var id_img=key_img_data+"_"+data.id_doc.replace(/[^\w]/gi,'');
                     if(data[key_img_data]!=""&&data[key_img_data]!=undefined){
                         carrot.data.load_image(id_img,data[key_img_data],id_img);
-                        html_img+='<img class="'+id_img+'" src="images/512.png"/>';
+                        html_img+='<img class="'+id_img+'" src="'+carrot.url()+'/images/512.png"/>';
                         var id_img=key_img_data+"_"+data.id_doc;
                     }
                 }
