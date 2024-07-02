@@ -139,10 +139,10 @@ class Carrot_Rate{
         html+='<div class="row m-0 reviewrow p-3 px-0 border-bottom">';
 
             html+='<div class="col-md-1 align-items-center col-1 rcolm" role="button" onclick="carrot.user.show_info_mini(\''+user.id+'\',\''+user.lang+'\')">';
-                var url_avatar_user_field='images/avatar_default.png';
+                var url_avatar_user_field=carrot.url()+'/images/avatar_default.png';
                 if(comment.user!=null){
                     if(comment.user.avatar!=null) url_avatar_user_field=comment.user.avatar;
-                    if(url_avatar_user_field=="") url_avatar_user_field='images/avatar_default.png';
+                    if(url_avatar_user_field=="") url_avatar_user_field=arrot.url()+'/images/avatar_default.png';
                     html+='<img src="'+url_avatar_user_field+'" class="rounder w-100"/>';
                 }else{
                     html+='<i class="fa-solid fa-user fa-2x"></i>';
