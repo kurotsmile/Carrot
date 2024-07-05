@@ -307,7 +307,7 @@ class Carrot_Info{
                                 if(btn.type=="btn")
                                     html+=' <button id="'+btn["id"]+'" index="'+index+'" onclick="'+btn["act"]+'" type="button" class="btn d-inline btn-success m-1"><i class="'+btn["icon"]+'"></i> '+btn["label"]+'</button>';
                                 else
-                                    html+=' <a id="'+btn["id"]+'" index="'+index+'" href="'+btn["act"]+'" type="button" class="btn d-inline btn-success m-1"><i class="'+btn["icon"]+'"></i> '+btn["label"]+'</a>';
+                                    html+=' <a id="'+btn["id"]+'" target="_blank" index="'+index+'" href="'+btn["act"]+'" type="button" class="btn d-inline btn-success m-1"><i class="'+btn["icon"]+'"></i> '+btn["label"]+'</a>';
                             });
                             html+='</div>';
                         html+='</div>';

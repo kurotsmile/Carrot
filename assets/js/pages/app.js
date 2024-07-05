@@ -576,7 +576,7 @@ class Appp{
 
     box_download_item(name,link='',icon='fa-solid fa-file-arrow-down',tip='download',help='Click here to download'){
         var html_download='';
-        html_download+='<a href="'+link+'" title="'+help+'" data-toggle="tooltip" class="pt-2 pb-2 p-1 col-4 col-sm-4 col-md-2 col-md-2 col-xl-2 m-2 bg-success shadow-sm text-white">';
+        html_download+='<a href="'+link+'" target="_blank" title="'+help+'" data-toggle="tooltip" class="pt-2 pb-2 p-1 col-4 col-sm-4 col-md-2 col-md-2 col-xl-2 m-2 bg-success shadow-sm text-white">';
         html_download+='<i class="'+icon+' fa-3x"></i>';
         html_download+='</br>'+name+'<br/>';
         html_download+='<p class="fs-9"><i class="fa-solid fa-download"></i> '+tip+'</p>';
