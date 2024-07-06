@@ -18,9 +18,24 @@ class Carrot_Radio{
     add(){
         var new_data_radio=new Object();
         new_data_radio["id"]="r"+carrot.create_id();
-        new_data_radio["name"]="";
-        new_data_radio["url"]="";
-        new_data_radio["icon"]="";
+        new_data_radio["name"] = "";
+        new_data_radio["url"] = "";
+        new_data_radio["dataFormat"] = "";
+        new_data_radio["audioFormat"] = "";
+        new_data_radio["station"] = "";
+        new_data_radio["genres"] = "";
+        new_data_radio["bitrate"] = "";
+        new_data_radio["rating"] = "";
+        new_data_radio["description"] = "";
+        new_data_radio["excludeCodec"] = "";
+        new_data_radio["chunkSize"] = "";
+        new_data_radio["bufferSize"] = "";
+        new_data_radio["icon"] = "";
+        new_data_radio["city"] = "";
+        new_data_radio["country"] = "";
+        new_data_radio["date_create"]=new Date().toISOString();
+        new_data_radio["lang"]=carrot.langs.lang_setting;
+
         carrot.radio.frm_add_or_edit(new_data_radio).set_title("Add Radio").show();
     }
 
@@ -30,8 +45,22 @@ class Carrot_Radio{
         frm.set_db("radio","id");
         frm.create_field("id").set_label("ID").set_value(data["id"]).set_main();
         frm.create_field("name").set_label("Name").set_value(data["name"]);
-        frm.create_field("icon").set_label("Icon").set_value(data["icon"]).set_type("file").set_type_file("image/*");
         frm.create_field("url").set_label("Url Stream").set_value(data["url"]);
+        frm.create_field("dataFormat").set_label("Data Format").set_value(data["dataFormat"]);
+        frm.create_field("audioFormat").set_label("Audio Format").set_value(data["audioFormat"]);
+        frm.create_field("station").set_label("Station").set_value(data["station"]);
+        frm.create_field("genres").set_label("Genres").set_value(data["genres"]);
+        frm.create_field("bitrate").set_label("Bitrate").set_value(data["bitrate"]);
+        frm.create_field("rating").set_label("Rating").set_value(data["rating"]);
+        frm.create_field("description").set_label("Description").set_value(data["description"]);
+        frm.create_field("excludeCodec").set_label("Exclude Codec").set_value(data["excludeCodec"]);
+        frm.create_field("chunkSize").set_label("Chunk Size").set_value(data["chunkSize"]);
+        frm.create_field("bufferSize").set_label("Buffer Size").set_value(data["bufferSize"]);
+        frm.create_field("icon").set_label("Icon").set_value(data["icon"]).set_type("file").set_type_file("image/*");
+        frm.create_field("city").set_label("City").set_value(data["city"]);
+        frm.create_field("country").set_label("Country").set_value(data["country"]);
+        frm.create_field("date_create").set_label("Date Create").set_val(data["date_create"]);
+        frm.create_field("lang").set_label("Lang").set_type("lang").set_val(data["lang"]);
         return frm;
     }
 
