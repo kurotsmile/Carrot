@@ -628,15 +628,13 @@ class Appp{
         carrot.data.clear("stores");
         carrot.data.clear("images");
         carrot.data.clear("app_info");
-        setTimeout(3000,()=>{carrot.appp.show();});
+        setTimeout(carrot.appp.show,500);
         carrot.msg("Delete all data app success!","success");
     }
 
     reload_store(){
         carrot.data.clear("stores");
-        setTimeout(()=>{
-            carrot.appp.show_other_store();
-        },3000);
+        setTimeout(carrot.appp.show_other_store,600);
     }
 }
 carrot.appp=new Appp();

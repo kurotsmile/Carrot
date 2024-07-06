@@ -61,6 +61,7 @@ class Carrot_Radio{
         frm.create_field("country").set_label("Country").set_value(data["country"]);
         frm.create_field("date_create").set_label("Date Create").set_val(data["date_create"]);
         frm.create_field("lang").set_label("Lang").set_type("lang").set_val(data["lang"]);
+        frm.set_act_done("carrot.radio.reload()");
         return frm;
     }
 
@@ -157,10 +158,15 @@ class Carrot_Radio{
         return html;
     }
 
+    reload(){
+        carrot.data.clear("radio");
+        setTimeout(carrot.radio.show,500);
+    }
+
     delete_all_data(){
         carrot.data.clear("radio");
         carrot.msg("Delete all data radio success!","success");
-        setTimeout(3000,()=>{carrot.radio.show();});
+        setTimeout(carrot.radio.show(),500);
     }
 }
 carrot.radio=new Carrot_Radio();
