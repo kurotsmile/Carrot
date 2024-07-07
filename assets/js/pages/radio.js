@@ -35,7 +35,6 @@ class Carrot_Radio{
         new_data_radio["country"] = "";
         new_data_radio["date_create"]=new Date().toISOString();
         new_data_radio["lang"]=carrot.langs.lang_setting;
-
         carrot.radio.frm_add_or_edit(new_data_radio).set_title("Add Radio").show();
     }
 
@@ -63,6 +62,18 @@ class Carrot_Radio{
         frm.create_field("lang").set_label("Lang").set_type("lang").set_val(data["lang"]);
         frm.set_act_done("carrot.radio.reload()");
         return frm;
+    }
+
+    getStar(rate){
+        rate=parseInt(rate);
+        var html='';
+        for(var i=0;i<=5;i++){
+            if(i<rate)
+                html+='<i style="color:green" class="fas fa-star"></i>';
+            else
+                html+='<i style="color:#d9d9d9" class="far fa-star"></i>';
+        }
+        return html;
     }
 
     get_data(act_done){
@@ -130,7 +141,7 @@ class Carrot_Radio{
         item_radio.set_class_icon("pe-0 col-2");
         item_radio.set_class_body("mt-2 col-10");
         var html_body='';
-        html_body+='<div class="col-10"><i class="fa-solid fa-star-half-stroke"></i><i class="fa-solid fa-star-half-stroke"></i><i class="fa-solid fa-star-half-stroke"></i></div>';
+        html_body+='<div class="col-10">'+carrot.radio.getStar(data.rating)+'</div>';
         html_body+='<div class="col-2 text-end">';
         html_body+='<i role="button" onclick="carrot.player_media.play_audio(\''+data.name+'\',\''+data.name+'\',\''+data.url+'\');" class="audio_icon fa-solid fa-play fa-2x text-success btn_play_radio" obj_id="'+data.id+'"></i>';
         html_body+='</div>';
@@ -160,13 +171,13 @@ class Carrot_Radio{
 
     reload(){
         carrot.data.clear("radio");
-        setTimeout(carrot.radio.show,500);
+        setTimeout(carrot.radio.show,2000);
     }
 
     delete_all_data(){
         carrot.data.clear("radio");
         carrot.msg("Delete all data radio success!","success");
-        setTimeout(carrot.radio.show(),500);
+        setTimeout(carrot.radio.show(),2000);
     }
 }
 carrot.radio=new Carrot_Radio();

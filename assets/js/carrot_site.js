@@ -851,10 +851,14 @@ class Carrot_Site{
                 }else{
                     var all_item = obj_json.all_item;
                     
-    
                     $.each(all_item, function (index, d) {
-                        var doc_id = d["id_import"];
-                        delete d["id_import"];
+                        var doc_id = ""
+                        if(d["id_import"]!=null){
+                            doc_id=d["id_import"];
+                            delete d["id_import"];
+                        }else{
+                            doc_id="id"+carrot.create_id();
+                        }
                         carrot.db.collection(name_collection).doc(doc_id).set(d);
                     });
 
