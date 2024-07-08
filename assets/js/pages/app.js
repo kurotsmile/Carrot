@@ -128,7 +128,7 @@ class Appp{
             carrot.appp.get_data((data)=>{
                 $("#all_app_contain").html('');
                 $(carrot.random(data)).each(function(index,app){
-                    if(index>=12) return false;
+                    if(index>=24) return false;
                     app["index"]=index;
                     $("#all_app_contain").append(carrot.appp.box_item(app).html());
                 });
