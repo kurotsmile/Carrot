@@ -38,7 +38,6 @@ class Carrot_Player_Media{
             carrot.player_media.carrot.body.parent().parent().append(this.ui_player());
             carrot.player_media.emp_player=$("#music_player_mini");
             $("#music_player_mini").draggable({scroll: true,axis: "x",cursor: "crosshair", handle: ".fa-up-down-left-right"});
-            
         }
     }
 
