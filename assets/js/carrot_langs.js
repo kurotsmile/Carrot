@@ -77,10 +77,19 @@ class Carrot_Langs{
     get_all_data_lang() {
         this.carrot.load_bar();
         this.carrot.log("get_all_data_lang from server","alert");
-        carrot.server.get_collection("lang",(langs)=>{
-            carrot.langs.list_lang=langs;
-            carrot.langs.save_list_lang();
-        });
+
+        if(carrot.type_server=="firestore"){
+            carrot.server.get_collection("lang", (data) => {
+                carrot.langs.list_lang = data;
+                carrot.langs.save_list_lang();
+            });
+        }else{
+            $.getJSON(carrot.config.list_url_data_lang[0],function(data){
+                carrot.langs.list_lang = data["all_item"];
+                carrot.langs.save_list_lang();
+            });
+        }
+
         carrot.update_new_ver_cur("lang",true);
     };
 
@@ -109,10 +118,17 @@ class Carrot_Langs{
     get_all_data_lang_web(){
         this.carrot.load_bar();
         this.carrot.log("Get lang "+this.carrot.lang+" from server","alert");
-        var q=new Carrot_Query("lang_data");
-        q.add_select(carrot.lang);
-        q.add_where("id","lang_web");
-        q.get_data(this.get_data_lang_web_done);
+        if(carrot.type_server=='firestore'){
+            var q=new Carrot_Query("lang_data");
+            q.add_select(carrot.lang);
+            q.add_where("id","lang_web");
+            q.get_data(this.get_data_lang_web_done);
+        }else{
+            $.getJSON(carrot.config.list_lang_web[0],function(data){
+                var all_item=data["all_item"];
+                carrot.langs.get_data_lang_web_done(all_item);
+            });
+        }
         this.carrot.update_new_ver_cur("lang_web",true);
     }
 

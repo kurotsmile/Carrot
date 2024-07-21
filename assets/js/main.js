@@ -64,9 +64,14 @@ function toLowerCase_tag(name_tag){
     $("#" + name_tag).val(s_txt);
 }
 
-var carrot=new Carrot_Site();
+var carrot;
 
 $(document).ready(function () {
+    carrot=new Carrot_Site();
+    cr.onLoad();
+    cr.setSiteName("https://carrotstore.web.app");
+    cr.setColor("#1e761e");
+    cr.add_btn_top();
     $("#load_bar").css("width","0%");
     $("#head").hide();
     $("#head_nav").hide();

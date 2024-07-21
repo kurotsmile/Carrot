@@ -130,7 +130,10 @@ class Appp{
                 $(carrot.random(data)).each(function(index,app){
                     if(index>=24) return false;
                     app["index"]=index;
-                    $("#all_app_contain").append(carrot.appp.box_item(app).html());
+                    if(carrot.type_server=="firestore")
+                        $("#all_app_contain").append(carrot.appp.box_item(app).html());
+                    else
+                        $("#all_app_contain").append(carrot.appp.box_item_emp(app));
                 });
                 carrot.appp.check_event();
             });
@@ -155,19 +158,26 @@ class Appp{
     }
 
     get_data_link_store(act_done){
-        carrot.data.list("stores").then((stores)=>{
-            carrot.appp.link_store=stores;
-            act_done(stores);
-        }).catch(()=>{
-            var q=new Carrot_Query("link_store");
-            q.get_data((stores)=>{
-                $(stores).each(function(index,store){
-                    carrot.data.add("stores",store);
-                });
+        if(carrot.type_server=="firestore"){
+            carrot.data.list("stores").then((stores)=>{
                 carrot.appp.link_store=stores;
                 act_done(stores);
+            }).catch(()=>{
+                var q=new Carrot_Query("link_store");
+                q.get_data((stores)=>{
+                    $(stores).each(function(index,store){
+                        carrot.data.add("stores",store);
+                    });
+                    carrot.appp.link_store=stores;
+                    act_done(stores);
+                });
             });
-        });
+        }else{
+            $.getJSON(carrot.config.list_link_store[0],function(data){
+                carrot.appp.link_store=data["all_item"];
+                act_done(carrot.appp.link_store);
+            });
+        }
     }
 
     get_data(act_done){
@@ -187,26 +197,37 @@ class Appp{
     }
 
     get_data_from_server(act_done){
-        var q=new Carrot_Query("app");
-        q.add_select("name_"+carrot.lang);
-        q.add_select("name_en");
-        q.add_select("icon");
-        q.add_select("type");
-        q.add_select("status");
-
-        $(carrot.appp.link_store).each(function(index,store){
-            q.add_select(store.key);
-        });
-
-        q.add_where("status",carrot.appp.status_view);
-        if(carrot.appp.type_view!="all") q.add_where("type",carrot.appp.type_view);
-        q.get_data((data)=>{
-            carrot.appp.objs=data;
-            $(data).each(function(index,app){
-                carrot.data.add("apps",app);
+        if(carrot.type_server=="firestore"){
+            var q=new Carrot_Query("app");
+            q.add_select("name_"+carrot.lang);
+            q.add_select("name_en");
+            q.add_select("icon");
+            q.add_select("type");
+            q.add_select("status");
+    
+            $(carrot.appp.link_store).each(function(index,store){
+                q.add_select(store.key);
             });
-            act_done(data);
-        });
+    
+            q.add_where("status",carrot.appp.status_view);
+            if(carrot.appp.type_view!="all") q.add_where("type",carrot.appp.type_view);
+            q.get_data((data)=>{
+                carrot.appp.objs=data;
+                $(data).each(function(index,app){
+                    carrot.data.add("apps",app);
+                });
+                act_done(data);
+            });
+        }else{
+            $.getJSON(cr.get_random(carrot.config.list_url_data_app),function(data){
+                var apps=data["all_item"];
+                $.each(apps,function(index,a){
+                    apps[index]["id_doc"]=a.id_import;
+                });
+                act_done(apps);
+            });
+        }
+
     }
 
     load_list_app_by_data(data){
@@ -307,14 +328,67 @@ class Appp{
         return frm;
     }
 
-    box_item(data_app){
+    box_item_emp(data_app){
         if(data_app==null) return '';
         var key_name="name_"+carrot.lang;
-        carrot.data.load_image(data_app.id_doc,data_app.icon,"icon_app_"+data_app.id_doc.replace(/[\s!@#$%^&*()]/g, ''));
+        if(carrot.type_server=="firestore") carrot.data.load_image(data_app.id_doc,data_app.icon,"icon_app_"+data_app.id_doc.replace(/[\s!@#$%^&*()]/g, ''));
         var app_item=new Carrot_List_Item(carrot);
         app_item.set_icon("images/150.png");
         app_item.set_id(data_app.id_doc);
-        app_item.set_id_icon("icon_app_"+data_app.id_doc.replace(/[\s!@#$%^&*()]/g, ''));
+        if(carrot.type_server=="firestore") app_item.set_id_icon("icon_app_"+data_app.id_doc.replace(/[\s!@#$%^&*()]/g, ''));
+        app_item.set_class_icon_col("col-3");
+        app_item.set_class_body("col-9");
+        app_item.set_name(data_app[key_name]);
+        app_item.set_tip(data_app.name_en);
+
+        var html_body='';
+        html_body+='<ul class="row">';
+            html_body+='<li class="col-8 ratfac">';
+            html_body+='<i class="bi text-warning fa-solid fa-star"></i>';
+            html_body+='<i class="bi text-warning fa-solid fa-star"></i>';
+            html_body+='<i class="bi text-warning fa-solid fa-star"></i>';
+            html_body+='<i class="bi text-warning fa-solid fa-star"></i>';
+            html_body+='<i class="bi fa-solid fa-star"></i>';
+        html_body+='</li>';
+
+        if(data_app.type=="app")
+            html_body+='<li class="col-4 btn" onclick="carrot.appp.show_app();"><span class="text-secondary float-end"><i class="fa-solid fa-mobile"></i></span></li>';
+        else
+            html_body+='<li class="col-4 btn" onclick="carrot.appp.show_game();"><span class="text-secondary float-end"><i class="fa-solid fa-gamepad"></i></span></li>';
+        html_body+='</ul>';
+
+        if(carrot.appp.link_store!=null){
+            var html_store_link="";
+            $(carrot.random(carrot.appp.link_store)).each(function(index,store){
+                if(data_app[store.key]!=null){
+                    var link_store_app=data_app[store.key];
+                    if(link_store_app!='') html_store_link+="<a class='link_app' title=\""+store.name+"\" target=\"_blank\" href=\""+link_store_app+"\"><i class=\""+store.icon+"\"></i></a>";
+                }
+            });
+            html_body+="<div class='row'><div class='col-12'>"+html_store_link+"</div></div>";
+        }
+
+        app_item.set_body(html_body);
+        app_item.set_class('col-md-4 mb-3');
+        app_item.set_id(data_app.id_doc);
+        app_item.set_db_collection("app");
+        app_item.set_obj_js("appp");
+
+        var emp_app=$(app_item.html());
+        $(emp_app).click(function(){
+            carrot.appp.show_app_info(data_app);
+        });
+        return emp_app;
+    }
+
+    box_item(data_app){
+        if(data_app==null) return '';
+        var key_name="name_"+carrot.lang;
+        if(carrot.type_server=="firestore") carrot.data.load_image(data_app.id_doc,data_app.icon,"icon_app_"+data_app.id_doc.replace(/[\s!@#$%^&*()]/g, ''));
+        var app_item=new Carrot_List_Item(carrot);
+        app_item.set_icon("images/150.png");
+        app_item.set_id(data_app.id_doc);
+        if(carrot.type_server=="firestore") app_item.set_id_icon("icon_app_"+data_app.id_doc.replace(/[\s!@#$%^&*()]/g, ''));
         app_item.set_class_icon_col("col-3");
         app_item.set_class_body("col-9");
         app_item.set_name(data_app[key_name]);
@@ -384,7 +458,7 @@ class Appp{
     }
 
     box_store_item(data){
-        carrot.data.load_image(data.id_doc,data.img,"store_icon_"+data.id_doc);
+        if(carrot.type_server=="firestore") carrot.data.load_image(data.id_doc,data.img,"store_icon_"+data.id_doc);
         var store_item=new Carrot_List_Item(carrot);
         store_item.set_id(data.id_doc);
         store_item.set_db("link_store");

@@ -39,18 +39,46 @@ class Carrot_Site{
     rate;
     config;
     server;
+    os;
 
     call_show_on_load_pagejs=true;
+    type_server="firestore";
+    v="0.0.3";
     
     constructor(){
         if(localStorage.getItem("index_server")!=null)this.index_server=parseInt(localStorage.getItem("index_server"));
 
-        fetch('rabbit.data?=2.2').then(response => response.text()).then((text) => {
+        fetch('rabbit.data?v='+this.v).then(response => response.text()).then((text) => {
             var data_text=atob(text);
             this.config=JSON.parse(data_text);
-            this.setup_sever_db(this.index_server);
+            this.setup_server_os();
         }); 
     };
+
+    setup_server_os(){
+        var userAgent = navigator.userAgent;
+        var os = "Unknown OS";
+
+        if (userAgent.indexOf("Win") !== -1) os = "Windows";
+        else if (userAgent.indexOf("Mac") !== -1) os = "MacOS";
+        else if (userAgent.indexOf("X11") !== -1) os = "UNIX";
+        else if (userAgent.indexOf("Linux") !== -1) os = "Linux";
+        else if (userAgent.indexOf("Android") !== -1) os = "Android";
+        else if (userAgent.indexOf("like Mac") !== -1) os = "iOS";
+
+        this.os=os;
+        //os="iOS";
+        if(os=="MacOS"||os=="iOS"){
+            this.type_server="json";
+            $.getJSON(this.config.list_url_data_setting_web[0],(data)=>{
+                var all_item=data["all_item"];
+                carrot.obj_version_new=all_item[1];
+                carrot.load_page(all_item[1]);
+            });
+        }else{
+            this.setup_sever_db(this.index_server);
+        }
+    }
 
     setup_sever_db(index_sever){
         this.firebaseConfig_mainhost=this.config.server[index_sever];
@@ -154,174 +182,189 @@ class Carrot_Site{
         this.server=new Carrot_Server();
         carrot.load_bar();
         carrot.server.get_doc("setting_web","version",(data)=>{
-            
-            carrot.obj_version_new=data;
-            carrot.save_obj_version_new();
-            carrot.save_obj_version_cur();
-            carrot.load_bar();
-
-            this.update_new_ver_cur("js",true);
-            this.update_new_ver_cur("page",true);
-            
-            this.body=$("#main_contain");
-    
-            if(this.is_dev)
-                this.paypal_CLIENT_ID=carrot.config.paypal_dev_CLIENT_ID;
-            else
-                this.paypal_CLIENT_ID=carrot.config.paypal_pub_CLIENT_ID;
-    
-            $('head').append('<script type="text/javascript" src="assets/js/carrot_data.js?ver='+this.get_ver_cur("js")+'"></script>');
-            $('head').append('<script type="text/javascript" src="assets/js/carrot_langs.js?ver='+this.get_ver_cur("js")+'"></script>');
-            $('head').append('<script type="text/javascript" src="assets/js/carrot_form.js?ver='+this.get_ver_cur("js")+'"></script>');
-            $('head').append('<script type="text/javascript" src="assets/js/carrot_user.js?ver='+this.get_ver_cur("js")+'"></script>');
-            $('head').append('<script type="text/javascript" src="assets/js/carrot_rate.js?ver='+this.get_ver_cur("js")+'"></script>');
-            $('head').append('<script type="text/javascript" src="assets/js/carrot_menu.js?ver='+this.get_ver_cur("js")+'"></script>');
-            $('head').append('<script type="text/javascript" src="assets/js/carrot_list_item.js?ver='+this.get_ver_cur("js")+'"></script>');
-            $('head').append('<script type="text/javascript" src="assets/js/carrot_pay.js?ver='+this.get_ver_cur("js")+'"></script>');
-            $('head').append('<script type="text/javascript" src="assets/js/carrot_player_media.js?ver='+this.get_ver_cur("js")+'"></script>');
-            $('head').append('<script type="text/javascript" src="assets/js/carrot_file.js?ver='+this.get_ver_cur("js")+'"></script>');
-            $('head').append('<script type="text/javascript" src="assets/js/carrot_about_us.js?ver='+this.get_ver_cur("js")+'"></script>');
-            $('head').append('<script type="text/javascript" src="assets/js/carrot_privacy_policy.js?ver='+this.get_ver_cur("js")+'"></script>');
-            $('head').append('<script type="text/javascript" src="https://www.paypal.com/sdk/js?client-id='+this.paypal_CLIENT_ID+'"></script>');
-    
-            this.menu=new Carrot_Menu(this);
-            this.langs=new Carrot_Langs(this);
-    
-            var btn_home_new=this.menu.create("btn_home_new").set_label("Home new").set_lang("home").set_icon("fa-solid fa-home");
-            $(btn_home_new).click(function(){carrot.home_page();});
-    
-            var btn_app=this.menu.create("btn_app").set_label("App and Game").set_lang("app").set_icon("fa-solid fa-gamepad");
-            $(btn_app).click(function(){carrot.load_js_page("app","appp","carrot.appp.back_show_all()");});
-    
-            var btn_add_apps=carrot.menu.create("app").set_label("Add App").set_icon("fa-solid fa-mobile").set_type("add");
-            $(btn_add_apps).click(function(){carrot.load_js_page("app","appp","carrot.appp.add()");});
-
-            var btn_add_link_store=carrot.menu.create("app").set_label("Add Link Store").set_icon("fa-solid fa-store").set_type("add");
-            $(btn_add_link_store).click(function(){carrot.load_js_page("app","app","carrot.appp.add_link_store()");});
-
-            var btn_list_link_store=carrot.menu.create("app").set_label("List Store").set_icon("fa-solid fa-store").set_type("dev");
-            $(btn_list_link_store).click(function(){carrot.load_js_page("app","app","carrot.appp.show_other_store()");});
-    
-            this.user=new Carrot_user();
-            this.phone_book=this.user;
-
-            var btn_list_music=this.menu.create("btn_list_music").set_label("Music").set_lang("music").set_icon("fa-solid fa-music");
-            $(btn_list_music).click(function(){carrot.load_js_page("song","song","carrot.song.list()");});
-            
-            var btn_code=this.menu.create("btn_code").set_label("Coder").set_lang("code").set_icon("fa-solid fa-code");
-            $(btn_code).click(function(){carrot.load_js_page("code","coder","carrot.coder.list()");});
-
-            var btn_midi=this.menu.create("btn_midi_piano").set_label("Midi").set_lang("midi").set_icon("fa-solid fa-drum");
-            $(btn_midi).click(function(){carrot.load_js_page("piano","midi","carrot.midi.show_list()");});
-
-            var btn_ico=this.menu.create("btn_ico").set_label("Icon").set_type("main").set_lang("icon").set_icon("fa-solid fa-face-smile");
-            $(btn_ico).click(function(){carrot.load_js_page("ico","ico","carrot.ico.list()");});
-
-            var btn_football=this.menu.create("btn_football").set_label("Football").set_type("main").set_lang("football").set_icon("fa-solid fa-futbol");
-            $(btn_football).click(function(){carrot.load_js_page("football","football","carrot.football.list()");});
-
-            var btn_audio=this.menu.create("btn_audio").set_label("Audio").set_type("main").set_lang("audio").set_icon("fa-solid fa-guitar");
-            $(btn_audio).click(function(){carrot.load_js_page("audio","audio","carrot.audio.show()");});
-
-            var btn_radio=this.menu.create("btn_radio").set_label("Radio").set_type("main").set_lang("radio").set_icon("fa-solid fa-radio");
-            $(btn_radio).click(function(){carrot.load_js_page("radio","radio","carrot.radio.list()");});
-            
-            var btn_bk=this.menu.create("btn_bk").set_label("List Background").set_lang("wallpaper").set_type("main").set_icon("fa-image fa-solid");
-            $(btn_bk).click(function(){carrot.load_js_page("background","background","carrot.background.show()");});
-
-            var btn_add_bk=this.menu.create("btn_add_bk").set_label("Add Background").set_type("add").set_icon("fa-image fa-solid");
-            $(btn_add_bk).click(function(){carrot.load_js_page("background","background","carrot.background.add()");});
-
-            var btn_bible=this.menu.create("btn_bible").set_label("Bible").set_lang("bible").set_type("main").set_icon("fa-solid fa-book-medical");
-            $(btn_bible).click(function(){carrot.load_js_page("bible","bible","carrot.bible.list()");});
-
-            var btn_chat=this.menu.create("btn_chat").set_label("Bible").set_lang("chat").set_type("main").set_icon("fa-solid fa-comments");
-            $(btn_chat).click(function(){carrot.load_js_page("chat","chat","carrot.chat.list()");});
-
-            var btn_ebook=this.menu.create("btn_ebook").set_label("Ebook").set_lang("ebook").set_type("main").set_icon("fa-solid fa-book");
-            $(btn_ebook).click(function(){carrot.load_js_page("ebook","ebook","carrot.ebook.list()");});
-
-            $(this.menu.create("list_avatar").set_label("List Avatar").set_icon("fa-regular fa-image-portrait").set_type("dev")).click(function(){
-                carrot.js("avatar","avatar","carrot.avatar.show()");
-            });
-
-            var btn_list_share=this.menu.create("btn_list_share").set_label("List Share").set_type("dev").set_lang("share").set_icon("fa-solid fa-share-nodes");
-            $(btn_list_share).click(function(){carrot.load_js_page("share","share","carrot.share.list()");});
-            
-            var btn_list_fashion=this.menu.create("btn_list_fashion").set_label("List Fashion").set_type("dev").set_icon("fa-solid fa-shirt");
-            $(btn_list_fashion).click(function(){carrot.load_js_page("fashion","fashion","carrot.fashion.show()");});
-
-            var btn_list_floor=this.menu.create("btn_list_floor").set_label("List Floor").set_type("dev").set_icon("fa-solid fa-seedling");
-            $(btn_list_floor).click(function(){carrot.load_js_page("floor","floor","carrot.floor.show()");});
-
-            this.privacy_policy=new Carrot_Privacy_Policy();
-            this.about_us=new Carrot_About_Us();
-            this.player_media=new Carrot_Player_Media(this);
-            this.file=new Carrot_File();
-            this.pay=new Carrot_Pay(this);
-            this.rate=new Carrot_Rate(this);
-            this.tool=this.rate;
-
-            this.data=new Carrot_data("carrotstore"+this.get_ver_cur("page"),this.get_ver_cur("page"));
-           
-            var btn_mod_host=this.menu.create("btn_mode_host").set_label("Change Mode Host").set_type("setting").set_icon("fa-brands fa-dev");
-            $(btn_mod_host).click(function(){carrot.change_host_connection();});
-    
-            var btn_server_host=this.menu.create("btn_mode_host").set_label(this.firebaseConfig_mainhost.projectId).set_type("setting").set_icon("fa-solid fa-server");
-            $(btn_server_host).click(function(){carrot.show_list_change_server();});
-    
-            var btn_setting_ver=this.menu.create("data_version").set_label("Data Version").set_type("setting").set_icon("fa-regular fa-code-compare");
-            $(btn_setting_ver).click(function(){carrot.show_edit_version_data_version();});
-    
-            var btn_export_file_json=this.menu.create("btn_export_file_json").set_label("Export Collection").set_type("setting").set_icon("fa-solid fa-file-export");
-            $(btn_export_file_json).click(function(){carrot.download_json();});
-    
-            var btn_import_file_json=this.menu.create("btn_import_file_json").set_label("Import Collection (File)").set_type("setting").set_icon("fa-solid fa-file-import");
-            $(btn_import_file_json).click(function(){carrot.show_import_json_file();});
-    
-            var btn_site_map=this.menu.create("btn_site_map").set_label("Site Map").set_type("setting").set_icon("fa-solid fa-sitemap");
-            $(btn_site_map).click(function(){carrot.show_site_map();});
-    
-            var btn_update_config=this.menu.create("btn_update_config").set_label("Update File Config").set_type("setting").set_icon("fa-solid fa-file");
-            $(btn_update_config).click(function(){carrot.act_update_file_config();});
-    
-            var btn_del_all=this.menu.create("btn_del_all").set_label("Delete all data cache").set_type("setting").set_icon("fa-solid fa-trash-can");
-            $(btn_del_all).click(function(){carrot.act_delete_all_data();});
-    
-            $("#btn_model_site").click(function(){carrot.change_mode_site();});
-    
-            if(carrot.check_ver_cur("lang")==false) carrot.langs.get_all_data_lang();
-            if(carrot.check_ver_cur("lang_web")==false) carrot.langs.get_data_lang_web();
-    
-            this.user.show_info_user_login_in_header();
-            this.menu.show();
-    
-            $(".btn-menu").click(function () {
-                $(".btn-menu").removeClass("active");
-                $(".btn-menu i").removeClass("fa-bounce");
-                $(this).addClass("active");
-                $(this).find("i").addClass("fa-bounce");
-            });
-    
-            var TodayDate = new Date();
-            var m = TodayDate.getMonth();m++;
-            $("#logo_carrot").attr("src",this.url()+"/images/logo/logo_"+m+".png");
-    
-            if(carrot.check_ver_cur("lang")==false){
-                carrot.log("Get lang new version "+carrot.get_ver_cur("lang"));
-                carrot.server.get_collection("lang",(data)=>{
-                    carrot.langs.list_lang=data;
-                    carrot.check_show_by_id_page();
-                });
-                carrot.update_new_ver_cur("lang",true);
-            }
-            else{
-                carrot.check_show_by_id_page();
-            }
+            carrot.load_page(data);
         },()=>{
             //alert("Error");
             //carrot.act_next_server_when_fail();
         });
+    }
+
+    load_page(data){
+        carrot.obj_version_new = data;
+        carrot.save_obj_version_new();
+        carrot.save_obj_version_cur();
+        carrot.load_bar();
+
+        this.update_new_ver_cur("js", true);
+        this.update_new_ver_cur("page", true);
+
+        this.body = $("#main_contain");
+
+        if (this.is_dev)
+            this.paypal_CLIENT_ID = carrot.config.paypal_dev_CLIENT_ID;
+        else
+            this.paypal_CLIENT_ID = carrot.config.paypal_pub_CLIENT_ID;
+
+        $('head').append('<script type="text/javascript" src="assets/js/carrot_data.js?ver=' + this.get_ver_cur("js") + '"></script>');
+        $('head').append('<script type="text/javascript" src="assets/js/carrot_langs.js?ver=' + this.get_ver_cur("js") + '"></script>');
+        $('head').append('<script type="text/javascript" src="assets/js/carrot_form.js?ver=' + this.get_ver_cur("js") + '"></script>');
+        $('head').append('<script type="text/javascript" src="assets/js/carrot_user.js?ver=' + this.get_ver_cur("js") + '"></script>');
+        $('head').append('<script type="text/javascript" src="assets/js/carrot_rate.js?ver=' + this.get_ver_cur("js") + '"></script>');
+        $('head').append('<script type="text/javascript" src="assets/js/carrot_menu.js?ver=' + this.get_ver_cur("js") + '"></script>');
+        $('head').append('<script type="text/javascript" src="assets/js/carrot_list_item.js?ver=' + this.get_ver_cur("js") + '"></script>');
+        $('head').append('<script type="text/javascript" src="assets/js/carrot_pay.js?ver=' + this.get_ver_cur("js") + '"></script>');
+        $('head').append('<script type="text/javascript" src="assets/js/carrot_player_media.js?ver=' + this.get_ver_cur("js") + '"></script>');
+        $('head').append('<script type="text/javascript" src="assets/js/carrot_file.js?ver=' + this.get_ver_cur("js") + '"></script>');
+        $('head').append('<script type="text/javascript" src="assets/js/carrot_about_us.js?ver=' + this.get_ver_cur("js") + '"></script>');
+        $('head').append('<script type="text/javascript" src="assets/js/carrot_privacy_policy.js?ver=' + this.get_ver_cur("js") + '"></script>');
+        $('head').append('<script type="text/javascript" src="https://www.paypal.com/sdk/js?client-id=' + this.paypal_CLIENT_ID + '"></script>');
+
+        this.menu = new Carrot_Menu(this);
+        this.langs = new Carrot_Langs(this);
+
+        var btn_home_new = this.menu.create("btn_home_new").set_label("Home new").set_lang("home").set_icon("fa-solid fa-home");
+        $(btn_home_new).click(function () { carrot.home_page(); });
+
+        var btn_app = this.menu.create("btn_app").set_label("App and Game").set_lang("app").set_icon("fa-solid fa-gamepad");
+        $(btn_app).click(function () { carrot.load_js_page("app", "appp", "carrot.appp.back_show_all()"); });
+
+        var btn_add_apps = carrot.menu.create("app").set_label("Add App").set_icon("fa-solid fa-mobile").set_type("add");
+        $(btn_add_apps).click(function () { carrot.load_js_page("app", "appp", "carrot.appp.add()"); });
+
+        var btn_add_link_store = carrot.menu.create("app").set_label("Add Link Store").set_icon("fa-solid fa-store").set_type("add");
+        $(btn_add_link_store).click(function () { carrot.load_js_page("app", "app", "carrot.appp.add_link_store()"); });
+
+        var btn_list_link_store = carrot.menu.create("app").set_label("List Store").set_icon("fa-solid fa-store").set_type("dev");
+        $(btn_list_link_store).click(function () { carrot.load_js_page("app", "app", "carrot.appp.show_other_store()"); });
+
+        this.user = new Carrot_user();
+        this.phone_book = this.user;
+
+        var btn_list_music = this.menu.create("btn_list_music").set_label("Music").set_lang("music").set_icon("fa-solid fa-music");
+        $(btn_list_music).click(function () { carrot.load_js_page("song", "song", "carrot.song.list()"); });
+
+        var btn_code = this.menu.create("btn_code").set_label("Coder").set_lang("code").set_icon("fa-solid fa-code");
+        $(btn_code).click(function () { carrot.load_js_page("code", "coder", "carrot.coder.list()"); });
+
+        var btn_midi = this.menu.create("btn_midi_piano").set_label("Midi").set_lang("midi").set_icon("fa-solid fa-drum");
+        $(btn_midi).click(function () { carrot.load_js_page("piano", "midi", "carrot.midi.show_list()"); });
+
+        var btn_ico = this.menu.create("btn_ico").set_label("Icon").set_type("main").set_lang("icon").set_icon("fa-solid fa-face-smile");
+        $(btn_ico).click(function () { carrot.load_js_page("ico", "ico", "carrot.ico.list()"); });
+
+        var btn_football = this.menu.create("btn_football").set_label("Football").set_type("main").set_lang("football").set_icon("fa-solid fa-futbol");
+        $(btn_football).click(function () { carrot.load_js_page("football", "football", "carrot.football.list()"); });
+
+        var btn_audio = this.menu.create("btn_audio").set_label("Audio").set_type("main").set_lang("audio").set_icon("fa-solid fa-guitar");
+        $(btn_audio).click(function () { carrot.load_js_page("audio", "audio", "carrot.audio.show()"); });
+
+        var btn_radio = this.menu.create("btn_radio").set_label("Radio").set_type("main").set_lang("radio").set_icon("fa-solid fa-radio");
+        $(btn_radio).click(function () { carrot.load_js_page("radio", "radio", "carrot.radio.list()"); });
+
+        var btn_bk = this.menu.create("btn_bk").set_label("List Background").set_lang("wallpaper").set_type("main").set_icon("fa-image fa-solid");
+        $(btn_bk).click(function () { carrot.load_js_page("background", "background", "carrot.background.show()"); });
+
+        var btn_add_bk = this.menu.create("btn_add_bk").set_label("Add Background").set_type("add").set_icon("fa-image fa-solid");
+        $(btn_add_bk).click(function () { carrot.load_js_page("background", "background", "carrot.background.add()"); });
+
+        var btn_bible = this.menu.create("btn_bible").set_label("Bible").set_lang("bible").set_type("main").set_icon("fa-solid fa-book-medical");
+        $(btn_bible).click(function () { carrot.load_js_page("bible", "bible", "carrot.bible.list()"); });
+
+        var btn_chat = this.menu.create("btn_chat").set_label("Bible").set_lang("chat").set_type("main").set_icon("fa-solid fa-comments");
+        $(btn_chat).click(function () { carrot.load_js_page("chat", "chat", "carrot.chat.list()"); });
+
+        var btn_ebook = this.menu.create("btn_ebook").set_label("Ebook").set_lang("ebook").set_type("main").set_icon("fa-solid fa-book");
+        $(btn_ebook).click(function () { carrot.load_js_page("ebook", "ebook", "carrot.ebook.list()"); });
+
+        $(this.menu.create("list_avatar").set_label("List Avatar").set_icon("fa-regular fa-image-portrait").set_type("dev")).click(function () {
+            carrot.js("avatar", "avatar", "carrot.avatar.show()");
+        });
+
+        var btn_list_share = this.menu.create("btn_list_share").set_label("List Share").set_type("dev").set_lang("share").set_icon("fa-solid fa-share-nodes");
+        $(btn_list_share).click(function () { carrot.load_js_page("share", "share", "carrot.share.list()"); });
+
+        var btn_list_fashion = this.menu.create("btn_list_fashion").set_label("List Fashion").set_type("dev").set_icon("fa-solid fa-shirt");
+        $(btn_list_fashion).click(function () { carrot.load_js_page("fashion", "fashion", "carrot.fashion.show()"); });
+
+        var btn_list_floor = this.menu.create("btn_list_floor").set_label("List Floor").set_type("dev").set_icon("fa-solid fa-seedling");
+        $(btn_list_floor).click(function () { carrot.load_js_page("floor", "floor", "carrot.floor.show()"); });
+
+        this.privacy_policy = new Carrot_Privacy_Policy();
+        this.about_us = new Carrot_About_Us();
+        this.player_media = new Carrot_Player_Media(this);
+        this.file = new Carrot_File();
+        this.pay = new Carrot_Pay(this);
+        this.rate = new Carrot_Rate(this);
+        this.tool = this.rate;
+
+        this.data = new Carrot_data("carrotstore" + this.get_ver_cur("page"), this.get_ver_cur("page"));
+
+        var btn_mod_host = this.menu.create("btn_mode_host").set_label("Change Mode Host").set_type("setting").set_icon("fa-brands fa-dev");
+        $(btn_mod_host).click(function () { carrot.change_host_connection(); });
+
+        if(carrot.type_server=="firestore"){
+            var btn_server_host = this.menu.create("btn_mode_host").set_label(this.firebaseConfig_mainhost.projectId).set_type("setting").set_icon("fa-solid fa-server");
+            $(btn_server_host).click(function () { carrot.show_list_change_server(); });
+        }else{
+            var btn_server_host = this.menu.create("btn_mode_host").set_label(carrot.os).set_type("setting").set_icon("fa-solid fa-server");
+            $(btn_server_host).click(function () { carrot.show_list_change_server(); });
+        }
+
+        var btn_setting_ver = this.menu.create("data_version").set_label("Data Version").set_type("setting").set_icon("fa-regular fa-code-compare");
+        $(btn_setting_ver).click(function () { carrot.show_edit_version_data_version(); });
+
+        var btn_export_file_json = this.menu.create("btn_export_file_json").set_label("Export Collection").set_type("setting").set_icon("fa-solid fa-file-export");
+        $(btn_export_file_json).click(function () { carrot.download_json(); });
+
+        var btn_import_file_json = this.menu.create("btn_import_file_json").set_label("Import Collection (File)").set_type("setting").set_icon("fa-solid fa-file-import");
+        $(btn_import_file_json).click(function () { carrot.show_import_json_file(); });
+
+        var btn_site_map = this.menu.create("btn_site_map").set_label("Site Map").set_type("setting").set_icon("fa-solid fa-sitemap");
+        $(btn_site_map).click(function () { carrot.show_site_map(); });
+
+        var btn_update_config = this.menu.create("btn_update_config").set_label("Update File Config").set_type("setting").set_icon("fa-solid fa-file");
+        $(btn_update_config).click(function () { carrot.act_update_file_config(); });
+
+        var btn_del_all = this.menu.create("btn_del_all").set_label("Delete all data cache").set_type("setting").set_icon("fa-solid fa-trash-can");
+        $(btn_del_all).click(function () { carrot.act_delete_all_data(); });
+
+        $("#btn_model_site").click(function () { carrot.change_mode_site(); });
+
+        if (carrot.check_ver_cur("lang") == false) carrot.langs.get_all_data_lang();
+        if (carrot.check_ver_cur("lang_web") == false) carrot.langs.get_data_lang_web();
+
+        this.user.show_info_user_login_in_header();
+        this.menu.show();
+
+        $(".btn-menu").click(function () {
+            $(".btn-menu").removeClass("active");
+            $(".btn-menu i").removeClass("fa-bounce");
+            $(this).addClass("active");
+            $(this).find("i").addClass("fa-bounce");
+        });
+
+        var TodayDate = new Date();
+        var m = TodayDate.getMonth(); m++;
+        $("#logo_carrot").attr("src", this.url() + "/images/logo/logo_" + m + ".png");
+
+        if (carrot.check_ver_cur("lang") == false) {
+            carrot.log("Get lang new version " + carrot.get_ver_cur("lang"));
+            if(carrot.type_server=="firestore"){
+                carrot.server.get_collection("lang", (data) => {
+                    carrot.langs.list_lang = data;
+                    carrot.check_show_by_id_page();
+                });
+            }else{
+                $.getJSON(carrot.config.list_url_data_lang[0],function(data){
+                    carrot.langs.list_lang = data;
+                    carrot.check_show_by_id_page();
+                });
+            }
+            carrot.update_new_ver_cur("lang", true);
+        }
+        else {
+            carrot.check_show_by_id_page();
+        }
     }
 
     load_recognition(){
@@ -1224,7 +1267,7 @@ class Carrot_Site{
     }
 
     act_update_file_config(){
-        fetch('config.json?=2.2').then(response => response.text()).then((text) => {
+        fetch('config.json?v='+carrot.v).then(response => response.text()).then((text) => {
             const binaryData = btoa(text);
             const blob = new Blob([binaryData], {type: 'text/plain'});
             const url = URL.createObjectURL(blob);
