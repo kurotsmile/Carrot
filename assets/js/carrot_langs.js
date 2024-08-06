@@ -158,26 +158,30 @@ class Carrot_Langs{
         }
     }
 
-    list_btn_lang_select(class_button='btn-secondary'){
+    list_btn_lang_select(class_button='btn-secondary',func_sel=''){
         var html='';
         html+='<div class="btn-group" role="group">';
         html+='<button class="btn '+class_button+' dropdown-toggle btn-sm" type="button" id="btn_list_lang_ai" data-bs-toggle="dropdown" aria-expanded="true" >';
         html+='<i class="fa-solid fa-rectangle-list"></i> <l class="lang" key_lang="select_lang">Change country</l> ('+carrot.langs.lang_setting+')';
         html+='</button>';
-        html+='<div class="dropdown-menu" aria-labelledby="btn_list_lang_ai">';
+        html+='<div class="dropdown-menu" aria-labelledby="btn_list_lang_ai" id="menu_lang_sub">';
         $.each(carrot.langs.list_lang,function(i,lang){
-            if(lang.key==carrot.langs.lang_setting)
-                html+='<button type="button" class="dropdown-item active btn-setting-lang-change" key_change="'+lang.key+'"><img src="'+lang.icon+'" style="width:20px"/>'+lang.name+'</button> ';
-            else
-                html+='<button type="button" class="dropdown-item  btn-setting-lang-change" key_change="'+lang.key+'"><img src="'+lang.icon+'" style="width:20px"/>'+lang.name+'</button> ';
+            html+='<button type="button" onClick="'+func_sel+'(\''+lang.key+'\');return false;" class="dropdown-item '+(lang.key===carrot.langs.lang_setting?'active':lang.key==carrot.langs.lang_setting)+' btn-setting-lang-change" key_change="'+lang.key+'"><img src="'+lang.icon+'" style="width:20px"/>'+lang.name+'</button> ';
         });
         html+='</div>';
         html+='</div>';
 
         if(carrot.langs.list_lang==null){
+            setTimeout(()=>{
             carrot.langs.get_list_country((data)=>{
-                alert("Hahaa");
+                $.each(data,function(i,lang){
+                    var html_lang='';
+                    html_lang+='<button type="button" onClick="'+func_sel+'(\''+lang.key+'\');return false;" class="dropdown-item '+(lang.key===carrot.langs.lang_setting?'active':lang.key==carrot.langs.lang_setting)+' btn-setting-lang-change" key_change="'+lang.key+'"><img src="'+lang.icon+'" style="width:20px"/>'+lang.name+'</button> ';
+                    $("#menu_lang_sub").append(html_lang);
+                });
+
             });
+        },500);
         }
         return html;
     }
