@@ -166,7 +166,7 @@ class Chat{
         return s_icon;
     }
 
-    box_item(data){
+    box_item(data,s_class="col-md-4 mb-3"){
         var item_list=new Carrot_List_Item(carrot);
         var s_body='';
         var s_key=data.key;
@@ -213,6 +213,7 @@ class Chat{
         }
 
         item_list.set_body('<div class="col-12">'+s_body+'</div>');
+        item_list.set_class(s_class);
         item_list.set_class_body("mt-2 col-11 fs-9");
         item_list.set_db("chat-"+carrot.langs.lang_setting);
         item_list.set_obj_js("chat");
@@ -278,7 +279,7 @@ class Chat{
         frm.create_field("id").set_label("Id chat").set_val(data["id"]).set_type("id").set_main();
         var btn_add_msg=new Carrot_Btn();
         btn_add_msg.set_icon("fa-solid fa-comment-dots");
-        btn_add_msg.set_act("carrot.ai.chat.add_msg_for_key()");
+        btn_add_msg.set_act("carrot.chat.add_msg_for_key()");
         var btn_translate_key=new Carrot_Btn();
         btn_translate_key.set_icon("fa-solid fa-language");
         btn_translate_key.set_act("tr_inp('key','vi','"+carrot.langs.lang_setting+"')");
@@ -365,11 +366,11 @@ class Chat{
         var s_class_active='';
         html_menu+='<div class="row">';
         html_menu+='<div class="col-10 m-0 btn-toolbar btn-sm" role="toolbar" aria-label="Toolbar with button groups">';
+        html_menu+='<div role="group" aria-label="First group"  class="btn-group mr-2 btn-sm">';
         if(carrot.chat.where_a=='key'&&carrot.chat.where_c!=''){
             if(carrot.chat.show_type=="list_chat") s_class_active=""; else s_class_active="active";
             html_menu+='<button class="btn dev btn-success btn-sm '+s_class_active+'" onclick="carrot.chat.show_compare_msg();return false;"><i class="fa-solid fa-table-columns"></i></button>';
         }
-        html_menu+='<div role="group" aria-label="First group"  class="btn-group mr-2 btn-sm">';
         html_menu+=carrot.langs.list_btn_lang_select('btn-success','carrot.chat.change_lang');
         html_menu+='</div>';
                 html_menu+='<div role="group" aria-label="First group"  class="btn-group mr-2 btn-sm">';
@@ -587,8 +588,8 @@ class Chat{
                     html+=' <b>'+item_data["key"]+'</b> : '+item_data["msg"];
                 html+='</td>';
                 html+='<td class="w-10">';
-                    html+='<i role="button" onclick="carrot.ai.chat.delete_chat_in_msg(this);" class="float-end dev fs-9 fa-solid fa-trash text-danger m-1" db_collection="chat-'+carrot.langs.lang_setting+'" db_document="'+item_data.id+'" db_obj="carrot.ai.chat"></i>';
-                    html+='<i role="button" class="float-end dev btn_app_edit fs-9 fa-solid fa-pen-to-square m-1" onclick="carrot.ai.chat.edit" db_collection="chat-'+carrot.langs.lang_setting+'" db_document="'+item_data.id+'" db_obj="carrot.ai.chat"></i>';
+                    html+='<i role="button" onclick="carrot.chat.delete_chat_in_msg(this);" class="float-end dev fs-9 fa-solid fa-trash text-danger m-1" db_collection="chat-'+carrot.langs.lang_setting+'" db_document="'+item_data.id+'" db_obj="carrot.chat"></i>';
+                    html+='<i role="button" class="float-end dev btn_app_edit fs-9 fa-solid fa-pen-to-square m-1" onclick="carrot.chat.edit" db_collection="chat-'+carrot.langs.lang_setting+'" db_document="'+item_data.id+'" db_obj="carrot.chat"></i>';
                 html+='</td>';
             html+='</tr>';
         });
@@ -808,13 +809,13 @@ class Chat{
 
     
     show_compare_msg(){
-        this.show_type="compare";
-        this.show_compare_msg_list();
+        carrot.chat.show_type="compare";
+        carrot.chat.show_compare_msg_list();
     }
 
     show_compare_msg_list(){
         var html='';
-        html+=this.menu();
+        html+=carrot.chat.menu();
         html+='<div class="row">';
             html+='<div class="col-md-6" >';
                 html+='<div class="row" id="all_items_msg_tag"></div>';
@@ -824,55 +825,42 @@ class Chat{
                 html+='<div class="row" id="all_items_msg_change"></div>';
             html+='</div>';
         html+='</div>';
-        this.carrot.show(html);
+        carrot.show(html);
 
-        this.carrot.db.collection("chat-vi").where("key","==",this.where_c).get().then((querySnapshot) => {
-            if(querySnapshot.docs.length>0){
-                querySnapshot.forEach((doc) => {
-                    var data_chat=doc.data();
-                    data_chat["id"]=doc.id;
-                    $("#all_items_msg_tag").append(carrot.chat.box_item(data_chat,"col-12 col-md-12 mb-1"));
+        var q=new Carrot_Query("chat-vi");
+        q.add_where("key",carrot.chat.where_c);
+        q.get_data((chats)=>{
+            $.each(chats,function(index,c_vi){
+                $("#all_items_msg_tag").append(carrot.chat.box_item(c_vi,"col-12 col-md-12 mb-1").html());
+            });
+            $("#all_items_msg_tag").append(carrot.chat.box_compare_msg_add('vi'));
+            var q_c=new Carrot_Query("chat-"+carrot.langs.lang_setting);
+            q_c.add_where("key",carrot.chat.where_c);
+            q_c.get_data((chat_others)=>{
+                $.each(chat_others,function(index,c_change){
+                    $("#all_items_msg_change").append(carrot.chat.box_item(c_change,"col-12 col-md-12 mb-1").html());
                 });
-                $("#all_items_msg_tag").append(this.box_compare_msg_add('vi'));
-
-                this.carrot.db.collection("chat-"+this.carrot.langs.lang_setting).where("key","==",this.where_c).get().then((querySnapshot) => {
-                    if(querySnapshot.docs.length>0){
-                        var chats=new Object();
-                        querySnapshot.forEach((doc) => {
-                            var data_chat=doc.data();
-                            data_chat["id"]=doc.id;
-                            chats[doc.id]=JSON.stringify(data_chat);
-                            $("#all_items_msg_change").append(carrot.chat.box_item(data_chat,"col-12 col-md-12 mb-1"));
-                        });
-                        $("#all_items_msg_change").append(this.box_compare_msg_add(this.carrot.langs.lang_setting));
-                        this.check_event();
-                    }else{
-                        $("#all_items_msg_change").append(this.box_compare_msg_add(this.carrot.langs.lang_setting));
-                        this.check_event();
-                    }
-                }).catch((error) => {
-                    this.carrot.log_error(error);
-                });
-
-            }else{
-                $("#all_items_msg_tag").append(this.box_compare_msg_add('vi'));
-                this.check_event();
-            }
-        }).catch((error) => {
-            this.carrot.log_error(error);
+                $("#all_items_msg_change").append(carrot.chat.box_compare_msg_add(carrot.langs.lang_setting));
+                carrot.chat.check_event();
+            },()=>{
+                $("#all_items_msg_change").append(carrot.chat.box_compare_msg_add(carrot.langs.lang_setting));
+            });
+        },()=>{
+            $("#all_items_msg_tag").append(carrot.chat.box_compare_msg_add('vi'));
+            $("#all_items_msg_change").append(carrot.chat.box_compare_msg_add(carrot.langs.lang_setting));
         });
     }
 
     add_compare_msg(key_msg,lang){
-        var data_new=this.data_new_chat();
+        var data_new=carrot.chat.data_new_chat();
         data_new["key"]=key_msg;
         data_new["lang"]=lang;
-        this.show_add_or_edit_chat(data_new).set_title("Add Msg "+key_msg+" ("+lang+")").set_msg_done("Add chat success!").show();
+        carrot.chat.show_add_or_edit_chat(data_new).set_title("Add Msg "+key_msg+" ("+lang+")").set_msg_done("Add chat success!").show();
     }
 
     box_compare_msg_add(lang){
         var html='';
-        html+='<div class="col-12 col-md-12 mb-1" role="button" onclick="carrot.ai.chat.add_compare_msg(\''+carrot.ai.chat.where_c+'\',\''+lang+'\')">';
+        html+='<div class="col-12 col-md-12 mb-1" role="button" onclick="carrot.chat.add_compare_msg(\''+carrot.chat.where_c+'\',\''+lang+'\')">';
             html+='<div class="app-cover p-2 shadow-md bg-success text-white">';
                 html+='<div class="row">';
                     html+='<div class="col-12 col-md-12"><i class="fa-solid fa-circle-plus"></i> Add Chat</div>';
