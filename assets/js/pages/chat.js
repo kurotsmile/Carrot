@@ -190,7 +190,7 @@ class Chat{
         item_list.set_name(data.key);
         item_list.set_tip('<i class="fa-solid fa-circle" style="color:'+data.color+'"></i> '+' <span id="chat_msg_'+data.index+'">'+data.msg+'</span>');
 
-        s_body+='<input type="checkbox" class="form-check-input chat_checkbox dev" role="button" data-chat-id="'+data.id+'" emp_type="box"/> ';
+        s_body+='<input type="checkbox" class="form-check-input chat_checkbox dev" role="button" data-chat-id="'+data.id_doc+'" emp_type="box"/> ';
         if(data.reports!=null) s_body+='<i class="fa-solid fa-bug text-danger fa-fade"></i> ';
         if(data.status=="pending") s_body+='<i class="fa-regular fa-circle"></i> ';
         if(data.status=="passed") s_body+='<i class="fa-solid fa-circle-check text-success"></i> ';
@@ -832,7 +832,7 @@ class Chat{
                 querySnapshot.forEach((doc) => {
                     var data_chat=doc.data();
                     data_chat["id"]=doc.id;
-                    $("#all_items_msg_tag").append(carrot.ai.chat.box_chat_item(data_chat,"col-12 col-md-12 mb-1"));
+                    $("#all_items_msg_tag").append(carrot.chat.box_item(data_chat,"col-12 col-md-12 mb-1"));
                 });
                 $("#all_items_msg_tag").append(this.box_compare_msg_add('vi'));
 
@@ -843,7 +843,7 @@ class Chat{
                             var data_chat=doc.data();
                             data_chat["id"]=doc.id;
                             chats[doc.id]=JSON.stringify(data_chat);
-                            $("#all_items_msg_change").append(carrot.ai.chat.box_chat_item(data_chat,"col-12 col-md-12 mb-1"));
+                            $("#all_items_msg_change").append(carrot.chat.box_item(data_chat,"col-12 col-md-12 mb-1"));
                         });
                         $("#all_items_msg_change").append(this.box_compare_msg_add(this.carrot.langs.lang_setting));
                         this.check_event();
@@ -908,6 +908,12 @@ class Chat{
             html+='</div>';
         }
         return html;
+    }
+
+    select_all(){
+        $(".chat_checkbox").each(function(index,emp){
+            $(emp).prop('checked', true);
+        });
     }
 }
 
