@@ -74,8 +74,8 @@ class Carrot_Query{
             act_done(list);
           })
           .catch(error => {
+            console.error('There was a problem with your fetch operation:', error);
             if(act_fail!=null) act_fail();
-            else console.error('There was a problem with your fetch operation:', error);
           });
     }
 }
@@ -97,12 +97,15 @@ class Carrot_Server{
             .then((data) => {
                 var list=[];
                 for(var i=0;i<data.documents.length;i++){
-                    var obj_data=carrot.server.simplifyDocument(data[i].document.fields);
-                    obj_data["id_doc"]=data[i].document.name.split("/").pop();
+                    var obj_data=carrot.server.simplifyDocument(data.documents[i].fields);
+                    obj_data["id_doc"]=data.documents[i].name.split("/").pop();
                     list.push(obj_data);
                 }
                 act_done(list);
-            }).catch((error) => {if(act_fail!=null) act_fail();});
+            }).catch((error) => {
+              console.error('There was a problem with your fetch operation:', error);
+              if(act_fail!=null) act_fail();
+            });
     }
 
     get(collection,document,act_done,act_fail=null){
@@ -125,7 +128,7 @@ class Carrot_Server{
                 var obj_data=carrot.server.simplifyDocument(data.fields);
                 obj_data["id_doc"]=data.name.split("/").pop();
                 act_done(obj_data);
-            }).catch((error) => {console.log(error); if(act_fail!=null) act_fail();});
+            });
     }
 
     add_doc(collection,document_data,act_done=null,act_fail=null){

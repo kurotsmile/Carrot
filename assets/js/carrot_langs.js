@@ -33,20 +33,38 @@ class Carrot_Langs{
         $("#key_lang").html(carrot.lang);
     }
 
+    get_list_country(act_done=null){
+        carrot.log("get_all_data_lang from server","alert");
+
+        if(carrot.type_server=="firestore"){
+            carrot.server.get_collection("lang", (data) => {
+                carrot.langs.list_lang = data;
+                carrot.langs.save_list_lang();
+                if(act_done!=null) act_done(data);
+            });
+        }else{
+            $.getJSON(carrot.config.list_url_data_lang[0],function(data){
+                carrot.langs.list_lang = data["all_item"];
+                carrot.langs.save_list_lang();
+                if(act_done!=null) act_done(data["all_item"]);
+            });
+        }
+    }
+
     save_list_lang(){
-        localStorage.setItem("list_lang", JSON.stringify(this.list_lang));
+        localStorage.setItem("list_lang", JSON.stringify(carrot.langs.list_lang));
     }
 
     save_lang_web(){
-        localStorage.setItem("lang_web",JSON.stringify(this.lang_web));
+        localStorage.setItem("lang_web",JSON.stringify(carrot.langs.lang_web));
     }
 
     save_obj_lang_web(){
-        localStorage.setItem("obj_lang_web",JSON.stringify(this.obj_lang_web));
+        localStorage.setItem("obj_lang_web",JSON.stringify(carrot.langs.obj_lang_web));
     }
 
     save_obj_lang_setting_category(){
-        localStorage.setItem("obj_lang_setting_category",JSON.stringify(this.obj_lang_setting_category));
+        localStorage.setItem("obj_lang_setting_category",JSON.stringify(carrot.langs.obj_lang_setting_category));
     }
 
     delete_list_lang(){
@@ -75,21 +93,9 @@ class Carrot_Langs{
     }
 
     get_all_data_lang() {
-        this.carrot.load_bar();
-        this.carrot.log("get_all_data_lang from server","alert");
-
-        if(carrot.type_server=="firestore"){
-            carrot.server.get_collection("lang", (data) => {
-                carrot.langs.list_lang = data;
-                carrot.langs.save_list_lang();
-            });
-        }else{
-            $.getJSON(carrot.config.list_url_data_lang[0],function(data){
-                carrot.langs.list_lang = data["all_item"];
-                carrot.langs.save_list_lang();
-            });
-        }
-
+        carrot.load_bar();
+        carrot.log("get_all_data_lang from server","alert");
+        carrot.langs.get_list_country();
         carrot.update_new_ver_cur("lang",true);
     };
 
@@ -116,8 +122,8 @@ class Carrot_Langs{
     }
 
     get_all_data_lang_web(){
-        this.carrot.load_bar();
-        this.carrot.log("Get lang "+this.carrot.lang+" from server","alert");
+        carrot.load_bar();
+        carrot.log("Get lang "+carrot.lang+" from server","alert");
         if(carrot.type_server=='firestore'){
             var q=new Carrot_Query("lang_data");
             q.add_select(carrot.lang);
@@ -129,7 +135,7 @@ class Carrot_Langs{
                 carrot.langs.get_data_lang_web_done(all_item);
             });
         }
-        this.carrot.update_new_ver_cur("lang_web",true);
+        carrot.update_new_ver_cur("lang_web",true);
     }
 
     get_data_lang_web_done(data){
@@ -154,30 +160,34 @@ class Carrot_Langs{
 
     list_btn_lang_select(class_button='btn-secondary'){
         var html='';
-        var langs=this;
         html+='<div class="btn-group" role="group">';
         html+='<button class="btn '+class_button+' dropdown-toggle btn-sm" type="button" id="btn_list_lang_ai" data-bs-toggle="dropdown" aria-expanded="true" >';
-        html+='<i class="fa-solid fa-rectangle-list"></i> <l class="lang" key_lang="select_lang">Change country</l> ('+langs.lang_setting+')';
+        html+='<i class="fa-solid fa-rectangle-list"></i> <l class="lang" key_lang="select_lang">Change country</l> ('+carrot.langs.lang_setting+')';
         html+='</button>';
         html+='<div class="dropdown-menu" aria-labelledby="btn_list_lang_ai">';
-        $.each(this.list_lang,function(i,lang){
-            if(lang.key==langs.lang_setting)
+        $.each(carrot.langs.list_lang,function(i,lang){
+            if(lang.key==carrot.langs.lang_setting)
                 html+='<button type="button" class="dropdown-item active btn-setting-lang-change" key_change="'+lang.key+'"><img src="'+lang.icon+'" style="width:20px"/>'+lang.name+'</button> ';
             else
                 html+='<button type="button" class="dropdown-item  btn-setting-lang-change" key_change="'+lang.key+'"><img src="'+lang.icon+'" style="width:20px"/>'+lang.name+'</button> ';
         });
         html+='</div>';
         html+='</div>';
+
+        if(carrot.langs.list_lang==null){
+            carrot.langs.get_list_country((data)=>{
+                alert("Hahaa");
+            });
+        }
         return html;
     }
 
     list(){
-        var carrot=this.carrot;
         var html='';
-        carrot.change_title_page("All Lang","?p=lang","lang");
+        carrot.change_title_page("All Lang","?p=langs","langs");
         html+=carrot.langs.menu();
         html+='<div class="row">';
-        $(this.carrot.langs.list_lang).each(function(index,lang){
+        $(carrot.langs.list_lang).each(function(index,lang){
             lang["id"]=lang["key"];
             var item_lang=new Carrot_List_Item(carrot);
             item_lang.set_id(lang.id);
@@ -192,8 +202,19 @@ class Carrot_Langs{
             html+=item_lang.html();
         });
         html+='</div>';
-        this.carrot.show(html);
-        this.carrot.check_event();
+      
+        if(carrot.langs.list_lang==null){
+            carrot.server.list("lang",(data)=>{
+                console.log(data);
+                alert("sdsd");
+            });
+        }
+        carrot.show(html);
+        carrot.check_event();
+    }
+
+    show(){
+        carrot.langs.list();
     }
 
     add_lang(){

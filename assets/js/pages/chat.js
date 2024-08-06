@@ -183,7 +183,7 @@ class Chat{
             s_btn_extra=s_btn_extra+'<div role="button" db_collection="chat-'+carrot.langs.lang_setting+'" db_document="'+data.pater+'" class="dev btn btn_app_edit bg-secondary text-white btn-sm mr-2" onclick="carrot.chat.edit" db_obj="carrot.chat"><i class="fa-solid fa-feather"></i></div>';
         }
 
-        s_btn_extra=s_btn_extra+'<div role="button" db_collection="chat-'+carrot.langs.lang_setting+'" db_document="'+data.id+'" class="dev btn bg-info text-white btn-sm mr-2" onclick="carrot.chat.replication(this)" db_obj="carrot.chat"><i class="fa-solid fa-viruses"></i></div>';
+        s_btn_extra=s_btn_extra+'<div role="button" db_collection="chat-'+carrot.langs.lang_setting+'" db_document="'+data.id_doc+'" class="dev btn bg-info text-white btn-sm mr-2" onclick="carrot.chat.replication(this)" db_obj="carrot.chat"><i class="fa-solid fa-viruses"></i></div>';
 
         item_list.set_icon_font(carrot.chat.get_icon(data));
         item_list.set_btn_dev_extra(s_btn_extra);
