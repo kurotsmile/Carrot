@@ -477,7 +477,6 @@ class Bible{
     }
 
     change_lang(key_change){
-        var key_change=$(this).attr("key_change");
         carrot.bible.get_list_by_key_lang(key_change);
     }
 

@@ -184,7 +184,7 @@ class Song{
         q.add_select("genre");
         q.add_select("mp3");
         q.add_select("link_ytb");
-        q.set_limit(30);
+        q.set_limit(99);
         q.set_order(carrot.song.orderBy_at,carrot.song.orderBy_type);
         q.add_where("lang",carrot.langs.lang_setting);
         q.get_data((songs)=>{
