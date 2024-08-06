@@ -130,7 +130,7 @@ class EBook{
 
             html+='<div class="col-2">';
                 html+='<div class="btn-group mr-2 btn-sm float-end" role="group" aria-label="End group">';
-                html+=carrot.langs.list_btn_lang_select('btn-success');
+                html+=carrot.langs.list_btn_lang_select('btn-success','carrot.ebook.get_list_by_key_lang');
                 html+='</div>';
             html+='</div>';
             
@@ -467,11 +467,6 @@ class EBook{
             carrot.tool.list_other_and_footer("ebook");
         }
 
-        $(".btn-setting-lang-change").click(function(){
-            var key_change=$(this).attr("key_change");
-            carrot.ebook.get_list_by_key_lang(key_change);
-        });
-        
         carrot.tool.box_app_tip("ERead Now");
         carrot.check_event();
     }

@@ -85,7 +85,7 @@ class Carrot_Langs{
                     html+=carrot.tool.btn_export("setting_web","setting_web (lang,version)");
                     html+='<button onclick="carrot.langs.add_setting_lang()" class="btn btn-sm btn-success"><i class="fa-solid fa-square-plus"></i> Add setting lang</button>';
                     html+=btn_extension;
-                    if(this.lang_setting_db_collection!="") html+=carrot.langs.list_btn_lang_select();
+                    if(this.lang_setting_db_collection!="") html+=carrot.langs.list_btn_lang_select('btn-success','carrot.langs.change_btn_list_lang');
                 html+='</div>';
             html+='</div>';
         html+='</div>';
@@ -179,7 +179,6 @@ class Carrot_Langs{
                     html_lang+='<button type="button" onClick="'+func_sel+'(\''+lang.key+'\');return false;" class="dropdown-item '+(lang.key===carrot.langs.lang_setting?'active':lang.key==carrot.langs.lang_setting)+' btn-setting-lang-change" key_change="'+lang.key+'"><img src="'+lang.icon+'" style="width:20px"/>'+lang.name+'</button> ';
                     $("#menu_lang_sub").append(html_lang);
                 });
-
             });
         },500);
         }
@@ -343,11 +342,6 @@ class Carrot_Langs{
 
         carrot.check_event();
 
-        $(".btn-setting-lang-change").click(function(){
-            var key_change=$(this).attr("key_change");
-            langs.show_setting_lang_by_key(key_change,langs.lang_setting_db_collection);
-        });
-
         $("#btn_done_setting_lang").click(function(){
             var lang_country=new Object();
             var data_inp_lang=new Object();
@@ -361,6 +355,11 @@ class Carrot_Langs{
             carrot.set_doc_merge("lang_data",langs.lang_setting_db_collection,lang_country);
             $.MessageBox("Cập nhật "+langs.lang_setting_db_collection+" - "+langs.lang_setting+" thành công!")
         });
+    }
+
+    change_btn_list_lang(key_change){
+        var key_change=$(this).attr("key_change");
+        langs.show_setting_lang_by_key(key_change,langs.lang_setting_db_collection);
     }
 
     add_field_for_setting_lang(){

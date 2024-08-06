@@ -77,7 +77,7 @@ class Carrot_user{
 
                 html+='<div class="col-4">';
                     html+='<div class="btn-group mr-2 btn-sm float-end" role="group" aria-label="End group">';
-                    html+=carrot.langs.list_btn_lang_select('btn-success');
+                    html+=carrot.langs.list_btn_lang_select('btn-success','carrot.user.change_lang');
                     html+='</div>';
                 html+='</div>'
 
@@ -415,19 +415,17 @@ class Carrot_user{
         if(carrot.user.phone_book_info_cur!=null){
             carrot.tool.list_other_and_footer("user","sex",carrot.user.phone_book_info_cur.sex);
         }
-        
         carrot.tool.box_app_tip('Contact store');
-        $(".btn-setting-lang-change").click(function(){
-            var key_change=$(this).attr("key_change");
-            carrot.langs.lang_setting=key_change;
-            carrot.loading("Get list data by ("+key_change+")");
-            carrot.data.clear("user");
-            setTimeout(()=>{
-                carrot.user.get_data_from_server(carrot.user.load_list_by_data);
-            },500);
-        });
-
         carrot.check_event();
+    }
+
+    change_lang(key_change){
+        carrot.langs.lang_setting=key_change;
+        carrot.loading("Get list data by ("+key_change+")");
+        carrot.data.clear("user");
+        setTimeout(()=>{
+            carrot.user.get_data_from_server(carrot.user.load_list_by_data);
+        },500);
     }
 
     show_register(){

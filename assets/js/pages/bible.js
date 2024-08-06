@@ -27,7 +27,7 @@ class Bible{
                 html+='<button onclick="carrot.bible.add(\'new_testament\');" class="btn btn-sm dev btn-success"><i class="fa-solid fa-square-plus"></i> Add New testament</button>';
                 html+=carrot.tool.btn_export("bible");
                 html+='<button onclick="carrot.bible.delete_all_data();return false;" class="btn btn-danger dev btn-sm"><i class="fa-solid fa-dumpster-fire"></i> Delete All data</button>';
-                html+=carrot.langs.list_btn_lang_select('btn-success');
+                html+=carrot.langs.list_btn_lang_select('btn-success','carrot.bible.change_lang');
             html+='</div>';
         html+='</div>';
         html+='</div>';
@@ -474,10 +474,11 @@ class Bible{
 
         carrot.tool.box_app_tip('Bible world');
         carrot.check_event();
-        $(".btn-setting-lang-change").click(function(){
-            var key_change=$(this).attr("key_change");
-            carrot.bible.get_list_by_key_lang(key_change);
-        });
+    }
+
+    change_lang(key_change){
+        var key_change=$(this).attr("key_change");
+        carrot.bible.get_list_by_key_lang(key_change);
     }
 
     list_for_home(){

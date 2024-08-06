@@ -11,7 +11,7 @@ class Chat_Block{
 
         html_menu+='<div class="col-10 btn-sm">';
             html_menu+='<div role="group" aria-label="First group" class="btn-group btn-sm">';
-                html_menu+=carrot.langs.list_btn_lang_select('btn-success');
+                html_menu+=carrot.langs.list_btn_lang_select('btn-success','carrot.chat_block.change_lang');
                 html_menu+=carrot.tool.btn_export("block","Key chat block");
                 html_menu+='<button onclick="carrot.chat_block.delete_all_data();return false;" class="btn btn-danger dev btn-sm"><i class="fa-solid fa-dumpster-fire"></i> Delete All data</button>';
                 html_menu+='<button onclick="carrot.chat_block.add()" type="button" class="btn dev btn-info btn-sm"><i class="fa-solid fa-circle-plus"></i> Add Key</button>';
@@ -121,13 +121,13 @@ class Chat_Block{
     }
 
     check_event(){
-        $(".btn-setting-lang-change").click(function(){
-            var key_change=$(this).attr("key_change");
-            carrot.langs.lang_setting=key_change;
-            carrot.chat_block.objs=null;
-            carrot.chat_block.list();
-        });
         carrot.check_event();
+    }
+
+    change_lang(key_change){
+        carrot.langs.lang_setting=key_change;
+        carrot.chat_block.objs=null;
+        carrot.chat_block.list();
     }
  
     delete_all_data(){

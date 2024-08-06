@@ -45,7 +45,7 @@ class Song{
 
                 html+='<div class="col-4">';
                     html+='<div class="btn-group mr-2 btn-sm float-end" role="group" aria-label="End group">';
-                    html+=carrot.langs.list_btn_lang_select('btn-success');
+                    html+=carrot.langs.list_btn_lang_select('btn-success','carrot.song.change_lang');
                     html+='</div>';
                 html+='</div>'
 
@@ -297,12 +297,11 @@ class Song{
 
         carrot.tool.box_app_tip('Music for life');
         carrot.check_event();
-        
-        $(".btn-setting-lang-change").click(function(){
-            var key_change=$(this).attr("key_change");
-            carrot.langs.lang_setting=key_change;
-            carrot.song.get_data_from_server(carrot.song.load_list_by_data);
-        });
+    }
+
+    change_lang(key_change){
+        carrot.langs.lang_setting=key_change;
+        carrot.song.get_data_from_server(carrot.song.load_list_by_data);
     }
 
     play(index,type='music'){

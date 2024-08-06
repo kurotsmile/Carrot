@@ -370,7 +370,7 @@ class Chat{
             html_menu+='<button class="btn dev btn-success btn-sm '+s_class_active+'" onclick="carrot.chat.show_compare_msg();return false;"><i class="fa-solid fa-table-columns"></i></button>';
         }
         html_menu+='<div role="group" aria-label="First group"  class="btn-group mr-2 btn-sm">';
-        html_menu+=carrot.langs.list_btn_lang_select('btn-success');
+        html_menu+=carrot.langs.list_btn_lang_select('btn-success','carrot.chat.change_lang');
         html_menu+='</div>';
                 html_menu+='<div role="group" aria-label="First group"  class="btn-group mr-2 btn-sm">';
                 if(carrot.chat.show_type=='info') html_menu+='<button onclick="carrot.chat.list();" class="btn btn-sm btn-success"><i class="fa-solid fa-square-caret-left"></i> <l class="lang" key_lang="back">Back</l></button>';
@@ -632,22 +632,21 @@ class Chat{
     }
 
     check_event(){
-        $(".btn-setting-lang-change").click(function(){
-            var key_change=$(this).attr("key_change");
-            if(carrot.chat.show_type=="compare"){
-                carrot.langs.lang_setting=key_change;
-                carrot.chat.show_compare_msg_list();
-            }
-            else{
-                carrot.chat.objs=null;
-                carrot.langs.lang_setting=key_change;
-                carrot.chat.list();
-            }  
-        });
-
         if(carrot.chat.obj_info_cur!=null) carrot.tool.list_other_and_footer("chat","func",carrot.chat.obj_info_cur.func);
         carrot.tool.box_app_tip("AI Lover");
         carrot.check_event();
+    }
+
+    change_lang(key_change){
+        if(carrot.chat.show_type=="compare"){
+            carrot.langs.lang_setting=key_change;
+            carrot.chat.show_compare_msg_list();
+        }
+        else{
+            carrot.chat.objs=null;
+            carrot.langs.lang_setting=key_change;
+            carrot.chat.list();
+        }  
     }
 
     get_info(id){
