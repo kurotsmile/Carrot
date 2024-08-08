@@ -902,6 +902,28 @@ class Chat{
             $(emp).prop('checked', true);
         });
     }
+    
+    gpt_for_msg(){
+        var f_key=$("#key").val();
+        $.ajax({
+            url: 'https://api.openai.com/v1/chat/completions',
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ',
+                'Content-Type': 'application/json'
+            },
+            data: JSON.stringify({
+                model: 'gpt-3.5-turbo',
+                messages: [{ role: 'user', content: f_key }]
+            }),
+            success: function(response) {
+                $('#msg').text(response.choices[0].message.content);
+            },
+            error: function(xhr, status, error) {
+                $('#msg').text('Error: ' + error);
+            }
+        });
+    }
 }
 
 carrot.chat=new Chat();

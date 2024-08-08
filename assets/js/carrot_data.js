@@ -90,14 +90,18 @@ class Carrot_data{
             }
         },()=>{
             fetch(url)
-            .then(response => response.blob())
-            .then(blob => {
+            .then(response => {
+                if (!response.ok) {
+                    $("."+emp).attr("src","images/150.png");
+                }
+                return response.blob();
+            }).then(blob => {
                 var data_img={id_doc:id_doc,data:blob};
                 this.add("images",data_img);
                 $("."+emp).attr("src",url);
             })
             .catch(error => {
-                $("."+emp).attr("src","images/150.png");
+                $("."+emp).attr("src", url);
             });
         });
     }
