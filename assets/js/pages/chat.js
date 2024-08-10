@@ -259,6 +259,10 @@ class Chat{
     }
 
     edit(data,carrot){
+        if(data==null){
+            cr.msg("The chat no longer exists!","Edit","error");
+            return false;
+        }
         if(data["lang"]==null){
             data["lang"]=carrot.langs.lang_setting;
         }else{
@@ -902,7 +906,7 @@ class Chat{
             $(emp).prop('checked', true);
         });
     }
-    
+
     gpt_for_msg(){
         var f_key=$("#key").val();
         $.ajax({

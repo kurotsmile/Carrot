@@ -455,9 +455,9 @@ class Carrot_Langs{
             if (key_lang != carrot.lang) {
                 carrot.langs.change_lang(key_lang);
                 carrot.langs.get_data_lang_web();
-                carrot.user.delete_obj_phone_book();
-                carrot.check_show_by_id_page();
+                carrot.user.clear_all_data();
                 carrot.data.clear("apps");
+                carrot.check_show_by_id_page();
                 Swal.close();
             };
         });

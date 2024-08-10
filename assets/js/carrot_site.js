@@ -987,7 +987,7 @@ class Carrot_Site{
             }else{
                 this.load_bar();
                 $("#load_bar").css("width","100%");
-                this.load_js_page("home");
+                this.load_js_page("home","home");
             }
         }
     }
@@ -1118,7 +1118,7 @@ class Carrot_Site{
         if(carrot.home!=null)
             carrot.home.show();
         else
-            carrot.load_js_page("home","Home","carrot.home.show()");
+            carrot.load_js_page("home","home","carrot.home.show()");
     }
 
     html_404(list_btn=null){
@@ -1298,6 +1298,7 @@ class Carrot_Site{
     js(file_name_js_page, obj_js=null, callback=null){carrot.load_js_page(file_name_js_page,obj_js,callback);}
 
     load_js_page(file_name_js_page, obj_js=null, callback=null) {
+        carrot.id_page=file_name_js_page;
         var url="assets/js/pages/"+file_name_js_page+".js?ver="+this.get_ver_cur("js");
         if(obj_js!=null){
             this.call_show_on_load_pagejs=false;

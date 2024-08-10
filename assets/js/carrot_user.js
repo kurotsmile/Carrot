@@ -789,9 +789,13 @@ class Carrot_user{
     }
 
     delete_all_data(){
+        carrot.user.clear_all_data();
+        carrot.msg("Delete all data user success!","success");
+    }
+
+    clear_all_data(){
         carrot.data.clear("user");
         carrot.data.clear("user_info");
         carrot.user.objs=null;
-        carrot.msg("Delete all data user success!","success");
     }
 }

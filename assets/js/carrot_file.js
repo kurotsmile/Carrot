@@ -328,15 +328,8 @@ class Carrot_File{
     }
 
     add_box_file_item_link(id_emp){
-        var type_file_emp=$("#"+id_emp+"_file").attr("accept");
-        Swal.fire({
-            input: "url",
-            inputLabel: "URL address",
-            inputPlaceholder: "Enter the URL",
-            showCancelButton: true,
-            preConfirm: async (val) => {
-                $("#"+id_emp).attr("value",val).html(carrot.file.box_file_item(val,"thanh","link/*"));
-            }
+        cr.input("url","URL address",(val)=>{
+            $("#"+id_emp).attr("value",val).html(carrot.file.box_file_item(val,"thanh","link/*"));
         });
     }
 
