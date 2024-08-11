@@ -136,5 +136,5 @@ class Chat_Block{
     }
 }
 
-carrot.chat_block=new Chat_Block();
-if(carrot.call_show_on_load_pagejs) carrot.chat_block.show();
+var chat_block=new Chat_Block();
+carrot.chat_block=chat_block;

@@ -328,5 +328,5 @@ class Code{
     }
 }
 
-carrot.coder=new Code();
-if(carrot.call_show_on_load_pagejs) carrot.coder.show();
+var coder=new Code();
+carrot.coder=coder;

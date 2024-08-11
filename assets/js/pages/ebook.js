@@ -621,5 +621,5 @@ class EBook{
     }
 
 }
-carrot.ebook=new EBook();
-if(carrot.call_show_on_load_pagejs) carrot.ebook.show();
+var ebook=new EBook();
+carrot.ebook=ebook;

@@ -90,7 +90,7 @@ class Floor{
         carrot.floor.objs=null;
         carrot.msg("Delete all data success","success");
     }
-
 }
-carrot.floor=new Floor();
-if(carrot.call_show_on_load_pagejs) carrot.floor.show();
+
+var floor=new Floor();
+carrot.floor=floor;

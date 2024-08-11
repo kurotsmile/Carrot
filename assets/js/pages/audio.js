@@ -152,5 +152,5 @@ class Carrot_Audio{
         carrot.msg("Delete all data audio success!","success");
     }
 }
-carrot.audio=new Carrot_Audio();
-if(carrot.call_show_on_load_pagejs) carrot.audio.show();
+var audio_sound=new Carrot_Audio();
+carrot.audio=audio_sound;

@@ -102,5 +102,5 @@ class Fashion{
         carrot.check_event();
     }
 }
-carrot.fashion=new Fashion();
-if(carrot.call_show_on_load_pagejs) carrot.fashion.show();
+var fashion=new Fashion();
+carrot.fashion=fashion;

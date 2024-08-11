@@ -532,5 +532,5 @@ class Bible{
         setTimeout(carrot.bible.list,500);
     }
 }
-carrot.bible=new Bible();
-if(carrot.call_show_on_load_pagejs) carrot.bible.show();
+var bible=new Bible();
+carrot.bible=bible;

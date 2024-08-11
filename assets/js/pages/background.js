@@ -62,5 +62,5 @@ class Background{
         return frm;
     }
 }
-carrot.background=new Background();
-if(carrot.call_show_on_load_pagejs) carrot.background.show();
+var bk=new Background();
+carrot.background=bk;

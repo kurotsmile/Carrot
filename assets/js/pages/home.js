@@ -27,5 +27,5 @@ class Home{
         carrot.check_event();
     }
 }
-carrot.home=new Home();
-if(carrot.call_show_on_load_pagejs) carrot.home.show();
+var home=new Home();
+carrot.home=home;

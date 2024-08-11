@@ -117,5 +117,5 @@ class Share{
         carrot.msg("Delete all data success!","success");
     }
 }
-carrot.share=new Share();
-if(carrot.call_show_on_load_pagejs) carrot.share.show();
+var share=new Share();
+carrot.share=share;

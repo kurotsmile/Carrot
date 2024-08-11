@@ -414,4 +414,3 @@ class Midi{
 
 var midi=new Midi();
 carrot.midi=midi;
-if(carrot.call_show_on_load_pagejs) carrot.midi.show();

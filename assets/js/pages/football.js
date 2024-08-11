@@ -359,6 +359,6 @@ class FootBall{
         return html;
     }
 }
-carrot.football=new FootBall();
-if(carrot.call_show_on_load_pagejs) carrot.football.show();
+var football=new FootBall();
+carrot.football=football; 
 

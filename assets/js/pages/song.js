@@ -447,5 +447,5 @@ class Song{
         carrot.show_pay("song","Download Music ("+carrot.song.data_info_cur.name+")","Get file mp3 thi song from Carrot Music","1.99",carrot.song.pay_success);
     }
 }
-carrot.song=new Song();
-if(carrot.call_show_on_load_pagejs) carrot.song.show();
+var song=new Song();
+carrot.song=song;

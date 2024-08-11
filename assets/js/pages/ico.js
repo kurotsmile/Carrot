@@ -575,5 +575,5 @@ class Carrot_Ico{
         carrot.msg("Delete all data success!");
     }
 }
-carrot.ico=new Carrot_Ico();
-if(carrot.call_show_on_load_pagejs) carrot.ico.show();
+var ico=new Carrot_Ico();
+carrot.ico=ico;

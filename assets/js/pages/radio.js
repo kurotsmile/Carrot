@@ -180,5 +180,5 @@ class Carrot_Radio{
         setTimeout(carrot.radio.show(),2000);
     }
 }
-carrot.radio=new Carrot_Radio();
-if(carrot.call_show_on_load_pagejs) carrot.radio.show();
+var radio=new Carrot_Radio();
+carrot.radio=radio;

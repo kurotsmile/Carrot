@@ -711,5 +711,5 @@ class Appp{
         setTimeout(carrot.appp.show_other_store,600);
     }
 }
-carrot.appp=new Appp();
-if(carrot.call_show_on_load_pagejs) carrot.appp.show();
+var appp=new Appp();
+carrot.appp=appp;

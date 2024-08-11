@@ -114,5 +114,5 @@ class User_Avatar{
         carrot.msg("Delete all data list avatar");
     }
 }
-carrot.avatar=new User_Avatar();
-if(carrot.call_show_on_load_pagejs) carrot.avatar.show();
+var avatar=new User_Avatar();
+carrot.avatar=avatar;

@@ -41,7 +41,6 @@ class Carrot_Site{
     server;
     os;
 
-    call_show_on_load_pagejs=true;
     type_server="firestore";
     v="0.0.3";
     
@@ -978,16 +977,16 @@ class Carrot_Site{
                 eval("carrot."+this.id_page+".show()");
                 $("#load_bar").css("width","100%");
             }else{
-                this.load_js_page(this.id_page);
+                this.load_js_page(id_page,id_page,"carrot."+id_page+".show()");
             };
         }else{
             var id_page=this.get_param_url("page");
             if(id_page!=undefined){
-                this.load_js_page(id_page);
+                this.load_js_page(id_page,id_page,"carrot."+id_page+".show()");
             }else{
                 this.load_bar();
                 $("#load_bar").css("width","100%");
-                this.load_js_page("home","home");
+                this.load_js_page("home","home","carrot.home.show()");
             }
         }
     }
@@ -1301,13 +1300,10 @@ class Carrot_Site{
         carrot.id_page=file_name_js_page;
         var url="assets/js/pages/"+file_name_js_page+".js?ver="+this.get_ver_cur("js");
         if(obj_js!=null){
-            this.call_show_on_load_pagejs=false;
             if (carrot[obj_js]!=null) {
                 eval(callback);
                 return;
             }
-        }else{
-            this.call_show_on_load_pagejs=true;
         }
 
         return new Promise((resolve, reject) => {
