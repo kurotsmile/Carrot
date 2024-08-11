@@ -956,21 +956,12 @@ class Carrot_Site{
         this.msg("Thay đổi chế độ kết nối cơ sở dữ liệu thành công! Load lại trang để làm mới các chức năng!");
     }
 
-    get_param_url(sParam) {
-        var sPageURL = window.location.search.substring(1);
-        var sURLVariables = sPageURL.split('&');
-        for (var i = 0; i < sURLVariables.length; i++) {
-            var sParameterName = sURLVariables[i].split('=');
-            if (sParameterName[0] == sParam) return sParameterName[1];
-        }
-    }
-
     check_show_by_id_page() {
-        this.load_bar();
+        carrot.load_bar();
         $("#head").show();
         $("#head_nav").show();
-        this.id_page = this.get_param_url("p");
-        if(this.id_page!=undefined){
+        this.id_page = cr.arg("p");
+        if(id_page){
             this.log("check_show_by_id_page : "+this.id_page,"info");
             var obj_page_show=carrot[this.id_page];
             if(obj_page_show!=null){
@@ -980,8 +971,8 @@ class Carrot_Site{
                 this.load_js_page(id_page,id_page,"carrot."+id_page+".show()");
             };
         }else{
-            var id_page=this.get_param_url("page");
-            if(id_page!=undefined){
+            var id_page=cr.arg("page");
+            if(id_page){
                 this.load_js_page(id_page,id_page,"carrot."+id_page+".show()");
             }else{
                 this.load_bar();

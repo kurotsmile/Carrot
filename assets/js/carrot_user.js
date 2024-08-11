@@ -20,9 +20,9 @@ class Carrot_user{
     }
 
     show(){
-        var id=carrot.get_param_url("id");
-        if(id!=undefined){
-            var lang=carrot.get_param_url("user_lang");
+        var id=cr.arg("id");
+        if(id){
+            var lang=cr.arg("user_lang");
             setTimeout(()=>{
             carrot.user.get_info(id,lang,carrot.user.info);
             },500);

@@ -36,9 +36,9 @@ class Chat{
     }
 
     show(){
-        var id=carrot.get_param_url("id");
-        if(id!=undefined){
-            var lang_chat=carrot.get_param_url("lang_chat");
+        var id=cr.arg("id");
+        if(id){
+            var lang_chat=cr.arg("lang_chat");
             if(lang_chat!=undefined) lang_chat=carrot.langs.lang_setting;
             carrot.langs.lang_setting=lang_chat;
             carrot.chat.get_info(id);

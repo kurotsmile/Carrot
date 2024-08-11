@@ -124,8 +124,8 @@ class Song{
     }
 
     show(){
-        var id=carrot.get_param_url("id");
-        if(id!=undefined)
+        var id=cr.arg("id");
+        if(id)
             carrot.song.get_info(id);
         else
             carrot.song.list();

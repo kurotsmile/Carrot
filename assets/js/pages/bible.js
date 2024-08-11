@@ -10,8 +10,8 @@ class Bible{
     }
     
     show(){
-        var id=carrot.get_param_url("id");
-        if(id!=undefined)
+        var id=cr.arg("id");
+        if(id)
             carrot.bible.show_info(id);
         else
             carrot.bible.list();

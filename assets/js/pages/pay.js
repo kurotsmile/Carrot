@@ -1,13 +1,13 @@
 //carrot.change_title_page("Pay", "?page=pay","Pay");
-var id_product=carrot.get_param_url("id");
-var title_product=decodeURI(carrot.get_param_url("title"));
-var description_product=decodeURI(carrot.get_param_url("description"));
-var price_product=carrot.get_param_url("price");
-var user_id=carrot.get_param_url("user_id");
-var user_lang=carrot.get_param_url("user_lang");
-var user_name=decodeURI(carrot.get_param_url("user_name"));
-var type_product=carrot.get_param_url("type");
-var id_order=carrot.get_param_url("id_order");
+var id_product=cr.arg("id");
+var title_product=decodeURI(cr.arg("title"));
+var description_product=decodeURI(cr.arg("description"));
+var price_product=cr.arg("price");
+var user_id=cr.arg("user_id");
+var user_lang=cr.arg("user_lang");
+var user_name=decodeURI(cr.arg("user_name"));
+var type_product=cr.arg("type");
+var id_order=cr.arg("id_order");
 
 var html='';
 

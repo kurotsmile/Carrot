@@ -76,8 +76,8 @@ class Midi{
     }
 
     show(){
-        var id_midi=carrot.get_param_url("id");
-        if(id_midi!=undefined)
+        var id_midi=cr.arg("id");
+        if(id_midi)
             carrot.midi.show_midi_by_id(id_midi);
         else
             carrot.midi.show_list();

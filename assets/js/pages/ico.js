@@ -9,8 +9,8 @@ class Carrot_Ico{
     orderBy_type="ASCENDING";
     
     show(){
-        var id_icon=carrot.get_param_url("id");
-        if(id_icon!=undefined)
+        var id_icon=cr.arg("id");
+        if(id_icon)
             carrot.ico.get_info(id_icon);
         else
             carrot.ico.list();

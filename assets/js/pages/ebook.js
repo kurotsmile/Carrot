@@ -18,8 +18,8 @@ class EBook{
     }
 
     show(){
-        var id=carrot.get_param_url("id");
-        if(id!=undefined)
+        var id=cr.arg("id");
+        if(id)
             carrot.ebook.show_info_by_id(id);
         else
             carrot.ebook.list();

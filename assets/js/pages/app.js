@@ -33,8 +33,8 @@ class Appp{
     }
 
     show_all(){
-        var id_app=carrot.get_param_url("id");
-        if(id_app!=undefined){
+        var id_app=cr.arg("id");
+        if(id_app){
             id_app=decodeURI(id_app);
             carrot.appp.show_app_by_id(id_app);
         }else{
@@ -713,3 +713,5 @@ class Appp{
 }
 var appp=new Appp();
 carrot.appp=appp;
+carrot.app=appp;
+carrot.game=appp;

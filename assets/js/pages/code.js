@@ -7,8 +7,8 @@ class Code{
     type_show="list";
 
     show(){
-        var id=carrot.get_param_url("id");
-        if(id!=undefined)
+        var id=cr.arg("id");
+        if(id)
             carrot.coder.get_info(id);
         else
             carrot.coder.list();

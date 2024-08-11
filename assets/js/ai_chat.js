@@ -868,9 +868,9 @@ class AI_Chat{
     }
 
     show(id,carrot){
-        var id_chat=carrot.get_param_url("id");
-        var lang_chat=carrot.get_param_url("lang_chat");
-        if(id=="undefined"){
+        var id_chat=cr.arg("id");
+        var lang_chat=arg.arg("lang_chat");
+        if(id==undefined){
             carrot.get_doc("chat-"+lang_chat,id_chat,carrot.ai.chat.show_info);
         }
         else{
