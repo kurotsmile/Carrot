@@ -404,7 +404,7 @@ class EBook{
             var s_class='';
             if(index==0) s_class='show active';
             html_list+='<div class="tab-pane fade '+s_class+'" id="c_'+index+'_body" role="tabpanel" aria-labelledby="c_'+index+'">'
-            if(c.title!=undefined) html_list+='<h5>'+c.title+'</h5>';
+            if(carrot.tool.alive(c.title)) html_list+='<h5>'+c.title+'</h5>';
             html_list+=c.content;
             html_list+='</div>';
         });

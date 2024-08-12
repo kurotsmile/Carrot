@@ -365,9 +365,9 @@ class Carrot_user{
         var html='';
         html+='<div class="col-10">';
             html+='<div class="row">';
-                if(data_user.phone!=""&&data_user.phone!=undefined) html+='<div class="col-12 fs-8 text-break"><i class="fa-solid fa-phone"></i> '+data_user.phone+'</div>';
-                if(data_user.email!=""&&data_user.email!=undefined) html+='<div class="col-12 fs-8 text-break"><i class="fa-solid fa-envelope"></i> '+data_user.email+'</div>';
-                if(data_user.address!=""&&data_user.address!=undefined){
+                if(carrot.tool.alive(data_user.phone)) html+='<div class="col-12 fs-8 text-break"><i class="fa-solid fa-phone"></i> '+data_user.phone+'</div>';
+                if(carrot.tool.alive(data_user.email)) html+='<div class="col-12 fs-8 text-break"><i class="fa-solid fa-envelope"></i> '+data_user.email+'</div>';
+                if(carrot.tool.alive(data_user.address)){
                     var user_address=data_user.address;
                     if(user_address.name!="") html+='<li class="col-12 fs-8 text-break"><i class="fa-solid fa-location-dot"></i> '+user_address.name+'</li>';
                 }

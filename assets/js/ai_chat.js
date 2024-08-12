@@ -942,14 +942,14 @@ class AI_Chat{
                                     html+='<p>'+data.date_create+'</p>';
                                 html+='</div>';
 
-                                if(data.user.name!=undefined){
+                                if(carrot.tool.alive(data.user.name)){
                                     html+='<div class="col-md-4 col-6 text-center">';
                                     html+='<b><l class="lang" key_lang="author">Author</l> <i class="fa-solid fa-user-nurse"></i></b>';
                                     html+='<p>'+data.user.name+'</p>';
                                     html+='</div>';
                                 }
 
-                                if(data.func!=undefined){
+                                if(carrot.tool.alive(data.func)){
                                     var index_func=parseInt(data.func);
                                     html+='<div class="col-md-4 col-6 text-center">';
                                     html+='<b><l>Function</l> <i class="fa-solid fa-atom"></i></b>';
@@ -957,7 +957,7 @@ class AI_Chat{
                                     html+='</div>';
                                 }
 
-                                if(data.link!=""){
+                                if(carrot.tool.alive(data.link)){
                                     html+='<div class="col-md-4 col-6 text-center">';
                                     html+='<b><l>Link</l> <i class="fa-solid fa-link"></i></b>';
                                     html+='<p>'+data.link+'</p>';

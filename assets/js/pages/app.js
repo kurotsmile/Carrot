@@ -580,7 +580,7 @@ class Appp{
 
         $(carrot.random(carrot.appp.link_store)).each(function(index,store){
             store["index"]=index;
-            if(data[store.id_doc]!=undefined&&data[store.id_doc]!="") box_info.add_attrs(store.icon,store.name,"<a href='"+data[store.id_doc]+"' target='_blank'><img class='w-50' src='"+store.img+"'/></a>","");
+            if(carrot.tool.alive(data[store.id_doc])) box_info.add_attrs(store.icon,store.name,"<a href='"+data[store.id_doc]+"' target='_blank'><img class='w-50' src='"+store.img+"'/></a>","");
         });
 
         box_info.add_attrs("fa-sharp fa-solid fa-eye",carrot.l_html("count_view","Reviews"),"3.9k");
@@ -606,12 +606,12 @@ class Appp{
         if(carrot.tool.alive(data.exe_file)) box_info.add_btn("btn_exe_file","fa-solid fa-desktop","Download (Exe)",data.exe_file,'link');
         if(carrot.tool.alive(data.deb_file)) box_info.add_btn("btn_deb_file","fa-brands fa-ubuntu","Download <span class='fs-9'>(deb <i class='fa-brands fa-linux'></i>)</span>",data.deb_file,'link');
 
-        if(data["img1"]!=""&&data["img1"]!=undefined){
+        if(carrot.tool.alive(data["img1"])){
                 var html_img='<div class="owl-carousel owl-theme">';
                 for(var i=1;i<=8;i++){
                     var key_img_data="img"+i;
                     var id_img=key_img_data+"_"+data.id_doc.replace(/[^\w]/gi,'');
-                    if(data[key_img_data]!=""&&data[key_img_data]!=undefined){
+                    if(carrot.tool.alive(data[key_img_data])){
                         carrot.data.load_image(id_img,data[key_img_data],id_img);
                         html_img+='<img class="'+id_img+'" src="'+carrot.url()+'/images/512.png"/>';
                         var id_img=key_img_data+"_"+data.id_doc;

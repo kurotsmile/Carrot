@@ -228,8 +228,8 @@ class Code{
 
         box_info.set_protocol_url('code'+data.code_type+'://show/'+data.id);
 
-        if(data.describe!=''&&data.describe!='undefined'&&data.describe!=undefined) box_info.add_body('<h4 class="fw-semi fs-5 lang" key_lang="describe">Describe</h4>','<p class="fs-8 text-justify mb-2">'+data.describe+'</p><br/>');
-        if(data.code!=''&&data.code!='undefined'&&data.code!=undefined) box_info.add_body('<h4 class="fw-semi fs-5 lang" key_lang="code">Code</h4>','<pre><code id="code_txt" class="'+data.code_type+'">'+data.code+'</code></pre>');
+        if(carrot.tool.alive(data.describe)) box_info.add_body('<h4 class="fw-semi fs-5 lang" key_lang="describe">Describe</h4>','<p class="fs-8 text-justify mb-2">'+data.describe+'</p><br/>');
+        if(carrot.tool.alive(data.code)) box_info.add_body('<h4 class="fw-semi fs-5 lang" key_lang="code">Code</h4>','<pre><code id="code_txt" class="'+data.code_type+'">'+data.code+'</code></pre>');
 
         html+=carrot.coder.menu();
         html+=box_info.html();

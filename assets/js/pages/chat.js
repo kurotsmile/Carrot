@@ -39,7 +39,7 @@ class Chat{
         var id=cr.arg("id");
         if(id){
             var lang_chat=cr.arg("lang_chat");
-            if(lang_chat!=undefined) lang_chat=carrot.langs.lang_setting;
+            if(carrot.tool.alive(lang_chat)) lang_chat=carrot.langs.lang_setting;
             carrot.langs.lang_setting=lang_chat;
             carrot.chat.get_info(id);
         }
@@ -681,8 +681,8 @@ class Chat{
         box_info.add_attrs("fa-solid fa-palette",'<l class="lang" key_lang="color">Color</l>',data.color);
         box_info.add_attrs("fa-solid fa-smile",'<l class="lang" key_lang="icon">Icon</l>',data.icon);
         box_info.add_attrs("fa-regular fa-calendar",'<l class="lang" key_lang="date_create">Date Create</l>',data.date_create);
-        if(data.user.name!=undefined) box_info.add_attrs("fa-solid fa-user-nurse",'<l class="lang" key_lang="author">Author</l>',data.user.name);
-        if(data.func!=undefined){
+        if(carrot.tool.alive(data.user.name)) box_info.add_attrs("fa-solid fa-user-nurse",'<l class="lang" key_lang="author">Author</l>',data.user.name);
+        if(carrot.tool.alive(data.func)){
             var index_func=parseInt(data.func);
             box_info.add_attrs("fa-solid fa-atom",'Function',carrot.chat.funcs[index_func]);
         }

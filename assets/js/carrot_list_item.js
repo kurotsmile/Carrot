@@ -126,7 +126,7 @@ class Carrot_List_Item{
                     html+='<div class="pe-0 '+this.class_icon_col+' text-center"><i id="'+this.id_icon+'" role="button" '+s_htm_act_click+' class="'+this.icon_font+' fa-2x" obj_id="'+this.id+'" obj_index="'+this.index+'"></i></div>';
 
                 html+='<div class="det '+ this.class_body+'">';
-                    if(this.name!=undefined) html+="<h5 class='mb-0 fs-6 mt-0'>"+this.name+"</h5>";
+                    if(carrot.tool.alive(this.name)) html+="<h5 class='mb-0 fs-6 mt-0'>"+this.name+"</h5>";
                         if(this.tip!=null)html+="<span class='fs-8'>"+this.tip+"</span>"; 
                         if(this.body!=null){
                             html+="<div class='row'>";

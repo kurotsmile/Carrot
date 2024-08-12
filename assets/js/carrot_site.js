@@ -676,7 +676,7 @@ class Carrot_Site{
             var db_obj=$(this).attr("db_obj");
             var event_fun=$(this).attr("onclick");
             carrot.log("Edit "+db_collection+" : "+db_document);
-            if(event_fun!=undefined)
+            if(carrot.tool.alive(event_fun))
                 carrot.get_doc(db_collection,db_document,eval(event_fun));
             else
                 carrot.get_doc(db_collection,db_document,eval("carrot."+db_obj+".edit"));
@@ -697,7 +697,7 @@ class Carrot_Site{
                 confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
                 if (result.isConfirmed){
-                    if(event_fun!=undefined)
+                    if(carrot.tool.alive(event_fun))
                         eval(event_fun);
                     else
                         carrot.act_del_obj(db_collection,db_document);
