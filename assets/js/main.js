@@ -76,8 +76,7 @@ $(document).ready(function () {
     $("#head").hide();
     $("#head_nav").hide();
     $("#logo_carrot").on("contextmenu", function () { carrot.act_mode_dev(); return false; });
-    $("#btn_recognition").click(function(){carrot.start_recognition();});
-
+    
     var ContextMenu = [{
         icon: 'fa fa-home',
         label: 'Home Page',
