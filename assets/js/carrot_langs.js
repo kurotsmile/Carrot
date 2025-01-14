@@ -83,6 +83,7 @@ class Carrot_Langs{
                     html+='<button onclick="carrot.langs.list();" type="button" class="btn btn-info btn-sm"><i class="fa-solid fa-rectangle-list"></i> List Lang</button>';
                     html+=carrot.tool.btn_export("lang_data");
                     html+=carrot.tool.btn_export("setting_web","setting_web (lang,version)");
+                    if(carrot.langs.lang_setting_db_collection!="") html+='<button onclick="carrot.langs.export_db_cur();" type="button" class="btn btn-info btn-sm"><i class="fa-solid fa-download"></i> Export ('+carrot.langs.lang_setting_db_collection+')</button>';
                     html+='<button onclick="carrot.langs.add_setting_lang()" class="btn btn-sm btn-success"><i class="fa-solid fa-square-plus"></i> Add setting lang</button>';
                     html+=btn_extension;
                     if(this.lang_setting_db_collection!="") html+=carrot.langs.list_btn_lang_select('btn-success','carrot.langs.change_btn_list_lang');
@@ -358,8 +359,8 @@ class Carrot_Langs{
     }
 
     change_btn_list_lang(key_change){
-        var key_change=$(this).attr("key_change");
-        langs.show_setting_lang_by_key(key_change,langs.lang_setting_db_collection);
+        carrot.langs.lang_setting=key_change;
+        carrot.langs.show_setting_lang_by_key(key_change,carrot.langs.lang_setting_db_collection);
     }
 
     add_field_for_setting_lang(){
@@ -539,5 +540,9 @@ class Carrot_Langs{
 
     select_db_setting_lang(s_name_db){
         this.show_setting_lang_by_key(this.lang_setting,s_name_db);
+    }
+
+    export_db_cur(){
+        carrot.act_download_file_json(this.lang_db,carrot.langs.lang_setting_db_collection+".json");
     }
 }
