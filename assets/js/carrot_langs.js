@@ -209,8 +209,7 @@ class Carrot_Langs{
       
         if(carrot.langs.list_lang==null){
             carrot.server.list("lang",(data)=>{
-                console.log(data);
-                alert("sdsd");
+
             });
         }
         carrot.show(html);
