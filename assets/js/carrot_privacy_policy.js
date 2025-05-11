@@ -6,7 +6,7 @@ class Carrot_Privacy_Policy{
     }
 
     show(){
-        carrot.change_title_page("Privacy Policy", "?p=privacy_policy","privacy_policy");
+        carrot.change_title_page("Privacy Policy", "?page=privacy_policy","privacy_policy");
         $(carrot.body).load(carrot.get_url()+"privacy_policy/" + carrot.lang+".html?ver="+carrot.get_ver_cur("page"));
         carrot.check_event();
     }

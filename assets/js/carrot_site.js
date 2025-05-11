@@ -773,7 +773,7 @@ class Carrot_Site{
         if (!window.navigator || !window.navigator.registerProtocolHandler) {
             $.MessageBox("Your browser does not support the Stellar-protocol: SEP-0007. Use Chrome, Opera or Firefox to open web+stellar links")
         } else {
-            navigator.registerProtocolHandler("web+app", `${window.location.origin}/?p=app&id=%s`,"Carrot App");
+            navigator.registerProtocolHandler("web+app", `${window.location.origin}/?page=app&id=%s`,"Carrot App");
         }
     }
 

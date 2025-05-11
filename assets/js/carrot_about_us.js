@@ -6,7 +6,7 @@ class Carrot_About_Us{
     }
 
     show_page(){
-        carrot.change_title_page("About Us", "?p=about_us","about_us");
+        carrot.change_title_page("About Us", "?page=about_us","about_us");
         $(carrot.body).load(carrot.get_url()+"about_us/" + carrot.lang+".html?ver="+carrot.get_ver_cur("page"),function(){
             $(carrot.body).append(carrot.about_us.box_contact());
         });
