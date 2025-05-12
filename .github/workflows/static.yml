@@ -41,9 +41,9 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
-
-      - name: Dummy upload to fix missing info
+      - name: Upload build
         uses: actions/upload-artifact@v3
         with:
-          name: dummy
-          path: README.md
+          name: build-output
+          path: ./dist
+
