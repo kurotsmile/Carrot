@@ -421,3 +421,4 @@ xandr.com, 13293, RESELLER, f5ab79cb980f11d1
 xandr.com, 3318, RESELLER
 xandr.com, 8916, RESELLER
 yabbi.me, 675d9254-4032-47ed-9074-b6ef4dbab522, RESELLER
+google.com, pub-1682595508078257, RESELLER, f08c47fec0942fa0
