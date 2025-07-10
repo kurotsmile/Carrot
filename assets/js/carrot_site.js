@@ -54,27 +54,27 @@ class Carrot_Site{
         }); 
     };
 
-    setup_server_os(){
+    setup_server_os() {
         var userAgent = navigator.userAgent;
         var os = "Unknown OS";
 
         if (userAgent.indexOf("Win") !== -1) os = "Windows";
+        else if (userAgent.indexOf("like Mac") !== -1) os = "iOS"; 
         else if (userAgent.indexOf("Mac") !== -1) os = "MacOS";
         else if (userAgent.indexOf("X11") !== -1) os = "UNIX";
         else if (userAgent.indexOf("Linux") !== -1) os = "Linux";
         else if (userAgent.indexOf("Android") !== -1) os = "Android";
-        else if (userAgent.indexOf("like Mac") !== -1) os = "iOS";
 
-        this.os=os;
-        //os="iOS";
-        if(os=="MacOS"||os=="iOS"){
-            this.type_server="json";
-            $.getJSON(this.config.list_url_data_setting_web[0],(data)=>{
-                var all_item=data["all_item"];
-                carrot.obj_version_new=all_item[1];
+        this.os = os;
+
+        if (os == "MacOS" || os == "iOS") {
+            this.type_server = "json";
+            $.getJSON(this.config.list_url_data_setting_web[0], (data) => {
+                var all_item = data["all_item"];
+                carrot.obj_version_new = all_item[1];
                 carrot.load_page(all_item[1]);
             });
-        }else{
+        } else {
             this.setup_sever_db(this.index_server);
         }
     }
@@ -909,14 +909,18 @@ class Carrot_Site{
         $("#head").show();
         $("#head_nav").show();
         this.id_page = cr.arg("p");
-        if(id_page){
+        if(this.id_page){
             this.log("check_show_by_id_page : "+this.id_page,"info");
             var obj_page_show=carrot[this.id_page];
             if(obj_page_show!=null){
                 eval("carrot."+this.id_page+".show()");
                 $("#load_bar").css("width","100%");
             }else{
-                this.load_js_page(id_page,id_page,"carrot."+id_page+".show()");
+                if(this.id_page=="app"){
+                    this.load_js_page("app", "appp", "carrot.appp.show()");
+                }else{
+                    this.load_js_page(this.id_page,this.id_page,"carrot."+id_page+".show()");
+                }
             };
         }else{
             var id_page=cr.arg("page");
@@ -1103,7 +1107,7 @@ class Carrot_Site{
             $(apps).each(function(index,app){
                 carrot.hide_loading();
                 s_xml_app+='<url>';
-                s_xml_app+='<loc>https://carrotstore.web.app/?page=app&id='+app.id_doc+'</loc>';
+                s_xml_app+='<loc>https://carrotstore.web.app/?page=app&amp;id='+encodeURIComponent(app.id_doc)+'</loc>';
                 s_xml_app+='<lastmod>'+todays+'</lastmod>';
                 s_xml_app+='<changefreq>daily</changefreq>';
                 s_xml_app+='<priority>1</priority>';
@@ -1115,7 +1119,7 @@ class Carrot_Site{
             q_song.get_data((songs)=>{
                 $(songs).each(function(index,song){
                     s_xml_song+='<url>';
-                    s_xml_song+='<loc>https://carrotstore.web.app/?page=song&id='+song.id_doc+'</loc>';
+                    s_xml_song+='<loc>https://carrotstore.web.app/?page=song&amp;id='+encodeURIComponent(song.id_doc)+'</loc>';
                     s_xml_song+='<lastmod>'+todays+'</lastmod>';
                     s_xml_song+='<changefreq>daily</changefreq>';
                     s_xml_song+='<priority>0.9</priority>';

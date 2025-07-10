@@ -13,6 +13,10 @@ class Carrot_About_Us{
         carrot.check_event();
     }
 
+    show(){
+        this.show_page();
+    }
+
     box_contact(){
         var html='';
         html+='<div class="service px-4 py-5 pt-3">';

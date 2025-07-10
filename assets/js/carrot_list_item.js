@@ -320,7 +320,7 @@ class Carrot_Info{
                 $(this.list_body).each(function(index,data){
                     html+='<div index="'+index+'" class="about row p-2 py-3 bg-white mt-4 shadow-sm">';
                         html+='<h4>'+data.title+'</h4>';
-                        html+='<p class="fs-8 text-justify">'+data.body+'</p>';
+                        html+='<p class="fs-8 text-justify" style="white-space: pre-line;">'+data.body+'</p>';
                     html+='</div>';
                 });
 

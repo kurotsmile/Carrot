@@ -259,7 +259,7 @@ class Song{
         box_info.add_attrs("fa-solid fa-user",'<l class="lang" key_lang="artist">Artist</l>',data.artist);
         box_info.add_attrs("fa-solid fa-language",'<l class="lang" key_lang="country">Country</l>',data.lang);
 
-        box_info.add_body('<h4 class="fw-semi fs-5 lang" key_lang="describe">Lyrics</h4>','<p class="fs-8 text-justify">'+data.lyrics.replaceAll(". ","</br>")+'</p>');
+        box_info.add_body('<h4 class="fw-semi fs-5 lang" key_lang="describe">Lyrics</h4>','<p class="fs-8 text-justify" style="white-space: pre-line;">'+data.lyrics.replaceAll(". ","</br>")+'</p>');
         box_info.set_protocol_url("music://show/"+data.id_doc);
 
         box_info.add_btn("btn_download","fa-solid fa-file-arrow-down","Download","carrot.song.act_download()");
